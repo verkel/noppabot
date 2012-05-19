@@ -35,7 +35,8 @@ public class NoppaBot extends PircBot {
 	
 	private enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
 	
-	private Pattern dicePattern = Pattern.compile("\\b+d([0-9]+)\\b");
+	private Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
+	private Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([\\w]+)");
 	private Random random = new Random();
 	private Scheduler scheduler = new Scheduler();
 	private State state = State.NORMAL;
@@ -76,9 +77,19 @@ public class NoppaBot extends PircBot {
 	protected void onMessage(String channel, String sender, String login, String hostname,
 		String message) {
 		
-		Matcher matcher = dicePattern.matcher(message);
-		if (!matcher.find()) return;
-		String numberStr = matcher.group(1);
+		String numberStr;
+		Matcher customRollerMatcher = dicePatternWithCustomRoller.matcher(message);
+		Matcher regularMatcher = dicePattern.matcher(message);
+		
+		if (customRollerMatcher.matches()) {
+			numberStr = customRollerMatcher.group(1);
+			sender = customRollerMatcher.group(2);
+		}
+		else if (regularMatcher.matches()) {
+			numberStr = regularMatcher.group(1);
+		}
+		else return;
+		
 		int sides = Integer.parseInt(numberStr);
 		roll(sender, sides);
 	}

@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project NoppaBot">
+<project default="jar" name="NoppaBot">
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="C:/documents/eclipse-workspaces/noppabot/NoppaBot/NoppaBot.jar" filesetmanifest="mergewithoutmain">
+    <target name="jar">
+        <delete dir="build"/>
+        <mkdir dir="build"/>
+    	
+        <jar destfile="build/NoppaBot.jar" filesetmanifest="mergewithoutmain">
             <manifest>
                 <attribute name="Main-Class" value="NoppaBot"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
-            <fileset dir="C:/documents/eclipse-workspaces/noppabot/NoppaBot/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/documents/eclipse-workspaces/noppabot/NoppaBot/lib/pircbot.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/documents/eclipse-workspaces/noppabot/NoppaBot/lib/cron4j-2.2.5.jar"/>
+            <fileset dir="bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/pircbot.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/cron4j-2.2.5.jar"/>
         </jar>
     </target>
 </project>
