@@ -85,26 +85,32 @@ public class NoppaBot extends PircBot {
 	
 	private void roll(String nick, int sides) {
 		int value = random.nextInt(sides)+1;
-		String participatedMsg = participated(nick) ? 
-			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
-		String msg = String.format("%s rolled %d! %s%s", nick, value, grade(value), participatedMsg);
+		String msg;
+		if (sides == 100) {
+			String participatedMsg = participated(nick) ? 
+				" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
+			msg = String.format("%s rolled %d! %s%s", nick, value, grade(value), participatedMsg);
+			participate(nick, value);
+		}
+		else {
+			msg = String.format("%s rolled %d!", nick, value);
+		}
 		sendChannel(msg);
-		participate(nick, value);
 	}
 	
-	private String grade(int sides) {
-		if (sides == 100) return "You showed us....the ULTIMATE roll!";
-		else if (sides >= 95) return "You are a super roller!";
-		else if (sides >= 90) return "Amazing!";
-		else if (sides >= 80) return "Nicely done!";
-		else if (sides >= 70) return "Quite good!";
-		else if (sides >= 60) return "That's ok!";
-		else if (sides >= 50) return "... That's decent!";
-		else if (sides >= 40) return "... Could've gone better!";
-		else if (sides >= 30) return "That's kind of a low roll!";
-		else if (sides >= 20) return "Not having much luck today? :(";
-		else if (sides >= 10) return "Still at two digits!";
-		else if (sides > 1) return "Seek some advice from your local qualified rolling professional!";
+	private String grade(int value) {
+		if (value == 100) return "You showed us....the ULTIMATE roll!";
+		else if (value >= 95) return "You are a super roller!";
+		else if (value >= 90) return "Amazing!";
+		else if (value >= 80) return "Nicely done!";
+		else if (value >= 70) return "Quite good!";
+		else if (value >= 60) return "That's ok!";
+		else if (value >= 50) return "... That's decent!";
+		else if (value >= 40) return "... Could've gone better!";
+		else if (value >= 30) return "That's kind of a low roll!";
+		else if (value >= 20) return "Not having much luck today? :(";
+		else if (value >= 10) return "Still at two digits!";
+		else if (value > 1) return "Seek some advice from your local qualified rolling professional!";
 		else /*if (sides == 1)*/ return "Yikes!";
 	}
 	
