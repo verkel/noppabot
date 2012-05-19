@@ -12,8 +12,8 @@
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/pircbot.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="lib/cron4j-2.2.5.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/pircbot.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/cron4j-2.2.5.jar"/>
         </jar>
     </target>
 </project>
