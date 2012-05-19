@@ -1,3 +1,4 @@
+package noppabot;
 import it.sauronsoftware.cron4j.Scheduler;
 
 import java.util.*;
@@ -35,8 +36,9 @@ public class NoppaBot extends PircBot {
 	
 	private enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
 	
-	private Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
-	private Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([\\w]+)");
+	public static final Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
+	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([\\w]+)");
+	
 	private Random random = new Random();
 	private Scheduler scheduler = new Scheduler();
 	private State state = State.NORMAL;
@@ -100,11 +102,11 @@ public class NoppaBot extends PircBot {
 		if (sides == 100) {
 			String participatedMsg = participated(nick) ? 
 				" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
-			msg = String.format("%s rolled %d! %s%s", nick, value, grade(value), participatedMsg);
+			msg = String.format("%s rolls %d! %s%s", nick, value, grade(value), participatedMsg);
 			participate(nick, value);
 		}
 		else {
-			msg = String.format("%s rolled %d!", nick, value);
+			msg = String.format("%s rolls %d!", nick, value);
 		}
 		sendChannel(msg);
 	}
@@ -158,7 +160,7 @@ public class NoppaBot extends PircBot {
 			state = State.NORMAL;
 		}
 		else {
-			List<String> highestRollers = getHighestRollers();
+			List<String> highestRollers = getHighestRollers(rolls);
 			if (highestRollers.size() == 1) {
 				String winner = highestRollers.get(0);
 				int roll = rolls.get(winner);
@@ -182,23 +184,6 @@ public class NoppaBot extends PircBot {
 		tiebreakers.clear();
 	}
 	
-	private List<String> getHighestRollers() {
-		int max = Integer.MIN_VALUE;
-		List<String> highestRollers = new ArrayList<String>();
-		for (String nick : rolls.keySet()) {
-			int roll = participatingRoll(nick);
-			if (roll > max) {
-				highestRollers.clear();
-				highestRollers.add(nick);
-			}
-			else if (roll == max) {
-				highestRollers.add(nick);
-			}
-		}
-		
-		return highestRollers;
-	}
-	
 	private String randomRollStartMsg() {
 		return rollStartMsgs[random.nextInt(rollStartMsgs.length)];
 	}
@@ -209,6 +194,24 @@ public class NoppaBot extends PircBot {
 	
 	private void sendChannel(String msg) {
 		sendMessage(CHANNEL, msg);
+	}
+	
+	public static List<String> getHighestRollers(Map<String, Integer> rolls) {
+		int max = Integer.MIN_VALUE;
+		List<String> highestRollers = new ArrayList<String>();
+		for (String nick : rolls.keySet()) {
+			int roll = rolls.get(nick);
+			if (roll > max) {
+				max = roll;
+				highestRollers.clear();
+				highestRollers.add(nick);
+			}
+			else if (roll == max) {
+				highestRollers.add(nick);
+			}
+		}
+		
+		return highestRollers;
 	}
 	
 	public static String join(Iterable<? extends CharSequence> s, String delimiter) {
