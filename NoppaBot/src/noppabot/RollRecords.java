@@ -1,5 +1,8 @@
 package noppabot;
+import java.io.*;
 import java.util.*;
+
+import com.fasterxml.jackson.databind.*;
 
 
 /*
@@ -36,11 +39,38 @@ public class RollRecords {
 		if (user.nick == lastWinner) {
 			user.streak = streak+1;
 		}
+		lastWinner = user.nick;
 	}
 	
 	public void clearStreaks() {
 		for (User user : users) {
 			user.streak = 0;
+		}
+	}
+	
+	public void sortUsers() {
+		Collections.sort(users);
+	}
+	
+	public void save(Writer writer) throws IOException {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+			mapper.writeValue(writer, this);
+			
+		}
+		catch (Exception e) {
+			throw new IOException(e);
+		}
+	}
+	
+	public static RollRecords load(Reader reader) throws IOException{
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.readValue(reader, RollRecords.class);
+		}
+		catch (Exception e) {
+			throw new IOException(e);
 		}
 	}
 }

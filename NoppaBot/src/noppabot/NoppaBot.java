@@ -1,6 +1,7 @@
 package noppabot;
 import it.sauronsoftware.cron4j.Scheduler;
 
+import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
@@ -11,6 +12,7 @@ public class NoppaBot extends PircBot {
 	private static final String NICK = "proxyidra^";
 	private static final String SERVER = "irc.cs.hut.fi";
 	private static final String CHANNEL = "#orp";
+	private static final String ROLLRECORDS_PATH = "/home/verkel/public_html/public/misc/orp_rolls/rollrecords.json";
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
@@ -166,6 +168,9 @@ public class NoppaBot extends PircBot {
 				int roll = rolls.get(winner);
 				String msg = String.format(randomRollEndMsg(), winner, roll);
 				sendChannel(msg);
+				
+				writeWinFor(winner);
+				
 				state = State.NORMAL;
 			}
 			else {
@@ -184,6 +189,45 @@ public class NoppaBot extends PircBot {
 		tiebreakers.clear();
 	}
 	
+	private void writeWinFor(String winner) {
+		File path = new File(ROLLRECORDS_PATH);
+		RollRecords rec;
+		if (path.exists()) {
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader(new FileReader(path));
+				rec = RollRecords.load(reader);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return;
+			}
+			finally {
+				close(reader);
+			}
+		}
+		else rec = new RollRecords();
+		
+		rec.incrementWins(winner);
+		
+		File temp = new File(path.toString() + ".temp");
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(temp));
+			rec.save(writer);
+			close(writer);
+			path.delete();
+			temp.renameTo(path);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		finally {
+			close(writer);
+		}
+	}
+
 	private String randomRollStartMsg() {
 		return rollStartMsgs[random.nextInt(rollStartMsgs.length)];
 	}
@@ -220,5 +264,13 @@ public class NoppaBot extends PircBot {
 	    StringBuilder buffer = new StringBuilder(iter.next());
 	    while (iter.hasNext()) buffer.append(delimiter).append(iter.next());
 	    return buffer.toString();
+	}
+	
+	public static void close(Closeable c) {
+		try {
+			if (c != null) c.close();
+		}
+		catch (IOException e) {
+		}
 	}
 }

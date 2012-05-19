@@ -25,15 +25,6 @@ public class IrclogsRollRecordsParser {
 	
 	public void run() throws IOException {
 		final PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**\\" + mask);
-//	     DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-//	         public boolean accept(Path file) throws IOException {
-//	             return (Files.size(file) > 8192L);
-//	         }
-//	     };
-//	     Path dir = ...
-//	     try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, filter)) {
-//	         :
-//	     }
 		Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
 			@Override
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -43,7 +34,10 @@ public class IrclogsRollRecordsParser {
 		});
 		System.out.println("Files parsed!");
 		System.out.println("results:");
-		System.out.println(rollRecords.users);
+		rollRecords.sortUsers();
+//		System.out.println(rollRecords.users);
+		OutputStreamWriter osw = new OutputStreamWriter(System.out);
+		rollRecords.save(osw);
 	}
 	
 	private RollRecords rollRecords = new RollRecords();

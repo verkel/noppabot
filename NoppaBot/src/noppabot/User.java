@@ -7,7 +7,7 @@ import java.util.*;
  * @author verkel
  */
 
-public class User {
+public class User implements Comparable<User> {
 	public String nick;
 	public int wins;
 	public int streak;
@@ -17,4 +17,13 @@ public class User {
 	public String toString() {
 		return nick + ": " + wins;
 	}
+
+	@Override
+	public int compareTo(User user) {
+		return -compare(this.wins, user.wins);
+	}
+	
+   public static int compare(int x, int y) {
+      return (x < y) ? -1 : ((x == y) ? 0 : 1);
+  }
 }

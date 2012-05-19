@@ -4,5 +4,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/Libraries/lib/cron4j-2.2.5.jar"/>
 	<classpathentry kind="lib" path="/Libraries/lib/pircbot.jar"/>
+	<classpathentry kind="lib" path="/Libraries/lib/jackson-core-2.0.2.jar"/>
+	<classpathentry kind="lib" path="/Libraries/lib/jackson-databind-2.0.2.jar"/>
+	<classpathentry kind="lib" path="/Libraries/lib/jackson-annotations-2.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
