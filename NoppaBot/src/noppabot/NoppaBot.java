@@ -2,6 +2,7 @@ package noppabot;
 import it.sauronsoftware.cron4j.Scheduler;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.regex.*;
 
@@ -230,14 +231,14 @@ public class NoppaBot extends PircBot {
 		
 		rec.sortUsers();
 		
-		File temp = new File(path.toString() + ".temp");
 		BufferedWriter writer = null;
 		try {
-			writer = new BufferedWriter(new FileWriter(temp));
+			File old = new File(path.toString() + ".old");
+			copyFile(path, old);
+			
+			writer = new BufferedWriter(new FileWriter(path));
 			rec.save(writer);
 			close(writer);
-			path.delete();
-			temp.renameTo(path);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -292,5 +293,28 @@ public class NoppaBot extends PircBot {
 		}
 		catch (IOException e) {
 		}
+	}
+	
+	public static void copyFile(File sourceFile, File destFile) throws IOException {
+	    if(!destFile.exists()) {
+	        destFile.createNewFile();
+	    }
+
+	    FileChannel source = null;
+	    FileChannel destination = null;
+
+	    try {
+	        source = new FileInputStream(sourceFile).getChannel();
+	        destination = new FileOutputStream(destFile).getChannel();
+	        destination.transferFrom(source, 0, source.size());
+	    }
+	    finally {
+	        if(source != null) {
+	            source.close();
+	        }
+	        if(destination != null) {
+	            destination.close();
+	        }
+	    }
 	}
 }
