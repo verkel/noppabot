@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.*;
 public class RollRecords {
 	public List<User> users = new ArrayList<User>();
 	public String lastWinner;
+	public int streak;
 	
 	public User getUser(String nick) {
 		for (User user : users) {
@@ -33,19 +34,19 @@ public class RollRecords {
 	
 	public void incrementWins(String nick) {
 		User user = getOrAddUser(nick);
-		int streak = user.streak;
-		clearStreaks();
 		user.wins++;
 		if (user.nick == lastWinner) {
-			user.streak = streak+1;
+			streak++;
+		}
+		else {
+			streak = 1;
 		}
 		lastWinner = user.nick;
 	}
 	
-	public void clearStreaks() {
-		for (User user : users) {
-			user.streak = 0;
-		}
+	public void incrementParticipation(String nick) {
+		User user = getOrAddUser(nick);
+		user.participation++;
 	}
 	
 	public void sortUsers() {

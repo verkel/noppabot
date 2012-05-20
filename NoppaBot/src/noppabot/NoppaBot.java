@@ -169,7 +169,7 @@ public class NoppaBot extends PircBot {
 				String msg = String.format(randomRollEndMsg(), winner, roll);
 				sendChannel(msg);
 				
-				writeWinFor(winner);
+				updateRecords(winner);
 				
 				state = State.NORMAL;
 			}
@@ -189,7 +189,7 @@ public class NoppaBot extends PircBot {
 		tiebreakers.clear();
 	}
 	
-	private void writeWinFor(String winner) {
+	private void updateRecords(String winner) {
 		File path = new File(ROLLRECORDS_PATH);
 		RollRecords rec;
 		if (path.exists()) {
@@ -208,7 +208,25 @@ public class NoppaBot extends PircBot {
 		}
 		else rec = new RollRecords();
 		
+		// Ensure record contains every user
+		for (String nick : rolls.keySet()) {
+			rec.getOrAddUser(nick);
+		}
+		
+		// Increment wins for the winner
 		rec.incrementWins(winner);
+		
+		// Add the today's roll for everyone
+		for (User user : rec.users) {
+			if (rolls.containsKey(user.nick)) {
+				int roll = rolls.get(user.nick);
+				user.addRoll(roll);
+				user.participation++;
+			}
+			else {
+				user.addRoll(0);
+			}
+		}
 		
 		File temp = new File(path.toString() + ".temp");
 		BufferedWriter writer = null;

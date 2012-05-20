@@ -8,12 +8,15 @@
     	
         <jar destfile="build/NoppaBot.jar" filesetmanifest="mergewithoutmain">
             <manifest>
-                <attribute name="Main-Class" value="NoppaBot"/>
+                <attribute name="Main-Class" value="noppabot.NoppaBot"/>
                 <attribute name="Class-Path" value="."/>
             </manifest>
             <fileset dir="bin"/>
             <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/pircbot.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/cron4j-2.2.5.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/jackson-annotations-2.0.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/jackson-core-2.0.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/jackson-databind-2.0.2.jar"/>
         </jar>
     </target>
 </project>
