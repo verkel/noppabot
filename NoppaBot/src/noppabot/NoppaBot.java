@@ -58,7 +58,7 @@ public class NoppaBot extends PircBot {
 		setName(NICK);
 		connect(SERVER);
 		joinChannel(CHANNEL);
-		sendChannel("Hi everybody!!");
+		sendChannel("Imma baby seal!!");
 		
 		scheduler.schedule(ROLL_PERIOD_START, new Runnable() {
 			@Override
