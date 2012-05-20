@@ -228,6 +228,8 @@ public class NoppaBot extends PircBot {
 			}
 		}
 		
+		rec.sortUsers();
+		
 		File temp = new File(path.toString() + ".temp");
 		BufferedWriter writer = null;
 		try {
