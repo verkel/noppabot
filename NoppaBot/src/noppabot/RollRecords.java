@@ -35,7 +35,7 @@ public class RollRecords {
 	public void incrementWins(String nick) {
 		User user = getOrAddUser(nick);
 		user.wins++;
-		if (user.nick == lastWinner) {
+		if (user.nick.equals(lastWinner)) {
 			streak++;
 		}
 		else {
