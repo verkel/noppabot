@@ -61,6 +61,8 @@ public class NoppaBot extends PircBot {
 		joinChannel(CHANNEL);
 		sendChannel("Imma baby seal!!");
 		
+		checkIfInRollPeriod();
+		
 		scheduler.schedule(ROLL_PERIOD_START, new Runnable() {
 			@Override
 			public void run() {
@@ -76,6 +78,14 @@ public class NoppaBot extends PircBot {
 		});
 		
 		scheduler.start();
+	}
+
+
+	private void checkIfInRollPeriod() {
+		Calendar cal = Calendar.getInstance();
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		int minute = cal.get(Calendar.MINUTE);
+		if (hour == 0 && minute >= 0 && minute < 10) state = State.ROLL_PERIOD;
 	}
 	
 	@Override
