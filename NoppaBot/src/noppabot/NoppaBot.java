@@ -61,7 +61,7 @@ public class NoppaBot extends PircBot {
 		joinChannel(CHANNEL);
 		sendChannel("Eat a happy meal!");
 		
-		checkIfInRollPeriod();
+		if (isInRollPeriod()) state = State.ROLL_PERIOD;
 		
 		scheduler.schedule(ROLL_PERIOD_START, new Runnable() {
 			@Override
@@ -81,11 +81,15 @@ public class NoppaBot extends PircBot {
 	}
 
 
-	private void checkIfInRollPeriod() {
+	private boolean isInRollPeriod() {
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
 		int minute = cal.get(Calendar.MINUTE);
-		if (hour == 0 && minute >= 0 && minute < 10) state = State.ROLL_PERIOD;
+		return (hour == 0 && minute >= 0 && minute < 10);
+	}
+	
+	private boolean isOvertime() {
+		return !isInRollPeriod() && state == State.ROLL_PERIOD;
 	}
 	
 	@Override
@@ -145,6 +149,7 @@ public class NoppaBot extends PircBot {
 	private void participate(String nick, int rollValue) {
 		if (state == State.ROLL_PERIOD && !rolls.containsKey(nick)) {
 			rolls.put(nick, rollValue);
+			if (isOvertime()) endRollPeriod();
 		}
 		else if (state == State.SETTLE_TIE && tiebreakers.contains(nick)) {
 			if (!rolls.containsKey(nick)) {
@@ -171,8 +176,9 @@ public class NoppaBot extends PircBot {
 	private void endRollPeriod() {
 		
 		if (rolls.isEmpty()) {
-			sendChannel("No rolls today :(");
-			state = State.NORMAL;
+			sendChannel("No rolls within 10 minutes. Now first roll wins, be quick!");
+//			state = State.NORMAL;
+			return;
 		}
 		else {
 			List<String> highestRollers = getHighestRollers(rolls);
@@ -245,8 +251,10 @@ public class NoppaBot extends PircBot {
 		
 		BufferedWriter writer = null;
 		try {
-			File old = new File(path.toString() + ".old");
-			copyFile(path, old);
+			if (path.exists()) {
+				File old = new File(path.toString() + ".old");
+				copyFile(path, old);
+			}
 			
 			writer = new BufferedWriter(new FileWriter(path));
 			rec.save(writer);
