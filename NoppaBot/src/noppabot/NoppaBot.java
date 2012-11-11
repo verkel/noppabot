@@ -42,7 +42,9 @@ public class NoppaBot extends PircBot {
 	public static final Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([\\w]+)");
 	
-	private Random random = new Random();
+//	private Random random = new Random();
+	private Map<String, Random> randoms = new HashMap<String, Random>();
+	private Random commonRandom = new Random();
 	private Scheduler scheduler = new Scheduler();
 	private State state = State.NORMAL;
 	private Map<String, Integer> rolls = new HashMap<String, Integer>();
@@ -114,6 +116,7 @@ public class NoppaBot extends PircBot {
 	}
 	
 	private void roll(String nick, int sides) {
+		Random random = getRandomFor(nick);
 		int value = random.nextInt(sides)+1;
 		if (nick.equalsIgnoreCase("etsura")) value = -value;
 		String msg;
@@ -270,15 +273,20 @@ public class NoppaBot extends PircBot {
 	}
 
 	private String randomRollStartMsg() {
-		return rollStartMsgs[random.nextInt(rollStartMsgs.length)];
+		return rollStartMsgs[commonRandom.nextInt(rollStartMsgs.length)];
 	}
 	
 	private String randomRollEndMsg() {
-		return rollEndMsgs[random.nextInt(rollEndMsgs.length)];
+		return rollEndMsgs[commonRandom.nextInt(rollEndMsgs.length)];
 	}
 	
 	private void sendChannel(String msg) {
 		sendMessage(CHANNEL, msg);
+	}
+	
+	private Random getRandomFor(String nick) {
+		if (!randoms.containsKey(nick)) randoms.put(nick, new Random());
+		return randoms.get(nick);
 	}
 	
 	public static List<String> getHighestRollers(Map<String, Integer> rolls) {
