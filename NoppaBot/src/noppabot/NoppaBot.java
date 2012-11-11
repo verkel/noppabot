@@ -111,6 +111,7 @@ public class NoppaBot extends PircBot {
 	
 	private void roll(String nick, int sides) {
 		int value = random.nextInt(sides)+1;
+		if (nick.equalsIgnoreCase("etsura")) value = -value;
 		String msg;
 		if (sides == 100) {
 			String participatedMsg = participated(nick) ? 
@@ -137,7 +138,8 @@ public class NoppaBot extends PircBot {
 		else if (value >= 20) return "Not having much luck today? :(";
 		else if (value >= 10) return "Still at two digits!";
 		else if (value > 1) return "Seek some advice from your local qualified rolling professional!";
-		else /*if (sides == 1)*/ return "Yikes!";
+		else if (value == 1) return "Yikes!";
+		else return "Huh?";
 	}
 	
 	private void participate(String nick, int rollValue) {
