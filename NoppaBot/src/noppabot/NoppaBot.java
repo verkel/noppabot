@@ -13,7 +13,7 @@ public class NoppaBot extends PircBot {
 	private static final String NICK = "proxyidra^";
 	private static final String SERVER = "irc.cs.hut.fi";
 	private static final String CHANNEL = "#orp";
-	private static final String ROLLRECORDS_PATH = "/home/verkel/public_html/public/misc/orp_rolls/rollrecords.json";
+	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
@@ -59,7 +59,7 @@ public class NoppaBot extends PircBot {
 		setName(NICK);
 		connect(SERVER);
 		joinChannel(CHANNEL);
-		sendChannel("Imma baby seal!!");
+		sendChannel("Eat a happy meal!");
 		
 		checkIfInRollPeriod();
 		
