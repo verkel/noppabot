@@ -103,9 +103,6 @@ public class NoppaBot extends PircBot {
 		
 		schedulePowerupSpawn();
 		scheduler.start();
-		
-		spawnPowerup();
-		startRollPeriod();
 	}
 
 	private void schedulePowerupSpawn() {
