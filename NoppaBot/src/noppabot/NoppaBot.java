@@ -6,6 +6,8 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.regex.*;
 
+import noppabot.powerups.Powerups.Powerup;
+
 import org.jibble.pircbot.PircBot;
 
 public class NoppaBot extends PircBot {
@@ -49,6 +51,8 @@ public class NoppaBot extends PircBot {
 	private State state = State.NORMAL;
 	private Map<String, Integer> rolls = new HashMap<String, Integer>();
 	private Set<String> tiebreakers = new TreeSet<String>();
+	
+	public Map<String, Powerup> powerups = new HashMap<String, Powerup>();
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -116,23 +120,42 @@ public class NoppaBot extends PircBot {
 	}
 	
 	private void roll(String nick, int sides) {
-		Random random = getRandomFor(nick);
-		int value = random.nextInt(sides)+1;
+		int value = getRollFor(nick, sides);
 		if (nick.equalsIgnoreCase("etsura")) value = -value;
-		String msg;
+		String msg = null;
 		if (sides == 100) {
-			String participatedMsg = participated(nick) ? 
-				" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
-			msg = String.format("%s rolls %d! %s%s", nick, value, grade(value), participatedMsg);
+			
+			boolean powerupUsed = false;
+			if (powerups.containsKey(nick)) {
+				Powerup powerup = powerups.get(nick);
+				if (isInRollPeriod()) {
+					value = powerup.onContestRoll(this, nick, value);
+					if (powerup.shouldRemove()) powerups.remove(nick);
+					powerupUsed = true;
+				}
+				else powerup.onNormalRoll(this, nick, value);
+			}
+			
+			if (!powerupUsed) sendDefaultContestRollMessage(nick, value);
+			
 			participate(nick, value);
 		}
 		else {
-			msg = String.format("%s rolls %d!", nick, value);
+			sendChannelFormat("%s rolls %d!", nick, value);
 		}
-		sendChannel(msg);
+	}
+
+	public void sendDefaultContestRollMessage(String nick, int value) {
+		sendChannel(getDefaultContestRollMessage(nick, value));
+	}
+
+	public String getDefaultContestRollMessage(String nick, int value) {
+		String participatedMsg = participated(nick) ? 
+			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
+		return String.format("%s rolls %d! %s%s", nick, value, grade(value), participatedMsg);
 	}
 	
-	private String grade(int value) {
+	public String grade(int value) {
 		if (value == 100) return "You showed us....the ULTIMATE roll!";
 		else if (value >= 95) return "You are a super roller!";
 		else if (value >= 90) return "Amazing!";
@@ -209,6 +232,7 @@ public class NoppaBot extends PircBot {
 		
 		rolls.clear();
 		tiebreakers.clear();
+		powerups.clear();
 	}
 	
 	private void updateRecords(String winner) {
@@ -279,14 +303,23 @@ public class NoppaBot extends PircBot {
 	private String randomRollEndMsg() {
 		return rollEndMsgs[commonRandom.nextInt(rollEndMsgs.length)];
 	}
+
+	public void sendChannelFormat(String msg, Object... args) {
+		sendChannel(String.format(msg, args));
+	}
 	
-	private void sendChannel(String msg) {
+	public void sendChannel(String msg) {
 		sendMessage(CHANNEL, msg);
 	}
 	
 	private Random getRandomFor(String nick) {
 		if (!randoms.containsKey(nick)) randoms.put(nick, new Random());
 		return randoms.get(nick);
+	}
+	
+	public int getRollFor(String nick, int sides) {
+		Random random = getRandomFor(nick);
+		return random.nextInt(sides)+1;
 	}
 	
 	public static List<String> getHighestRollers(Map<String, Integer> rolls) {
