@@ -196,10 +196,10 @@ public class NoppaBot extends PircBot {
 		Powerup powerup = this.powerup;
 		
 		if (powerup == null) {
-			sendChannel("%s: nothing to grab.");
+			sendChannelFormat("%s: nothing to grab.", nick);
 		}
 		else if (powerups.containsKey(nick)) {
-			sendChannel("%s: you are encumbered.");
+			sendChannelFormat("%s: you are encumbered.", nick);
 		}
 		else {
 			powerups.put(nick, powerup);
