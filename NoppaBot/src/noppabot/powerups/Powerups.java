@@ -11,6 +11,7 @@ import noppabot.NoppaBot;
 
 public class Powerups {
 	private static List<Powerup> powerups = new ArrayList<Powerup>();
+	private static Random powerupRnd = new Random();
 	
 	private static final Set<Integer> primes = new HashSet<Integer>();
 	private static final List<Integer> dice;
@@ -20,7 +21,7 @@ public class Powerups {
 		dice = Arrays.asList(4, 6, 8, 10, 12, 20);
 	}
 	
-	public static int getSecondsAfterMidnight() {
+	private static int getSecondsAfterMidnight() {
 		Calendar c = Calendar.getInstance();
 		long now = c.getTimeInMillis();
 		c.set(Calendar.HOUR_OF_DAY, 0);
@@ -32,11 +33,20 @@ public class Powerups {
 		return (int)secondsPassed;
 	}
 	
+	public static Powerup getRandom() {
+		if (powerups.isEmpty()) bakeMore();
+		Powerup powerup = powerups.remove(powerupRnd.nextInt(powerups.size()));
+		return powerup;
+	}
+	
 	public static abstract class Powerup {
 		public void onSpawn(NoppaBot bot) {
 		}
 		
 		public void onPickup(NoppaBot bot, String nick) {
+		}
+		
+		public void onExpire(NoppaBot bot) {
 		}
 		
 		public void onRollPeriodStart(NoppaBot bot, String nick) {
@@ -62,7 +72,7 @@ public class Powerups {
 		}
 	}
 
-	public void bakeMore() {
+	public static void bakeMore() {
 		// Polished die
 		powerups.add(new Powerup() {
 			public static final int bonus = 5;
@@ -75,6 +85,11 @@ public class Powerups {
 			@Override
 			public void onPickup(NoppaBot bot, String nick) {
 				bot.sendChannelFormat("%s grabs the polished die.", nick);
+			}
+			
+			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("The polished die fades away.");
 			}
 			
 			@Override
@@ -94,6 +109,11 @@ public class Powerups {
 			@Override
 			public void onSpawn(NoppaBot bot) {
 				bot.sendChannel("A weighted die appears!");
+			}
+			
+			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("The weighted die falls into emptiness.");
 			}
 			
 			@Override
@@ -121,6 +141,11 @@ public class Powerups {
 			}
 			
 			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("The spell on the enchanted die expires and nobody really wants it anymore.");
+			}
+			
+			@Override
 			public void onPickup(NoppaBot bot, String nick) {
 				bot.sendChannelFormat("%s grabs the enchanted die and feels a tingling sensation at the fingertips.", nick);
 			}
@@ -142,6 +167,11 @@ public class Powerups {
 			@Override
 			public void onSpawn(NoppaBot bot) {
 				bot.sendChannel("A primal die appears!");
+			}
+			
+			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("Nobody wanted the primal die. Now it disappears.");
 			}
 			
 			@Override
@@ -174,6 +204,11 @@ public class Powerups {
 			}
 			
 			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("The lucky die runs away.");
+			}
+			
+			@Override
 			public void onPickup(NoppaBot bot, String nick) {
 				bot.sendChannelFormat("%s grabs the lucky die and it wishes good luck for the tonight's roll.", nick);
 			}
@@ -201,6 +236,11 @@ public class Powerups {
 			}
 			
 			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("Nobody took the MASTER DIE?! Maybe you should learn some dice appraisal skills at the certified rolling professional...");
+			}
+			
+			@Override
 			public void onPickup(NoppaBot bot, String nick) {
 				bot.sendChannelFormat("%s wrestles for the MASTER DIE with the other contestants and barely comes on top. Surely, the MASTER DIE must be worth all the trouble!", nick);
 			}
@@ -220,6 +260,11 @@ public class Powerups {
 			@Override
 			public void onSpawn(NoppaBot bot) {
 				bot.sendChannel("The fast die appears!");
+			}
+			
+			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("It was too fast for you.");
 			}
 			
 			@Override
@@ -246,6 +291,11 @@ public class Powerups {
 			@Override
 			public void onSpawn(NoppaBot bot) {
 				bot.sendChannel("The volatile die appears!");
+			}
+			
+			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("The volatile die grows unstable and explodes.");
 			}
 			
 			@Override
@@ -279,6 +329,11 @@ public class Powerups {
 			@Override
 			public void onSpawn(NoppaBot bot) {
 				bot.sendChannel("The symmetrical die appears!");
+			}
+			
+			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("The symmetrical die is deemed too perfect for the contest and is disqualified.");
 			}
 			
 			@Override
@@ -336,6 +391,11 @@ public class Powerups {
 			}
 			
 			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("Who wants some random dice bag anyway. There could be anything in there...");
+			}
+			
+			@Override
 			public int onContestRoll(NoppaBot bot, String nick, int roll) {
 				bot.sendChannelFormat("%s opens the dice bag. Inside he finds: %s", nick, diceToString());
 				
@@ -367,6 +427,11 @@ public class Powerups {
 			}
 			
 			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("Nobody seems to want to polish their skills, so the rolling professional walks away.");
+			}
+			
+			@Override
 			public void onPickup(NoppaBot bot, String nick) {
 				bot.sendChannelFormat("The rolling professional will assist %s in tonight's roll.", nick);
 			}
@@ -395,6 +460,11 @@ public class Powerups {
 			@Override
 			public void onSpawn(NoppaBot bot) {
 				bot.sendChannel("A diceteller appears!");
+			}
+			
+			@Override
+			public void onExpire(NoppaBot bot) {
+				bot.sendChannelFormat("No one seemed to believe the diceteller could see future rolls in a crystal ball. The ball was of wrong shape, anyway. Maybe next time she brings crystal dice?");
 			}
 			
 			@Override

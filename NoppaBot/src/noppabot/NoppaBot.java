@@ -6,6 +6,7 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.regex.*;
 
+import noppabot.powerups.*;
 import noppabot.powerups.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
@@ -28,7 +29,17 @@ public class NoppaBot extends PircBot {
 		"It's rolltime!",
 		"A new day, time for a new roll!",
 		"Who will be our lucky winner this time?",
-		"Let the rolls commence!"
+		"Let the rolls commence!",
+		"Tonight we select a new certified rolling professional!",
+		"The dice are out of the bag!",
+		"Experts say that rolling dice makes you 120% more handsome and/or beautiful.",
+		"Everyone got their dice ready? Here we go!",
+		"Winners do not use drugs. But enchanted dice, they might.",
+		"The dice rolling compo starts... now!",
+		"d100 is the name and rolling is my game!",
+		"1. roll, 2. ???, 3. Profit!",
+		"Make rolls, not war. Alternatively, wage war with dice.",
+		NICK + " rolls 100! SUPER!! ... No wait, you guys roll now."
 	};
 	
 	private String[] rollEndMsgs = {
@@ -36,7 +47,13 @@ public class NoppaBot extends PircBot {
 		"Our tonight's champion has been elected! %s scored the mighty %d points!",
 		"The score is settled! This time, %s won with the roll %d.",
 		"The dice gods have finalized the outcome! %s won with the roll %d!",
-		"The contest is over! Our lucky winner is %s with %d points!"
+		"The contest is over! Our lucky winner is %s with %d points!",
+		"The die has been cast. Tonight, %s is the dice emperor with %d points!",
+		"%s won the compo this time, with %d points. Was he lucky, or maybe he was using... the MASTER DIE?!",
+		"Using dice is the best way to make decisions. %s knows this best, beating others with his roll %d!",
+		"Tonight, %s was the high roller with %d points!",
+		"%s beat the others with the outstanding roll of %d!",
+		"%s is certified as the new local rolling professional after the superb %d roll!"
 	};
 	
 	private enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
@@ -52,6 +69,7 @@ public class NoppaBot extends PircBot {
 	private Map<String, Integer> rolls = new HashMap<String, Integer>();
 	private Set<String> tiebreakers = new TreeSet<String>();
 	
+	public Powerup powerup = null;
 	public Map<String, Powerup> powerups = new HashMap<String, Powerup>();
 	
 	public static void main(String[] args) throws Exception {
@@ -65,7 +83,7 @@ public class NoppaBot extends PircBot {
 		setName(NICK);
 		connect(SERVER);
 		joinChannel(CHANNEL);
-		sendChannel("Eat a happy meal!");
+//		sendChannel("Eat a happy meal!");
 		
 		if (isInRollPeriod()) state = State.ROLL_PERIOD;
 		
@@ -83,10 +101,57 @@ public class NoppaBot extends PircBot {
 			}
 		});
 		
+		schedulePowerupSpawn();
 		scheduler.start();
 	}
 
+	private void schedulePowerupSpawn() {
+		Calendar now = Calendar.getInstance();
+		int startHour = now.get(Calendar.HOUR_OF_DAY) + 1;
+		
+		int minutes = commonRandom.nextInt(60);
+		int hours = commonRandom.nextInt(Math.min(5, 24 - startHour)) + startHour;
+		int minutes2 = (minutes + 10) % 60;
+		int hours2 = minutes2 < minutes ? hours+1 : hours;
+		final String pattern = String.format("%d %d * * *", minutes, hours);
+		final String expirePattern = String.format("%d %d * * *", minutes2, hours2);
+		
+		scheduler.schedule(pattern, new Runnable() {
+			
+			@Override
+			public void run() {
+				spawnPowerup();
+				scheduler.deschedule(pattern);
+			}
 
+		});
+		
+		scheduler.schedule(expirePattern, new Runnable() {
+			
+			@Override
+			public void run() {
+				expirePowerup();
+				scheduler.deschedule(expirePattern);
+				schedulePowerupSpawn();
+			}
+
+		});
+	}
+
+	private void spawnPowerup() {
+		if (powerup != null) return;
+		
+		powerup = Powerups.getRandom();
+		powerup.onSpawn(this);
+	}
+
+	private void expirePowerup() {
+		if (powerup == null) return;
+		
+		powerup.onExpire(this);
+		powerup = null;
+	}
+	
 	private boolean isInRollPeriod() {
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -102,21 +167,41 @@ public class NoppaBot extends PircBot {
 	protected void onMessage(String channel, String sender, String login, String hostname,
 		String message) {
 		
-		String numberStr;
 		Matcher customRollerMatcher = dicePatternWithCustomRoller.matcher(message);
 		Matcher regularMatcher = dicePattern.matcher(message);
+		boolean customRoller = customRollerMatcher.matches();
+		boolean regularRoll = regularMatcher.matches();
 		
-		if (customRollerMatcher.matches()) {
-			numberStr = customRollerMatcher.group(1);
-			sender = customRollerMatcher.group(2);
+		if (customRoller || regularRoll) {
+			String numberStr;
+			if (customRoller) {
+				numberStr = customRollerMatcher.group(1);
+				sender = customRollerMatcher.group(2);
+			}
+			else {
+				numberStr = regularMatcher.group(1);
+			}
+
+			int sides = Integer.parseInt(numberStr);
+			roll(sender, sides);
 		}
-		else if (regularMatcher.matches()) {
-			numberStr = regularMatcher.group(1);
+		else if (message.equalsIgnoreCase("grab") || message.equalsIgnoreCase("pick") || message.equalsIgnoreCase("take")) {
+			grabPowerup(sender);
 		}
-		else return;
+
+	}
+	
+	private void grabPowerup(String nick) {
+		Powerup powerup = this.powerup;
 		
-		int sides = Integer.parseInt(numberStr);
-		roll(sender, sides);
+		if (powerup == null) {
+			sendChannel("Nothing to grab.");
+		}
+		else {
+			powerups.put(nick, powerup);
+			powerup.onPickup(this, nick);
+			this.powerup = null;
+		}
 	}
 	
 	private void roll(String nick, int sides) {
