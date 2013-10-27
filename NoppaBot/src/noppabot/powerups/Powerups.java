@@ -274,10 +274,11 @@ public class Powerups {
 			
 			@Override
 			public int onContestRoll(NoppaBot bot, String nick, int roll) {
-				int bonus = Math.max(0, 30 - getSecondsAfterMidnight());
+				int seconds = getSecondsAfterMidnight();
+				int bonus = Math.max(0, 30 - seconds);
 				int result = roll + bonus;
 				result = capResult(result);
-				bot.sendChannelFormat("%s waited %d seconds before throwing the fast die.");
+				bot.sendChannelFormat("%s waited %d seconds before throwing the fast die.", nick, seconds);
 				bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, roll, bonus, result, bot.grade(result));
 				return result;
 			}	
@@ -362,7 +363,7 @@ public class Powerups {
 			private void grabTenDice() {
 				for (int i = 0; i < 10; i++) {
 					Random diceRnd = new Random();
-					int die = dice.get(diceRnd.nextInt(diceBag.size()));
+					int die = dice.get(diceRnd.nextInt(dice.size()));
 					diceBag.add(die);
 				}
 				Collections.sort(diceBag);
@@ -406,7 +407,7 @@ public class Powerups {
 					int subroll = bot.getRollFor(nick, die);
 					result += subroll;
 					if (!first) buf.append(" + ");
-					buf.append(result);
+					buf.append(subroll);
 					first = false;
 				}
 				String resultStr = buf.toString();
@@ -419,7 +420,7 @@ public class Powerups {
 		
 		// Rolling professional
 		powerups.add(new Powerup() {
-			public static final int minRoll = 60;
+			public static final int minRoll = 50;
 			
 			@Override
 			public void onSpawn(NoppaBot bot) {
@@ -445,8 +446,8 @@ public class Powerups {
 				}
 				else {
 					bot.sendChannelFormat("The rolling professional notices that %s's rolling technique needs work! " +
-						"%s was about to roll a lowly %d, but rolling pro shows how it's done and rolls %d! %s",
-						nick, nick, roll, minRoll, bot.grade(minRoll));
+						"%s was about to roll a lowly %d, but rolling pro shows how it's done and rolls %d!",
+						nick, nick, roll, minRoll);
 					return minRoll;
 				}
 			}	
@@ -459,7 +460,7 @@ public class Powerups {
 			
 			@Override
 			public void onSpawn(NoppaBot bot) {
-				bot.sendChannel("A diceteller appears!");
+				bot.sendChannel("A Diceteller appears!");
 			}
 			
 			@Override
@@ -482,7 +483,7 @@ public class Powerups {
 			public int onContestRoll(NoppaBot bot, String nick, int roll) {
 				if (!rerolled) {
 					bot.sendChannelFormat("%s rolls %d! %s", nick, stashedRoll, bot.grade(stashedRoll));
-					bot.sendChannelFormat("%s recalls this was the exact roll foretold by the roll teller.", nick);
+					bot.sendChannelFormat("%s recalls this was the exact roll foretold by the Diceteller.", nick);
 					return stashedRoll;
 				}
 				else return super.onContestRoll(bot, nick, roll); // Normal behaviour

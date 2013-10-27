@@ -103,6 +103,9 @@ public class NoppaBot extends PircBot {
 		
 		schedulePowerupSpawn();
 		scheduler.start();
+		
+		spawnPowerup();
+		startRollPeriod();
 	}
 
 	private void schedulePowerupSpawn() {
@@ -185,7 +188,8 @@ public class NoppaBot extends PircBot {
 			int sides = Integer.parseInt(numberStr);
 			roll(sender, sides);
 		}
-		else if (message.equalsIgnoreCase("grab") || message.equalsIgnoreCase("pick") || message.equalsIgnoreCase("take")) {
+		else if (message.equalsIgnoreCase("grab") || message.equalsIgnoreCase("pick") 
+			|| message.equalsIgnoreCase("take") || message.equalsIgnoreCase("get")) {
 			grabPowerup(sender);
 		}
 
@@ -213,7 +217,7 @@ public class NoppaBot extends PircBot {
 			boolean powerupUsed = false;
 			if (powerups.containsKey(nick)) {
 				Powerup powerup = powerups.get(nick);
-				if (isInRollPeriod()) {
+				if (state == State.ROLL_PERIOD) {
 					value = powerup.onContestRoll(this, nick, value);
 					if (powerup.shouldRemove()) powerups.remove(nick);
 					powerupUsed = true;
