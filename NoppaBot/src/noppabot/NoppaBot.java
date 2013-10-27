@@ -107,7 +107,7 @@ public class NoppaBot extends PircBot {
 
 	private void schedulePowerupSpawn() {
 		Calendar now = Calendar.getInstance();
-		int startHour = now.get(Calendar.HOUR_OF_DAY) + 1;
+		int startHour = Math.max(12, now.get(Calendar.HOUR_OF_DAY) + 1);
 		
 		int minutes = commonRandom.nextInt(60);
 		int hours = commonRandom.nextInt(Math.min(5, 24 - startHour)) + startHour;
