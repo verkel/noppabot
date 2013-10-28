@@ -61,7 +61,6 @@ public class NoppaBot extends PircBot {
 	public static final Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([\\w]+)");
 	
-//	private Random random = new Random();
 	private Map<String, Random> randoms = new HashMap<String, Random>();
 	private Random commonRandom = new Random();
 	private Scheduler scheduler = new Scheduler();
@@ -261,7 +260,7 @@ public class NoppaBot extends PircBot {
 		else return "Huh?";
 	}
 	
-	private void participate(String nick, int rollValue) {
+	public void participate(String nick, int rollValue) {
 		if (state == State.ROLL_PERIOD && !rolls.containsKey(nick)) {
 			rolls.put(nick, rollValue);
 			if (isOvertime()) endRollPeriod();
@@ -286,6 +285,11 @@ public class NoppaBot extends PircBot {
 	private void startRollPeriod() {
 		state = State.ROLL_PERIOD;
 		sendChannel(randomRollStartMsg());
+		
+		for (String nick : powerups.keySet()) {
+			Powerup powerup = powerups.get(nick);
+			powerup.onRollPeriodStart(this, nick);
+		}
 	}
 	
 	private void endRollPeriod() {
@@ -324,24 +328,11 @@ public class NoppaBot extends PircBot {
 		powerups.clear();
 	}
 	
+	private static final File rollRecordsPath = new File(ROLLRECORDS_PATH);
+	
 	private void updateRecords(String winner) {
-		File path = new File(ROLLRECORDS_PATH);
-		RollRecords rec;
-		if (path.exists()) {
-			BufferedReader reader = null;
-			try {
-				reader = new BufferedReader(new FileReader(path));
-				rec = RollRecords.load(reader);
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				return;
-			}
-			finally {
-				close(reader);
-			}
-		}
-		else rec = new RollRecords();
+		RollRecords rec = loadRollRecords();
+		if (rec == null) return;
 		
 		// Ensure record contains every user
 		for (String nick : rolls.keySet()) {
@@ -367,12 +358,12 @@ public class NoppaBot extends PircBot {
 		
 		BufferedWriter writer = null;
 		try {
-			if (path.exists()) {
-				File old = new File(path.toString() + ".old");
-				copyFile(path, old);
+			if (rollRecordsPath.exists()) {
+				File old = new File(rollRecordsPath.toString() + ".old");
+				copyFile(rollRecordsPath, old);
 			}
 			
-			writer = new BufferedWriter(new FileWriter(path));
+			writer = new BufferedWriter(new FileWriter(rollRecordsPath));
 			rec.save(writer);
 			close(writer);
 		}
@@ -383,6 +374,27 @@ public class NoppaBot extends PircBot {
 		finally {
 			close(writer);
 		}
+	}
+
+
+	public RollRecords loadRollRecords() {
+		RollRecords rec;
+		if (rollRecordsPath.exists()) {
+			BufferedReader reader = null;
+			try {
+				reader = new BufferedReader(new FileReader(rollRecordsPath));
+				rec = RollRecords.load(reader);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+			finally {
+				close(reader);
+			}
+		}
+		else rec = new RollRecords();
+		return rec;
 	}
 
 	private String randomRollStartMsg() {
