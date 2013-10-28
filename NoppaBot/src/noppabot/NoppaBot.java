@@ -14,16 +14,16 @@ import org.jibble.pircbot.PircBot;
 public class NoppaBot extends PircBot {
 
 	private static final String NICK = "proxyidra^";
-	private static final String SERVER = "irc.cs.hut.fi";
 	private static final String CHANNEL = "#orp";
+	private static final String SERVER = "irc.cs.hut.fi";
 	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
 	private static final int POWERUP_EXPIRE_MINUTES = 30;
 	
-//	private static final String ROLL_PERIOD_START = "57 2 * * *";
-//	private static final String ROLL_PERIOD_END = "58 2 * * *";
+//	private static final String NICK = "test-idra^";
+//	private static final String CHANNEL = "#noppatest";
 	
 	private String[] rollStartMsgs = {
 		"Gentlemen, place your rolls!",
@@ -102,9 +102,16 @@ public class NoppaBot extends PircBot {
 			}
 		});
 		
-//		schedulePowerupSpawn();
 		schedulePowerupsOfTheDay();
 		scheduler.start();
+		
+		giveFreePowerup(); // spawn one right now
+	}
+	
+	private void giveFreePowerup() {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MINUTE, 1);
+		schedulePowerupSpawn(cal);
 	}
 
 	private void schedulePowerupsOfTheDay() {
@@ -117,6 +124,9 @@ public class NoppaBot extends PircBot {
 		Calendar rollPeriodEnd = (Calendar)rollPeriodStart.clone();
 		rollPeriodEnd.set(Calendar.MINUTE, 10);
 		
+		Calendar spawnEndTime = (Calendar)rollPeriodStart.clone();
+		spawnEndTime.add(Calendar.MINUTE, -POWERUP_EXPIRE_MINUTES);
+		
 		Calendar spawnTime = Calendar.getInstance();
 		if (spawnTime.get(Calendar.HOUR_OF_DAY) < 10) {
 			spawnTime.set(Calendar.HOUR_OF_DAY, 10);
@@ -125,7 +135,7 @@ public class NoppaBot extends PircBot {
 		}
 		incrementSpawnTime(spawnTime);
 		
-		while (spawnTime.before(rollPeriodStart)) {
+		while (spawnTime.before(spawnEndTime)) {
 			schedulePowerupSpawn(spawnTime);
 			incrementSpawnTime(spawnTime);
 		}
@@ -167,13 +177,14 @@ public class NoppaBot extends PircBot {
 		powerupSpawnTaskIDs.add(spawnTaskID);
 		powerupSpawnTaskIDs.add(expireTaskID);
 		
-		System.out.printf("Added spawn on %s, expires on %s\n", spawnTime, expireTime);
+//		System.out.printf("Added spawn on %s, expires on %s\n", spawnTime.getTime(), expireTime.getTime());
 	}
 	
 	private void clearPowerupSpawnTasks() {
 		for (String id : powerupSpawnTaskIDs) {
 			scheduler.deschedule(id);
 		}
+		powerupSpawnTaskIDs.clear();
 	}
 	
 	private void spawnPowerup() {
