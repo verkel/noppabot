@@ -20,6 +20,7 @@ public class NoppaBot extends PircBot {
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
+	private static final int POWERUP_EXPIRE_MINUTES = 30;
 	
 //	private static final String ROLL_PERIOD_START = "57 2 * * *";
 //	private static final String ROLL_PERIOD_END = "58 2 * * *";
@@ -67,6 +68,7 @@ public class NoppaBot extends PircBot {
 	private State state = State.NORMAL;
 	private Map<String, Integer> rolls = new HashMap<String, Integer>();
 	private Set<String> tiebreakers = new TreeSet<String>();
+	private List<String> powerupSpawnTaskIDs = new ArrayList<String>();
 	
 	public Powerup powerup = null;
 	public Map<String, Powerup> powerups = new HashMap<String, Powerup>();
@@ -100,43 +102,80 @@ public class NoppaBot extends PircBot {
 			}
 		});
 		
-		schedulePowerupSpawn();
+//		schedulePowerupSpawn();
+		schedulePowerupsOfTheDay();
 		scheduler.start();
 	}
 
-	private void schedulePowerupSpawn() {
-		Calendar now = Calendar.getInstance();
-		int startHour = Math.max(12, now.get(Calendar.HOUR_OF_DAY) + 1);
+	private void schedulePowerupsOfTheDay() {
+		Calendar rollPeriodStart = Calendar.getInstance();
+		rollPeriodStart.add(Calendar.DATE, 1);
+		rollPeriodStart.set(Calendar.HOUR_OF_DAY, 0);
+		rollPeriodStart.set(Calendar.MINUTE, 0);
+		rollPeriodStart.set(Calendar.SECOND, 0);
 		
-		int minutes = commonRandom.nextInt(60);
-		int hours = commonRandom.nextInt(Math.min(5, 24 - startHour)) + startHour;
-		int minutes2 = (minutes + 10) % 60;
-		int hours2 = minutes2 < minutes ? hours+1 : hours;
-		final String pattern = String.format("%d %d * * *", minutes, hours);
-		final String expirePattern = String.format("%d %d * * *", minutes2, hours2);
+		Calendar rollPeriodEnd = (Calendar)rollPeriodStart.clone();
+		rollPeriodEnd.set(Calendar.MINUTE, 10);
 		
-		scheduler.schedule(pattern, new Runnable() {
+		Calendar spawnTime = Calendar.getInstance();
+		if (spawnTime.get(Calendar.HOUR_OF_DAY) < 10) {
+			spawnTime.set(Calendar.HOUR_OF_DAY, 10);
+			spawnTime.set(Calendar.MINUTE, 0);
+			spawnTime.set(Calendar.SECOND, 0);
+		}
+		incrementSpawnTime(spawnTime);
+		
+		while (spawnTime.before(rollPeriodStart)) {
+			schedulePowerupSpawn(spawnTime);
+			incrementSpawnTime(spawnTime);
+		}
+	}
+
+	private void incrementSpawnTime(Calendar spawnTime) {
+		int minutesRandomRange = 500 - 20 * spawnTime.get(Calendar.HOUR_OF_DAY);
+		int minutesIncr = POWERUP_EXPIRE_MINUTES + commonRandom.nextInt(minutesRandomRange);
+		spawnTime.add(Calendar.MINUTE, minutesIncr);
+	}
+	
+	private void schedulePowerupSpawn(Calendar spawnTime) {
+		Calendar expireTime = (Calendar)spawnTime.clone();
+		expireTime.add(Calendar.MINUTE, POWERUP_EXPIRE_MINUTES);
+		
+		final String pattern = String.format("%d %d * * *", 
+			spawnTime.get(Calendar.MINUTE), spawnTime.get(Calendar.HOUR_OF_DAY));
+		final String expirePattern = String.format("%d %d * * *",
+			expireTime.get(Calendar.MINUTE), expireTime.get(Calendar.HOUR_OF_DAY));
+		
+		String spawnTaskID = scheduler.schedule(pattern, new Runnable() {
 			
 			@Override
 			public void run() {
 				spawnPowerup();
-				scheduler.deschedule(pattern);
 			}
 
 		});
 		
-		scheduler.schedule(expirePattern, new Runnable() {
+		String expireTaskID = scheduler.schedule(expirePattern, new Runnable() {
 			
 			@Override
 			public void run() {
 				expirePowerup();
-				scheduler.deschedule(expirePattern);
-				schedulePowerupSpawn();
 			}
 
 		});
+		
+		powerupSpawnTaskIDs.add(spawnTaskID);
+		powerupSpawnTaskIDs.add(expireTaskID);
+		
+		System.out.printf("Added spawn on %s, expires on %s\n", spawnTime, expireTime);
 	}
-
+	
+	private void clearPowerupSpawnTasks() {
+		for (String id : powerupSpawnTaskIDs) {
+			scheduler.deschedule(id);
+		}
+	}
+	
 	private void spawnPowerup() {
 		if (powerup != null) return;
 		
@@ -210,7 +249,6 @@ public class NoppaBot extends PircBot {
 	private void roll(String nick, int sides) {
 		int value = getRollFor(nick, sides);
 		if (nick.equalsIgnoreCase("etsura")) value = -value;
-		String msg = null;
 		if (sides == 100) {
 			
 			boolean powerupUsed = false;
@@ -326,6 +364,8 @@ public class NoppaBot extends PircBot {
 		rolls.clear();
 		tiebreakers.clear();
 		powerups.clear();
+		clearPowerupSpawnTasks();
+		schedulePowerupsOfTheDay();
 	}
 	
 	private static final File rollRecordsPath = new File(ROLLRECORDS_PATH);
