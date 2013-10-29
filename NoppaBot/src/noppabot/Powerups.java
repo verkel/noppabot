@@ -12,6 +12,8 @@ public class Powerups {
 
 	private static final Set<Integer> primes = new HashSet<Integer>();
 	private static final List<Integer> dice;
+	
+	private static int lastPowerupIndex = -1;
 
 	static {
 		primes.addAll(Arrays.asList(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59,
@@ -20,7 +22,11 @@ public class Powerups {
 	}
 
 	public static Powerup getRandom() {
-		int rnd = powerupRnd.nextInt(16);
+		// Prevent two same powerups in a row
+		int rnd;
+		do { rnd = powerupRnd.nextInt(16); }
+		while (rnd == lastPowerupIndex);
+		lastPowerupIndex = rnd;
 
 		switch (rnd) {
 			case 0: return new PolishedDie();
