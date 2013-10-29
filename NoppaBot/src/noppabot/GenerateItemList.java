@@ -113,6 +113,11 @@ public class GenerateItemList {
 	}
 	
 	class RegularDie extends Powerup {
+
+		@Override
+		public String getName() {
+			return "Regular Die";
+		}
 	}
 
 	private void testBasicPowerups() {

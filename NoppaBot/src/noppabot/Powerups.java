@@ -51,6 +51,8 @@ public class Powerups {
 	}
 
 	public static abstract class Powerup {
+		
+		public abstract String getName();
 
 		public void onSpawn(INoppaBot bot) {
 		}
@@ -113,6 +115,11 @@ public class Powerups {
 				bot.grade(result));
 			return result;
 		}
+
+		@Override
+		public String getName() {
+			return "Polished die";
+		}
 	}
 
 	public static class WeightedDie extends Powerup {
@@ -143,6 +150,11 @@ public class Powerups {
 			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
 				bot.grade(result));
 			return result;
+		}
+
+		@Override
+		public String getName() {
+			return "Weighted die";
 		}
 	}
 
@@ -176,6 +188,11 @@ public class Powerups {
 			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
 				bot.grade(result));
 			return result;
+		}
+
+		@Override
+		public String getName() {
+			return "Enchanted die";
 		}
 	}
 
@@ -216,6 +233,11 @@ public class Powerups {
 				return roll;
 			}
 		}
+
+		@Override
+		public String getName() {
+			return "Primal die";
+		}
 	}
 
 	public static class LuckyDie extends Powerup {
@@ -254,6 +276,11 @@ public class Powerups {
 				return roll;
 			}
 		}
+
+		@Override
+		public String getName() {
+			return "Lucky die";
+		}
 	}
 
 	public static class MasterDie extends Powerup {
@@ -282,6 +309,11 @@ public class Powerups {
 			bot.sendChannelFormat("%s rolls d200 with the MASTER DIE...", nick);
 			bot.sendDefaultContestRollMessage(nick, result);
 			return result;
+		}
+
+		@Override
+		public String getName() {
+			return "Master die";
 		}
 	}
 
@@ -314,6 +346,11 @@ public class Powerups {
 			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, roll, bonus, result,
 				bot.grade(result));
 			return result;
+		}
+
+		@Override
+		public String getName() {
+			return "Fast Die";
 		}
 	}
 
@@ -350,6 +387,11 @@ public class Powerups {
 		private int getRerollRnd() {
 			return powerupRnd.nextInt(100)+1;
 		}
+
+		@Override
+		public String getName() {
+			return "Volatile Die";
+		}
 	}
 
 	public static class SymmetricalDie extends Powerup {
@@ -385,6 +427,11 @@ public class Powerups {
 					nick, roll, result);
 				return result;
 			}
+		}
+
+		@Override
+		public String getName() {
+			return "Symmetrical Die";
 		}
 	}
 
@@ -449,6 +496,11 @@ public class Powerups {
 			bot.sendChannelFormat("%s rolls with the dice. %s = %d", nick, resultStr, result);
 			return result;
 		}
+		
+		@Override
+		public String getName() {
+			return "Bag of Dice";
+		}
 	}
 	
 	public static class GroundhogDie extends Powerup {
@@ -482,6 +534,11 @@ public class Powerups {
 				return lastRoll;
 			}
 			else return super.onContestRoll(bot, nick, roll); // Normal behaviour
+		}
+
+		@Override
+		public String getName() {
+			return "Groundhog Die";
 		}
 	}
 	
@@ -519,6 +576,11 @@ public class Powerups {
 					nick, nick, roll, minRoll);
 				return minRoll;
 			}
+		}
+
+		@Override
+		public String getName() {
+			return "Rolling professional";
 		}
 	}
 
@@ -560,6 +622,11 @@ public class Powerups {
 			}
 			else return super.onContestRoll(bot, nick, roll); // Normal behaviour
 		}
+
+		@Override
+		public String getName() {
+			return "Diceteller";
+		}
 	}
 	
 	public static class RollerBot extends Powerup {
@@ -584,6 +651,11 @@ public class Powerups {
 			int roll = bot.getRollFor(nick, 100);
 			bot.sendChannelFormat("%s's RollerBot rolls %d! %s", nick, roll, bot.grade(roll));
 			bot.participate(nick, roll);
+		}
+
+		@Override
+		public String getName() {
+			return "RollerBot";
 		}
 	}
 
@@ -631,6 +703,11 @@ public class Powerups {
 				stolenPowerup.onPickup(bot, nick);
 			}
 		}
+
+		@Override
+		public String getName() {
+			return "Dice pirate";
+		}
 	}
 	
 	public static class SecretDocument extends Powerup {
@@ -654,6 +731,11 @@ public class Powerups {
 			bot.sendMessage(nick, msg);
 			bot.sendMessage(nick, "Maybe it is in the long-forgotten language of Noppa Elders? " +
 				"You feel that if you could translate it, it could give you significant competetive advantage!");
+		}
+		
+		@Override
+		public String getName() {
+			return "Secret document";
 		}
 	}
 

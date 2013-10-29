@@ -69,7 +69,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Set<String> tiebreakers = new TreeSet<String>();
 	private List<String> powerupSpawnTaskIDs = new ArrayList<String>();
 	private Powerup powerup = null;
-	private Map<String, Powerup> powerups = new HashMap<String, Powerup>();
+	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -84,7 +84,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		joinChannel(CHANNEL);
 //		sendChannel("Eat a happy meal!");
 		
-		if (isInRollPeriod()) state = State.ROLL_PERIOD;
+		if (isInRollPeriod()) startRollPeriod();
 		
 		scheduler.schedule(ROLL_PERIOD_START, new Runnable() {
 			@Override
@@ -236,9 +236,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			|| message.equalsIgnoreCase("take") || message.equalsIgnoreCase("get")) {
 			grabPowerup(sender);
 		}
-
+		else if (message.equalsIgnoreCase("items")) {
+			listItems(true);
+		}
 	}
 	
+	private void listItems(boolean notifyAboutNoItems) {
+		StringBuilder buf = new StringBuilder();
+		for (String nick : powerups.keySet()) {
+			String powerupName = powerups.get(nick).getName();
+			buf.append(String.format("%s has the %s! ", nick, powerupName));
+		}
+		if (buf.length() > 0) sendChannel(buf.toString());
+		else if (notifyAboutNoItems) sendChannel("Nobody has any items.");
+	}
+
 	private void grabPowerup(String nick) {
 		Powerup powerup = this.powerup;
 		
@@ -336,6 +348,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void startRollPeriod() {
 		state = State.ROLL_PERIOD;
 		sendChannel(randomRollStartMsg());
+		listItems(false);
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
