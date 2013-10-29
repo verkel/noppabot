@@ -2,11 +2,9 @@
  * Created on 27.10.2013
  * @author verkel
  */
-package noppabot.powerups;
+package noppabot;
 
 import java.util.*;
-
-import noppabot.*;
 
 public class Powerups {
 
@@ -19,18 +17,6 @@ public class Powerups {
 		primes.addAll(Arrays.asList(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59,
 			61, 67, 71, 73, 79, 83, 89, 97));
 		dice = Arrays.asList(4, 6, 8, 10, 12, 20);
-	}
-
-	private static int getSecondsAfterMidnight() {
-		Calendar c = Calendar.getInstance();
-		long now = c.getTimeInMillis();
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		long passed = now - c.getTimeInMillis();
-		long secondsPassed = passed / 1000;
-		return (int)secondsPassed;
 	}
 
 	public static Powerup getRandom() {
@@ -59,19 +45,19 @@ public class Powerups {
 
 	public static abstract class Powerup {
 
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 		}
 
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 		}
 
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 		}
 
-		public void onRollPeriodStart(NoppaBot bot, String nick) {
+		public void onRollPeriodStart(INoppaBot bot, String nick) {
 		}
 
-		public void onNormalRoll(NoppaBot bot, String nick, int roll) {
+		public void onNormalRoll(INoppaBot bot, String nick, int roll) {
 		}
 
 		/**
@@ -79,7 +65,7 @@ public class Powerups {
 		 * 
 		 * @return a modified roll
 		 */
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			bot.sendDefaultContestRollMessage(nick, roll);
 			return roll;
 		}
@@ -92,27 +78,27 @@ public class Powerups {
 		}
 	}
 
-	private static class PolishedDie extends Powerup {
+	public static class PolishedDie extends Powerup {
 
 		public static final int bonus = 5;
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A polished die appears!");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat("%s grabs the polished die.", nick);
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the polished die fades away.");
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			int result = roll + bonus;
 			result = capResult(result);
 			bot.sendChannelFormat("The polished die adds a nice bonus to %s's roll.", nick);
@@ -122,27 +108,27 @@ public class Powerups {
 		}
 	}
 
-	private static class WeightedDie extends Powerup {
+	public static class WeightedDie extends Powerup {
 
 		public static final int bonus = 10;
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A weighted die appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the weighted die falls into emptiness.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat("%s grabs the weighted die.", nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			int result = roll + bonus;
 			result = capResult(result);
 			bot.sendChannelFormat(
@@ -153,28 +139,28 @@ public class Powerups {
 		}
 	}
 
-	private static class EnchantedDie extends Powerup {
+	public static class EnchantedDie extends Powerup {
 
 		public static final int bonus = 15;
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("An enchanted die appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the spell on the enchanted die expires and nobody really wants it anymore.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
 				"%s grabs the enchanted die and feels a tingling sensation at the fingertips.", nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			int result = roll + bonus;
 			result = capResult(result);
 			bot.sendChannelFormat(
@@ -186,28 +172,28 @@ public class Powerups {
 		}
 	}
 
-	private static class PrimalDie extends Powerup {
+	public static class PrimalDie extends Powerup {
 
 		public static final int bonus = 20;
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A primal die appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... nobody wanted the primal die. Now it disappears.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat("%s grabs the primal die and gains knowledge about prime numbers.",
 				nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			if (primes.contains(roll)) {
 				int result = roll + bonus;
 				result = capResult(result);
@@ -225,28 +211,28 @@ public class Powerups {
 		}
 	}
 
-	private static class LuckyDie extends Powerup {
+	public static class LuckyDie extends Powerup {
 
 		public static final int bonus = 25;
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A lucky die appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the lucky die rolls away.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
 				"%s grabs the lucky die and it wishes good luck for the tonight's roll.", nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			if (String.valueOf(roll).contains("7")) {
 				int result = roll + bonus;
 				result = capResult(result);
@@ -263,27 +249,27 @@ public class Powerups {
 		}
 	}
 
-	private static class MasterDie extends Powerup {
+	public static class MasterDie extends Powerup {
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("The MASTER DIE appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... nobody took the MASTER DIE?! Maybe you should learn some dice appraisal skills at the certified rolling professional.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
 				"%s wrestles for the MASTER DIE with the other contestants and barely comes on top. Surely, the MASTER DIE must be worth all the trouble!",
 				nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			int result = bot.getRollFor(nick, 200);
 			result = capResult(result);
 			bot.sendChannelFormat("%s rolls d200 with the MASTER DIE...", nick);
@@ -292,28 +278,28 @@ public class Powerups {
 		}
 	}
 
-	private static class FastDie extends Powerup {
+	public static class FastDie extends Powerup {
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("The fast die appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... it was too fast for you.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
 				"%s quickly grabs the fast die! It asks you if you can throw it even faster when the time comes.",
 				nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
-			int seconds = getSecondsAfterMidnight();
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			int seconds = bot.getSecondsAfterMidnight();
 			int bonus = Math.max(0, 30 - seconds);
 			int result = roll + bonus;
 			result = capResult(result);
@@ -324,72 +310,62 @@ public class Powerups {
 		}
 	}
 
-	// Volatile die
-	private static class VolatileDie extends Powerup {
-
-		private int rollNumber = 0;
-		private int firstRoll;
+	public static class VolatileDie extends Powerup {
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("The volatile die appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the volatile die grows unstable and explodes.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat("%s grabs the volatile die! It glows with an aura of uncertainty.",
 				nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
-			rollNumber++;
-			if (rollNumber == 1) {
-				bot.sendDefaultContestRollMessage(nick, roll);
-				bot.sendChannelFormat(
-					"%s's volatile die asks: \"Is that roll good? I can let you roll again, if you want...\"",
-					nick);
-				firstRoll = roll;
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			bot.sendChannelFormat("%s rolls with the volatile die. %d! %s", nick, roll, bot.grade(roll));
+			
+			while (getRerollRnd() > roll) {
+				roll = bot.getRollFor(nick, 100);
+				bot.sendChannelFormat("%s's volatile die keeps on rolling! %d! %s", nick, roll, bot.grade(roll));
 			}
-			else {
-				String taunt = roll >= firstRoll ? "Profit!" : "Damn it :P";
-				bot.sendChannelFormat("%s rerolls with the volatile die. %d! %s", nick, roll, taunt);
-			}
+			
 			return roll;
 		}
-
-		@Override
-		public boolean shouldRemove() {
-			return rollNumber > 1;
+		
+		private int getRerollRnd() {
+			return powerupRnd.nextInt(100)+1;
 		}
 	}
 
-	private static class SymmetricalDie extends Powerup {
+	public static class SymmetricalDie extends Powerup {
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("The symmetrical die appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the symmetrical die is deemed too perfect for the contest and is disqualified.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
 				"%s grabs the symmetrical die! The die is so even and smooth, that you begin to question how you could've ever seen other dice as symmetrical.",
 				nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			if (roll >= 50) {
 				bot.sendChannelFormat("%s rolls %d with the symmetrical die. It's a nice number!",
 					nick, roll);
@@ -405,7 +381,7 @@ public class Powerups {
 		}
 	}
 
-	private static class BagOfDice extends Powerup {
+	public static class BagOfDice extends Powerup {
 
 		private List<Integer> diceBag = new ArrayList<Integer>();
 
@@ -430,24 +406,24 @@ public class Powerups {
 		}
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			grabTenDice();
 			bot.sendChannel("A bag of dice appears!");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
 				"%s grabs the bag! It should be okay to use them tonight, just this once...", nick);
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... who wants some random dice bag anyway. There could be anything in there.");
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			bot.sendChannelFormat("%s opens the dice bag. Inside he finds: %s", nick, diceToString());
 
 			StringBuilder buf = new StringBuilder();
@@ -467,28 +443,62 @@ public class Powerups {
 			return result;
 		}
 	}
+	
+	public static class RetroactiveDie extends Powerup {
 
-	private static class RollingProfessional extends Powerup {
+		@Override
+		public void onSpawn(INoppaBot bot) {
+			bot.sendChannel("A retroactive die appears!");
+		}
+
+		@Override
+		public void onExpire(INoppaBot bot) {
+			bot.sendChannelFormat("... the retroactive die is now history.");
+		}
+
+		@Override
+		public void onPickup(INoppaBot bot, String nick) {
+			bot.sendChannelFormat("%s grabs the retroactive die and ensures that the history will repeat itself.", nick);
+		}
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			Integer lastRoll = null;
+			RollRecords records = bot.loadRollRecords();
+			if (records != null) {
+				lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
+			}
+			
+			if (lastRoll != null) {
+				bot.sendChannelFormat("%s throws the retroactive die with a familiar motion.");
+				bot.sendChannelFormat("%s rolls %d! %s", nick, lastRoll, bot.grade(lastRoll));
+				return lastRoll;
+			}
+			else return super.onContestRoll(bot, nick, roll); // Normal behaviour
+		}
+	}
+	
+	public static class RollingProfessional extends Powerup {
 
 		public static final int minRoll = 50;
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A certified rolling professional appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... nobody seems to want to polish their skills, so the rolling professional walks away.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat("The rolling professional will assist %s in tonight's roll.", nick);
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			if (roll >= minRoll) {
 				bot.sendDefaultContestRollMessage(nick, roll);
 				bot.sendChannelFormat(
@@ -505,23 +515,23 @@ public class Powerups {
 		}
 	}
 
-	private static class Diceteller extends Powerup {
+	public static class Diceteller extends Powerup {
 
 		private int stashedRoll;
 		private boolean rerolled = false;
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A Diceteller appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... no one seemed to believe the diceteller could see future rolls in a crystal ball. The ball was of wrong shape, anyway. Maybe next time she brings crystal dice?");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			stashedRoll = bot.getRollFor(nick, 100);
 			bot.sendChannelFormat(
 				"The diceteller, glancing at his crystal ball, whispers to %s: \"Your next roll will be %d.\"",
@@ -529,12 +539,12 @@ public class Powerups {
 		}
 
 		@Override
-		public void onNormalRoll(NoppaBot bot, String nick, int roll) {
+		public void onNormalRoll(INoppaBot bot, String nick, int roll) {
 			rerolled = true;
 		}
 
 		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			if (!rerolled) {
 				bot.sendChannelFormat("%s rolls %d! %s", nick, stashedRoll, bot.grade(stashedRoll));
 				bot.sendChannelFormat("%s recalls this was the exact roll foretold by the Diceteller.",
@@ -545,50 +555,50 @@ public class Powerups {
 		}
 	}
 	
-	private static class RollerBot extends Powerup {
+	public static class RollerBot extends Powerup {
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A RollerBot appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the RollerBot breaks down.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat("The RollerBot will automatically roll for %s tonight.", nick);
 		}
 		
 		@Override
-		public void onRollPeriodStart(NoppaBot bot, String nick) {
+		public void onRollPeriodStart(INoppaBot bot, String nick) {
 			int roll = bot.getRollFor(nick, 100);
 			bot.sendChannelFormat("%s's RollerBot rolls %d! %s", nick, roll, bot.grade(roll));
 			bot.participate(nick, roll);
 		}
 	}
 
-	private static class DicePirate extends Powerup {
+	public static class DicePirate extends Powerup {
 
 		@Override
-		public void onSpawn(NoppaBot bot) {
+		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A DicePirate appears!");
 		}
 
 		@Override
-		public void onExpire(NoppaBot bot) {
+		public void onExpire(INoppaBot bot) {
 			bot.sendChannelFormat("... the DicePirate smells better loot elsewhere and leaves.");
 		}
 
 		@Override
-		public void onPickup(NoppaBot bot, String nick) {
+		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat("The DicePirate will steal an item for %s for 100 gold dubloons! %s gladly pays him.", nick, nick);
 			Random rnd = new Random();
-			int size = bot.powerups.size();
+			int size = bot.getPowerups().size();
 			int itemIndex = rnd.nextInt(size);
-			Set<String> owners = new TreeSet<String>(bot.powerups.keySet());
+			Set<String> owners = new TreeSet<String>(bot.getPowerups().keySet());
 			int i = 0;
 			String targetOwner = null;
 			for (String owner : owners) {
@@ -603,50 +613,16 @@ public class Powerups {
 				bot.sendChannelFormat("There was nothing to steal for the DicePirate and he just runs off with your gold.");
 			}
 			else {
-				Powerup stolenPowerup = bot.powerups.remove(targetOwner);
+				Powerup stolenPowerup = bot.getPowerups().remove(targetOwner);
 				try {
 					stolenPowerup = stolenPowerup.getClass().newInstance();
 				}
 				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
-				bot.powerups.put(nick, stolenPowerup);
+				bot.getPowerups().put(nick, stolenPowerup);
 				stolenPowerup.onPickup(bot, nick);
 			}
-		}
-	}
-	
-	private static class RetroactiveDie extends Powerup {
-
-		@Override
-		public void onSpawn(NoppaBot bot) {
-			bot.sendChannel("A retroactive die appears!");
-		}
-
-		@Override
-		public void onExpire(NoppaBot bot) {
-			bot.sendChannelFormat("... the retroactive die is now history.");
-		}
-
-		@Override
-		public void onPickup(NoppaBot bot, String nick) {
-			bot.sendChannelFormat("%s grabs the retroactive die and ensures that the history will repeat itself.", nick);
-		}
-		
-		@Override
-		public int onContestRoll(NoppaBot bot, String nick, int roll) {
-			Integer lastRoll = null;
-			RollRecords records = bot.loadRollRecords();
-			if (records != null) {
-				lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
-			}
-			
-			if (lastRoll != null) {
-				bot.sendChannelFormat("%s throws the retroactive die with a familiar motion.");
-				bot.sendChannelFormat("%s rolls %d! %s", nick, lastRoll, bot.grade(lastRoll));
-				return lastRoll;
-			}
-			else return super.onContestRoll(bot, nick, roll); // Normal behaviour
 		}
 	}
 

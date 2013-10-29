@@ -6,12 +6,11 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.regex.*;
 
-import noppabot.powerups.*;
-import noppabot.powerups.Powerups.Powerup;
+import noppabot.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
 
-public class NoppaBot extends PircBot {
+public class NoppaBot extends PircBot implements INoppaBot {
 
 	private static final String NICK = "proxyidra^";
 	private static final String CHANNEL = "#orp";
@@ -69,9 +68,8 @@ public class NoppaBot extends PircBot {
 	private Map<String, Integer> rolls = new HashMap<String, Integer>();
 	private Set<String> tiebreakers = new TreeSet<String>();
 	private List<String> powerupSpawnTaskIDs = new ArrayList<String>();
-	
-	public Powerup powerup = null;
-	public Map<String, Powerup> powerups = new HashMap<String, Powerup>();
+	private Powerup powerup = null;
+	private Map<String, Powerup> powerups = new HashMap<String, Powerup>();
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -105,7 +103,7 @@ public class NoppaBot extends PircBot {
 		schedulePowerupsOfTheDay();
 		scheduler.start();
 		
-		giveFreePowerup(); // spawn one right now
+//		giveFreePowerup(); // spawn one right now
 	}
 	
 	private void giveFreePowerup() {
@@ -282,16 +280,19 @@ public class NoppaBot extends PircBot {
 		}
 	}
 
+	@Override
 	public void sendDefaultContestRollMessage(String nick, int value) {
 		sendChannel(getDefaultContestRollMessage(nick, value));
 	}
 
+	@Override
 	public String getDefaultContestRollMessage(String nick, int value) {
 		String participatedMsg = participated(nick) ? 
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
 		return String.format("%s rolls %d! %s%s", nick, value, grade(value), participatedMsg);
 	}
 	
+	@Override
 	public String grade(int value) {
 		if (value == 100) return "You showed us....the ULTIMATE roll!";
 		else if (value >= 95) return "You are a super roller!";
@@ -309,6 +310,7 @@ public class NoppaBot extends PircBot {
 		else return "Huh?";
 	}
 	
+	@Override
 	public void participate(String nick, int rollValue) {
 		if (state == State.ROLL_PERIOD && !rolls.containsKey(nick)) {
 			rolls.put(nick, rollValue);
@@ -428,6 +430,7 @@ public class NoppaBot extends PircBot {
 	}
 
 
+	@Override
 	public RollRecords loadRollRecords() {
 		RollRecords rec;
 		if (rollRecordsPath.exists()) {
@@ -456,12 +459,19 @@ public class NoppaBot extends PircBot {
 		return rollEndMsgs[commonRandom.nextInt(rollEndMsgs.length)];
 	}
 
+	@Override
 	public void sendChannelFormat(String msg, Object... args) {
 		sendChannel(String.format(msg, args));
 	}
 	
+	@Override
 	public void sendChannel(String msg) {
 		sendMessage(CHANNEL, msg);
+	}
+	
+	@Override
+	public Map<String, Powerup> getPowerups() {
+		return powerups;
 	}
 	
 	private Random getRandomFor(String nick) {
@@ -469,6 +479,7 @@ public class NoppaBot extends PircBot {
 		return randoms.get(nick);
 	}
 	
+	@Override
 	public int getRollFor(String nick, int sides) {
 		Random random = getRandomFor(nick);
 		return random.nextInt(sides)+1;
@@ -490,6 +501,19 @@ public class NoppaBot extends PircBot {
 		}
 		
 		return highestRollers;
+	}
+	
+	@Override
+	public int getSecondsAfterMidnight() {
+		Calendar c = Calendar.getInstance();
+		long now = c.getTimeInMillis();
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		long passed = now - c.getTimeInMillis();
+		long secondsPassed = passed / 1000;
+		return (int)secondsPassed;
 	}
 	
 	public static String join(Iterable<? extends CharSequence> s, String delimiter) {
