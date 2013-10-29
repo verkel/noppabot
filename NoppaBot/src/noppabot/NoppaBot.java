@@ -258,7 +258,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: nothing to grab.", nick);
 		}
 		else if (powerups.containsKey(nick)) {
-			sendChannelFormat("%s: you are encumbered.", nick);
+			sendChannelFormat("%s: you already have the %s.", nick, powerups.get(nick).getName());
 		}
 		else {
 			powerups.put(nick, powerup);
