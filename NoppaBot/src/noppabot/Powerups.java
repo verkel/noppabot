@@ -32,7 +32,7 @@ public class Powerups {
 			case 6: return new FastDie();
 			case 7: return new VolatileDie();
 			case 8: return new SymmetricalDie();
-			case 9: return new RetroactiveDie();
+			case 9: return new GroundhogDie();
 			case 10: return new BagOfDice();
 			case 11: return new RollingProfessional();
 			case 12: return new Diceteller();
@@ -444,21 +444,21 @@ public class Powerups {
 		}
 	}
 	
-	public static class RetroactiveDie extends Powerup {
+	public static class GroundhogDie extends Powerup {
 
 		@Override
 		public void onSpawn(INoppaBot bot) {
-			bot.sendChannel("A retroactive die appears!");
+			bot.sendChannel("A groundhog die appears!");
 		}
 
 		@Override
 		public void onExpire(INoppaBot bot) {
-			bot.sendChannelFormat("... the retroactive die is now history.");
+			bot.sendChannelFormat("... the groundhog die will now move on.");
 		}
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
-			bot.sendChannelFormat("%s grabs the retroactive die and ensures that the history will repeat itself.", nick);
+			bot.sendChannelFormat("%s grabs the groundhog die and ensures that the history will repeat itself.", nick);
 		}
 		
 		@Override
@@ -470,7 +470,7 @@ public class Powerups {
 			}
 			
 			if (lastRoll != null) {
-				bot.sendChannelFormat("%s throws the retroactive die with a familiar motion.");
+				bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.");
 				bot.sendChannelFormat("%s rolls %d! %s", nick, lastRoll, bot.grade(lastRoll));
 				return lastRoll;
 			}

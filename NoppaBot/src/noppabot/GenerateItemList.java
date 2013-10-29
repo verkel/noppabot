@@ -122,7 +122,7 @@ public class GenerateItemList {
 		testBasicPowerup("Symmetrical die", "SymmetricalDie.png", symmetricalDieDesc,
 			new SymmetricalDie(), testBot);
 		testBagOfDice();
-		testRetroactiveDie();
+		testGroundhogDie();
 		testBasicPowerup("Rolling professional", "RollingProfessional.png", rollingProfessionalDesc,
 			new RollingProfessional(), testBot);
 		testDiceteller();
@@ -185,7 +185,7 @@ public class GenerateItemList {
 		System.out.print('.');
 	}
 	
-	private void testRetroactiveDie() {
+	private void testGroundhogDie() {
 		double sum = 0;
 		int lastRoll = 0, lastLastRoll = 0;
 		for (int i = 0; i < iterations; i++) {
@@ -197,7 +197,7 @@ public class GenerateItemList {
 			lastRoll = roll;
 		}
 		double ev = sum / (double)iterations;
-		results.add(new TestResult("Retroactive die", "RetroactiveDie.png", retroactiveDieDesc, ev));
+		results.add(new TestResult("Groundhog die", "GroundhogDie.png", groundhogDieDesc, ev));
 		System.out.print('.');
 	}
 	
@@ -276,7 +276,7 @@ public class GenerateItemList {
 	private static final String primalDieDesc = "Primal die gives a +20 bonus if the roll is a prime.";
 	private static final String polishedDieDesc = "Polished die gives a +5 bonus.";
 	private static final String fastDieDesc = "Fast die gives a bonus of 30 - (seconds passed since the contest started). After 30 seconds the bonus will be 0.";
-	private static final String retroactiveDieDesc = "Retroactive die repeats your last roll.";
+	private static final String groundhogDieDesc = "Groundhog die repeats your last roll.";
 	private static final String weightedDieDesc = "Weighted die gives a +10 bonus.";
 	private static final String rollingProfessionalDesc = "Rolling professional ensures your roll is at least 50.";
 	private static final String dicetellerDesc = "Diceteller tells what your next roll will be.";
