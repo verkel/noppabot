@@ -72,7 +72,7 @@ public class GenerateItemList {
 		
 		appendCSS(buf);
 		
-		buf.append("<h1>Item list</h1>\n");
+		buf.append("<h2>Item list</h2>\n");
 		buf.append("<table>\n");
 		buf.append("<tr><th>Item</th><th>Name</th><th>EV</th><th class=\"desc\">Description</th>\n");
 		
@@ -258,6 +258,14 @@ public class GenerateItemList {
 		@Override
 		public int getSecondsAfterMidnight() {
 			return 0;
+		}
+
+		@Override
+		public void sendMessage(String nick, String msg) {
+		}
+
+		@Override
+		public void sendMessageFormat(String nick, String msg, Object... args) {
 		}
 	}
 	

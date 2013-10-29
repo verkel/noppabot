@@ -20,7 +20,7 @@ public class Powerups {
 	}
 
 	public static Powerup getRandom() {
-		int rnd = powerupRnd.nextInt(15);
+		int rnd = powerupRnd.nextInt(16);
 
 		switch (rnd) {
 			case 0: return new PolishedDie();
@@ -38,6 +38,7 @@ public class Powerups {
 			case 12: return new Diceteller();
 			case 13: return new RollerBot();
 			case 14: return new DicePirate();
+			case 15: return new SecretDocument();
 		}
 
 		throw new RuntimeException("Illegal powerup random index");
@@ -623,6 +624,29 @@ public class Powerups {
 				bot.getPowerups().put(nick, stolenPowerup);
 				stolenPowerup.onPickup(bot, nick);
 			}
+		}
+	}
+	
+	public static class SecretDocument extends Powerup {
+
+		@Override
+		public void onSpawn(INoppaBot bot) {
+			bot.sendChannel("A secret document appears!");
+		}
+
+		@Override
+		public void onExpire(INoppaBot bot) {
+			bot.sendChannelFormat("... wind blows the secret document away.");
+		}
+
+		@Override
+		public void onPickup(INoppaBot bot, String nick) {
+			bot.sendMessage(nick, "You open the secret document. It contains the following information:");
+			String msg = "R3VyIHBiemN5cmdyIHl2ZmcgYnMgbmFwdnJhZyBxdnByIG5lZ3ZzbnBnZiBwbmEgb3Igc2Jo" +
+				"YXEgbmcgdWdnYzovL2lyZXhyeS52eHYuc3YvY2hveXZwL3p2ZnAvYmVjX2VieXlmL3ZncnpmLyAh";
+			bot.sendMessage(nick, msg);
+			bot.sendMessage(nick, "Maybe it is in the long-forgotten language of Noppa Elders? " +
+				"You feel that if you could translate it, it could give you significant competetive advantage!");
 		}
 	}
 

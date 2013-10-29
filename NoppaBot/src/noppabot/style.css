@@ -1,18 +1,23 @@
 body {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Caldera, sans-serif;
 	font-size: 14px;
 }
 
+h1, h2 {
+	font-family: Caldera, sans-serif;
+	color: #069;
+}
+
 h1 {
-	font-size: 30px;
+	font-size: 32px;
 }
 
 h2 {
-	font-size: 18px;
+	font-size: 20px;
 }
 
 th {
-	background-color:darkblue;
+	background-color:#FF9900;
 	color:white;
 }
 
@@ -22,7 +27,7 @@ td {
 }
 
 td.big {
-	font-size: 24px;
+	font-size: 16px;
 }
 
 td.bold {
@@ -35,5 +40,5 @@ small {
 }
 
 th.desc, td.desc {
-	width: 350px;
+	width: 340px;
 }

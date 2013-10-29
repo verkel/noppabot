@@ -470,6 +470,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
+	public void sendMessageFormat(String nick, String msg, Object... args) {
+		sendMessage(nick, String.format(msg, args));
+	}
+	
+	@Override
 	public Map<String, Powerup> getPowerups() {
 		return powerups;
 	}

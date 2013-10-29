@@ -29,5 +29,9 @@ public interface INoppaBot {
 	public Map<String, Powerup> getPowerups();
 	
 	public int getSecondsAfterMidnight();
+	
+	public void sendMessage(String nick, String msg);
+	
+	public void sendMessageFormat(String nick, String msg, Object... args);
 
 }
