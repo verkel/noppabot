@@ -85,6 +85,11 @@ public class Powerups {
 		public boolean shouldRemove() {
 			return true;
 		}
+		
+		@Override
+		public String toString() {
+			return getName();
+		}
 	}
 
 	public static class PolishedDie extends Powerup {
@@ -676,7 +681,7 @@ public class Powerups {
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
-			bot.sendChannelFormat("The DicePirate will steal an item for %s for 100 gold dubloons! %s gladly pays him.", nick, nick);
+			bot.sendChannelFormat("The DicePirate will plunder dice and other shiny things for 100 gold dubloons! %s gladly pays him.", nick, nick);
 			Random rnd = new Random();
 			int size = bot.getPowerups().size();
 			int itemIndex = rnd.nextInt(size);
@@ -692,7 +697,7 @@ public class Powerups {
 			}
 			
 			if (targetOwner == null) {
-				bot.sendChannelFormat("There was nothing to steal for the DicePirate and he just runs off with your gold.");
+				bot.sendChannelFormat("There was no loot in sight for the DicePirate and he just runs off with your gold.");
 			}
 			else {
 				Powerup stolenPowerup = bot.getPowerups().remove(targetOwner);
@@ -703,7 +708,8 @@ public class Powerups {
 					throw new RuntimeException(e);
 				}
 				bot.getPowerups().put(nick, stolenPowerup);
-				stolenPowerup.onPickup(bot, nick);
+				bot.sendChannelFormat("The dice pirate looted %s's %s!", targetOwner, stolenPowerup);
+				if (stolenPowerup instanceof Diceteller) stolenPowerup.onPickup(bot, nick);
 			}
 		}
 
