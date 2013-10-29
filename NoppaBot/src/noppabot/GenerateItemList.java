@@ -37,12 +37,14 @@ public class GenerateItemList {
 		public String image;
 		public String description;
 		public double ev;
+		public double sd;
 		
-		public TestResult(String name, String image, String description, double ev) {
+		public TestResult(String name, String image, String description, double ev, double sd) {
 			this.name = name;
 			this.image = image;
 			this.description = description;
 			this.ev = ev;
+			this.sd = sd;
 		}
 
 		@Override
@@ -53,8 +55,13 @@ public class GenerateItemList {
 		}
 		
 		public String getEv() {
-			if (ev < 0) return "Unknown";
-			else return String.format("%.2f", ev);
+			if (ev < 0) return "None";
+			else return String.format(Locale.US, "%.2f", ev);
+		}
+		
+		public String getSd() {
+			if (sd < 0) return "None";
+			else return String.format(Locale.US, "%.2f", sd);
 		}
 	}
 	
@@ -73,8 +80,10 @@ public class GenerateItemList {
 		appendCSS(buf);
 		
 		buf.append("<h2>Item list</h2>\n");
+		buf.append("<p><b>EV</b> = Expected value, <b>SD</b> = Standard deviation</p>\n");
 		buf.append("<table>\n");
-		buf.append("<tr><th>Item</th><th>Name</th><th>EV</th><th class=\"desc\">Description</th>\n");
+		buf.append("<tr><th>Item</th><th>Name</th><th>EV</th><th>SD</th>" +
+			"<th class=\"desc\">Description</th>\n");
 		
 		testBasicPowerups();
 		Collections.sort(results);
@@ -126,28 +135,25 @@ public class GenerateItemList {
 		testBasicPowerup("Rolling professional", "RollingProfessional.png", rollingProfessionalDesc,
 			new RollingProfessional(), testBot);
 		testDiceteller();
-		testRollerBot();
+		testBasicPowerup("RollerBot", "RollerBot.png", rollerBotDesc, new RegularDie(), testBot);
 		testDicePirate();
 	}
 	
-	private void testRollerBot() {
-		results.add(new TestResult("RollerBot", "RollerBot.png", rollerBotDesc, REGULAR_DICE_EV));
-		System.out.print('.');
-	}
-
 	private void testDicePirate() {
-		results.add(new TestResult("Dice pirate", "DicePirate.png", dicePirateDesc, -1));
+		results.add(new TestResult("Dice pirate", "DicePirate.png", dicePirateDesc, -1, -1));
 		System.out.print('.');
 	}
 
 	private void testBasicPowerup(String name, String image, String desc, Powerup powerup, TestBot bot) {
-		double ev = testPowerup(powerup, bot);
-		TestResult result = new TestResult(name, image, desc, ev);
-		results.add(result);
+		double ev = computePowerupEV(powerup, bot);
 		System.out.print('.');
+		double sd = computePowerupSD(powerup, bot, ev);
+		System.out.print('.');
+		TestResult result = new TestResult(name, image, desc, ev, sd);
+		results.add(result);
 	}
 	
-	private double testPowerup(Powerup powerup, TestBot bot) {
+	private double computePowerupEV(Powerup powerup, TestBot bot) {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			int roll = bot.getRollFor(TESTER_NAME, 100);
@@ -157,8 +163,21 @@ public class GenerateItemList {
 		return sum / (double)iterations;
 	}
 	
+	private double computePowerupSD(Powerup powerup, TestBot bot, double ev) {
+		double sum = 0;
+		for (int i = 0; i < iterations; i++) {
+			int roll = bot.getRollFor(TESTER_NAME, 100);
+			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
+			double diff = roll - ev;
+			sum += diff*diff;
+		}
+		return Math.sqrt(sum / (double)iterations);
+	}
+	
 	private void testBagOfDice() {
 		double iterations = GenerateItemList.iterations / 10;
+		
+		// EV
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = new BagOfDice();
@@ -168,24 +187,52 @@ public class GenerateItemList {
 			sum += roll;
 		}
 		double ev = sum / (double)iterations;
-		results.add(new TestResult("Bag of dice", "BagOfDice.png", bagOfDiceDesc, ev));
 		System.out.print('.');
+		
+		// SD
+		sum = 0;
+		for (int i = 0; i < iterations; i++) {
+			Powerup powerup = new BagOfDice();
+			powerup.onSpawn(testBot);
+			int roll = testBot.getRollFor(TESTER_NAME, 100);
+			roll = powerup.onContestRoll(testBot, TESTER_NAME, roll);
+			double diff = roll - ev;
+			sum += diff*diff;
+		}
+		double sd = Math.sqrt(sum / (double)iterations);
+		System.out.print('.');
+		
+		results.add(new TestResult("Bag of dice", "BagOfDice.png", bagOfDiceDesc, ev, sd));
 	}
 	
 	private void testDiceteller() {
+		// EV
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
-//			Powerup powerup = new VolatileDie();
 			int roll = testBot.getRollFor(TESTER_NAME, 100);
 			if (roll < REGULAR_DICE_EV) roll = testBot.getRollFor(TESTER_NAME, 100);
 			sum += roll;
 		}
 		double ev = sum / (double)iterations;
-		results.add(new TestResult("Diceteller", "Diceteller.png", dicetellerDesc, ev));
+		System.out.print('.');
+		
+		// SD
+		sum = 0;
+		for (int i = 0; i < iterations; i++) {
+			int roll = testBot.getRollFor(TESTER_NAME, 100);
+			if (roll < REGULAR_DICE_EV) roll = testBot.getRollFor(TESTER_NAME, 100);
+			double diff = roll - ev;
+			sum += diff*diff;
+		}
+		double sd = Math.sqrt(sum / (double)iterations);
+		System.out.print('.');
+		
+		results.add(new TestResult("Diceteller", "Diceteller.png", dicetellerDesc, ev, sd));
 		System.out.print('.');
 	}
 	
 	private void testGroundhogDie() {
+		// EV
 		double sum = 0;
 		int lastRoll = 0, lastLastRoll = 0;
 		for (int i = 0; i < iterations; i++) {
@@ -197,7 +244,24 @@ public class GenerateItemList {
 			lastRoll = roll;
 		}
 		double ev = sum / (double)iterations;
-		results.add(new TestResult("Groundhog die", "GroundhogDie.png", groundhogDieDesc, ev));
+		System.out.print('.');
+		
+		// SD
+		sum = 0;
+		lastRoll = 0; lastLastRoll = 0;
+		for (int i = 0; i < iterations; i++) {
+			int roll;
+			if (lastRoll == lastLastRoll || lastRoll < REGULAR_DICE_EV) roll = testBot.getRollFor(TESTER_NAME, 100);
+			else roll = lastRoll;
+			double diff = roll - ev;
+			sum += diff * diff;
+			lastLastRoll = lastRoll;
+			lastRoll = roll;
+		}
+		double sd = Math.sqrt(sum / (double)iterations);
+		System.out.print('.');
+		
+		results.add(new TestResult("Groundhog die", "GroundhogDie.png", groundhogDieDesc, ev, sd));
 		System.out.print('.');
 	}
 	
@@ -205,7 +269,8 @@ public class GenerateItemList {
 		buf.append("<tr>\n");
 		buf.append("<td>").append("<img src=\"").append("items/").append(r.image).append("\"> ").append("</td>\n");
 		buf.append("<td class=\"big bold\">").append(r.name).append("</td>\n");
-		buf.append("<td class=\"big\">").append(r.getEv()).append("</td>\n");
+		buf.append("<td class=\"big bold\">").append(r.getEv()).append("</td>\n");
+		buf.append("<td class=\"big\">").append(r.getSd()).append("</td>\n");
 		buf.append("<td class=\"desc\">").append(r.description).append("</td>\n");
 		buf.append("</tr>\n");
 	}
