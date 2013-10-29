@@ -6,7 +6,9 @@ import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.regex.*;
 
+import noppabot.Powerups.MasterDie;
 import noppabot.Powerups.Powerup;
+import noppabot.Powerups.RollerBot;
 
 import org.jibble.pircbot.PircBot;
 
@@ -14,8 +16,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private static final String NICK = "proxyidra^";
 	private static final String CHANNEL = "#orp";
-	private static final String SERVER = "irc.cs.hut.fi";
 	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
+	private static final String SERVER = "irc.cs.hut.fi";
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
@@ -23,6 +25,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 //	private static final String NICK = "test-idra^";
 //	private static final String CHANNEL = "#noppatest";
+//	private static final String ROLLRECORDS_PATH = "rollrecords.json";
 	
 	private String[] rollStartMsgs = {
 		"Gentlemen, place your rolls!",
@@ -36,7 +39,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		"Everyone got their dice ready? Here we go!",
 		"Winners do not use drugs. But enchanted dice, they might.",
 		"The dice rolling compo starts... now!",
-		"d100 is the name and rolling is my game!",
+		NICK + "'s the name and rolling is my game!",
 		"1. roll, 2. ???, 3. Profit!",
 		"Make rolls, not war. Alternatively, wage war with dice.",
 		NICK + " rolls 100! SUPER!! ... No wait, you guys roll now."
@@ -103,7 +106,54 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		schedulePowerupsOfTheDay();
 		scheduler.start();
 		
+//		debugStuff();
 //		giveFreePowerup(); // spawn one right now
+		
+		handleConsoleCommands();
+	}
+	
+	private void debugStuff() {
+		powerups.put("jlindval", new MasterDie());
+		powerup = new RollerBot();
+		powerup.onSpawn(this);
+		startRollPeriod();
+	}
+	
+	private void handleConsoleCommands() {
+		try {
+			BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+			String input;
+			while ((input = r.readLine()) != null) {
+				String[] tokens = input.split("\\s+");
+				String cmd = tokens[0];
+				if (cmd.equals("quit")) {
+					System.out.println("Quitting");
+					if (tokens.length > 1) quit(tokens[1]);
+					else quit("Goodbye!");
+					break;
+				}
+				else if (cmd.equals("help")) {
+					commandsHelp();
+				}
+				else {
+					System.out.println("Unknown command: " + tokens[0]);
+					commandsHelp();
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void commandsHelp() {
+		System.out.println("Commands: help, quit");
+	}
+	
+	private void quit(String reason) {
+		scheduler.stop();
+		quitServer(reason);
+		dispose();
 	}
 	
 	private void giveFreePowerup() {
