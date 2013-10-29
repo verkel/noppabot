@@ -641,6 +641,7 @@ public class Powerups {
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
+			bot.sendChannelFormat("%s reads the secret document, and looks puzzled.", nick);
 			bot.sendMessage(nick, "You open the secret document. It contains the following information:");
 			String msg = "R3VyIHBiemN5cmdyIHl2ZmcgYnMgbmFwdnJhZyBxdnByIG5lZ3ZzbnBnZiBwbmEgb3Igc2Jo" +
 				"YXEgbmcgdWdnYzovL2lyZXhyeS52eHYuc3YvY2hveXZwL3p2ZnAvYmVjX2VieXlmL3ZncnpmLyAh";
