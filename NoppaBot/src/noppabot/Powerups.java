@@ -528,12 +528,15 @@ public class Powerups {
 				lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
 			}
 			
-			if (lastRoll != null) {
-				bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.");
+			if (lastRoll != null && lastRoll > 0) {
+				bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.", nick);
 				bot.sendChannelFormat("%s rolls %d! %s", nick, lastRoll, bot.grade(lastRoll));
 				return lastRoll;
 			}
-			else return super.onContestRoll(bot, nick, roll); // Normal behaviour
+			else {
+				bot.sendChannel("The groundhog die fails to repeat yesterday's events.");
+				return super.onContestRoll(bot, nick, roll); // Normal behaviour
+			}
 		}
 
 		@Override
