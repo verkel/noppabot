@@ -478,7 +478,7 @@ public class Powerups {
 
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			bot.sendChannelFormat("%s opens the dice bag. Inside he finds: %s", nick, diceToString());
+			bot.sendChannelFormat("%s opens the dice bag. It contains the following dice: %s", nick, diceToString());
 
 			StringBuilder buf = new StringBuilder();
 			boolean first = true;
