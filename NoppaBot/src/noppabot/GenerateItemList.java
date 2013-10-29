@@ -203,7 +203,7 @@ public class GenerateItemList {
 	
 	private void appendResult(TestResult r, StringBuilder buf) {
 		buf.append("<tr>\n");
-		buf.append("<td>").append("<img src=\"").append(r.image).append("\"> ").append("</td>\n");;
+		buf.append("<td>").append("<img src=\"").append("items/").append(r.image).append("\"> ").append("</td>\n");
 		buf.append("<td class=\"big bold\">").append(r.name).append("</td>\n");
 		buf.append("<td class=\"big\">").append(r.getEv()).append("</td>\n");
 		buf.append("<td class=\"desc\">").append(r.description).append("</td>\n");
