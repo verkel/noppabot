@@ -120,6 +120,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void handleConsoleCommands() {
+		System.out.printf("Joined as %s to channel %s\n", NICK, CHANNEL);
+		
 		try {
 			BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
 			String input;
