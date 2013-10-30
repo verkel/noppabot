@@ -15,18 +15,18 @@ import org.jibble.pircbot.PircBot;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
-//	private static final String NICK = "proxyidra^";
-//	private static final String CHANNEL = "#orp";
-//	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
+	private static final String NICK = "proxyidra^";
+	private static final String CHANNEL = "#orp";
+	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
 	private static final String SERVER = "irc.cs.hut.fi";
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
 	private static final int POWERUP_EXPIRE_MINUTES = 30;
 	
-	private static final String NICK = "test-idra^";
-	private static final String CHANNEL = "#noppatest";
-	private static final String ROLLRECORDS_PATH = "rollrecords.json";
+//	private static final String NICK = "test-idra^";
+//	private static final String CHANNEL = "#noppatest";
+//	private static final String ROLLRECORDS_PATH = "rollrecords.json";
 	
 	private String[] rollStartMsgs = {
 		"Gentlemen, place your rolls!",
@@ -107,7 +107,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		schedulePowerupsOfTheDay();
 		scheduler.start();
 		
-		debugStuff();
+//		debugStuff();
 //		giveFreePowerup(); // spawn one right now
 		
 		handleConsoleCommands();
