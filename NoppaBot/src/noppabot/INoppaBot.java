@@ -17,6 +17,8 @@ public interface INoppaBot {
 	public String grade(int value);
 
 	public void participate(String nick, int rollValue);
+	
+	public boolean participated(String nick);
 
 	public RollRecords loadRollRecords();
 
@@ -27,6 +29,8 @@ public interface INoppaBot {
 	public int getRollFor(String nick, int sides);
 	
 	public Map<String, Powerup> getPowerups();
+	
+	public Map<String, Integer> getRolls();
 	
 	public int getSecondsAfterMidnight();
 	

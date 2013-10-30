@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import noppabot.Powerups.DicePirate;
+import noppabot.Powerups.ApprenticeDie;
 import noppabot.Powerups.MasterDie;
 import noppabot.Powerups.Powerup;
 
@@ -114,11 +114,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("Verkel", new MasterDie());
-		powerups.put("jlindval", new DicePirate());
+		powerups.put("Verkel", new ApprenticeDie());
+//		powerups.put("hessu", new ApprenticeDie());
+		powerups.put("jlindval", new MasterDie());
 //		powerup = new RollerBot();
 //		powerup.onSpawn(this);
-		rolls.put("jlindval", 100);
+//		rolls.put("jlindval", 100);
 		startRollPeriod();
 	}
 	
@@ -307,6 +308,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 		}
 		else {
+			if (powerups.isEmpty()) {
+				sendChannel("Nobody has any items.");
+				return;
+			}
+			
 			StringBuilder buf = new StringBuilder();
 			buf.append("Items: ");
 			boolean first = true;
@@ -316,8 +322,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				buf.append(String.format("%s (%s)", powerupName, nick));
 				first = false;
 			}
-			if (buf.length() > 0) sendChannel(buf.toString());
-			else sendChannel("Nobody has any items.");
+			sendChannel(buf.toString());
 		}
 	}
 	
@@ -373,11 +378,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (sides == 100) {
 			
 			boolean powerupUsed = false;
-			if (powerups.containsKey(nick)) {
+			if (powerups.containsKey(nick) && !participated(nick)) {
 				Powerup powerup = powerups.get(nick);
-				if (state == State.ROLL_PERIOD) {
+				if (state == State.ROLL_PERIOD || state == State.SETTLE_TIE) {
 					value = powerup.onContestRoll(this, nick, value);
-					if (powerup.shouldRemove()) powerups.remove(nick);
 					powerupUsed = true;
 				}
 				else powerup.onNormalRoll(this, nick, value);
@@ -441,7 +445,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private boolean participated(String nick) {
+	@Override
+	public boolean participated(String nick) {
 		return rolls.containsKey(nick);
 	}
 	
@@ -494,7 +499,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				tiebreakers.addAll(highestRollers);
 				
 				rolls.clear();
-//				powerups.clear();
+				
+				for (String tiebreakerNick : tiebreakers) {
+					Powerup powerup = powerups.get(tiebreakerNick);
+					powerup.onTiebreakPeriodStart(this, tiebreakerNick);
+				}
 				
 				state = State.SETTLE_TIE;
 			}
@@ -597,6 +606,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	@Override
 	public Map<String, Powerup> getPowerups() {
 		return powerups;
+	}
+	
+	@Override
+	public Map<String, Integer> getRolls() {
+		return rolls;
 	}
 	
 	private Random getRandomFor(String nick) {

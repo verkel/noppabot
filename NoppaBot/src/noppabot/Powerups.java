@@ -5,6 +5,7 @@
 package noppabot;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 public class Powerups {
 
@@ -65,6 +66,9 @@ public class Powerups {
 
 		public void onRollPeriodStart(INoppaBot bot, String nick) {
 		}
+		
+		public void onTiebreakPeriodStart(INoppaBot bot, String nick) {
+		}
 
 		public void onNormalRoll(INoppaBot bot, String nick, int roll) {
 		}
@@ -79,13 +83,6 @@ public class Powerups {
 			return roll;
 		}
 
-		/**
-		 * Should the powerup be removed now?
-		 */
-		public boolean shouldRemove() {
-			return true;
-		}
-		
 		@Override
 		public String toString() {
 			return getName();
@@ -313,12 +310,27 @@ public class Powerups {
 			result = capResult(result);
 			bot.sendChannelFormat("%s rolls d200 with the MASTER DIE...", nick);
 			bot.sendDefaultContestRollMessage(nick, result);
+			rollUnusedApprenticeDies(bot, result);
 			return result;
+		}
+		
+		private void rollUnusedApprenticeDies(INoppaBot bot, int roll) {
+			Map<String, Powerup> powerups = bot.getPowerups();
+			for (Entry<String, Powerup> entry : powerups.entrySet()) {
+				String owner = entry.getKey();
+				Powerup powerup = entry.getValue();
+				if (powerup instanceof ApprenticeDie && !bot.participated(owner)) {
+					bot.sendChannelFormat("%s's apprentice die observes and then rolls %d.", owner, roll);
+					// Don't use participate so we wont end the contest on overtime
+					// and forget the master die's roll
+					bot.getRolls().put(owner, roll);
+				}
+			}
 		}
 
 		@Override
 		public String getName() {
-			return "Master die";
+			return "MASTER DIE";
 		}
 	}
 
@@ -716,6 +728,42 @@ public class Powerups {
 		@Override
 		public String getName() {
 			return "Dice pirate";
+		}
+	}
+	
+	public static class ApprenticeDie extends Powerup {
+
+		@Override
+		public void onSpawn(INoppaBot bot) {
+			bot.sendChannel("An apprentice die appears!");
+		}
+
+		@Override
+		public void onExpire(INoppaBot bot) {
+			bot.sendChannelFormat("... the apprentice die will find no masters today.");
+		}
+
+		@Override
+		public void onPickup(INoppaBot bot, String nick) {
+			bot.sendChannelFormat("%s grabs the apprentice die and it looks forward to learning from the MASTER DIE.", nick);
+		}
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			bot.sendChannelFormat("%s rolls with the apprentice die, but it really just wanted " +
+				"to see the MASTER DIE do it, first.", nick);
+			return super.onContestRoll(bot, nick, roll); // Normal behaviour
+		}
+		
+		@Override
+		public void onTiebreakPeriodStart(INoppaBot bot, String nick) {
+			bot.sendChannelFormat("%s's apprentice die has learned enough and evolves into a MASTER DIE!", nick);
+			bot.getPowerups().put(nick, new MasterDie());
+		}
+
+		@Override
+		public String getName() {
+			return "Apprentice die";
 		}
 	}
 	

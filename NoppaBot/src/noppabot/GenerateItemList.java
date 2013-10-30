@@ -337,6 +337,16 @@ public class GenerateItemList {
 		@Override
 		public void sendMessageFormat(String nick, String msg, Object... args) {
 		}
+
+		@Override
+		public boolean participated(String nick) {
+			return false;
+		}
+
+		@Override
+		public Map<String, Integer> getRolls() {
+			return null;
+		}
 	}
 	
 	class LazyBot extends TestBot {
