@@ -130,7 +130,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Polished die";
+			return "Polished Die";
 		}
 	}
 
@@ -166,7 +166,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Weighted die";
+			return "Weighted Die";
 		}
 	}
 
@@ -204,7 +204,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Enchanted die";
+			return "Enchanted Die";
 		}
 	}
 
@@ -248,7 +248,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Primal die";
+			return "Primal Die";
 		}
 	}
 
@@ -291,7 +291,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Lucky die";
+			return "Lucky Die";
 		}
 	}
 
@@ -369,9 +369,9 @@ public class Powerups {
 			int bonus = Math.max(0, 30 - seconds);
 			int result = roll + bonus;
 			result = capResult(result);
-			bot.sendChannelFormat("%s waited %d seconds before throwing the fast die.", nick, seconds);
-			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, roll, bonus, result,
-				bot.grade(result));
+			bot.sendChannelFormat("%s waited %d seconds before rolling. The fast die awards +%d speed bonus!", 
+				nick, seconds, bonus);
+			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result, bot.grade(result));
 			return result;
 		}
 
@@ -610,7 +610,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Rolling professional";
+			return "Rolling Professional";
 		}
 	}
 
@@ -737,7 +737,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Dice pirate";
+			return "DicePirate";
 		}
 	}
 	
@@ -773,7 +773,7 @@ public class Powerups {
 
 		@Override
 		public String getName() {
-			return "Apprentice die";
+			return "Apprentice Die";
 		}
 	}
 	
@@ -802,7 +802,7 @@ public class Powerups {
 		
 		@Override
 		public String getName() {
-			return "Secret document";
+			return "Secret Document";
 		}
 	}
 
