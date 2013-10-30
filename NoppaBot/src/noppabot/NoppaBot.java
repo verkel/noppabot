@@ -8,7 +8,6 @@ import java.util.regex.*;
 
 import noppabot.Powerups.MasterDie;
 import noppabot.Powerups.Powerup;
-import noppabot.Powerups.RollerBot;
 
 import org.jibble.pircbot.PircBot;
 
@@ -113,9 +112,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("jlindval", new MasterDie());
-		powerup = new RollerBot();
-		powerup.onSpawn(this);
+		powerups.put("Verkel", new MasterDie());
+//		powerup = new RollerBot();
+//		powerup.onSpawn(this);
+		rolls.put("jlindval", 100);
 		startRollPeriod();
 	}
 	
@@ -412,7 +412,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		if (rolls.isEmpty()) {
 			sendChannel("No rolls within 10 minutes. Now first roll wins, be quick!");
-//			state = State.NORMAL;
 			return;
 		}
 		else {
@@ -425,6 +424,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				
 				updateRecords(winner);
 				
+				rolls.clear();
+				tiebreakers.clear();
+				powerups.clear();
+				clearPowerupSpawnTasks();
+				schedulePowerupsOfTheDay();
+				
 				state = State.NORMAL;
 			}
 			else {
@@ -435,15 +440,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					roll, tiebreakersStr);
 				sendChannel(msg);
 				tiebreakers.addAll(highestRollers);
+				
+				rolls.clear();
+				powerups.clear();
+				
 				state = State.SETTLE_TIE;
 			}
 		}
-		
-		rolls.clear();
-		tiebreakers.clear();
-		powerups.clear();
-		clearPowerupSpawnTasks();
-		schedulePowerupsOfTheDay();
 	}
 	
 	private static final File rollRecordsPath = new File(ROLLRECORDS_PATH);
