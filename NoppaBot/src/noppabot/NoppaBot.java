@@ -4,6 +4,7 @@ import it.sauronsoftware.cron4j.Scheduler;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.regex.*;
 
 import noppabot.Powerups.MasterDie;
@@ -13,18 +14,18 @@ import org.jibble.pircbot.PircBot;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
-	private static final String NICK = "proxyidra^";
-	private static final String CHANNEL = "#orp";
-	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
+//	private static final String NICK = "proxyidra^";
+//	private static final String CHANNEL = "#orp";
+//	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
 	private static final String SERVER = "irc.cs.hut.fi";
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
 	private static final int POWERUP_EXPIRE_MINUTES = 30;
 	
-//	private static final String NICK = "test-idra^";
-//	private static final String CHANNEL = "#noppatest";
-//	private static final String ROLLRECORDS_PATH = "rollrecords.json";
+	private static final String NICK = "test-idra^";
+	private static final String CHANNEL = "#noppatest";
+	private static final String ROLLRECORDS_PATH = "rollrecords.json";
 	
 	private String[] rollStartMsgs = {
 		"Gentlemen, place your rolls!",
@@ -105,7 +106,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		schedulePowerupsOfTheDay();
 		scheduler.start();
 		
-//		debugStuff();
+		debugStuff();
 //		giveFreePowerup(); // spawn one right now
 		
 		handleConsoleCommands();
@@ -291,6 +292,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else if (message.equalsIgnoreCase("items")) {
 			listItems(true);
 		}
+		else if (message.equalsIgnoreCase("rolls")) {
+			listRolls();
+		}
 	}
 	
 	private void listItems(boolean notifyAboutNoItems) {
@@ -301,6 +305,35 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		if (buf.length() > 0) sendChannel(buf.toString());
 		else if (notifyAboutNoItems) sendChannel("Nobody has any items.");
+	}
+	
+	private void listRolls() {
+		if (state != State.ROLL_PERIOD) {
+			sendChannel("Rolls can be listed only during the roll period.");
+			return;
+		}
+
+		StringBuilder buf = new StringBuilder();
+		Set<Entry<String, Integer>> rollsSorted = new TreeSet<Entry<String, Integer>>(
+			new Comparator<Entry<String, Integer>>() {
+
+			@Override
+			public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
+				return -e1.getValue().compareTo(e2.getValue());
+			}}
+		);
+		rollsSorted.addAll(rolls.entrySet());
+		
+		boolean first = true;
+		for (Entry<String, Integer> entry : rollsSorted) {
+			String nick = entry.getKey();
+			int roll = entry.getValue();
+			if (!first) buf.append(", ");
+			buf.append(String.format("%s has rolled %d", nick, roll));
+			first = false;
+		}
+		if (buf.length() > 0) sendChannel(buf.toString());
+		else sendChannel("Nobody has rolled yet.");
 	}
 
 	private void grabPowerup(String nick) {
@@ -385,6 +418,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				rolls.put(nick, rollValue);
 				tiebreakers.remove(nick);
 				if (tiebreakers.isEmpty()) endRollPeriod();
+				else {
+					String pendingTiebreakers = join(tiebreakers, ", ");
+					sendChannelFormat("I still need a roll from %s.", pendingTiebreakers);
+				}
 			}
 		}
 	}
@@ -442,7 +479,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				tiebreakers.addAll(highestRollers);
 				
 				rolls.clear();
-				powerups.clear();
+//				powerups.clear();
 				
 				state = State.SETTLE_TIE;
 			}
