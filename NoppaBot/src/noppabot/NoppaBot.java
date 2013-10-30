@@ -244,7 +244,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void spawnPowerup() {
 		if (powerup != null) return;
 		
-		powerup = Powerups.getRandom();
+		powerup = Powerups.getRandom(this);
 		powerup.onSpawn(this);
 	}
 
@@ -622,6 +622,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public int getRollFor(String nick, int sides) {
 		Random random = getRandomFor(nick);
 		return random.nextInt(sides)+1;
+	}
+	
+	public int countPowerups(Class<? extends Powerup> type) {
+		int count = 0;
+		for (Powerup powerup : powerups.values()) {
+			if (type.isAssignableFrom(powerup.getClass())) count++;
+		}
+		return count;
 	}
 	
 	public static List<String> getHighestRollers(Map<String, Integer> rolls) {

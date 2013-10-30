@@ -22,7 +22,17 @@ public class Powerups {
 		dice = Arrays.asList(4, 6, 8, 10, 12, 20);
 	}
 
-	public static Powerup getRandom() {
+	public static Powerup getRandom(NoppaBot bot) {
+		// Have a chance to spawn some apprentice dies if there is a master die
+		// Don't spawn these otherwise
+		int masterDieCount = bot.countPowerups(MasterDie.class);
+		if (masterDieCount > 0) {
+			int apprenticeDieCount = bot.countPowerups(ApprenticeDie.class);
+			if (powerupRnd.nextFloat() < 0.30f / apprenticeDieCount) {
+				return new ApprenticeDie();
+			}
+		}
+		
 		// Prevent two same powerups in a row
 		int rnd;
 		do { rnd = powerupRnd.nextInt(16); }
