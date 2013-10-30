@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
+import noppabot.Powerups.DicePirate;
 import noppabot.Powerups.MasterDie;
 import noppabot.Powerups.Powerup;
 
@@ -114,6 +115,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void debugStuff() {
 		powerups.put("Verkel", new MasterDie());
+		powerups.put("jlindval", new DicePirate());
 //		powerup = new RollerBot();
 //		powerup.onSpawn(this);
 		rolls.put("jlindval", 100);
@@ -290,21 +292,33 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			grabPowerup(sender);
 		}
 		else if (message.equalsIgnoreCase("items")) {
-			listItems(true);
+			listItems(false);
 		}
 		else if (message.equalsIgnoreCase("rolls")) {
 			listRolls();
 		}
 	}
 	
-	private void listItems(boolean notifyAboutNoItems) {
-		StringBuilder buf = new StringBuilder();
-		for (String nick : powerups.keySet()) {
-			String powerupName = powerups.get(nick).getName();
-			buf.append(String.format("%s has the %s! ", nick, powerupName));
+	private void listItems(boolean isRollPeriodStart) {
+		if (isRollPeriodStart) {
+			for (String nick : powerups.keySet()) {
+				String powerupName = powerups.get(nick).getName();
+				sendChannelFormat("%s has the %s! ", nick, powerupName);
+			}
 		}
-		if (buf.length() > 0) sendChannel(buf.toString());
-		else if (notifyAboutNoItems) sendChannel("Nobody has any items.");
+		else {
+			StringBuilder buf = new StringBuilder();
+			buf.append("Items: ");
+			boolean first = true;
+			for (String nick : powerups.keySet()) {
+				String powerupName = powerups.get(nick).getName();
+				if (!first) buf.append(", ");
+				buf.append(String.format("%s (%s)", powerupName, nick));
+				first = false;
+			}
+			if (buf.length() > 0) sendChannel(buf.toString());
+			else sendChannel("Nobody has any items.");
+		}
 	}
 	
 	private void listRolls() {
@@ -313,7 +327,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			return;
 		}
 
-		StringBuilder buf = new StringBuilder();
 		Set<Entry<String, Integer>> rollsSorted = new TreeSet<Entry<String, Integer>>(
 			new Comparator<Entry<String, Integer>>() {
 
@@ -324,12 +337,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		);
 		rollsSorted.addAll(rolls.entrySet());
 		
+		StringBuilder buf = new StringBuilder();
+		buf.append("Rolls: ");
 		boolean first = true;
 		for (Entry<String, Integer> entry : rollsSorted) {
 			String nick = entry.getKey();
 			int roll = entry.getValue();
 			if (!first) buf.append(", ");
-			buf.append(String.format("%s has rolled %d", nick, roll));
+			buf.append(String.format("%d (%s)", roll, nick));
 			first = false;
 		}
 		if (buf.length() > 0) sendChannel(buf.toString());
@@ -437,7 +452,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void startRollPeriod() {
 		state = State.ROLL_PERIOD;
 		sendChannel(randomRollStartMsg());
-		listItems(false);
+		listItems(true);
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
