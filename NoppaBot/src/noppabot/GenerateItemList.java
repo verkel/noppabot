@@ -28,9 +28,9 @@ public class GenerateItemList {
 	
 	private List<TestResult> results = new ArrayList<TestResult>();
 	private Random rnd = new Random();
-//	private static final int iterations = 1000000; // test
+	private static final int iterations = 1000000; // test
 //	private static final int iterations = 10000000; // good accuracy
-	private static final int iterations = 100000000; // excellent accuracy
+//	private static final int iterations = 100000000; // excellent accuracy
 	
 	class TestResult implements Comparable<TestResult> {
 		public String name;
@@ -142,10 +142,16 @@ public class GenerateItemList {
 		testDiceteller();
 		testBasicPowerup("RollerBot", "RollerBot.png", rollerBotDesc, new RegularDie(), testBot);
 		testDicePirate();
+		testApprenticeDie();
 	}
 	
 	private void testDicePirate() {
 		results.add(new TestResult("Dice pirate", "DicePirate.png", dicePirateDesc, -1, -1));
+		System.out.print('.');
+	}
+	
+	private void testApprenticeDie() {
+		results.add(new TestResult("Apprentice die", "ApprenticeDie.png", apprenticeDieDesc, -1, -1));
 		System.out.print('.');
 	}
 
@@ -317,7 +323,7 @@ public class GenerateItemList {
 		
 		@Override
 		public Map<String, Powerup> getPowerups() {
-			return null;
+			return Collections.emptyMap();
 		}
 		
 		@Override
@@ -360,16 +366,21 @@ public class GenerateItemList {
 	private static final String dicePirateDesc = "Dice pirate steals item from another contestant.";
 	private static final String rollerBotDesc = "Roller bot rolls automatically when the contest starts.";
 	private static final String luckyDieDesc = "Lucky die gives a +25 bonus if the roll contains any sevens.";
-	private static final String bagOfDiceDesc = "Bag of dice contains ten random dice ranging from d4 to d20. Your roll result is the summed result from throwing all the dice.";
+	private static final String bagOfDiceDesc = "Bag of dice contains ten random dice ranging from d4 to d20." +
+		" Your roll result is the summed result from throwing all the dice.";
 	private static final String primalDieDesc = "Primal die gives a +20 bonus if the roll is a prime.";
 	private static final String polishedDieDesc = "Polished die gives a +5 bonus.";
-	private static final String fastDieDesc = "Fast die gives a bonus of 30 - (seconds passed since the contest started). After 30 seconds the bonus will be 0.";
+	private static final String fastDieDesc = "Fast die gives a bonus of 30 - (seconds passed since the contest started). " +
+		"After 30 seconds the bonus will be 0.";
 	private static final String groundhogDieDesc = "Groundhog die repeats your last roll.";
 	private static final String weightedDieDesc = "Weighted die gives a +10 bonus.";
 	private static final String rollingProfessionalDesc = "Rolling professional ensures your roll is at least 50.";
 	private static final String dicetellerDesc = "Diceteller tells what your next roll will be.";
 	private static final String enchantedDieDesc = "Enchanted die gives a +15 bonus.";
-	private static final String volatileDieDesc = "After the initial roll, the volatile die may reroll itself. The chance for reroll is 100% - (lastRoll)%. The roll after which the volatile die stops is your result.";
+	private static final String volatileDieDesc = "After the initial roll, the volatile die may reroll itself. " +
+		"The chance for reroll is 100% - (lastRoll)%. The roll after which the volatile die stops is your result.";
 	private static final String symmetricalDieDesc = "Symmetrical die flips rolls less than 50 into 100 - roll.";
 	private static final String masterDieDesc = "Master die lets you roll d200 (the result is capped into 100).";
+	private static final String apprenticeDieDesc = "After a master die is rolled, the apprentice " +
+		"die will roll the same result. If the apprentice die ends up in the tiebreaker round, it turns into a master die.";
 }
