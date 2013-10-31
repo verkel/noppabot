@@ -9,6 +9,7 @@ import java.util.*;
 
 import noppabot.Powerups.BagOfDice;
 import noppabot.Powerups.EnchantedDie;
+import noppabot.Powerups.ExtremeDie;
 import noppabot.Powerups.FastDie;
 import noppabot.Powerups.LuckyDie;
 import noppabot.Powerups.MasterDie;
@@ -16,7 +17,6 @@ import noppabot.Powerups.PolishedDie;
 import noppabot.Powerups.Powerup;
 import noppabot.Powerups.PrimalDie;
 import noppabot.Powerups.RollingProfessional;
-import noppabot.Powerups.SymmetricalDie;
 import noppabot.Powerups.VolatileDie;
 import noppabot.Powerups.WeightedDie;
 
@@ -133,8 +133,8 @@ public class GenerateItemList {
 		testBasicPowerup("Fast die<br><small>(rolled randomly within 00:01)</small>", "FastDie.png",
 			fastDieDesc, new FastDie(), new LazyBot());
 		testBasicPowerup("Volatile die", "VolatileDie.png", volatileDieDesc, new VolatileDie(), testBot);
-		testBasicPowerup("Symmetrical die", "SymmetricalDie.png", symmetricalDieDesc,
-			new SymmetricalDie(), testBot);
+		testBasicPowerup("Extreme die", "ExtremeDie.png", extremeDieDesc,
+			new ExtremeDie(), testBot);
 		testBagOfDice();
 		testGroundhogDie();
 		testBasicPowerup("Rolling professional", "RollingProfessional.png", rollingProfessionalDesc,
@@ -379,7 +379,7 @@ public class GenerateItemList {
 	private static final String enchantedDieDesc = "Enchanted die gives a +15 bonus.";
 	private static final String volatileDieDesc = "After the initial roll, the volatile die may reroll itself. " +
 		"The chance for reroll is 100% - (lastRoll)%. The roll after which the volatile die stops is your result.";
-	private static final String symmetricalDieDesc = "Symmetrical die flips rolls less than 50 into 100 - roll.";
+	private static final String extremeDieDesc = "Extreme die changes rolls 1..10 and 90..99 into 100.";
 	private static final String masterDieDesc = "Master die lets you roll d200 (the result is capped into 100).";
 	private static final String apprenticeDieDesc = "After a master die is rolled, the apprentice " +
 		"die will roll the same result. If the apprentice die ends up in the tiebreaker round, it turns into a master die.";

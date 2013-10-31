@@ -48,7 +48,7 @@ public class Powerups {
 			case 5: return new MasterDie();
 			case 6: return new FastDie();
 			case 7: return new VolatileDie();
-			case 8: return new SymmetricalDie();
+			case 8: return new ExtremeDie();
 			case 9: return new GroundhogDie();
 			case 10: return new BagOfDice();
 			case 11: return new RollingProfessional();
@@ -421,44 +421,45 @@ public class Powerups {
 		}
 	}
 
-	public static class SymmetricalDie extends Powerup {
+	public static class ExtremeDie extends Powerup {
 
 		@Override
 		public void onSpawn(INoppaBot bot) {
-			bot.sendChannel("The symmetrical die appears!");
+			bot.sendChannel("The extreme die appears!");
 		}
 
 		@Override
 		public void onExpire(INoppaBot bot) {
-			bot.sendChannelFormat("... the symmetrical die is deemed too perfect for the contest and is disqualified.");
+			bot.sendChannelFormat("... the extreme die gets bored sitting still and takes off.");
 		}
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
-				"%s grabs the symmetrical die! The die is so even and smooth, that you begin to question how you could've ever seen other dice as symmetrical.",
+				"%s grabs the extreme die! You discuss about various subcultures popular with radical dice.",
 				nick);
 		}
 
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			if (roll >= 50) {
-				bot.sendChannelFormat("%s rolls %d with the symmetrical die. It's a nice number!",
-					nick, roll);
+			if (roll == 100) {
+				bot.sendChannelFormat("%s rolls %d with the extreme die! That's the most extreme roll and the die is ecstatic!", nick, roll); 
+				return roll;
+			}
+			else if (roll > 10 && roll < 90) {
+				bot.sendChannelFormat("%s rolls %d with the extreme die! This number is quite ordinary, says the die.", nick, roll);
 				return roll;
 			}
 			else {
-				int result = 100 - roll;
-				bot.sendChannelFormat(
-					"%s rolls %d with the symmetrical die. This die likes low numbers as much as high numbers, so it kindly flips your roll to %d.",
-					nick, roll, result);
-				return result;
+				bot.sendChannelFormat("%s rolls %d with the extreme die! This number is very extremal! says the die.", nick, roll);
+				bot.sendChannelFormat("The extreme die rewards %s with the most extreme roll, 100!", nick);
+				return 100;
 			}
 		}
 
 		@Override
 		public String getName() {
-			return "Symmetrical Die";
+			return "Extreme Die";
 		}
 	}
 
