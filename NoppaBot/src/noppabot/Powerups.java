@@ -83,7 +83,8 @@ public class Powerups {
 		public void onTiebreakPeriodStart(INoppaBot bot, String nick) {
 		}
 
-		public void onNormalRoll(INoppaBot bot, String nick, int roll) {
+		public int onNormalRoll(INoppaBot bot, String nick, int roll) {
+			return roll;
 		}
 
 		/**
@@ -645,19 +646,27 @@ public class Powerups {
 		}
 
 		@Override
-		public void onNormalRoll(INoppaBot bot, String nick, int roll) {
+		public int onNormalRoll(INoppaBot bot, String nick, int roll) {
 			rerolled = true;
+			
+			int result = stashedRoll;
+			stashedRoll = roll;
+			
+			return result;
 		}
 
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			int result = stashedRoll;
+			stashedRoll = roll;
+
+			bot.sendChannelFormat("%s rolls %d! %s", nick, result, bot.grade(result));
 			if (!rerolled) {
-				bot.sendChannelFormat("%s rolls %d! %s", nick, stashedRoll, bot.grade(stashedRoll));
 				bot.sendChannelFormat("%s recalls this was the exact roll foretold by the Diceteller.",
 					nick);
-				return stashedRoll;
 			}
-			else return super.onContestRoll(bot, nick, roll); // Normal behaviour
+			
+			return result;
 		}
 
 		@Override
