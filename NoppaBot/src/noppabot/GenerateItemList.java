@@ -366,7 +366,7 @@ public class GenerateItemList {
 	private static final String dicePirateDesc = "Dice pirate steals item from another contestant.";
 	private static final String rollerBotDesc = "Roller bot rolls automatically when the contest starts.";
 	private static final String luckyDieDesc = "Lucky die gives a +25 bonus if the roll contains any sevens.";
-	private static final String bagOfDiceDesc = "Bag of dice contains ten random dice ranging from d4 to d20." +
+	private static final String bagOfDiceDesc = "Bag of dice contains 1 to 8 random dice ranging from d4 to d100." +
 		" Your roll result is the summed result from throwing all the dice.";
 	private static final String primalDieDesc = "Primal die gives a +20 bonus if the roll is a prime.";
 	private static final String polishedDieDesc = "Polished die gives a +5 bonus.";

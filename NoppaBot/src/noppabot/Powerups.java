@@ -19,7 +19,10 @@ public class Powerups {
 	static {
 		primes.addAll(Arrays.asList(2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59,
 			61, 67, 71, 73, 79, 83, 89, 97));
-		dice = Arrays.asList(4, 6, 8, 10, 12, 20);
+		List<Integer> lowDice = Arrays.asList(4, 6, 8, 10, 12, 20);
+		dice = new ArrayList<Integer>();
+		dice.addAll(lowDice);
+		dice.add(100);
 	}
 
 	public static Powerup getRandom(NoppaBot bot) {
@@ -468,8 +471,10 @@ public class Powerups {
 		private List<Integer> diceBag = new ArrayList<Integer>();
 
 		private void grabTenDice() {
-			for (int i = 0; i < 10; i++) {
-				Random diceRnd = new Random();
+			Random diceRnd = new Random();
+			int count = 1 + diceRnd.nextInt(8);
+			
+			for (int i = 0; i < count; i++) {
 				int die = dice.get(diceRnd.nextInt(dice.size()));
 				diceBag.add(die);
 			}
@@ -522,6 +527,7 @@ public class Powerups {
 			result = capResult(result);
 
 			bot.sendChannelFormat("%s rolls with the dice. %s = %d", nick, resultStr, result);
+//			System.out.println(result);
 			return result;
 		}
 		
