@@ -306,16 +306,23 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		if (customRoller || regularRoll) {
 			String numberStr;
+			String rollerNick;
 			if (customRoller) {
 				numberStr = customRollerMatcher.group(1);
-				sender = customRollerMatcher.group(2);
+				rollerNick = customRollerMatcher.group(2);
+				
+				if (isOnChannel(rollerNick)) {
+					sendChannelFormat("%s is on the channel, so you cannot roll for him/her", rollerNick);
+					return;
+				}
 			}
 			else {
 				numberStr = regularMatcher.group(1);
+				rollerNick = sender;
 			}
 
 			int sides = Integer.parseInt(numberStr);
-			roll(sender, sides);
+			roll(rollerNick, sides);
 		}
 		else if (message.equalsIgnoreCase("grab") || message.equalsIgnoreCase("pick") 
 			|| message.equalsIgnoreCase("take") || message.equalsIgnoreCase("get")) {
@@ -690,6 +697,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		long passed = now - c.getTimeInMillis();
 		long secondsPassed = passed / 1000;
 		return (int)secondsPassed;
+	}
+	
+	private boolean isOnChannel(String nick) {
+		org.jibble.pircbot.User[] users = getUsers(nick);
+		for (org.jibble.pircbot.User user : users) {
+			if (user.getNick().equals(nick)) return true;
+		}
+		return false;
 	}
 	
 	public static String join(Iterable<? extends CharSequence> s, String delimiter) {
