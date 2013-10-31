@@ -272,7 +272,7 @@ public class Powerups {
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
 			bot.sendChannelFormat(
-				"%s grabs the lucky die and it wishes good luck for the tonight's roll.", nick);
+				"%s grabs the lucky die and it wishes good luck for tonight's roll.", nick);
 		}
 
 		@Override
