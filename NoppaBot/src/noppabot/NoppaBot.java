@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.regex.*;
 
 import noppabot.Powerups.Diceteller;
-import noppabot.Powerups.MasterDie;
 import noppabot.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
@@ -135,12 +134,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("Verkel", new Diceteller());
+//		powerups.put("Verkel", new Diceteller());
 //		powerups.put("hessu", new ApprenticeDie());
-		powerups.put("jlindval", new MasterDie());
-//		powerup = new RollerBot();
-//		powerup.onSpawn(this);
+//		powerups.put("jlindval", new MasterDie());
+		powerup = new Diceteller();
+		powerup.onSpawn(this);
 //		rolls.put("jlindval", 100);
+		
 //		startRollPeriod();
 	}
 	
@@ -162,6 +162,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equals("help")) {
 					commandsHelp();
 				}
+				else if (cmd.equals("startperiod")) {
+					System.out.println("Starting roll period");
+					startRollPeriod();
+				}
+				else if (cmd.equals("endperiod")) {
+					System.out.println("Ending roll period");
+					endRollPeriod();
+				}
 				else {
 					System.out.println("Unknown command: " + tokens[0]);
 					commandsHelp();
@@ -174,7 +182,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void commandsHelp() {
-		System.out.println("Commands: help, quit");
+		System.out.println("Commands: help, quit, startperiod, endperiod");
 	}
 	
 	private void quit(String reason) {
@@ -405,7 +413,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					value = powerup.onContestRoll(this, nick, value);
 					powerupUsed = true;
 				}
-				else powerup.onNormalRoll(this, nick, value);
+				else {
+					value = powerup.onNormalRoll(this, nick, value);
+				}
 			}
 			
 			if (!powerupUsed) sendDefaultContestRollMessage(nick, value);
