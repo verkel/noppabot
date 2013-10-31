@@ -26,6 +26,12 @@ public class Powerups {
 	}
 
 	public static Powerup getRandom(NoppaBot bot) {
+		Powerup powerup = doGetRandom(bot);
+		powerup.initialize(bot);
+		return powerup;
+	}
+	
+	private static Powerup doGetRandom(NoppaBot bot) {
 		// Have a chance to spawn some apprentice dies if there is a master die
 		// Don't spawn these otherwise
 		int masterDieCount = bot.countPowerups(MasterDie.class);
@@ -68,6 +74,13 @@ public class Powerups {
 		
 		public abstract String getName();
 
+		public void initialize(INoppaBot bot) {
+		}
+		
+		/**
+		 * Say something when the item spawns. Don't initialize the item here, as
+		 * it won't be called when a dice pirate generates a new item.
+		 */
 		public void onSpawn(INoppaBot bot) {
 		}
 
@@ -471,7 +484,7 @@ public class Powerups {
 
 		private List<Integer> diceBag = new ArrayList<Integer>();
 
-		private void grabTenDice() {
+		private void grabSomeDice() {
 			Random diceRnd = new Random();
 			int count = 1 + diceRnd.nextInt(8);
 			
@@ -494,8 +507,12 @@ public class Powerups {
 		}
 
 		@Override
+		public void initialize(INoppaBot bot) {
+			grabSomeDice();
+		}
+		
+		@Override
 		public void onSpawn(INoppaBot bot) {
-			grabTenDice();
 			bot.sendChannel("A bag of dice appears!");
 		}
 
@@ -724,6 +741,7 @@ public class Powerups {
 			int size = bot.getPowerups().size();
 			int itemIndex = rnd.nextInt(size);
 			Set<String> owners = new TreeSet<String>(bot.getPowerups().keySet());
+			owners.remove(nick);
 			int i = 0;
 			String targetOwner = null;
 			for (String owner : owners) {
@@ -741,6 +759,7 @@ public class Powerups {
 				Powerup stolenPowerup = bot.getPowerups().remove(targetOwner);
 				try {
 					stolenPowerup = stolenPowerup.getClass().newInstance();
+					stolenPowerup.initialize(bot);
 				}
 				catch (Exception e) {
 					throw new RuntimeException(e);

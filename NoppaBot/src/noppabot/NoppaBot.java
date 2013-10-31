@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import noppabot.Powerups.Diceteller;
+import noppabot.Powerups.BagOfDice;
 import noppabot.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
@@ -136,12 +136,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void debugStuff() {
 //		powerups.put("Verkel", new Diceteller());
 //		powerups.put("hessu", new ApprenticeDie());
-//		powerups.put("jlindval", new MasterDie());
-		powerup = new Diceteller();
-		powerup.onSpawn(this);
+		Powerup p = new BagOfDice(); p.initialize(this);
+		powerups.put("Verkel", p);
+//		powerup = new DicePirate();
+//		powerup.onSpawn(this);
 //		rolls.put("jlindval", 100);
 		
-//		startRollPeriod();
+		startRollPeriod();
 	}
 	
 	private void handleConsoleCommands() {
