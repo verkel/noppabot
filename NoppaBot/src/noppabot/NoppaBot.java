@@ -15,50 +15,61 @@ import org.jibble.pircbot.PircBot;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
-	private static final String NICK = "proxyidra^";
-	private static final String CHANNEL = "#orp";
-	private static final String ROLLRECORDS_PATH = "/data/public_html/public/misc/orp_rolls/rollrecords.json";
-	private static final String SERVER = "irc.cs.hut.fi";
+	private final String nick;
+	private final String channel;
+	private final String server;
+	private final File rollRecordsPath;
+	private final boolean executeDebugStuff;
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
 	private static final int POWERUP_EXPIRE_MINUTES = 30;
 	
-//	private static final String NICK = "test-idra^";
-//	private static final String CHANNEL = "#noppatest";
-//	private static final String ROLLRECORDS_PATH = "rollrecords.json";
+	private Properties properties;
 	
-	private String[] rollStartMsgs = {
-		"Gentlemen, place your rolls!",
-		"It's rolltime!",
-		"A new day, time for a new roll!",
-		"Who will be our lucky winner this time?",
-		"Let the rolls commence!",
-		"Tonight we select a new certified rolling professional!",
-		"The dice are out of the bag!",
-		"Experts say that rolling dice makes you 120% more handsome and/or beautiful.",
-		"Everyone got their dice ready? Here we go!",
-		"Winners do not use drugs. But enchanted dice, they might.",
-		"The dice rolling compo starts... now!",
-		NICK + "'s the name and rolling is my game!",
-		"1. roll, 2. ???, 3. Profit!",
-		"Make rolls, not war. Alternatively, wage war with dice.",
-		NICK + " rolls 100! SUPER!! ... No wait, you guys roll now."
-	};
+	private void loadProperties() throws IOException {
+		properties = new Properties();
+		BufferedReader r = new BufferedReader(new FileReader("NoppaBot.properties"));
+		properties.load(r);
+		r.close();
+	}
 	
-	private String[] rollEndMsgs = {
-		"The winner has been decided! He is %s with the roll %d!",
-		"Our tonight's champion has been elected! %s scored the mighty %d points!",
-		"The score is settled! This time, %s won with the roll %d.",
-		"The dice gods have finalized the outcome! %s won with the roll %d!",
-		"The contest is over! Our lucky winner is %s with %d points!",
-		"The die has been cast. Tonight, %s is the dice emperor with %d points!",
-		"%s won the compo this time, with %d points. Was he lucky, or maybe he was using... the MASTER DIE?!",
-		"Using dice is the best way to make decisions. %s knows this best, beating others with his roll %d!",
-		"Tonight, %s was the high roller with %d points!",
-		"%s beat the others with the outstanding roll of %d!",
-		"%s is certified as the new local rolling professional after the superb %d roll!"
-	};
+	private String[] rollStartMsgs;
+	private String[] rollEndMsgs;
+	
+	private void initMessages() {
+		rollStartMsgs = new String[] {
+			"Gentlemen, place your rolls!",
+			"It's rolltime!",
+			"A new day, time for a new roll!",
+			"Who will be our lucky winner this time?",
+			"Let the rolls commence!",
+			"Tonight we select a new certified rolling professional!",
+			"The dice are out of the bag!",
+			"Experts say that rolling dice makes you 120% more handsome and/or beautiful.",
+			"Everyone got their dice ready? Here we go!",
+			"Winners do not use drugs. But enchanted dice, they might.",
+			"The dice rolling compo starts... now!",
+			nick + "'s the name and rolling is my game!",
+			"1. roll, 2. ???, 3. Profit!",
+			"Make rolls, not war. Alternatively, wage war with dice.",
+			nick + " rolls 100! SUPER!! ... No wait, you guys roll now."
+		};
+		
+		rollEndMsgs = new String[] {
+			"The winner has been decided! He is %s with the roll %d!",
+			"Our tonight's champion has been elected! %s scored the mighty %d points!",
+			"The score is settled! This time, %s won with the roll %d.",
+			"The dice gods have finalized the outcome! %s won with the roll %d!",
+			"The contest is over! Our lucky winner is %s with %d points!",
+			"The die has been cast. Tonight, %s is the dice emperor with %d points!",
+			"%s won the compo this time, with %d points. Was he lucky, or maybe he was using... the MASTER DIE?!",
+			"Using dice is the best way to make decisions. %s knows this best, beating others with his roll %d!",
+			"Tonight, %s was the high roller with %d points!",
+			"%s beat the others with the outstanding roll of %d!",
+			"%s is certified as the new local rolling professional after the superb %d roll!"
+		};
+	}
 	
 	private enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
 	
@@ -82,11 +93,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	public NoppaBot() throws Exception {
 		super();
-		setLogin(NICK);
-		setName(NICK);
-		connect(SERVER);
-		joinChannel(CHANNEL);
+		
+		loadProperties();
+		nick = properties.getProperty("nick");
+		channel = properties.getProperty("channel");
+		rollRecordsPath =  new File(properties.getProperty("rollRecordsPath"));
+		server = properties.getProperty("server");
+		executeDebugStuff = Boolean.parseBoolean(properties.getProperty("executeDebugStuff"));
+		
+		setLogin(nick);
+		setName(nick);
+		connect(server);
+		joinChannel(channel);
 //		sendChannel("Eat a happy meal!");
+		
+		initMessages();
 		
 		if (isInRollPeriod()) startRollPeriod();
 		
@@ -107,7 +128,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		schedulePowerupsOfTheDay();
 		scheduler.start();
 		
-//		debugStuff();
+		if (executeDebugStuff) debugStuff();
 //		giveFreePowerup(); // spawn one right now
 		
 		handleConsoleCommands();
@@ -124,7 +145,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void handleConsoleCommands() {
-		System.out.printf("Joined as %s to channel %s\n", NICK, CHANNEL);
+		System.out.printf("Joined as %s to channel %s\n", nick, channel);
 		
 		try {
 			BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
@@ -510,8 +531,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private static final File rollRecordsPath = new File(ROLLRECORDS_PATH);
-	
 	private void updateRecords(String winner) {
 		RollRecords rec = loadRollRecords();
 		if (rec == null) return;
@@ -595,7 +614,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	public void sendChannel(String msg) {
-		sendMessage(CHANNEL, msg);
+		sendMessage(channel, msg);
 	}
 	
 	@Override
