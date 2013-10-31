@@ -31,7 +31,7 @@ public class Powerups {
 		int masterDieCount = bot.countPowerups(MasterDie.class);
 		if (masterDieCount > 0) {
 			int apprenticeDieCount = bot.countPowerups(ApprenticeDie.class);
-			if (powerupRnd.nextFloat() < 0.30f / apprenticeDieCount) {
+			if (powerupRnd.nextFloat() < 0.30f / (1 + apprenticeDieCount)) {
 				return new ApprenticeDie();
 			}
 		}
