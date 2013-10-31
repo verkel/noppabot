@@ -171,6 +171,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					System.out.println("Ending roll period");
 					endRollPeriod();
 				}
+				else if (cmd.equals("freebie")) {
+					giveFreePowerup();
+				}
 				else {
 					System.out.println("Unknown command: " + tokens[0]);
 					commandsHelp();
@@ -183,7 +186,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void commandsHelp() {
-		System.out.println("Commands: help, quit, startperiod, endperiod");
+		System.out.println("Commands: help, quit, startperiod, endperiod, freebie");
 	}
 	
 	private void quit(String reason) {
@@ -195,6 +198,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void giveFreePowerup() {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MINUTE, 1);
+		System.out.println("Will spawn additional powerup in " + cal.getTime());
 		schedulePowerupSpawn(cal);
 	}
 
