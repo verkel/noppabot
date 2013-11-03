@@ -7,7 +7,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import noppabot.Powerups.BagOfDice;
+import noppabot.Powerups.ApprenticeDie;
+import noppabot.Powerups.MasterDie;
 import noppabot.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
@@ -134,9 +135,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-//		powerups.put("Verkel", new Diceteller());
-//		powerups.put("hessu", new ApprenticeDie());
-		Powerup p = new BagOfDice(); p.initialize(this);
+		powerups.put("hassu", new ApprenticeDie());
+		powerups.put("hessu", new ApprenticeDie());
+		Powerup p = new MasterDie(); p.initialize(this);
 		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
@@ -373,20 +374,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			return;
 		}
 
-		Set<Entry<String, Integer>> rollsSorted = new TreeSet<Entry<String, Integer>>(
-			new Comparator<Entry<String, Integer>>() {
+		List<Entry<String, Integer>> rollsList = new ArrayList<Entry<String, Integer>>();
+		Comparator<Entry<String, Integer>> comp = new Comparator<Entry<String, Integer>>() {
 
 			@Override
 			public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
 				return -e1.getValue().compareTo(e2.getValue());
-			}}
-		);
-		rollsSorted.addAll(rolls.entrySet());
+			}
+		};
+		rollsList.addAll(rolls.entrySet());
+		Collections.sort(rollsList, comp);
 		
 		StringBuilder buf = new StringBuilder();
 		buf.append("Rolls: ");
 		boolean first = true;
-		for (Entry<String, Integer> entry : rollsSorted) {
+		for (Entry<String, Integer> entry : rollsList) {
 			String nick = entry.getKey();
 			int roll = entry.getValue();
 			if (!first) buf.append(", ");
