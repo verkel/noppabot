@@ -707,7 +707,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private boolean isOnChannel(String nick) {
-		org.jibble.pircbot.User[] users = getUsers(nick);
+		org.jibble.pircbot.User[] users = getUsers(channel);
 		for (org.jibble.pircbot.User user : users) {
 			if (user.getNick().equals(nick)) return true;
 		}
