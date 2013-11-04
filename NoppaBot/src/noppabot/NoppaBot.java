@@ -74,7 +74,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
 	
 	public static final Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
-	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([^\\s]+)");
+	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([^\\s]+)\\s*");
 	
 	private Map<String, Random> randoms = new HashMap<String, Random>();
 	private Random commonRandom = new Random();
