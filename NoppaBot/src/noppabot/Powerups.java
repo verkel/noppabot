@@ -736,12 +736,12 @@ public class Powerups {
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
-			bot.sendChannelFormat("The DicePirate will plunder dice and other shiny things for 100 gold dubloons! %s gladly pays him.", nick, nick);
+			bot.sendChannelFormat("The DicePirate will plunder dice and other shiny things for 100 gold dubloons! %s gladly pays him.", nick);
 			Random rnd = new Random();
-			int size = bot.getPowerups().size();
-			int itemIndex = rnd.nextInt(size);
 			Set<String> owners = new TreeSet<String>(bot.getPowerups().keySet());
 			owners.remove(nick);
+			int size = owners.size();
+			int itemIndex = rnd.nextInt(size);
 			int i = 0;
 			String targetOwner = null;
 			for (String owner : owners) {
