@@ -736,9 +736,10 @@ public class Powerups {
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
+			Map<String, Powerup> powerups = bot.getPowerups();
 			bot.sendChannelFormat("The DicePirate will plunder dice and other shiny things for 100 gold dubloons! %s gladly pays him.", nick);
 			Random rnd = new Random();
-			Set<String> owners = new TreeSet<String>(bot.getPowerups().keySet());
+			Set<String> owners = new TreeSet<String>(powerups.keySet());
 			owners.remove(nick);
 			int size = owners.size();
 			int itemIndex = rnd.nextInt(size);
@@ -754,9 +755,10 @@ public class Powerups {
 			
 			if (targetOwner == null) {
 				bot.sendChannelFormat("There was no loot in sight for the DicePirate and he just runs off with your gold.");
+				powerups.remove(nick);
 			}
 			else {
-				Powerup stolenPowerup = bot.getPowerups().remove(targetOwner);
+				Powerup stolenPowerup = powerups.remove(targetOwner);
 				try {
 					stolenPowerup = stolenPowerup.getClass().newInstance();
 					stolenPowerup.initialize(bot);
@@ -764,7 +766,7 @@ public class Powerups {
 				catch (Exception e) {
 					throw new RuntimeException(e);
 				}
-				bot.getPowerups().put(nick, stolenPowerup);
+				powerups.put(nick, stolenPowerup);
 				bot.sendChannelFormat("The dice pirate looted %s's %s!", targetOwner, stolenPowerup);
 				if (stolenPowerup instanceof Diceteller) stolenPowerup.onPickup(bot, nick);
 			}
