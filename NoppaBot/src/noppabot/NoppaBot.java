@@ -53,11 +53,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			nick + "'s the name and rolling is my game!",
 			"1. roll, 2. ???, 3. Profit!",
 			"Make rolls, not war. Alternatively, wage war with dice.",
-			nick + " rolls 100! SUPER!! ... No wait, you guys roll now."
+			nick + " rolls 100! SUPER!! ... No wait, you guys roll now.",
+			"Kill all audio and dice! The rolling compo has begun.",
 		};
 		
 		rollEndMsgs = new String[] {
-			"The winner has been decided! He is %s with the roll %d!",
+			"The winner has been decided! It is %s with the roll %d!",
 			"Our tonight's champion has been elected! %s scored the mighty %d points!",
 			"The score is settled! This time, %s won with the roll %d.",
 			"The dice gods have finalized the outcome! %s won with the roll %d!",
@@ -67,7 +68,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			"Using dice is the best way to make decisions. %s knows this best, beating others with his roll %d!",
 			"Tonight, %s was the high roller with %d points!",
 			"%s beat the others with the outstanding roll of %d!",
-			"%s is certified as the new local rolling professional after the superb %d roll!"
+			"%s is certified as the new local rolling professional after the superb %d roll!",
+			"The dice favored %s tonight, granting the victory with %d points!",
+			"The demo \"Choose 200 polys and a roll\" by %s entertained all of us tonight. "
+			+ "It crushed the competition by a large margin with %d votes!",
+			"%s has clicked on lots of candies, cows and cookies, and is experienced in picking the "
+			+ "most profitable die, resulting the roll %d!",
 		};
 	}
 	
