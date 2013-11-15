@@ -823,7 +823,7 @@ public class Powerups {
 
 		@Override
 		public void onExpire(INoppaBot bot) {
-			bot.sendChannelFormat("... wind blows the secret document away.");
+			bot.sendChannelFormat("... the wind blows the secret document away.");
 		}
 
 		@Override
