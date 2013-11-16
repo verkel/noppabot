@@ -54,7 +54,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			"1. roll, 2. ???, 3. Profit!",
 			"Make rolls, not war. Alternatively, wage war with dice.",
 			nick + " rolls 100! SUPER!! ... No wait, you guys roll now.",
-			"Kill all audio and dice! The rolling compo has begun.",
+			"Kill all audio and non-d100 dice! The rolling compo has begun.",
 			"Here we go!",
 			"Has everyone already uncovered the secrets of dice?"
 		};
