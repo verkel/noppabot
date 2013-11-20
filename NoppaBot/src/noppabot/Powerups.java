@@ -569,7 +569,7 @@ public class Powerups {
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
-			bot.sendChannelFormat("%s grabs the groundhog die and ensures that the history will repeat itself.", nick);
+			bot.sendChannelFormat("%s grabs the groundhog die and ensures that history will repeat itself.", nick);
 		}
 		
 		@Override
