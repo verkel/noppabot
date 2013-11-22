@@ -44,7 +44,7 @@ public class Powerups {
 		
 		// Prevent two same powerups in a row
 		int rnd;
-		do { rnd = powerupRnd.nextInt(16); }
+		do { rnd = powerupRnd.nextInt(15); }
 		while (rnd == lastPowerupIndex);
 		lastPowerupIndex = rnd;
 
@@ -64,7 +64,7 @@ public class Powerups {
 			case 12: return new Diceteller();
 			case 13: return new RollerBot();
 			case 14: return new DicePirate();
-			case 15: return new SecretDocument();
+//			case 15: return new SecretDocument();
 		}
 
 		throw new RuntimeException("Illegal powerup random index");
