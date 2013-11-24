@@ -333,10 +333,13 @@ public class Powerups {
 
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			int result = bot.getRollFor(nick, 200);
-			result = capResult(result);
+			int uncappedResult = bot.getRollFor(nick, 200);
+			int result = capResult(uncappedResult);
 			bot.sendChannelFormat("%s rolls d200 with the MASTER DIE...", nick);
-			bot.sendDefaultContestRollMessage(nick, result);
+			if (uncappedResult > 100) {
+				bot.sendChannelFormat("%s rolls %d (= 100)! %s", nick, uncappedResult, bot.grade(result));
+			}
+			else bot.sendDefaultContestRollMessage(nick, result);
 			rollUnusedApprenticeDies(bot, result);
 			return result;
 		}
