@@ -368,7 +368,7 @@ public class GenerateItemList {
 	private static final String luckyDieDesc = "Lucky die gives a +25 bonus if the roll contains any sevens.";
 	private static final String bagOfDiceDesc = "Bag of dice contains 1 to 8 random dice ranging from d4 to d100." +
 		" Your roll result is the summed result from throwing all the dice.";
-	private static final String primalDieDesc = "Primal die gives a +20 bonus if the roll is a prime.";
+	private static final String primalDieDesc = "Primal die gives a +20 bonus if the <a href=\"http://www.prime-numbers.net/prime-numbers-1-100-chart.html\">roll is a prime</a>.";
 	private static final String polishedDieDesc = "Polished die gives a +5 bonus.";
 	private static final String fastDieDesc = "Fast die gives a bonus of 30 - (seconds passed since the contest started). " +
 		"After 30 seconds the bonus will be 0.";
