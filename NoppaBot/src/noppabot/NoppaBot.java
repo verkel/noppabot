@@ -56,7 +56,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			nick + " rolls 100! SUPER!! ... No wait, you guys roll now.",
 			"Kill all audio and non-d100 dice! The rolling compo has begun.",
 			"Here we go!",
-			"Has everyone already uncovered the secrets of dice?"
 		};
 		
 		rollEndMsgs = new String[] {
