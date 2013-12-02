@@ -84,7 +84,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public static final Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([^\\s]+)\\s*");
 	
-	private Map<String, Random> randoms = new HashMap<String, Random>();
+	private Map<String, PeekableRandom> randoms = new HashMap<String, PeekableRandom>();
 	private Random commonRandom = new Random();
 	private Scheduler scheduler = new Scheduler();
 	private State state = State.NORMAL;
@@ -417,8 +417,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: you already have the %s.", nick, powerups.get(nick).getName());
 		}
 		else {
-			powerups.put(nick, powerup);
 			powerup.onPickup(this, nick);
+			if (powerup.isCarried()) powerups.put(nick, powerup);
 			this.powerup = null;
 		}
 	}
@@ -664,15 +664,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return rolls;
 	}
 	
-	private Random getRandomFor(String nick) {
-		if (!randoms.containsKey(nick)) randoms.put(nick, new Random());
+	private PeekableRandom getRandomFor(String nick) {
+		if (!randoms.containsKey(nick)) randoms.put(nick, new PeekableRandom());
 		return randoms.get(nick);
 	}
 	
 	@Override
 	public int getRollFor(String nick, int sides) {
-		Random random = getRandomFor(nick);
-		return random.nextInt(sides)+1;
+		PeekableRandom random = getRandomFor(nick);
+		return random.nextInt(sides) + 1;
+	}
+	
+	@Override
+	public int peekRollFor(String nick) {
+		PeekableRandom random = getRandomFor(nick);
+		return random.peek() + 1;
 	}
 	
 	public int countPowerups(Class<? extends Powerup> type) {

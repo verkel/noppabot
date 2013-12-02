@@ -109,6 +109,13 @@ public class Powerups {
 			bot.sendDefaultContestRollMessage(nick, roll);
 			return roll;
 		}
+		
+		/**
+		 * Should the powerup be put into player's item slot
+		 */
+		public boolean isCarried() {
+			return true;
+		}
 
 		@Override
 		public String toString() {
@@ -644,9 +651,6 @@ public class Powerups {
 
 	public static class Diceteller extends Powerup {
 
-		private int stashedRoll;
-		private boolean rerolled = false;
-
 		@Override
 		public void onSpawn(INoppaBot bot) {
 			bot.sendChannel("A Diceteller appears!");
@@ -654,41 +658,23 @@ public class Powerups {
 
 		@Override
 		public void onExpire(INoppaBot bot) {
-			bot.sendChannelFormat("... no one seemed to believe the diceteller could see future rolls in a crystal ball. The ball was of wrong shape, anyway. Maybe next time she brings crystal dice?");
+			bot.sendChannelFormat("... no one seemed to believe the diceteller could see future rolls in a crystal ball. " +
+				"The ball was of wrong shape, anyway. Maybe next time she brings crystal dice?");
 		}
 
 		@Override
 		public void onPickup(INoppaBot bot, String nick) {
-			stashedRoll = bot.getRollFor(nick, 100);
+			int result = bot.peekRollFor(nick);
 			bot.sendChannelFormat(
 				"The diceteller, glancing at his crystal ball, whispers to %s: \"Your next roll will be %d.\"",
-				nick, stashedRoll);
+				nick, result);
 		}
 
 		@Override
-		public int onNormalRoll(INoppaBot bot, String nick, int roll) {
-			rerolled = true;
-			
-			int result = stashedRoll;
-			stashedRoll = roll;
-			
-			return result;
+		public boolean isCarried() {
+			return false;
 		}
-
-		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			int result = stashedRoll;
-			stashedRoll = roll;
-
-			bot.sendChannelFormat("%s rolls %d! %s", nick, result, bot.grade(result));
-			if (!rerolled) {
-				bot.sendChannelFormat("%s recalls this was the exact roll foretold by the Diceteller.",
-					nick);
-			}
-			
-			return result;
-		}
-
+		
 		@Override
 		public String getName() {
 			return "Diceteller";

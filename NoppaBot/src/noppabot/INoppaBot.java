@@ -28,6 +28,8 @@ public interface INoppaBot {
 
 	public int getRollFor(String nick, int sides);
 	
+	public int peekRollFor(String nick);
+	
 	public Map<String, Powerup> getPowerups();
 	
 	public Map<String, Integer> getRolls();

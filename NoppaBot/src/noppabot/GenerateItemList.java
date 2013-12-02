@@ -353,6 +353,11 @@ public class GenerateItemList {
 		public Map<String, Integer> getRolls() {
 			return null;
 		}
+
+		@Override
+		public int peekRollFor(String nick) {
+			return 0;
+		}
 	}
 	
 	class LazyBot extends TestBot {
