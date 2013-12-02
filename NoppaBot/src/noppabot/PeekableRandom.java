@@ -18,12 +18,15 @@ public class PeekableRandom {
 	}
 
 	public int nextInt(int n) {
+		// Return the peeked result for d100 roll if there was one
 		if (nextD100 != -1 && n == 100) {
 			int result = nextD100;
 			nextD100 = -1;
 			return result;
 		}
+		// Else return a new number, and wipe the peeked result
 		else {
+			nextD100 = -1;
 			return random.nextInt(n);
 		}
 	}
