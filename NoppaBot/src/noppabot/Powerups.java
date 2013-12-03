@@ -974,7 +974,7 @@ public class Powerups {
 				}
 			}
 			else {
-				bot.sendChannelFormat("%s: The trainer says you have nothing to upgrade.");
+				bot.sendChannelFormat("%s: The trainer says you have nothing to upgrade.", nick);
 				return false;
 			}
 		}
