@@ -38,10 +38,10 @@ public class Powerups {
 		allPowerups.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(),
 			new DicePirate(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), new FastDie(),
 			new GroundhogDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
-			new RollerBot(), new RollingProfessional(), new VolatileDie(), new WeightedDie()));
+			new RollingProfessional(), new VolatileDie(), new WeightedDie()));
 
 		upgradeablePowerups.addAll(allPowerups);
-		upgradeablePowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new Diceteller(), new RollerBot()));
+		upgradeablePowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new Diceteller()));
 		
 		diceStormPowerups.addAll(allPowerups);
 		diceStormPowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate()));
@@ -822,42 +822,6 @@ public class Powerups {
 		}
 	}
 	
-	public static class RollerBot extends Powerup {
-
-		@Override
-		public void onSpawn(INoppaBot bot) {
-			bot.sendChannel("A RollerBot appears!");
-		}
-
-		@Override
-		public void onExpire(INoppaBot bot) {
-			bot.sendChannelFormat("... the RollerBot breaks down.");
-		}
-
-		@Override
-		public void onPickup(INoppaBot bot, String nick) {
-			bot.sendChannelFormat("The RollerBot will automatically roll for %s tonight.", nick);
-		}
-		
-		@Override
-		public void onRollPeriodStart(INoppaBot bot, String nick) {
-			int roll = bot.getRollFor(nick, 100);
-			bot.sendChannelFormat("%s's RollerBot rolls %d! %s", nick, roll, bot.grade(roll));
-			bot.participate(nick, roll);
-		}
-
-		@Override
-		public String getName() {
-			return "RollerBot";
-		}
-		
-		
-		@Override
-		public int getCost() {
-			return -1;
-		}
-	}
-
 	public static class DicePirate extends Powerup {
 
 		@Override
