@@ -4,12 +4,15 @@
  */
 package noppabot;
 
-import java.util.Map;
+import java.util.*;
 
+import noppabot.Powerups.Event;
 import noppabot.Powerups.Powerup;
 
 public interface INoppaBot {
 
+	public Object scheduleSpawn(Calendar spawnTime, List<Powerup> allowedPowerups, List<Event> allowedEvents);
+	
 	public void sendDefaultContestRollMessage(String nick, int value);
 
 	public String getDefaultContestRollMessage(String nick, int value);
@@ -39,5 +42,7 @@ public interface INoppaBot {
 	public void sendMessage(String nick, String msg);
 	
 	public void sendMessageFormat(String nick, String msg, Object... args);
+	
+	public String remainingSpawnsInfo();
 
 }

@@ -9,6 +9,7 @@ import java.util.*;
 
 import noppabot.Powerups.BagOfDice;
 import noppabot.Powerups.EnchantedDie;
+import noppabot.Powerups.Event;
 import noppabot.Powerups.ExtremeDie;
 import noppabot.Powerups.FastDie;
 import noppabot.Powerups.LuckyDie;
@@ -117,6 +118,11 @@ public class GenerateItemList {
 		@Override
 		public String getName() {
 			return "Regular Die";
+		}
+
+		@Override
+		public int getCost() {
+			return 0;
 		}
 	}
 
@@ -357,6 +363,17 @@ public class GenerateItemList {
 		@Override
 		public int peekRollFor(String nick) {
 			return 0;
+		}
+
+		@Override
+		public String remainingSpawnsInfo() {
+			return null;
+		}
+
+		@Override
+		public Object scheduleSpawn(Calendar spawnTime, List<Powerup> allowedPowerups,
+			List<Event> allowedEvents) {
+			return null;
 		}
 	}
 	

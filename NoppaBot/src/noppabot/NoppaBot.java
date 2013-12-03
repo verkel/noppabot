@@ -1,5 +1,5 @@
 package noppabot;
-import it.sauronsoftware.cron4j.Scheduler;
+import it.sauronsoftware.cron4j.*;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -7,8 +7,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import noppabot.Powerups.ApprenticeDie;
-import noppabot.Powerups.MasterDie;
+import noppabot.Powerups.Event;
+import noppabot.Powerups.FourthWallBreaks;
 import noppabot.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
@@ -82,6 +82,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	public static final Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([^\\s]+)\\s*");
+	public static final Pattern commandAndArgument = Pattern.compile("^(\\w+)(?:\\s+(.+)?)?");
 	
 	private Map<String, PeekableRandom> randoms = new HashMap<String, PeekableRandom>();
 	private Random commonRandom = new Random();
@@ -90,7 +91,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Map<String, Integer> rolls = new HashMap<String, Integer>();
 	private Set<String> tiebreakers = new TreeSet<String>();
 	private List<String> powerupSpawnTaskIDs = new ArrayList<String>();
-	private Powerup powerup = null;
+	//private Powerup powerup = null;
+	private List<Powerup> availablePowerups = new ArrayList<Powerup>();
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	
 	public static void main(String[] args) throws Exception {
@@ -142,13 +144,23 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("hassu", new ApprenticeDie());
-		powerups.put("hessu", new ApprenticeDie());
-		Powerup p = new MasterDie(); p.initialize(this);
-		powerups.put("Verkel", p);
+//		powerups.put("hassu", new ApprenticeDie());
+//		powerups.put("hessu", new ApprenticeDie());
+//		powerups.put("kessu", new ApprenticeDie());
+//		powerups.put("frodo", new ApprenticeDie());
+//		powerups.put("bilbo", new ApprenticeDie());
+//		Powerup p = new PolishedDie(); p.initialize(this);
+//		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
 //		rolls.put("jlindval", 100);
+		
+//		availablePowerups.add(new MasterDie());
+//		availablePowerups.add(new WeightedDie());
+//		availablePowerups.add(new BagOfDice());
+//		availablePowerups.add(new Diceteller());
+		
+		new FourthWallBreaks().run(this);
 		
 		startRollPeriod();
 	}
@@ -160,11 +172,16 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
 			String input;
 			while ((input = r.readLine()) != null) {
-				String[] tokens = input.split("\\s+");
-				String cmd = tokens[0];
+//				String[] tokens = input.split("\\s+");
+				
+				Matcher commandMatcher = commandAndArgument.matcher(input);
+				if (!commandMatcher.matches()) continue;
+				String cmd = commandMatcher.group(1);
+				String args = commandMatcher.group(2);
+				
 				if (cmd.equals("quit")) {
 					System.out.println("Quitting");
-					if (tokens.length > 1) quit(tokens[1]);
+					if (args != null) quit(args);
 					else quit("Goodbye!");
 					break;
 				}
@@ -183,7 +200,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					giveFreePowerup();
 				}
 				else {
-					System.out.println("Unknown command: " + tokens[0]);
+					System.out.println("Unknown command: " + cmd);
 					commandsHelp();
 				}
 			}
@@ -204,10 +221,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void giveFreePowerup() {
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MINUTE, 1);
-		System.out.println("Will spawn additional powerup in " + cal.getTime());
-		schedulePowerupSpawn(cal);
+		sendChannel("Spawning item manually");
+		scheduleSpawn(null, Powerups.allPowerups, Collections.<Event>emptyList());
 	}
 
 	private void schedulePowerupsOfTheDay() {
@@ -231,19 +246,80 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		incrementSpawnTime(spawnTime);
 		
+		List<Event> allowedEvents = Powerups.allEvents;
 		while (spawnTime.before(spawnEndTime)) {
-			schedulePowerupSpawn(spawnTime);
+			Object spawn = scheduleSpawn(spawnTime, Powerups.allPowerups, allowedEvents);
+			// Only allow one 4th wall break per day
+			if (spawn instanceof FourthWallBreaks) allowedEvents = Powerups.allEventsMinusFourthWall;
 			incrementSpawnTime(spawnTime);
 		}
 	}
 
 	private void incrementSpawnTime(Calendar spawnTime) {
-		int minutesRandomRange = 500 - 20 * spawnTime.get(Calendar.HOUR_OF_DAY);
-		int minutesIncr = POWERUP_EXPIRE_MINUTES + commonRandom.nextInt(minutesRandomRange);
+		int minutesRandomRange = 400 - 15 * spawnTime.get(Calendar.HOUR_OF_DAY);
+		int minutesIncr = commonRandom.nextInt(minutesRandomRange);
 		spawnTime.add(Calendar.MINUTE, minutesIncr);
 	}
 	
-	private void schedulePowerupSpawn(Calendar spawnTime) {
+	private class SpawnTask extends Task {
+		public Object spawn;
+		public Date time;
+		
+		public SpawnTask(Date time, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
+			this.time = time;
+			spawn = Powerups.getRandomPowerupOrEvent(NoppaBot.this, allowedPowerups, allowedEvents);
+		}
+		
+		public Powerup getPowerup() {
+			if (spawn instanceof Powerup) return (Powerup)spawn;
+			else return null;
+		}
+
+		@Override
+		public void execute(TaskExecutionContext context) {
+			if (spawn instanceof Powerup) {
+				Powerup powerup = (Powerup)spawn;
+				powerup.onSpawn(NoppaBot.this);
+				availablePowerups.add(powerup);
+			}
+			else {
+				Event event = (Event)spawn;
+				event.run(NoppaBot.this);
+			}
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("[%tR] %s", time, spawn);
+		}
+	}
+	
+	private class ExpireTask extends Task {
+		public Powerup powerup;
+		
+		public ExpireTask(Powerup powerup) {
+			this.powerup = powerup;
+		}
+		
+		@Override
+		public void execute(TaskExecutionContext context) {
+			availablePowerups.remove(powerup);
+			powerup.onExpire(NoppaBot.this);
+		}
+	}
+	
+	/**
+	 * Schedule a powerup/event spawn or spawn it immediately
+	 * 
+	 * @param spawnTime Spawn time or null for spawn immediately
+	 * @param spawnEvents Spawn events too
+	 * @param allowFourthWallBreaks Allow the fourth wall falls event
+	 */
+	@Override
+	public Object scheduleSpawn(Calendar spawnTime, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
+		boolean immediateSpawn = (spawnTime == null);
+		if (immediateSpawn) spawnTime = Calendar.getInstance();
+		
 		Calendar expireTime = (Calendar)spawnTime.clone();
 		expireTime.add(Calendar.MINUTE, POWERUP_EXPIRE_MINUTES);
 		
@@ -251,29 +327,27 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTime.get(Calendar.MINUTE), spawnTime.get(Calendar.HOUR_OF_DAY));
 		final String expirePattern = String.format("%d %d * * *",
 			expireTime.get(Calendar.MINUTE), expireTime.get(Calendar.HOUR_OF_DAY));
-		
-		String spawnTaskID = scheduler.schedule(pattern, new Runnable() {
-			
-			@Override
-			public void run() {
-				spawnPowerup();
-			}
 
-		});
+		SpawnTask spawnTask = new SpawnTask(spawnTime.getTime(), allowedPowerups, allowedEvents);
+		Powerup powerup = spawnTask.getPowerup();
 		
-		String expireTaskID = scheduler.schedule(expirePattern, new Runnable() {
-			
-			@Override
-			public void run() {
-				expirePowerup();
-			}
-
-		});
+		if (immediateSpawn) {
+			spawnTask.execute(null);
+		}
+		else {
+			String spawnTaskID = scheduler.schedule(pattern, spawnTask);
+			powerupSpawnTaskIDs.add(spawnTaskID);
+		}
 		
-		powerupSpawnTaskIDs.add(spawnTaskID);
-		powerupSpawnTaskIDs.add(expireTaskID);
+		if (powerup != null) {
+			ExpireTask expireTask = new ExpireTask(powerup);
+			String expireTaskID = scheduler.schedule(expirePattern, expireTask);
+			powerupSpawnTaskIDs.add(expireTaskID);
+		}
 		
 //		System.out.printf("Added spawn on %s, expires on %s\n", spawnTime.getTime(), expireTime.getTime());
+		
+		return spawnTask.spawn;
 	}
 	
 	private void clearPowerupSpawnTasks() {
@@ -281,20 +355,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			scheduler.deschedule(id);
 		}
 		powerupSpawnTaskIDs.clear();
-	}
-	
-	private void spawnPowerup() {
-		if (powerup != null) return;
-		
-		powerup = Powerups.getRandom(this);
-		powerup.onSpawn(this);
-	}
-
-	private void expirePowerup() {
-		if (powerup == null) return;
-		
-		powerup.onExpire(this);
-		powerup = null;
 	}
 	
 	private boolean isInRollPeriod() {
@@ -337,15 +397,22 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			int sides = Integer.parseInt(numberStr);
 			roll(rollerNick, sides);
 		}
-		else if (message.equalsIgnoreCase("grab") || message.equalsIgnoreCase("pick") 
-			|| message.equalsIgnoreCase("take") || message.equalsIgnoreCase("get")) {
-			grabPowerup(sender);
-		}
-		else if (message.equalsIgnoreCase("items")) {
-			listItems(false);
-		}
-		else if (message.equalsIgnoreCase("rolls")) {
-			listRolls();
+		
+		Matcher commandMatcher = commandAndArgument.matcher(message);
+		if (commandMatcher.matches()) {
+			String cmd = commandMatcher.group(1);
+			String args = commandMatcher.group(2);
+			
+			if (cmd.equalsIgnoreCase("grab") || cmd.equalsIgnoreCase("pick") 
+				|| cmd.equalsIgnoreCase("take") || cmd.equalsIgnoreCase("get")) {
+				grabPowerup(sender, args);
+			}
+			else if (cmd.equalsIgnoreCase("items")) {
+				listItems(false);
+			}
+			else if (cmd.equalsIgnoreCase("rolls")) {
+				listRolls();
+			}
 		}
 	}
 	
@@ -406,20 +473,44 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else sendChannel("Nobody has rolled yet.");
 	}
 
-	private void grabPowerup(String nick) {
-		Powerup powerup = this.powerup;
-		
-		if (powerup == null) {
+	private void grabPowerup(String nick, String powerupName) {
+		Powerup powerup = findPowerup(powerupName);
+
+		if (availablePowerups.isEmpty()) {
 			sendChannelFormat("%s: nothing to grab.", nick);
 		}
-		else if (powerups.containsKey(nick)) {
-			sendChannelFormat("%s: you already have the %s.", nick, powerups.get(nick).getName());
+		else if (powerup != null && !powerup.canPickUp(this, nick)) {
+			// canPickUp(*) will warn the user
 		}
 		else {
-			powerup.onPickup(this, nick);
-			if (powerup.isCarried()) powerups.put(nick, powerup);
-			this.powerup = null;
+			if (powerup != null) {
+				powerup.onPickup(this, nick);
+				if (powerup.isCarried()) powerups.put(nick, powerup);
+				availablePowerups.remove(powerup);
+			}
+			// User didn't specify which item to grab
+			else if (powerupName == null) {
+				String items = join(availablePowerups, ", ");
+				sendChannelFormat("%s: There are multiple dice available: %s. Specify which one you want!", nick, items);
+			}
+			// Unknown item
+			else {
+				sendChannelFormat("%s: There is no such item available.", nick);
+			}
 		}
+	}
+	
+	private Powerup findPowerup(String name) {
+		if (name == null) {
+			if (availablePowerups.size() == 1) return availablePowerups.get(0);
+			else return null;
+		}
+		
+		for (Powerup powerup : availablePowerups) {
+			if (powerup.getName().toLowerCase().contains(name.toLowerCase())) return powerup;
+		}
+		
+		return null;
 	}
 	
 	private void roll(String nick, int sides) {
@@ -719,6 +810,22 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return (int)secondsPassed;
 	}
 	
+	@Override
+	public String remainingSpawnsInfo() {
+		StringBuilder buf = new StringBuilder();
+		boolean first = true;
+		for (String id : powerupSpawnTaskIDs) {
+			Task task = scheduler.getTask(id);
+			if (task instanceof SpawnTask) {
+				if (!first) buf.append(", ");
+				buf.append(task);
+				first = false;
+			}
+		}
+		
+		return buf.toString();
+	}
+	
 	private boolean isOnChannel(String nick) {
 		org.jibble.pircbot.User[] users = getUsers(channel);
 		for (org.jibble.pircbot.User user : users) {
@@ -727,11 +834,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return false;
 	}
 	
-	public static String join(Iterable<? extends CharSequence> s, String delimiter) {
-	    Iterator<? extends CharSequence> iter = s.iterator();
+	public static String join(Iterable<?> s, String delimiter) {
+	    Iterator<?> iter = s.iterator();
 	    if (!iter.hasNext()) return "";
-	    StringBuilder buffer = new StringBuilder(iter.next());
-	    while (iter.hasNext()) buffer.append(delimiter).append(iter.next());
+	    StringBuilder buffer = new StringBuilder(iter.next().toString());
+	    while (iter.hasNext()) buffer.append(delimiter).append(iter.next().toString());
 	    return buffer.toString();
 	}
 	
