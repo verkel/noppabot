@@ -9,6 +9,7 @@ import java.util.regex.*;
 
 import noppabot.Powerups.Event;
 import noppabot.Powerups.FourthWallBreaks;
+import noppabot.Powerups.MasterDie;
 import noppabot.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
@@ -71,7 +72,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			"%s beat the others with the outstanding roll of %d!",
 			"%s is certified as the new local rolling professional after the superb %d roll!",
 			"The dice favored %s tonight, granting the victory with %d points!",
-			"The demo \"Choose 200 polys and a roll\" by %s entertained all of us tonight. "
+			"The demo \"Choose 100 polys and a roll\" by %s entertained all of us tonight. "
 			+ "It crushed the competition by a large margin with %d votes!",
 			"%s has clicked on lots of candies, cows and cookies, and is experienced in picking the "
 			+ "most profitable die, resulting the roll %d!",
@@ -94,6 +95,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	//private Powerup powerup = null;
 	private List<Powerup> availablePowerups = new ArrayList<Powerup>();
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
+	private Set<String> favorsUsed = new HashSet<String>();
+	private Set<String> autorolls = new HashSet<String>();
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -155,14 +158,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerup.onSpawn(this);
 //		rolls.put("jlindval", 100);
 		
-//		availablePowerups.add(new MasterDie());
+		availablePowerups.add(new MasterDie());
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
 //		availablePowerups.add(new Diceteller());
 		
 		new FourthWallBreaks().run(this);
 		
-		startRollPeriod();
+//		startRollPeriod();
 	}
 	
 	private void handleConsoleCommands() {
@@ -413,7 +416,69 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			else if (cmd.equalsIgnoreCase("rolls")) {
 				listRolls();
 			}
+			else if (cmd.equalsIgnoreCase("peek")) {
+				peekNextSpawn(sender);
+			}
+			else if (cmd.equalsIgnoreCase("autoroll")) {
+				autorollFor(sender);
+			}
 		}
+	}
+	
+	private void autorollFor(String nick) {
+		if (!hasFavor(nick)) return;
+		favorsUsed.add(nick);
+		
+		sendChannelFormat("%s: ok, I will roll for you tonight.", nick);
+		
+		autorolls.add(nick);
+	}
+
+
+	private void peekNextSpawn(String nick) {
+		if (!hasFavor(nick)) return;
+		favorsUsed.add(nick);
+		
+		String spawn = null;
+		boolean lastSpawn = true;
+		for (String id : powerupSpawnTaskIDs) {
+			Task task = scheduler.getTask(id);
+			if (task instanceof SpawnTask) {
+				if (spawn == null) {
+					spawn = task.toString();
+				}
+				else {
+					lastSpawn = false;
+					break;
+				}
+			}
+		}
+		
+		StringBuilder buf = new StringBuilder();
+		if (spawn != null) {
+			buf.append("Next up is: ");
+			buf.append(spawn).append(". ");
+			if (lastSpawn) {
+				buf.append("That will be the last event for today.");
+			}
+			else {
+				buf.append("That won't be the last event, though!");
+			}
+		}
+		else {
+			buf.append("No further events will occur today!");
+		}
+		
+		sendChannel(buf.toString());
+	}
+
+	private boolean hasFavor(String nick) {
+		if (favorsUsed.contains(nick)) {
+			sendChannelFormat("%s: you have used your favor for today", nick);
+			return false;
+		}
+		
+		return true;
 	}
 	
 	private void listItems(boolean isRollPeriodStart) {
@@ -606,6 +671,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			Powerup powerup = powerups.get(nick);
 			powerup.onRollPeriodStart(this, nick);
 		}
+		
+		if (!autorolls.isEmpty()) {
+			sendChannelFormat("I'll roll for: %s", join(autorolls, ", "));
+			
+			for (String nick : autorolls) {
+				roll(nick, 100);
+			}
+		}
 	}
 	
 	private void endRollPeriod() {
@@ -627,6 +700,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				rolls.clear();
 				tiebreakers.clear();
 				powerups.clear();
+				favorsUsed.clear();
+				autorolls.clear();
 				clearPowerupSpawnTasks();
 				schedulePowerupsOfTheDay();
 				
