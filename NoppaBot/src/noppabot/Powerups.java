@@ -53,7 +53,7 @@ public class Powerups {
 	}
 
 	public static Object getRandomPowerupOrEvent(NoppaBot bot, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
-		if (powerupRnd.nextFloat() < 0.05f) {
+		if (!allowedEvents.isEmpty() && powerupRnd.nextFloat() < 0.05f) {
 			return getRandomEvent(allowedEvents);
 		}
 		else {
