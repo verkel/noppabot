@@ -41,7 +41,7 @@ public class Powerups {
 			new RollingProfessional(), new VolatileDie(), new WeightedDie()));
 
 		upgradeablePowerups.addAll(allPowerups);
-		upgradeablePowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new Diceteller()));
+		upgradeablePowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new Diceteller(), new GroundhogDie()));
 		
 		diceStormPowerups.addAll(allPowerups);
 		diceStormPowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate()));
