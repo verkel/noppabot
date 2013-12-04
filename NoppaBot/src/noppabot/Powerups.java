@@ -834,7 +834,7 @@ public class Powerups {
 			Set<String> owners = new TreeSet<String>(powerups.keySet());
 			int size = owners.size();
 			String targetOwner = null;
-			if (size < 0) {
+			if (size > 0) {
 				int itemIndex = rnd.nextInt(size);
 				int i = 0;
 				for (String owner : owners) {
