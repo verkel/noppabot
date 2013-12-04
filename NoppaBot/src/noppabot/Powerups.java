@@ -53,7 +53,7 @@ public class Powerups {
 	}
 
 	public static Object getRandomPowerupOrEvent(NoppaBot bot, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
-		if (!allowedEvents.isEmpty() && powerupRnd.nextFloat() < 0.05f) {
+		if (!allowedEvents.isEmpty() && powerupRnd.nextFloat() < 0.08f) {
 			return getRandomEvent(allowedEvents);
 		}
 		else {
@@ -1074,7 +1074,9 @@ public class Powerups {
 		public void run(INoppaBot bot) {
 			bot.sendChannelFormat("Out of nowhere, a violent wind knocks down the DiceMaster's screen! " +
 				"From behind the screen, you catch a glimpse of notes written by the DM:");
-			bot.sendChannel(bot.remainingSpawnsInfo());
+			String info = bot.remainingSpawnsInfo();
+			if (info.equals("")) info = "... seems that nothing of interest was in the notes!";
+			bot.sendChannel(info);
 		}
 		
 		@Override

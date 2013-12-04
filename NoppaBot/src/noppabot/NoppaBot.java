@@ -164,7 +164,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		availablePowerups.add(new BagOfDice());
 //		availablePowerups.add(new Diceteller());
 		
-		new FourthWallBreaks().run(this);
+//		new FourthWallBreaks().run(this);
 		
 //		startRollPeriod();
 	}
@@ -260,7 +260,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void incrementSpawnTime(Calendar spawnTime) {
-		int minutesRandomRange = 400 - 15 * spawnTime.get(Calendar.HOUR_OF_DAY);
+		int minutesRandomRange = 400 - 10 * spawnTime.get(Calendar.HOUR_OF_DAY);
 		int minutesIncr = commonRandom.nextInt(minutesRandomRange);
 		spawnTime.add(Calendar.MINUTE, minutesIncr);
 	}
@@ -366,7 +366,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTask.expireTask = expireTask; // If we want to change the powerup, we want to alter the expire task too
 		}
 		
-//		System.out.printf("Added spawn on %s, expires on %s\n", spawnTime.getTime(), expireTime.getTime());
+//		System.out.printf("Spawning %s on %tR, expires on %tR\n", spawnTask.spawn, spawnTime.getTime(), expireTime.getTime());
 		
 		return spawnTask.spawn;
 	}
