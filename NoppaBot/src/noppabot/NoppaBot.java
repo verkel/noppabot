@@ -260,7 +260,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void incrementSpawnTime(Calendar spawnTime) {
-		int minutesRandomRange = 400 - 10 * spawnTime.get(Calendar.HOUR_OF_DAY);
+		int minutesRandomRange = 480 - 15 * spawnTime.get(Calendar.HOUR_OF_DAY);
 		int minutesIncr = commonRandom.nextInt(minutesRandomRange);
 		spawnTime.add(Calendar.MINUTE, minutesIncr);
 	}
