@@ -485,7 +485,7 @@ public class Powerups {
 
 		@Override
 		public void onExpire(INoppaBot bot) {
-			bot.sendChannelFormat("... it was too fast for you.");
+			bot.sendChannelFormat("... the fast die was too fast for you.");
 		}
 
 		@Override
