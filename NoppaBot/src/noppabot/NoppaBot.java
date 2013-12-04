@@ -306,8 +306,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		@Override
 		public void execute(TaskExecutionContext context) {
-			availablePowerups.remove(powerup);
-			powerup.onExpire(NoppaBot.this);
+			if (availablePowerups.remove(powerup)) {
+				powerup.onExpire(NoppaBot.this);
+			}
 		}
 	}
 	
