@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
+import noppabot.Powerups.ApprenticeDie;
 import noppabot.Powerups.Event;
 import noppabot.Powerups.FourthWallBreaks;
 import noppabot.Powerups.MasterDie;
@@ -267,6 +268,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private class SpawnTask extends Task {
 		public Object spawn;
 		public Date time;
+		public String id;
+		public ExpireTask expireTask;
 		
 		public SpawnTask(Date time, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
 			this.time = time;
@@ -280,14 +283,20 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		@Override
 		public void execute(TaskExecutionContext context) {
-			if (spawn instanceof Powerup) {
-				Powerup powerup = (Powerup)spawn;
-				powerup.onSpawn(NoppaBot.this);
-				availablePowerups.add(powerup);
+			try {
+				if (spawn instanceof Powerup) {
+					Powerup powerup = (Powerup)spawn;
+					powerup.onSpawn(NoppaBot.this);
+					availablePowerups.add(powerup);
+				}
+				else {
+					Event event = (Event)spawn;
+					event.run(NoppaBot.this);
+				}
 			}
-			else {
-				Event event = (Event)spawn;
-				event.run(NoppaBot.this);
+			finally {
+				powerupSpawnTaskIDs.remove(id);
+				scheduler.deschedule(id);
 			}
 		}
 		
@@ -299,6 +308,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private class ExpireTask extends Task {
 		public Powerup powerup;
+		public String id;
 		
 		public ExpireTask(Powerup powerup) {
 			this.powerup = powerup;
@@ -306,8 +316,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		@Override
 		public void execute(TaskExecutionContext context) {
-			if (availablePowerups.remove(powerup)) {
-				powerup.onExpire(NoppaBot.this);
+			try {
+				if (availablePowerups.remove(powerup)) {
+					powerup.onExpire(NoppaBot.this);
+				}
+			}
+			finally {
+				powerupSpawnTaskIDs.remove(id);
+				scheduler.deschedule(id);
 			}
 		}
 	}
@@ -339,14 +355,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTask.execute(null);
 		}
 		else {
-			String spawnTaskID = scheduler.schedule(pattern, spawnTask);
-			powerupSpawnTaskIDs.add(spawnTaskID);
+			spawnTask.id = scheduler.schedule(pattern, spawnTask);
+			powerupSpawnTaskIDs.add(spawnTask.id);
 		}
 		
 		if (powerup != null) {
 			ExpireTask expireTask = new ExpireTask(powerup);
-			String expireTaskID = scheduler.schedule(expirePattern, expireTask);
-			powerupSpawnTaskIDs.add(expireTaskID);
+			expireTask.id = scheduler.schedule(expirePattern, expireTask);
+			powerupSpawnTaskIDs.add(expireTask.id);
+			spawnTask.expireTask = expireTask; // If we want to change the powerup, we want to alter the expire task too
 		}
 		
 //		System.out.printf("Added spawn on %s, expires on %s\n", spawnTime.getTime(), expireTime.getTime());
@@ -900,6 +917,24 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		
 		return buf.toString();
+	}
+	
+	/**
+	 * Randomly overwrite some scheduled spawns with apprentice dice spawns
+	 */
+	@Override
+	public void insertApprenticeDice() {
+		for (String id : powerupSpawnTaskIDs) {
+			Task task = scheduler.getTask(id);
+			if (task instanceof SpawnTask) {
+				SpawnTask spawnTask = (SpawnTask)task;
+				if (spawnTask.getPowerup() != null && commonRandom.nextFloat() < 0.15f) {
+					ApprenticeDie apprenticeDie = new ApprenticeDie();
+					spawnTask.spawn = apprenticeDie;
+					spawnTask.expireTask.powerup = apprenticeDie;
+				}
+			}
+		}
 	}
 	
 	private boolean isOnChannel(String nick) {

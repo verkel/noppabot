@@ -375,6 +375,10 @@ public class GenerateItemList {
 			List<Event> allowedEvents) {
 			return null;
 		}
+
+		@Override
+		public void insertApprenticeDice() {
+		}
 	}
 	
 	class LazyBot extends TestBot {

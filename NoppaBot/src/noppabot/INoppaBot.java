@@ -44,5 +44,7 @@ public interface INoppaBot {
 	public void sendMessageFormat(String nick, String msg, Object... args);
 	
 	public String remainingSpawnsInfo();
+	
+	public void insertApprenticeDice();
 
 }

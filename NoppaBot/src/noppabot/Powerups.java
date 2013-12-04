@@ -74,16 +74,6 @@ public class Powerups {
 	}
 	
 	private static Powerup selectRandomPowerup(NoppaBot bot, List<Powerup> allowedPowerups) {
-		// Have a chance to spawn some apprentice dies if there is a master die
-		// Don't spawn these otherwise
-		int masterDieCount = bot.countPowerups(MasterDie.class);
-		if (masterDieCount > 0) {
-			int apprenticeDieCount = bot.countPowerups(ApprenticeDie.class);
-			if (powerupRnd.nextFloat() < 0.20f / (1 + apprenticeDieCount * 0.5f)) {
-				return new ApprenticeDie();
-			}
-		}
-		
 		// Prevent two same powerups in a row
 		int rnd;
 		int n = allowedPowerups.size();
@@ -436,6 +426,8 @@ public class Powerups {
 			bot.sendChannelFormat(
 				"%s wrestles for the MASTER DIE with the other contestants and barely comes on top. Surely, the MASTER DIE must be worth all the trouble!",
 				nick);
+			
+			bot.insertApprenticeDice();
 		}
 
 		@Override
