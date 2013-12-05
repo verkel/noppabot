@@ -11,6 +11,7 @@ import noppabot.Powerups.ApprenticeDie;
 import noppabot.Powerups.Event;
 import noppabot.Powerups.FourthWallBreaks;
 import noppabot.Powerups.MasterDie;
+import noppabot.Powerups.PolishedDie;
 import noppabot.Powerups.Powerup;
 
 import org.jibble.pircbot.PircBot;
@@ -24,6 +25,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private final boolean debug;
 	private final boolean executeDebugStuff;
 	
+	private static final String ROLL_PERIOD_ABOUT_TO_START = "59 23 * * *";
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
 	private static final int POWERUP_EXPIRE_MINUTES = 60;
@@ -126,6 +128,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		if (isInRollPeriod()) startRollPeriod();
 		
+		scheduler.schedule(ROLL_PERIOD_ABOUT_TO_START, new Runnable() {
+			@Override
+			public void run() {
+				doTasksBeforeRollPeriodStart();
+			}
+		});
+		
 		scheduler.schedule(ROLL_PERIOD_START, new Runnable() {
 			@Override
 			public void run() {
@@ -150,18 +159,18 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-//		powerups.put("hassu", new ApprenticeDie());
-//		powerups.put("hessu", new ApprenticeDie());
-//		powerups.put("kessu", new ApprenticeDie());
-//		powerups.put("frodo", new ApprenticeDie());
-//		powerups.put("bilbo", new ApprenticeDie());
-//		Powerup p = new PolishedDie(); p.initialize(this);
-//		powerups.put("Verkel", p);
+		powerups.put("hassu", new ApprenticeDie());
+		powerups.put("hessu", new ApprenticeDie());
+		powerups.put("kessu", new ApprenticeDie());
+		powerups.put("frodo", new ApprenticeDie());
+		powerups.put("bilbo", new ApprenticeDie());
+		Powerup p = new PolishedDie(); p.initialize(this);
+		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
-		rolls.put("Verkel", 100);
-		rolls.put("jlindval", 100);
-		autorolls.add("jlindval");
+//		rolls.put("Verkel", 100);
+//		rolls.put("jlindval", 100);
+//		autorolls.add("jlindval");
 		
 		availablePowerups.add(new MasterDie());
 //		availablePowerups.add(new WeightedDie());
@@ -244,7 +253,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		rollPeriodEnd.set(Calendar.MINUTE, 10);
 		
 		Calendar spawnEndTime = (Calendar)rollPeriodStart.clone();
-//		spawnEndTime.add(Calendar.MINUTE, -POWERUP_EXPIRE_MINUTES);
+		spawnEndTime.add(Calendar.MINUTE, -1);
 		
 		Calendar spawnTime = Calendar.getInstance();
 		if (spawnTime.get(Calendar.HOUR_OF_DAY) < 10) {
@@ -515,20 +524,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void listItems(boolean isRollPeriodStart) {
-		if (isRollPeriodStart) {
-			for (String nick : powerups.keySet()) {
-				String powerupName = powerups.get(nick).getName();
-				sendChannelFormat("%s has the %s! ", nick, powerupName);
-			}
+		if (powerups.isEmpty() && !isRollPeriodStart) {
+			sendChannel("Nobody has any items.");
+			return;
 		}
-		else {
-			if (powerups.isEmpty()) {
-				sendChannel("Nobody has any items.");
-				return;
-			}
-			
+		
+		if (!powerups.isEmpty() || !isRollPeriodStart) {
 			StringBuilder buf = new StringBuilder();
-			buf.append("Items: ");
+			if (isRollPeriodStart) buf.append("Today you have collected: ");
+			else buf.append("Items: ");
 			boolean first = true;
 			for (String nick : powerups.keySet()) {
 				String powerupName = powerups.get(nick).getName();
@@ -695,14 +699,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return rolls.get(nick);
 	}
 	
-	private void startRollPeriod() {
-		state = State.ROLL_PERIOD;
-		
+
+	private void doTasksBeforeRollPeriodStart() {
 		expireAllPowerups();
 		clearPowerupSpawnTasks();
 
-		sendChannel(randomRollStartMsg());
 		listItems(true);
+	}
+	
+	private void startRollPeriod() {
+		state = State.ROLL_PERIOD;
+		
+		// Do this again, because doTasksBeforeRollPeriodStart() isn't guaranteed to occur
+		clearPowerupSpawnTasks();
+
+		sendChannel(randomRollStartMsg());
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
