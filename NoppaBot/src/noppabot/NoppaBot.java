@@ -21,11 +21,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private final String channel;
 	private final String server;
 	private final File rollRecordsPath;
+	private final boolean debug;
 	private final boolean executeDebugStuff;
 	
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
-	private static final int POWERUP_EXPIRE_MINUTES = 30;
+	private static final int POWERUP_EXPIRE_MINUTES = 60;
 	
 	private Properties properties;
 	
@@ -112,6 +113,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		channel = properties.getProperty("channel");
 		rollRecordsPath =  new File(properties.getProperty("rollRecordsPath"));
 		server = properties.getProperty("server");
+		debug = Boolean.parseBoolean(properties.getProperty("debug"));
 		executeDebugStuff = Boolean.parseBoolean(properties.getProperty("executeDebugStuff"));
 		
 		setLogin(nick);
@@ -134,7 +136,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		scheduler.schedule(ROLL_PERIOD_END, new Runnable() {
 			@Override
 			public void run() {
-				endRollPeriod();
+				tryEndRollPeriod();
 			}
 		});
 		
@@ -157,7 +159,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
-//		rolls.put("jlindval", 100);
+		rolls.put("Verkel", 100);
+		rolls.put("jlindval", 100);
+		autorolls.add("jlindval");
 		
 		availablePowerups.add(new MasterDie());
 //		availablePowerups.add(new WeightedDie());
@@ -198,7 +202,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				}
 				else if (cmd.equals("endperiod")) {
 					System.out.println("Ending roll period");
-					endRollPeriod();
+					tryEndRollPeriod();
 				}
 				else if (cmd.equals("freebie")) {
 					giveFreePowerup();
@@ -240,7 +244,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		rollPeriodEnd.set(Calendar.MINUTE, 10);
 		
 		Calendar spawnEndTime = (Calendar)rollPeriodStart.clone();
-		spawnEndTime.add(Calendar.MINUTE, -POWERUP_EXPIRE_MINUTES);
+//		spawnEndTime.add(Calendar.MINUTE, -POWERUP_EXPIRE_MINUTES);
 		
 		Calendar spawnTime = Calendar.getInstance();
 		if (spawnTime.get(Calendar.HOUR_OF_DAY) < 10) {
@@ -317,15 +321,26 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		@Override
 		public void execute(TaskExecutionContext context) {
 			try {
-				if (availablePowerups.remove(powerup)) {
-					powerup.onExpire(NoppaBot.this);
-				}
+				expirePowerup(powerup);
 			}
 			finally {
 				powerupSpawnTaskIDs.remove(id);
 				scheduler.deschedule(id);
 			}
 		}
+	}
+	
+	private void expirePowerup(Powerup powerup) {
+		if (availablePowerups.remove(powerup)) {
+			powerup.onExpire(this);
+		}
+	}
+
+	private void expireAllPowerups() {
+		for (Powerup powerup : availablePowerups) {
+			powerup.onExpire(this);
+		}
+		availablePowerups.clear();
 	}
 	
 	/**
@@ -366,7 +381,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTask.expireTask = expireTask; // If we want to change the powerup, we want to alter the expire task too
 		}
 		
-//		System.out.printf("Spawning %s on %tR, expires on %tR\n", spawnTask.spawn, spawnTime.getTime(), expireTime.getTime());
+		if (debug) System.out.printf("Spawning %s on %tR, expires on %tR\n", spawnTask.spawn, spawnTime.getTime(), expireTime.getTime());
 		
 		return spawnTask.spawn;
 	}
@@ -656,13 +671,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public void participate(String nick, int rollValue) {
 		if (state == State.ROLL_PERIOD && !rolls.containsKey(nick)) {
 			rolls.put(nick, rollValue);
-			if (isOvertime()) endRollPeriod();
+			if (isOvertime()) tryEndRollPeriod();
 		}
 		else if (state == State.SETTLE_TIE && tiebreakers.contains(nick)) {
 			if (!rolls.containsKey(nick)) {
 				rolls.put(nick, rollValue);
 				tiebreakers.remove(nick);
-				if (tiebreakers.isEmpty()) endRollPeriod();
+				if (tiebreakers.isEmpty()) tryEndRollPeriod();
 				else {
 					String pendingTiebreakers = join(tiebreakers, ", ");
 					sendChannelFormat("I still need a roll from %s.", pendingTiebreakers);
@@ -682,6 +697,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void startRollPeriod() {
 		state = State.ROLL_PERIOD;
+		
+		expireAllPowerups();
+		clearPowerupSpawnTasks();
+
 		sendChannel(randomRollStartMsg());
 		listItems(true);
 		
@@ -690,6 +709,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			powerup.onRollPeriodStart(this, nick);
 		}
 		
+		autorollFor(autorolls);
+		
+	}
+	
+	private void autorollFor(Set<String> autorolls) {
 		if (!autorolls.isEmpty()) {
 			sendChannelFormat("I'll roll for: %s", join(autorolls, ", "));
 			
@@ -699,52 +723,92 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private void endRollPeriod() {
+	private void tryEndRollPeriod() {
 		
 		if (rolls.isEmpty()) {
 			sendChannel("No rolls within 10 minutes. Now first roll wins, be quick!");
+			state = State.ROLL_PERIOD;
 			return;
 		}
 		else {
 			List<String> highestRollers = getHighestRollers(rolls);
 			if (highestRollers.size() == 1) {
-				String winner = highestRollers.get(0);
-				int roll = rolls.get(winner);
-				String msg = String.format(randomRollEndMsg(), winner, roll);
-				sendChannel(msg);
-				
-				updateRecords(winner);
-				
-				rolls.clear();
-				tiebreakers.clear();
-				powerups.clear();
-				favorsUsed.clear();
-				autorolls.clear();
-				clearPowerupSpawnTasks();
-				schedulePowerupsOfTheDay();
-				
-				state = State.NORMAL;
+				endRollPeriod(highestRollers);
 			}
 			else {
-				String tiebreakersStr = join(highestRollers, ", ");
-				int roll = rolls.get(highestRollers.get(0));
-				String msg = String.format(
-					"The roll %d was tied between %s. Roll again to settle the score!", 
-					roll, tiebreakersStr);
-				sendChannel(msg);
-				tiebreakers.addAll(highestRollers);
-				
-				rolls.clear();
-				
-				for (String tiebreakerNick : tiebreakers) {
-					Powerup powerup = powerups.get(tiebreakerNick);
-					powerup.onTiebreakPeriodStart(this, tiebreakerNick);
-				}
-				
-				state = State.SETTLE_TIE;
+				startSettleTie(highestRollers);
 			}
 		}
 	}
+
+	private void startSettleTie(List<String> highestRollers) {
+		String tiebreakersStr = join(highestRollers, ", ");
+		int roll = rolls.get(highestRollers.get(0));
+		String msg = String.format(
+			"The roll %d was tied between %s. Roll again within 10 minutes to settle the score!", 
+			roll, tiebreakersStr);
+		sendChannel(msg);
+		tiebreakers.addAll(highestRollers);
+		
+		rolls.clear();
+		
+		for (String tiebreakerNick : tiebreakers) {
+			Powerup powerup = powerups.get(tiebreakerNick);
+			if (powerup != null) powerup.onTiebreakPeriodStart(this, tiebreakerNick);
+		}
+		
+		scheduleSettleTieTimeout();
+		
+		state = State.SETTLE_TIE;
+
+		// Autoroll for tiebreakers with autoroll set
+		Set<String> tiebreakerAutorolls = new TreeSet<String>();
+		tiebreakerAutorolls.addAll(tiebreakers);
+		tiebreakerAutorolls.retainAll(autorolls);
+		autorollFor(tiebreakerAutorolls);
+	}
+
+
+	private void scheduleSettleTieTimeout() {
+		SettleTieTimeoutTask timeoutTask = new SettleTieTimeoutTask();
+		Calendar time = Calendar.getInstance();
+		time.add(Calendar.MINUTE, 10);
+		final String pattern = String.format("%d %d * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
+		timeoutTask.id = scheduler.schedule(pattern, timeoutTask);
+	}
+	
+	private class SettleTieTimeoutTask extends Task {
+		public String id;
+		
+		@Override
+		public void execute(TaskExecutionContext arg0) throws RuntimeException {
+			if (state == State.SETTLE_TIE) {
+				sendChannel("I'm calling this now...");
+				tiebreakers.clear();
+				tryEndRollPeriod();
+			}
+			scheduler.deschedule(id);
+		}
+	}
+	
+	private void endRollPeriod(List<String> highestRollers) {
+		String winner = highestRollers.get(0);
+		int roll = rolls.get(winner);
+		String msg = String.format(randomRollEndMsg(), winner, roll);
+		sendChannel(msg);
+		
+		updateRecords(winner);
+		
+		rolls.clear();
+		tiebreakers.clear();
+		powerups.clear();
+		favorsUsed.clear();
+		autorolls.clear();
+		schedulePowerupsOfTheDay();
+		
+		state = State.NORMAL;
+	}
+
 	
 	private void updateRecords(String winner) {
 		RollRecords rec = loadRollRecords();
