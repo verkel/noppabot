@@ -296,20 +296,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		@Override
 		public void execute(TaskExecutionContext context) {
-			try {
-				if (spawn instanceof Powerup) {
-					Powerup powerup = (Powerup)spawn;
-					powerup.onSpawn(NoppaBot.this);
-					availablePowerups.add(powerup);
-				}
-				else {
-					Event event = (Event)spawn;
-					event.run(NoppaBot.this);
-				}
+			powerupSpawnTaskIDs.remove(id);
+			scheduler.deschedule(id);
+			
+			if (spawn instanceof Powerup) {
+				Powerup powerup = (Powerup)spawn;
+				powerup.onSpawn(NoppaBot.this);
+				availablePowerups.add(powerup);
 			}
-			finally {
-				powerupSpawnTaskIDs.remove(id);
-				scheduler.deschedule(id);
+			else {
+				Event event = (Event)spawn;
+				event.run(NoppaBot.this);
 			}
 		}
 		
@@ -329,13 +326,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		@Override
 		public void execute(TaskExecutionContext context) {
-			try {
-				expirePowerup(powerup);
-			}
-			finally {
-				powerupSpawnTaskIDs.remove(id);
-				scheduler.deschedule(id);
-			}
+			powerupSpawnTaskIDs.remove(id);
+			scheduler.deschedule(id);
+			
+			expirePowerup(powerup);
 		}
 	}
 	
