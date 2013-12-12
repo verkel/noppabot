@@ -119,11 +119,6 @@ public class GenerateItemList {
 		public String getName() {
 			return "Regular Die";
 		}
-
-		@Override
-		public int getCost() {
-			return 0;
-		}
 	}
 
 	private void testBasicPowerups() {
@@ -371,13 +366,13 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public Object scheduleSpawn(Calendar spawnTime, List<Powerup> allowedPowerups,
-			List<Event> allowedEvents) {
-			return null;
+		public void insertApprenticeDice() {
 		}
 
 		@Override
-		public void insertApprenticeDice() {
+		public Object scheduleSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups,
+			Spawner<Event> allowedEvents) {
+			return null;
 		}
 	}
 	

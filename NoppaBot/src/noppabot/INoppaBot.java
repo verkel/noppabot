@@ -11,7 +11,7 @@ import noppabot.Powerups.Powerup;
 
 public interface INoppaBot {
 
-	public Object scheduleSpawn(Calendar spawnTime, List<Powerup> allowedPowerups, List<Event> allowedEvents);
+	public Object scheduleSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups, Spawner<Event> allowedEvents);
 	
 	public void sendDefaultContestRollMessage(String nick, int value);
 

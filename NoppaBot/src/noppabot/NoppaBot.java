@@ -239,7 +239,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void giveFreePowerup() {
 		sendChannel("Spawning item manually");
-		scheduleSpawn(null, Powerups.allPowerups, Collections.<Event>emptyList());
+		scheduleSpawn(null, Powerups.allPowerups, null);
 	}
 
 	private void schedulePowerupsOfTheDay() {
@@ -263,7 +263,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		incrementSpawnTime(spawnTime);
 		
-		List<Event> allowedEvents = Powerups.allEvents;
+		Spawner<Event> allowedEvents = Powerups.allEvents;
 		while (spawnTime.before(spawnEndTime)) {
 			Object spawn = scheduleSpawn(spawnTime, Powerups.allPowerups, allowedEvents);
 			// Only allow one 4th wall break per day
@@ -284,9 +284,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		public String id;
 		public ExpireTask expireTask;
 		
-		public SpawnTask(Date time, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
+		public SpawnTask(Date time, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
 			this.time = time;
-			spawn = Powerups.getRandomPowerupOrEvent(NoppaBot.this, allowedPowerups, allowedEvents);
+			spawn = Powerups.getRandomPowerupOrEvent(NoppaBot.this, spawnPowerups, spawnEvents);
 		}
 		
 		public Powerup getPowerup() {
@@ -354,7 +354,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	 * @param allowFourthWallBreaks Allow the fourth wall falls event
 	 */
 	@Override
-	public Object scheduleSpawn(Calendar spawnTime, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
+	public Object scheduleSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups, Spawner<Event> allowedEvents) {
 		boolean immediateSpawn = (spawnTime == null);
 		if (immediateSpawn) spawnTime = Calendar.getInstance();
 		

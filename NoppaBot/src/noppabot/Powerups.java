@@ -14,15 +14,15 @@ public class Powerups {
 	private static final Set<Integer> primes = new HashSet<Integer>();
 	private static final List<Integer> dice;
 	
-	public static final List<Powerup> allPowerups = new ArrayList<Powerup>();
-	public static final List<Powerup> diceStormPowerups = new ArrayList<Powerup>();
-	public static final List<Event> allEvents = new ArrayList<Event>();
-	public static final List<Event> allEventsMinusFourthWall = new ArrayList<Event>();
-
-	private static final NavigableSet<Powerup> upgradeablePowerups = new TreeSet<Powerup>();
+	public static final Spawner<Powerup> allPowerups;
+	public static final Spawner<Powerup> diceStormPowerups;
+	public static final Spawner<Event> allEvents;
+	public static final Spawner<Event> allEventsMinusFourthWall;
 	
-	private static int lastPowerupIndex = -1;
-	private static int lastEventIndex = -1;
+//	private static final NavigableSet<Powerup> upgradeablePowerups = new TreeSet<Powerup>();
+	
+//	private static int lastPowerupIndex = -1;
+//	private static int lastEventIndex = -1;
 	
 
 	static {
@@ -34,68 +34,59 @@ public class Powerups {
 		dice.addAll(lowDice);
 		dice.add(100);
 		
+		List<Powerup> allPowerupsList = new ArrayList<Powerup>();
+		List<Powerup> diceStormPowerupsList = new ArrayList<Powerup>();
+		List<Event> allEventsList = new ArrayList<Event>();
+		List<Event> allEventsMinusFourthWallList = new ArrayList<Event>();
+		
 		// Apprentice die is not put here, but can be spawned regardless if there are master dies
-		allPowerups.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(),
+		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(),
 			new DicePirate(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), new FastDie(),
 			new GroundhogDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
 			new RollingProfessional(), new VolatileDie(), new WeightedDie()));
 
-		upgradeablePowerups.addAll(allPowerups);
-		upgradeablePowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new Diceteller(), new GroundhogDie()));
+//		upgradeablePowerups.addAll(allPowerupsList);
+//		upgradeablePowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new Diceteller(), new GroundhogDie()));
 		
-		diceStormPowerups.addAll(allPowerups);
-		diceStormPowerups.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate()));
+		diceStormPowerupsList.addAll(allPowerupsList);
+		diceStormPowerupsList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate()));
 		
-		allEvents.addAll(Arrays.asList(new CounterfeitDice(), new DiceMutation(), new DiceStorm(), new FourthWallBreaks()));
+		allEventsList.addAll(Arrays.asList(new CounterfeitDice(), new DiceMutation(), new DiceStorm(), new FourthWallBreaks()));
 		
-		allEventsMinusFourthWall.addAll(allEvents);
-		allEventsMinusFourthWall.remove(new FourthWallBreaks());
+		allEventsMinusFourthWallList.addAll(allEventsList);
+		allEventsMinusFourthWallList.remove(new FourthWallBreaks());
+		
+		allPowerups = new Spawner<Powerup>(allPowerupsList);
+		diceStormPowerups = new Spawner<Powerup>(diceStormPowerupsList);
+		allEvents = new Spawner<Event>(allEventsList);
+		allEventsMinusFourthWall = new Spawner<Event>(allEventsMinusFourthWallList);
 	}
 
-	public static Object getRandomPowerupOrEvent(NoppaBot bot, List<Powerup> allowedPowerups, List<Event> allowedEvents) {
-		if (!allowedEvents.isEmpty() && powerupRnd.nextFloat() < 0.08f) {
-			return getRandomEvent(allowedEvents);
+	public static Object getRandomPowerupOrEvent(NoppaBot bot, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
+		if (spawnEvents != null && powerupRnd.nextFloat() < 0.08f) {
+			return getRandomEvent(spawnEvents);
 		}
 		else {
-			return getRandomPowerup(bot, allowedPowerups);
+			return getRandomPowerup(bot, spawnPowerups);
 		}
 	}
 	
-	public static Powerup getRandomPowerup(NoppaBot bot, List<Powerup> allowedPowerups) {
-		Powerup powerup = selectRandomPowerup(bot, allowedPowerups);
-		powerup = clonePowerup(bot, powerup);
+	public static Powerup getRandomPowerup(NoppaBot bot, Spawner<Powerup> spawnPowerups) {
+		Powerup powerup = spawnPowerups.spawn();
+		powerup.initialize(bot);
 		return powerup;
 	}
 	
-	public static Event getRandomEvent(List<Event> allowedEvents) {
-		Event event = selectRandomEvent(allowedEvents);
-		event = cloneEvent(event);
+	public static Event getRandomEvent(Spawner<Event> spawnEvents) {
+		Event event = spawnEvents.spawn();
 		return event;
 	}
 	
-	private static Powerup selectRandomPowerup(NoppaBot bot, List<Powerup> allowedPowerups) {
-		// Prevent two same powerups in a row
-		int rnd;
-		int n = allowedPowerups.size();
-		do { rnd = powerupRnd.nextInt(n); }
-		while (rnd == lastPowerupIndex);
-		lastPowerupIndex = rnd;
-
-		return allowedPowerups.get(rnd);
+	public static interface ISpawnable {
+		public float getSpawnChance();
 	}
 	
-	private static Event selectRandomEvent(List<Event> allowedEvents) {
-		// Prevent two same events in a row
-		int rnd;
-		int n = allowedEvents.size();
-		do { rnd = powerupRnd.nextInt(n); }
-		while (rnd == lastEventIndex);
-		lastEventIndex = rnd;
-		
-		return allowedEvents.get(rnd);
-	}
-
-	public static abstract class Powerup implements Comparable<Powerup> {
+	public static abstract class Powerup implements ISpawnable {
 		
 		public abstract String getName();
 
@@ -151,33 +142,38 @@ public class Powerups {
 			return true;
 		}
 		
-		/**
-		 * Cost or value of the die
-		 */
-		public abstract int getCost();
+//		/**
+//		 * Cost or value of the die
+//		 */
+//		public abstract int getCost();
+		
+		@Override
+		public float getSpawnChance() {
+			return 1;
+		}
 
 		@Override
 		public String toString() {
 			return getName();
 		}
 		
-		@Override
-		public int compareTo(Powerup p) {
-			return cmp(getCost(), p.getCost());
-		}
-		
-		private static int cmp(int c1, int c2) {
-			return c1 > c2 ? 1 : c1 < c2 ? -1 : 0;
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			// This is useful for the upgradeablePowerups set
-			return this.getClass().equals(obj.getClass());
-		}
+//		@Override
+//		public int compareTo(Powerup p) {
+//			return cmp(getCost(), p.getCost());
+//		}
+//		
+//		private static int cmp(int c1, int c2) {
+//			return c1 > c2 ? 1 : c1 < c2 ? -1 : 0;
+//		}
+//		
+//		@Override
+//		public boolean equals(Object obj) {
+//			// This is useful for the upgradeablePowerups set
+//			return this.getClass().equals(obj.getClass());
+//		}
 	}
 	
-	public static abstract class Event {
+	public static abstract class Event implements ISpawnable {
 		public abstract void run(INoppaBot bot);
 		
 		public abstract String getName();
@@ -185,6 +181,11 @@ public class Powerups {
 		@Override
 		public String toString() {
 			return getName();
+		}
+		
+		@Override
+		public float getSpawnChance() {
+			return 1;
 		}
 	}
 
@@ -221,11 +222,6 @@ public class Powerups {
 		public String getName() {
 			return "Polished Die";
 		}
-		
-		@Override
-		public int getCost() {
-			return 1;
-		}
 	}
 
 	public static class WeightedDie extends Powerup {
@@ -261,11 +257,6 @@ public class Powerups {
 		@Override
 		public String getName() {
 			return "Weighted Die";
-		}
-		
-		@Override
-		public int getCost() {
-			return 7;
 		}
 	}
 
@@ -307,8 +298,8 @@ public class Powerups {
 		}
 		
 		@Override
-		public int getCost() {
-			return 9;
+		public float getSpawnChance() {
+			return 0.75f;
 		}
 	}
 
@@ -354,11 +345,6 @@ public class Powerups {
 		public String getName() {
 			return "Primal Die";
 		}
-		
-		@Override
-		public int getCost() {
-			return 2;
-		}
 	}
 
 	public static class LuckyDie extends Powerup {
@@ -401,11 +387,6 @@ public class Powerups {
 		@Override
 		public String getName() {
 			return "Lucky Die";
-		}
-		
-		@Override
-		public int getCost() {
-			return 3;
 		}
 	}
 
@@ -463,8 +444,8 @@ public class Powerups {
 		}
 		
 		@Override
-		public int getCost() {
-			return 12;
+		public float getSpawnChance() {
+			return 0.33f;
 		}
 	}
 
@@ -504,9 +485,10 @@ public class Powerups {
 			return "Fast Die";
 		}
 		
+		
 		@Override
-		public int getCost() {
-			return 11;
+		public float getSpawnChance() {
+			return 0.50f;
 		}
 	}
 
@@ -547,11 +529,6 @@ public class Powerups {
 		@Override
 		public String getName() {
 			return "Volatile Die";
-		}
-		
-		@Override
-		public int getCost() {
-			return 10;
 		}
 	}
 
@@ -594,11 +571,6 @@ public class Powerups {
 		@Override
 		public String getName() {
 			return "Extreme Die";
-		}
-		
-		@Override
-		public int getCost() {
-			return 8;
 		}
 	}
 
@@ -675,11 +647,6 @@ public class Powerups {
 		public String getName() {
 			return "Bag of Dice";
 		}
-		
-		@Override
-		public int getCost() {
-			return 5;
-		}
 	}
 	
 	public static class GroundhogDie extends Powerup {
@@ -723,9 +690,10 @@ public class Powerups {
 			return "Groundhog Die";
 		}
 		
+		
 		@Override
-		public int getCost() {
-			return 6;
+		public float getSpawnChance() {
+			return 0.75f;
 		}
 	}
 	
@@ -769,11 +737,6 @@ public class Powerups {
 		public String getName() {
 			return "Rolling Professional";
 		}
-		
-		@Override
-		public int getCost() {
-			return 4;
-		}
 	}
 
 	public static class Diceteller extends Powerup {
@@ -805,12 +768,6 @@ public class Powerups {
 		@Override
 		public String getName() {
 			return "Diceteller";
-		}
-		
-		
-		@Override
-		public int getCost() {
-			return -1;
 		}
 	}
 	
@@ -852,7 +809,7 @@ public class Powerups {
 			}
 			else {
 				Powerup stolenPowerup = powerups.remove(targetOwner);
-				stolenPowerup = clonePowerup(bot, stolenPowerup);
+//				stolenPowerup = clonePowerup(bot, stolenPowerup); // onPickup() stuff aren't carried anymore, so no need to clone
 				powerups.put(nick, stolenPowerup);
 				bot.sendChannelFormat("The dice pirate looted %s's %s!", targetOwner, stolenPowerup);
 				if (stolenPowerup instanceof Diceteller) stolenPowerup.onPickup(bot, nick);
@@ -870,29 +827,8 @@ public class Powerups {
 		}
 		
 		@Override
-		public int getCost() {
-			return -1;
-		}
-	}
-	
-	private static Powerup clonePowerup(INoppaBot bot, Powerup powerup) {
-		try {
-			powerup = powerup.getClass().newInstance();
-			powerup.initialize(bot);
-			return powerup;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	private static Event cloneEvent(Event event) {
-		try {
-			event = event.getClass().newInstance();
-			return event;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		public float getSpawnChance() {
+			return 0.75f;
 		}
 	}
 	
@@ -929,11 +865,6 @@ public class Powerups {
 		@Override
 		public String getName() {
 			return "Apprentice Die";
-		}
-		
-		@Override
-		public int getCost() {
-			return -1;
 		}
 	}
 	
@@ -979,15 +910,15 @@ public class Powerups {
 			bot.sendChannelFormat("The trainer says: \"I will help you to unlock the hidden potential in your dice!\"");
 			bot.sendChannelFormat("%s's %s evolved into %s!", nick, oldPowerup, newPowerup);
 		}
-		
-		@Override
-		public int getCost() {
-			return -1;
-		}
 
 		@Override
 		public String getName() {
 			return "Dicemon Trainer";
+		}
+		
+		@Override
+		public float getSpawnChance() {
+			return 2f;
 		}
 	}
 	
@@ -1004,7 +935,7 @@ public class Powerups {
 			
 			int count = 3 + powerupRnd.nextInt(2);
 			for (int i = 0; i < count; i++) {
-				bot.scheduleSpawn(null, diceStormPowerups, Collections.<Event>emptyList());
+				bot.scheduleSpawn(null, diceStormPowerups, null);
 			}
 		}
 		
@@ -1087,22 +1018,6 @@ public class Powerups {
 	
 	private static int capResult(int roll) {
 		return Math.min(100, roll);
-	}
-	
-	private static Powerup upgrade(INoppaBot bot, Powerup powerup) {
-		if (upgradeablePowerups.contains(powerup)) {
-			Powerup higher = upgradeablePowerups.higher(powerup);
-			if (higher != null) return clonePowerup(bot, higher);
-		}
-		return null;
-	}
-	
-	private static Powerup downgrade(INoppaBot bot, Powerup powerup) {
-		if (upgradeablePowerups.contains(powerup)) {
-			Powerup lower = upgradeablePowerups.lower(powerup);
-			if (lower != null) return clonePowerup(bot, lower);
-		}
-		return null;
 	}
 	
 	private static List<String> getRandomDiceOwners(INoppaBot bot) {
