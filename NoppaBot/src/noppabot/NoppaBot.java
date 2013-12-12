@@ -7,8 +7,9 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import noppabot.events.*;
-import noppabot.powerups.*;
+import noppabot.spawns.Spawner;
+import noppabot.spawns.dice.*;
+import noppabot.spawns.events.*;
 
 import org.jibble.pircbot.PircBot;
 

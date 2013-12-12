@@ -6,8 +6,9 @@ package noppabot;
 
 import java.util.*;
 
-import noppabot.events.Event;
-import noppabot.powerups.Powerup;
+import noppabot.spawns.Spawner;
+import noppabot.spawns.dice.Powerup;
+import noppabot.spawns.events.Event;
 
 public interface INoppaBot {
 

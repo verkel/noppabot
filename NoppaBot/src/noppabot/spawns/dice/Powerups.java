@@ -2,12 +2,14 @@
  * Created on 27.10.2013
  * @author verkel
  */
-package noppabot.powerups;
+package noppabot.spawns.dice;
 
 import java.util.*;
 
-import noppabot.*;
-import noppabot.events.*;
+import noppabot.NoppaBot;
+import noppabot.spawns.Spawner;
+import noppabot.spawns.events.*;
+import noppabot.spawns.instants.*;
 
 public class Powerups {
 

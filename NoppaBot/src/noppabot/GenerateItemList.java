@@ -7,8 +7,9 @@ package noppabot;
 import java.io.*;
 import java.util.*;
 
-import noppabot.events.Event;
-import noppabot.powerups.*;
+import noppabot.spawns.Spawner;
+import noppabot.spawns.dice.*;
+import noppabot.spawns.events.Event;
 
 public class GenerateItemList {
 
