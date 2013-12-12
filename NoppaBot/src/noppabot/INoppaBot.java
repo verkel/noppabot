@@ -6,8 +6,8 @@ package noppabot;
 
 import java.util.*;
 
-import noppabot.Powerups.Event;
-import noppabot.Powerups.Powerup;
+import noppabot.events.Event;
+import noppabot.powerups.Powerup;
 
 public interface INoppaBot {
 
@@ -47,4 +47,5 @@ public interface INoppaBot {
 	
 	public void insertApprenticeDice();
 
+	public List<String> getRandomPowerupOwners();
 }

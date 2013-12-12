@@ -7,19 +7,8 @@ package noppabot;
 import java.io.*;
 import java.util.*;
 
-import noppabot.Powerups.BagOfDice;
-import noppabot.Powerups.EnchantedDie;
-import noppabot.Powerups.Event;
-import noppabot.Powerups.ExtremeDie;
-import noppabot.Powerups.FastDie;
-import noppabot.Powerups.LuckyDie;
-import noppabot.Powerups.MasterDie;
-import noppabot.Powerups.PolishedDie;
-import noppabot.Powerups.Powerup;
-import noppabot.Powerups.PrimalDie;
-import noppabot.Powerups.RollingProfessional;
-import noppabot.Powerups.VolatileDie;
-import noppabot.Powerups.WeightedDie;
+import noppabot.events.Event;
+import noppabot.powerups.*;
 
 public class GenerateItemList {
 
@@ -372,6 +361,11 @@ public class GenerateItemList {
 		@Override
 		public Object scheduleSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups,
 			Spawner<Event> allowedEvents) {
+			return null;
+		}
+
+		@Override
+		public List<String> getRandomPowerupOwners() {
 			return null;
 		}
 	}

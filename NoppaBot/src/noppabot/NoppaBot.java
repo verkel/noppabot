@@ -7,12 +7,8 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import noppabot.Powerups.ApprenticeDie;
-import noppabot.Powerups.Event;
-import noppabot.Powerups.FourthWallBreaks;
-import noppabot.Powerups.MasterDie;
-import noppabot.Powerups.PolishedDie;
-import noppabot.Powerups.Powerup;
+import noppabot.events.*;
+import noppabot.powerups.*;
 
 import org.jibble.pircbot.PircBot;
 
@@ -1004,6 +1000,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public List<String> getRandomPowerupOwners() {
+		ArrayList<String> owners = new ArrayList<String>(getPowerups().keySet());
+		Collections.shuffle(owners);
+		int removeCount = commonRandom.nextInt(owners.size());
+		return owners.subList(0, owners.size() - removeCount);
 	}
 	
 	private boolean isOnChannel(String nick) {
