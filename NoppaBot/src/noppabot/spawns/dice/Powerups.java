@@ -31,15 +31,15 @@ public class Powerups {
 		
 		// Apprentice die is not put here, but can be spawned regardless if there are master dies
 		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(),
-			new DicePirate(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), new FastDie(),
+			new DicePirate(), new DiceRecycler(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), new FastDie(),
 			new GroundhogDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
 			new RollingProfessional(), new VolatileDie(), new WeightedDie()));
 		
 		firstPowerupList.addAll(allPowerupsList);
-		firstPowerupList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate()));
+		firstPowerupList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new DiceRecycler()));
 
 		diceStormPowerupsList.addAll(allPowerupsList);
-		diceStormPowerupsList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate()));
+		diceStormPowerupsList.removeAll(Arrays.asList(new DicePirate()));
 		
 		allEventsList.addAll(Arrays.asList(new DiceMutation(), new DiceStorm(), new FourthWallBreaks()));
 		

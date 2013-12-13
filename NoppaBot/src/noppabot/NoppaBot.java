@@ -11,7 +11,7 @@ import noppabot.spawns.Spawner;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.WeightedDie.CrushingDie;
 import noppabot.spawns.events.*;
-import noppabot.spawns.instants.DicemonTrainer;
+import noppabot.spawns.instants.*;
 
 import org.jibble.pircbot.PircBot;
 
@@ -174,7 +174,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		availablePowerups.add(p);
 		availablePowerups.add(new ExtremeDie());
-		availablePowerups.add(new DicemonTrainer());
+		availablePowerups.add(new DiceRecycler());
 		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
