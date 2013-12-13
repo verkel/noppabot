@@ -164,7 +164,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerups.put("kessu", new ApprenticeDie());
 //		powerups.put("frodo", new ApprenticeDie());
 //		powerups.put("bilbo", new ApprenticeDie());
-		Powerup p = new PrimalDie(); p.initialize(this);
+//		Powerup p = new JackpotDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
@@ -172,8 +172,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		rolls.put("jlindval", 100);
 //		autorolls.add("jlindval");
 		
-		availablePowerups.add(p);
-		availablePowerups.add(new EnchantedDie());
+//		availablePowerups.add(p);
+		availablePowerups.add(new ExtremeDie());
 		availablePowerups.add(new DicemonTrainer());
 		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());

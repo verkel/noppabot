@@ -97,7 +97,7 @@ public abstract class Powerup implements ISpawnable {
 		return getName();
 	}
 	
-	public int clamp(int roll) {
+	public static int clamp(int roll) {
 		return Math.max(0, Math.min(100, roll));
 	}
 	

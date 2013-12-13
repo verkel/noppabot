@@ -52,4 +52,52 @@ public class GroundhogDie extends Powerup {
 	public float getSpawnChance() {
 		return 0.75f;
 	}
+	
+	@Override
+	public boolean isUpgradeable() {
+		return true;
+	}
+	
+	@Override
+	public Powerup upgrade() {
+		return new SelfImprovingDie();
+	}
+	
+	// Upgrade
+	public static class SelfImprovingDie extends Powerup {
+		
+		private static final int bonus = 10;
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			Integer lastRoll = null;
+			RollRecords records = bot.loadRollRecords();
+			if (records != null) {
+				lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
+			}
+			
+			if (lastRoll != null && lastRoll > 0) {
+				int result = lastRoll + bonus;
+				bot.sendChannelFormat("%s's self-improving die analyzes the yesterday's roll of %d.",
+					nick, lastRoll);
+				bot.sendChannelFormat("%s's self-improving die rolls %d + %d = %d! %s", 
+					nick, lastRoll, bonus, result, bot.grade(result));
+				return result;
+			}
+			else {
+				bot.sendChannel("The self-improving die fails to improve on yesterday's events.");
+				return super.onContestRoll(bot, nick, roll); // Normal behaviour
+			}
+		}
+		
+		@Override
+		public String getName() {
+			return "Self-Improving Die";
+		}
+		
+		@Override
+		public String getUpgradeDescription(INoppaBot bot, String nick) {
+			return String.format("The self-improving die will roll the yesterday's roll + %d.", bonus);
+		}
+	}
 }

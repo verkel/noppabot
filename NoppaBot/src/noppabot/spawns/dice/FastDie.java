@@ -4,10 +4,12 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 
 public class FastDie extends Powerup {
 
+	private static final int maxBonus = 20;
+	
 	@Override
 	public void onSpawn(INoppaBot bot) {
 		bot.sendChannel("The fast die appears!");
@@ -28,11 +30,12 @@ public class FastDie extends Powerup {
 	@Override
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		int seconds = bot.getSecondsAfterMidnight();
-		int bonus = Math.max(0, 30 - seconds);
+		int penalty = MathUtils.clamp(seconds - 10, 0, maxBonus);
+		int bonus = maxBonus - penalty;
 		int result = roll + bonus;
 		result = clamp(result);
-		bot.sendChannelFormat("%s waited %d seconds before rolling. The fast die awards +%d speed bonus!", 
-			nick, seconds, bonus);
+		bot.sendChannelFormat("%s waited %d seconds before rolling. The fast die awards %d - %d = %d speed bonus!", 
+			nick, seconds, maxBonus, penalty, bonus);
 		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result, bot.grade(result));
 		return result;
 	}
@@ -46,5 +49,44 @@ public class FastDie extends Powerup {
 	@Override
 	public float getSpawnChance() {
 		return 0.50f;
+	}
+	
+	@Override
+	public boolean isUpgradeable() {
+		return true;
+	}
+	
+	@Override
+	public Powerup upgrade() {
+		return new FasterDie();
+	}
+	
+	// Upgrade
+	public static class FasterDie extends Powerup {
+		
+		private static final int maxBonus = 30;
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			int seconds = bot.getSecondsAfterMidnight();
+			int penalty = MathUtils.clamp(seconds, 0, maxBonus);
+			int bonus = maxBonus - penalty;
+			int result = roll + bonus;
+			result = clamp(result);
+			bot.sendChannelFormat("%s waited %d seconds before rolling. The faster die awards %d - %d = %d speed bonus!", 
+				nick, seconds, maxBonus, penalty, bonus);
+			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result, bot.grade(result));
+			return result;
+		}
+		
+		@Override
+		public String getName() {
+			return "Faster Die";
+		}
+		
+		@Override
+		public String getUpgradeDescription(INoppaBot bot, String nick) {
+			return "You now get bonus from the first 10 seconds too.";
+		}
 	}
 }

@@ -48,4 +48,46 @@ public class LuckyDie extends Powerup {
 	public String getName() {
 		return "Lucky Die";
 	}
+	
+	@Override
+	public boolean isUpgradeable() {
+		return true;
+	}
+	
+	@Override
+	public Powerup upgrade() {
+		return new JackpotDie();
+	}
+	
+	// Upgrade
+	public static class JackpotDie extends Powerup {
+		private static final int jackpotBonus = 40;
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			if (String.valueOf(roll).contains("7")) {
+				int result = roll + jackpotBonus;
+				result = clamp(result);
+				bot.sendChannelFormat(
+					"%s rolls %d! You win the JACKPOT! Your final roll is %d + %d = %d.",
+					nick, roll, roll, jackpotBonus, result);
+				return result;
+			}
+			else {
+				bot.sendChannelFormat(
+					"%s rolls %d! No jackpot for you.", nick, roll);
+				return roll;
+			}
+		}
+		
+		@Override
+		public String getName() {
+			return "Jackpot Die";
+		}
+		
+		@Override
+		public String getUpgradeDescription(INoppaBot bot, String nick) {
+			return String.format("If your roll contains the digit 7, you now get the jackpot bonus of +%d!", jackpotBonus);
+		}
+	}
 }

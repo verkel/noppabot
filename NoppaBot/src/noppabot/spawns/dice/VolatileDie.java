@@ -37,12 +37,56 @@ public class VolatileDie extends Powerup {
 		return roll;
 	}
 	
-	private int getRerollRnd() {
+	private static int getRerollRnd() {
 		return Powerups.powerupRnd.nextInt(100)+1;
 	}
 
 	@Override
 	public String getName() {
 		return "Volatile Die";
+	}
+	
+	@Override
+	public boolean isUpgradeable() {
+		return true;
+	}
+	
+	@Override
+	public Powerup upgrade() {
+		return new OptimizingDie();
+	}
+	
+	// Upgrade
+	public static class OptimizingDie extends Powerup {
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			bot.sendChannelFormat("%s rolls with the optimizing die. %d! %s", nick, roll, bot.grade(roll));
+			
+			while (getRerollRnd() > roll) {
+				int nextRoll = bot.getRollFor(nick, 100);
+				if (nextRoll < roll) {
+					bot.sendChannelFormat("%s's optimizing die was about to roll %d, but it stopped " +
+						"and landed back on %d.", nick, nextRoll, roll);
+					break;
+				}
+				else {
+					roll = nextRoll;
+					bot.sendChannelFormat("%s's optimizing die keeps on rolling! %d! %s", nick, roll, bot.grade(roll));
+				}
+			}
+			
+			return roll;
+		}
+		
+		@Override
+		public String getName() {
+			return "Optimizing Die";
+		}
+		
+		@Override
+		public String getUpgradeDescription(INoppaBot bot, String nick) {
+			return "The die will now stop if it's about to reroll a lower number than the previous roll is.";
+		}
 	}
 }

@@ -8,7 +8,7 @@ import noppabot.INoppaBot;
 
 public class RollingProfessional extends Powerup {
 
-	public static final int minRoll = 50;
+	private static final int minRoll = 50;
 
 	@Override
 	public void onSpawn(INoppaBot bot) {
@@ -45,5 +45,48 @@ public class RollingProfessional extends Powerup {
 	@Override
 	public String getName() {
 		return "Rolling Professional";
+	}	
+	
+	@Override
+	public boolean isUpgradeable() {
+		return true;
+	}
+	
+	@Override
+	public Powerup upgrade() {
+		return new RollingProfessor();
+	}
+	
+	// Upgrade
+	public static class RollingProfessor extends Powerup {
+		
+		private static final int minRoll = 70;
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			if (roll >= minRoll) {
+				bot.sendDefaultContestRollMessage(nick, roll);
+				bot.sendChannelFormat(
+					"The rolling professor gives you an A+ for this roll!", nick);
+				return roll;
+			}
+			else {
+				bot.sendChannelFormat("The rolling professor scolds %s for not listening on his applied " +
+						"dicetology lectures. %s was about to roll only %d, but the professor steps in and " +
+						"demonstrates how to roll %d!",
+					nick, nick, roll, minRoll);
+				return minRoll;
+			}
+		}
+		
+		@Override
+		public String getName() {
+			return "Rolling Professor";
+		}
+		
+		@Override
+		public String getUpgradeDescription(INoppaBot bot, String nick) {
+			return String.format("The professor guarantees your roll to be at least %d.", minRoll);
+		}
 	}
 }

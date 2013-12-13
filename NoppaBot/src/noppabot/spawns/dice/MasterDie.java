@@ -12,20 +12,24 @@ import noppabot.INoppaBot;
 
 public class MasterDie extends Powerup {
 
+	private static final int sides = 150;
+	
 	@Override
 	public void onSpawn(INoppaBot bot) {
-		bot.sendChannel("The MASTER DIE appears!");
+		bot.sendChannel("The Master Die appears!");
 	}
 
 	@Override
 	public void onExpire(INoppaBot bot) {
-		bot.sendChannelFormat("... nobody took the MASTER DIE?! Maybe you should learn some dice appraisal skills at the certified rolling professional.");
+		bot.sendChannelFormat("... nobody took the Master Die?! Maybe you should learn some " +
+			"dice appraisal skills at the certified rolling professional.");
 	}
 
 	@Override
 	public void onPickup(INoppaBot bot, String nick) {
 		bot.sendChannelFormat(
-			"%s wrestles for the MASTER DIE with the other contestants and barely comes on top. Surely, the MASTER DIE must be worth all the trouble!",
+			"%s wrestles for the Master Die with the other contestants and barely comes on top. " +
+			"Surely the Master Die must be worth all the trouble!",
 			nick);
 		
 		bot.insertApprenticeDice();
@@ -33,9 +37,13 @@ public class MasterDie extends Powerup {
 
 	@Override
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
-		int uncappedResult = bot.getRollFor(nick, 200);
+		return doContestRoll(getName(), sides, bot, nick);
+	}
+	
+	private static int doContestRoll(String dieName, int sides, INoppaBot bot, String nick) {
+		int uncappedResult = bot.getRollFor(nick, sides);
 		int result = clamp(uncappedResult);
-		bot.sendChannelFormat("%s rolls d200 with the MASTER DIE...", nick);
+		bot.sendChannelFormat("%s rolls d%d with %s...", nick, sides, dieName);
 		if (uncappedResult > 100) {
 			bot.sendChannelFormat("%s rolls %d (= 100)! %s", nick, uncappedResult, bot.grade(result));
 		}
@@ -44,7 +52,7 @@ public class MasterDie extends Powerup {
 		return result;
 	}
 	
-	private void rollUnusedApprenticeDies(INoppaBot bot, int roll) {
+	private static void rollUnusedApprenticeDies(INoppaBot bot, int roll) {
 		Map<String, Powerup> powerups = bot.getPowerups();
 		for (Entry<String, Powerup> entry : powerups.entrySet()) {
 			String owner = entry.getKey();
@@ -60,11 +68,42 @@ public class MasterDie extends Powerup {
 
 	@Override
 	public String getName() {
-		return "MASTER DIE";
+		return "The Master Die";
 	}
 	
 	@Override
 	public float getSpawnChance() {
 		return 0.25f;
+	}
+	
+	@Override
+	public boolean isUpgradeable() {
+		return true;
+	}
+	
+	@Override
+	public Powerup upgrade() {
+		return new TheOneDie();
+	}
+	
+	// Upgrade
+	public static class TheOneDie extends Powerup {
+		
+		private static final int sides = 200;
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			return doContestRoll(getName(), sides, bot, nick);
+		}
+		
+		@Override
+		public String getName() {
+			return "The One Die";
+		}
+		
+		@Override
+		public String getUpgradeDescription(INoppaBot bot, String nick) {
+			return String.format("Bearing %d sides, this truly is the die to rule them all.", 200);
+		}
 	}
 }

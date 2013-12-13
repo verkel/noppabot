@@ -38,5 +38,10 @@ public class Diceteller extends Powerup {
 	public String getName() {
 		return "Diceteller";
 	}
+	
+	@Override
+	public float getSpawnChance() {
+		return 2.0f;
+	}
 }
 
