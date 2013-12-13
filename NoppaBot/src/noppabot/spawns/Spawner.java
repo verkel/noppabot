@@ -11,9 +11,11 @@ import java.util.*;
 public class Spawner<S extends ISpawnable> {
 	private NavigableMap<Float, S> chances = new TreeMap<Float, S>();
 	private Random random = new Random();
-	private float lastKey = -1f;
+	private LastSpawn lastSpawn;
 	
-	public Spawner(Collection<S> spawnables) {
+	public Spawner(Collection<S> spawnables, LastSpawn lastSpawn) {
+		this.lastSpawn = lastSpawn;
+		
 		// Compute sum of spawn chances
 		float sum = 0f;
 		for (S s : spawnables) {
@@ -32,8 +34,8 @@ public class Spawner<S extends ISpawnable> {
 		// Prevent two same spawns in a row
 		float rnd, key;
 		do { rnd = random.nextFloat(); }
-		while ((key = chances.higherKey(rnd)) == lastKey);
-		lastKey = key;
+		while ((key = chances.higherKey(rnd)) == lastSpawn.key);
+		lastSpawn.key = key;
 		
 		S value = chances.get(key);
 		return clone(value);
@@ -48,5 +50,10 @@ public class Spawner<S extends ISpawnable> {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	// So that we may share the lastSpawn between multiple spawners
+	public static class LastSpawn {
+		public float key = -1f;
 	}
 }

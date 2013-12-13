@@ -101,6 +101,12 @@ public abstract class Powerup implements ISpawnable {
 		return Math.max(0, Math.min(100, roll));
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		// This is useful for removing stuff from the spawning lists
+		return this.getClass().equals(obj.getClass());
+	}
+	
 //	@Override
 //	public int compareTo(Powerup p) {
 //		return cmp(getCost(), p.getCost());
@@ -110,9 +116,5 @@ public abstract class Powerup implements ISpawnable {
 //		return c1 > c2 ? 1 : c1 < c2 ? -1 : 0;
 //	}
 //	
-//	@Override
-//	public boolean equals(Object obj) {
-//		// This is useful for the upgradeablePowerups set
-//		return this.getClass().equals(obj.getClass());
-//	}
+
 }

@@ -266,12 +266,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		incrementSpawnTime(spawnTime);
 		
-		Spawner<Event> allowedEvents = Powerups.allEvents;
+		Spawner<Powerup> spawnPowerups = Powerups.firstPowerup;
+		Spawner<Event> spawnEvents = Powerups.allEvents;
+		int n = 0;
 		while (spawnTime.before(spawnEndTime)) {
-			Object spawn = scheduleSpawn(spawnTime, Powerups.allPowerups, allowedEvents);
+			if (n > 0) spawnPowerups = Powerups.allPowerups;
+			if (n > 2) spawnEvents = Powerups.allEventsMinusFourthWall;
+			Object spawn = scheduleSpawn(spawnTime, spawnPowerups, spawnEvents);
 			// Only allow one 4th wall break per day
-			if (spawn instanceof FourthWallBreaks) allowedEvents = Powerups.allEventsMinusFourthWall;
+			if (spawn instanceof FourthWallBreaks) spawnEvents = Powerups.allEventsMinusFourthWall;
 			incrementSpawnTime(spawnTime);
+			n++;
 		}
 	}
 

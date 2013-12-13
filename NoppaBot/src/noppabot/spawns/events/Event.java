@@ -22,4 +22,10 @@ public abstract class Event implements ISpawnable {
 	public float getSpawnChance() {
 		return 1;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// This is useful for removing stuff from the spawning lists
+		return this.getClass().equals(obj.getClass());
+	}
 }
