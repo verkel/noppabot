@@ -32,7 +32,7 @@ public class Spawner<S extends ISpawnable> {
 		// Prevent two same spawns in a row
 		float rnd, key;
 		do { rnd = random.nextFloat(); }
-		while ((key = chances.lowerKey(rnd)) != lastKey);
+		while ((key = chances.higherKey(rnd)) == lastKey);
 		lastKey = key;
 		
 		S value = chances.get(key);

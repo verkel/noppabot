@@ -31,7 +31,7 @@ public class LuckyDie extends Powerup {
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		if (String.valueOf(roll).contains("7")) {
 			int result = roll + bonus;
-			result = capResult(result);
+			result = clamp(result);
 			bot.sendChannelFormat(
 				"%s rolls %d! The lucky die likes sevens in numbers, so it tinkers with your roll, making it %d + %d = %d. Lucky!",
 				nick, roll, roll, bonus, result);

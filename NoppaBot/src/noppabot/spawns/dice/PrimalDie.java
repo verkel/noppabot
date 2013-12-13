@@ -39,7 +39,7 @@ public class PrimalDie extends Powerup {
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		if (primes.contains(roll)) {
 			int result = roll + bonus;
-			result = capResult(result);
+			result = clamp(result);
 			bot.sendChannelFormat(
 				"%s rolls %d, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %d + %d = %d.",
 				nick, roll, roll, bonus, result);
@@ -56,5 +56,80 @@ public class PrimalDie extends Powerup {
 	@Override
 	public String getName() {
 		return "Primal Die";
+	}
+	
+	@Override
+	public boolean isUpgradeable() {
+		return true;
+	}
+	
+	@Override
+	public Powerup upgrade() {
+		return new TribalDie();
+	}
+	
+	// Upgrade
+	public static class TribalDie extends Powerup {
+		
+		private static final int otherPrimesBonus = 10;
+		private int otherPrimesTotalBonus = 0;
+		
+		@Override
+		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+			int result = roll;
+			if (primes.contains(roll)) {
+				result += bonus;
+				bot.sendChannelFormat(
+					"%s rolls %d, which is a prime! The tribe of primal dies grants you an offering of" +
+					" bonus points. The modified roll is %d + %d = %d.",
+					nick, roll, roll, bonus, result);
+			}
+			else {
+				bot.sendChannelFormat(
+					"%s rolls %d! The tribe of primal dice seem uninterested.", nick,
+					roll);
+			}
+			
+			if (otherPrimesTotalBonus > 0) {
+				result += otherPrimesTotalBonus;
+				bot.sendChannelFormat("The tribal gifts of %d points are added to %s's roll, " +
+					"increasing it to %d", otherPrimesTotalBonus, nick, result);
+			}
+			
+			result = clamp(result);
+			return result;
+		}
+		
+		@Override
+		public void onOpponentRollLate(INoppaBot bot, String owner, String opponent, int roll) {
+			Map<String, Integer> rolls = bot.getRolls();
+			
+			if (primes.contains(roll)) {
+				if (bot.participated(owner)) {
+					int totalRoll = rolls.get(owner) + otherPrimesBonus;
+					rolls.put(owner, totalRoll);
+					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
+						"%s gets an offering of %d points from the tribe! %s's roll is now %d.",
+						opponent, roll, owner, otherPrimesBonus, owner, totalRoll);
+				}
+				else {
+					otherPrimesTotalBonus += otherPrimesBonus;
+					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
+						"%s gets an offering of %d points from the tribe!",
+						opponent, roll,  owner, otherPrimesBonus);
+				}
+			}
+		}
+		
+		@Override
+		public String getName() {
+			return "Tribal Die";
+		}
+		
+		@Override
+		public String getUpgradeDescription(INoppaBot bot, String nick) {
+			return String.format("The whole tribe of primal dies now support you, and will grant" +
+				" %d bonus for every prime rolled by an opponent.", otherPrimesBonus);
+		}
 	}
 }

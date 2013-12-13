@@ -30,7 +30,7 @@ public class FastDie extends Powerup {
 		int seconds = bot.getSecondsAfterMidnight();
 		int bonus = Math.max(0, 30 - seconds);
 		int result = roll + bonus;
-		result = capResult(result);
+		result = clamp(result);
 		bot.sendChannelFormat("%s waited %d seconds before rolling. The fast die awards +%d speed bonus!", 
 			nick, seconds, bonus);
 		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result, bot.grade(result));

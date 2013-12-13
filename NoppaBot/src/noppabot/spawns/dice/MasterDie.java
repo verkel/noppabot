@@ -34,7 +34,7 @@ public class MasterDie extends Powerup {
 	@Override
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		int uncappedResult = bot.getRollFor(nick, 200);
-		int result = capResult(uncappedResult);
+		int result = clamp(uncappedResult);
 		bot.sendChannelFormat("%s rolls d200 with the MASTER DIE...", nick);
 		if (uncappedResult > 100) {
 			bot.sendChannelFormat("%s rolls %d (= 100)! %s", nick, uncappedResult, bot.grade(result));

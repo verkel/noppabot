@@ -36,6 +36,17 @@ public abstract class Powerup implements ISpawnable {
 	public int onNormalRoll(INoppaBot bot, String nick, int roll) {
 		return roll;
 	}
+	
+	public int onOpponentRoll(INoppaBot bot, String owner, String opponent, int roll) {
+		return roll;
+	}
+	
+	public void onOpponentRollLate(INoppaBot bot, String owner, String opponent, int roll) {
+	}
+	
+	public String getUpgradeDescription(INoppaBot bot, String nick) {
+		return "";
+	}
 
 	/**
 	 * Say the appropriate roll message and return the modified roll
@@ -86,8 +97,8 @@ public abstract class Powerup implements ISpawnable {
 		return getName();
 	}
 	
-	public int capResult(int roll) {
-		return Math.min(100, roll);
+	public int clamp(int roll) {
+		return Math.max(0, Math.min(100, roll));
 	}
 	
 //	@Override

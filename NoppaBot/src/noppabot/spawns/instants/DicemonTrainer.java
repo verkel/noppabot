@@ -44,10 +44,13 @@ public class DicemonTrainer extends Powerup {
 	@Override
 	public void onPickup(INoppaBot bot, String nick) {
 		Powerup oldPowerup = bot.getPowerups().get(nick);
+		String oldName = oldPowerup.getName();
 		Powerup newPowerup = oldPowerup.upgrade();
+		String newName = newPowerup.getName();
+		String descr = newPowerup.getUpgradeDescription(bot, nick);
 		bot.getPowerups().put(nick, newPowerup);
-		bot.sendChannelFormat("The trainer says: \"I will help you to unlock the hidden potential in your dice!\"");
-		bot.sendChannelFormat("%s's %s evolved into %s!", nick, oldPowerup, newPowerup);
+		bot.sendChannelFormat("The trainer says: I'll unlock the hidden potential in your dice!");
+		bot.sendChannelFormat("%s's %s evolved into %s! %s", nick, oldName, newName, descr);
 	}
 
 	@Override

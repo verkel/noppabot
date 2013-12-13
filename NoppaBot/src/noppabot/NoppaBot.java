@@ -9,7 +9,9 @@ import java.util.regex.*;
 
 import noppabot.spawns.Spawner;
 import noppabot.spawns.dice.*;
+import noppabot.spawns.dice.WeightedDie.CrushingDie;
 import noppabot.spawns.events.*;
+import noppabot.spawns.instants.DicemonTrainer;
 
 import org.jibble.pircbot.PircBot;
 
@@ -115,6 +117,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		debug = Boolean.parseBoolean(properties.getProperty("debug"));
 		executeDebugStuff = Boolean.parseBoolean(properties.getProperty("executeDebugStuff"));
 		
+		setVerbose(false); // Print stacktraces, but also useless server messages
 		setLogin(nick);
 		setName(nick);
 		connect(server);
@@ -156,20 +159,23 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("hassu", new ApprenticeDie());
-		powerups.put("hessu", new ApprenticeDie());
-		powerups.put("kessu", new ApprenticeDie());
-		powerups.put("frodo", new ApprenticeDie());
-		powerups.put("bilbo", new ApprenticeDie());
-		Powerup p = new PolishedDie(); p.initialize(this);
-		powerups.put("Verkel", p);
+		powerups.put("hassu", new CrushingDie());
+//		powerups.put("hessu", new ApprenticeDie());
+//		powerups.put("kessu", new ApprenticeDie());
+//		powerups.put("frodo", new ApprenticeDie());
+//		powerups.put("bilbo", new ApprenticeDie());
+		Powerup p = new PrimalDie(); p.initialize(this);
+//		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
 //		rolls.put("Verkel", 100);
 //		rolls.put("jlindval", 100);
 //		autorolls.add("jlindval");
 		
-		availablePowerups.add(new MasterDie());
+		availablePowerups.add(p);
+		availablePowerups.add(new EnchantedDie());
+		availablePowerups.add(new DicemonTrainer());
+		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
 //		availablePowerups.add(new Diceteller());
@@ -394,6 +400,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private boolean isInRollPeriod() {
+		if (debug) return true;
+		
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
 		int minute = cal.get(Calendar.MINUTE);
@@ -607,29 +615,57 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void roll(String nick, int sides) {
-		int value = getRollFor(nick, sides);
-		if (nick.equalsIgnoreCase("etsura")) value = -value;
+		int roll = getRollFor(nick, sides);
+		if (nick.equalsIgnoreCase("etsura")) roll = -roll;
+		
 		if (sides == 100) {
+			boolean participated = participated(nick);
+			boolean rollOrTiebreakPeriod = state == State.ROLL_PERIOD || state == State.SETTLE_TIE;
 			
+			// Activate the carried powerup
 			boolean powerupUsed = false;
-			if (powerups.containsKey(nick) && !participated(nick)) {
+			if (powerups.containsKey(nick) && !participated) {
 				Powerup powerup = powerups.get(nick);
-				if (state == State.ROLL_PERIOD || state == State.SETTLE_TIE) {
-					value = powerup.onContestRoll(this, nick, value);
+				if (rollOrTiebreakPeriod) {
+					roll = powerup.onContestRoll(this, nick, roll);
 					powerupUsed = true;
 				}
 				else {
-					value = powerup.onNormalRoll(this, nick, value);
+					roll = powerup.onNormalRoll(this, nick, roll);
 				}
 			}
 			
-			if (!powerupUsed) sendDefaultContestRollMessage(nick, value);
+			// Do the normal roll if no powerup was used
+			if (!powerupUsed) sendDefaultContestRollMessage(nick, roll);
 			
-			participate(nick, value);
+			// Activate powerups which affect opponent rolls
+			if (!participated && rollOrTiebreakPeriod) {
+				roll = fireOpponentRolled(nick, roll);
+			}
+			
+			participate(nick, roll);
 		}
 		else {
-			sendChannelFormat("%s rolls %d!", nick, value);
+			sendChannelFormat("%s rolls %d!", nick, roll);
 		}
+	}
+
+	private int fireOpponentRolled(String nick, int roll) {
+		// Early -- can modify the roll
+		for (String powerupOwner : powerups.keySet()) {
+			if (!powerupOwner.equals(nick)) {
+				Powerup powerup = powerups.get(powerupOwner);
+				roll = powerup.onOpponentRoll(this, powerupOwner, nick, roll);
+			}
+		}
+		// Late -- the roll is now determined, do something else
+		for (String powerupOwner : powerups.keySet()) {
+			if (!powerupOwner.equals(nick)) {
+				Powerup powerup = powerups.get(powerupOwner);
+				powerup.onOpponentRollLate(this, powerupOwner, nick, roll);
+			}
+		}
+		return roll;
 	}
 
 	@Override
