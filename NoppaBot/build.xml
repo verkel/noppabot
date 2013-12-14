@@ -17,6 +17,7 @@
             <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/jackson-annotations-2.0.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/jackson-core-2.0.2.jar"/>
             <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/jackson-databind-2.0.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="../Libraries/lib/jfiglet-1.0-alpha1.jar"/>
         </jar>
     </target>
 </project>

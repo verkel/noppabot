@@ -49,38 +49,48 @@ public class WeightedDie extends Powerup {
 	
 	@Override
 	public Powerup upgrade() {
-		return new CrushingDie();
+		return new CrushingDie(false);
 	}
 	
 	// Upgrade
 	public static class CrushingDie extends Powerup {
 		private static final int dmgSides = 30;
 		
+		private boolean wasHumongousDie;
+		
+		public CrushingDie(boolean wasHumongousDie) {
+			this.wasHumongousDie = wasHumongousDie;
+		}
+		
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %d! %s", nick, roll,
-				bot.grade(roll));
-			return roll;
+			if (wasHumongousDie) return HumongousDie.doContestRoll(bot, nick, roll);
+			else {
+				bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %d! %s", nick, roll,
+					bot.grade(roll));
+				return roll;
+			}
 		}
 		
 		@Override
 		public int onOpponentRoll(INoppaBot bot, String owner, String opponent, int roll) {
-			int damage = Powerups.powerupRnd.nextInt(dmgSides) + 1;
+			int damage = wasHumongousDie ? dmgSides : (Powerups.powerupRnd.nextInt(dmgSides) + 1);
 			int result = roll - damage;
 			result = clamp(result);
-			bot.sendChannelFormat("%s's die crushes the opposition! %s's roll takes %d damage and drops down to %d.", 
-				owner, opponent, damage, result);
+			bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %d damage and drops down to %d.", 
+				owner, getName(), opponent, damage, result);
 			return result;
 		}
 		
 		@Override
 		public String getName() {
-			return "Crushing Die";
+			return wasHumongousDie ? "HUMONGOUS CRUSHING DIE" : "Crushing Die";
 		}
 		
 		@Override
 		public String getUpgradeDescription(INoppaBot bot, String nick) {
-			return String.format("It loses its bonus, but now deals d%d crushing damage to others' rolls!", dmgSides);
+			if (wasHumongousDie) return String.format("It now deals %d crushing damage to others' rolls!", dmgSides);
+			else return String.format("It loses its bonus, but now deals d%d crushing damage to others' rolls!", dmgSides);
 		}
 	}
 }

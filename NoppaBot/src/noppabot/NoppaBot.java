@@ -159,7 +159,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("hassu", new CrushingDie());
+		powerups.put("hassu", new CrushingDie(false));
 //		powerups.put("hessu", new ApprenticeDie());
 //		powerups.put("kessu", new ApprenticeDie());
 //		powerups.put("frodo", new ApprenticeDie());
@@ -173,7 +173,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		autorolls.add("jlindval");
 		
 //		availablePowerups.add(p);
-		availablePowerups.add(new ExtremeDie());
+		availablePowerups.add(new HumongousDie());
 		availablePowerups.add(new DiceRecycler());
 		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());
