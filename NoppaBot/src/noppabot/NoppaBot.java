@@ -26,6 +26,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private static final String ROLL_PERIOD_ABOUT_TO_START = "59 23 * * *";
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
+	private static final String AUTOROLL_TIME = "5 0 * * *";
 	private static final String ROLL_PERIOD_END = "10 0 * * *";
 	private static final int POWERUP_EXPIRE_MINUTES = 60;
 	
@@ -139,6 +140,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			@Override
 			public void run() {
 				startRollPeriod();
+			}
+		});
+		
+		scheduler.schedule(AUTOROLL_TIME, new Runnable() {
+			@Override
+			public void run() {
+				autorollFor(autorolls);
 			}
 		});
 		
@@ -751,9 +759,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			Powerup powerup = powerups.get(nick);
 			powerup.onRollPeriodStart(this, nick);
 		}
-		
-		autorollFor(autorolls);
-		
 	}
 	
 	private void autorollFor(Set<String> autorolls) {
