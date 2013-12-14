@@ -48,7 +48,7 @@ public class ApprenticeDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new MasterDie();
 	}
 }

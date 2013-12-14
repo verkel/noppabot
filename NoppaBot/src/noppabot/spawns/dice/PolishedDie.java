@@ -47,7 +47,7 @@ public class PolishedDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new VeryPolishedDie();
 	}
 	
@@ -77,7 +77,7 @@ public class PolishedDie extends Powerup {
 		}
 		
 		@Override
-		public Powerup upgrade() {
+		public Powerup upgrade(INoppaBot bot) {
 			name = "Very " + name;
 			bonus += 10;
 			return this;

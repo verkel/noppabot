@@ -54,7 +54,7 @@ public class EnchantedDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new PotentDie();
 	}
 	

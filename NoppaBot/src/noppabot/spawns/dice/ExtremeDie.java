@@ -58,7 +58,7 @@ public class ExtremeDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new DaringDie();
 	}
 	

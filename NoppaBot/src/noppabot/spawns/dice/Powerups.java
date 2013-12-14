@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
-import noppabot.NoppaBot;
+import noppabot.INoppaBot;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.LastSpawn;
 import noppabot.spawns.events.*;
@@ -19,6 +19,7 @@ public class Powerups {
 	public static final Spawner<Powerup> allPowerups;
 	public static final Spawner<Powerup> firstPowerup;
 	public static final Spawner<Powerup> diceStormPowerups;
+	public static final Spawner<Powerup> diceBrosPowerups;
 	public static final Spawner<Event> allEvents;
 	public static final Spawner<Event> allEventsMinusFourthWall;
 	
@@ -26,15 +27,20 @@ public class Powerups {
 		List<Powerup> allPowerupsList = new ArrayList<Powerup>();
 		List<Powerup> firstPowerupList = new ArrayList<Powerup>();
 		List<Powerup> diceStormPowerupsList = new ArrayList<Powerup>();
+		List<Powerup> diceBrosPowerupsList = new ArrayList<Powerup>();
 		List<Event> allEventsList = new ArrayList<Event>();
 		List<Event> allEventsMinusFourthWallList = new ArrayList<Event>();
 		
 		// Apprentice die is not put here, but can be spawned regardless if there are master dies
-		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(),
+		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(), new DiceBros(),
 			new DicePirate(), new DiceRecycler(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), new FastDie(),
 			new GroundhogDie(), new HumongousDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
-			new RollingProfessional(), new VolatileDie(), new WeightedDie()));
-		
+			new RollingProfessional(), new WeightedDie()));
+
+		diceBrosPowerupsList.addAll(Arrays.asList(new BagOfDice(), new EnchantedDie(),
+			new ExtremeDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
+			new RollingProfessional(), new WeightedDie()));
+
 		firstPowerupList.addAll(allPowerupsList);
 		firstPowerupList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new DiceRecycler()));
 
@@ -52,11 +58,12 @@ public class Powerups {
 		allPowerups = new Spawner<Powerup>(allPowerupsList, lastPowerup);
 		firstPowerup = new Spawner<Powerup>(firstPowerupList, lastPowerup);
 		diceStormPowerups = new Spawner<Powerup>(diceStormPowerupsList, lastPowerup);
+		diceBrosPowerups = new Spawner<Powerup>(diceBrosPowerupsList, new LastSpawn());
 		allEvents = new Spawner<Event>(allEventsList, lastEvent);
 		allEventsMinusFourthWall = new Spawner<Event>(allEventsMinusFourthWallList, lastEvent);
 	}
 
-	public static Object getRandomPowerupOrEvent(NoppaBot bot, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
+	public static Object getRandomPowerupOrEvent(INoppaBot bot, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
 		if (spawnEvents != null && powerupRnd.nextFloat() < 0.08f) {
 			return getRandomEvent(spawnEvents);
 		}
@@ -65,7 +72,7 @@ public class Powerups {
 		}
 	}
 	
-	public static Powerup getRandomPowerup(NoppaBot bot, Spawner<Powerup> spawnPowerups) {
+	public static Powerup getRandomPowerup(INoppaBot bot, Spawner<Powerup> spawnPowerups) {
 		Powerup powerup = spawnPowerups.spawn();
 		powerup.initialize(bot);
 		return powerup;

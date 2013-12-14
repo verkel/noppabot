@@ -48,7 +48,7 @@ public class WeightedDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new CrushingDie(false);
 	}
 	

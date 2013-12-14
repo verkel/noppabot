@@ -173,7 +173,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		autorolls.add("jlindval");
 		
 //		availablePowerups.add(p);
-		availablePowerups.add(new HumongousDie());
+		availablePowerups.add(new DiceBros());
 		availablePowerups.add(new DiceRecycler());
 		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());

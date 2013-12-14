@@ -83,7 +83,7 @@ public class HumongousDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new CrushingDie(true);
 	}
 }

@@ -59,7 +59,7 @@ public class GroundhogDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new SelfImprovingDie();
 	}
 	

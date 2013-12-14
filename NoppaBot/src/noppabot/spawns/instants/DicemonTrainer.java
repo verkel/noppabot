@@ -45,7 +45,7 @@ public class DicemonTrainer extends Powerup {
 	public void onPickup(INoppaBot bot, String nick) {
 		Powerup oldPowerup = bot.getPowerups().get(nick);
 		String oldName = oldPowerup.getName();
-		Powerup newPowerup = oldPowerup.upgrade();
+		Powerup newPowerup = oldPowerup.upgrade(bot);
 		String newName = newPowerup.getName();
 		String descr = newPowerup.getUpgradeDescription(bot, nick);
 		bot.getPowerups().put(nick, newPowerup);

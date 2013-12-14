@@ -53,7 +53,7 @@ public class RollingProfessional extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new RollingProfessor();
 	}
 	

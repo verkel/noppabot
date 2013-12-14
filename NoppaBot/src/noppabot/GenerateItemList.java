@@ -9,6 +9,7 @@ import java.util.*;
 
 import noppabot.spawns.Spawner;
 import noppabot.spawns.dice.*;
+import noppabot.spawns.dice.VolatileDie.OptimizingDie;
 import noppabot.spawns.events.Event;
 
 public class GenerateItemList {
@@ -134,6 +135,8 @@ public class GenerateItemList {
 		testBasicPowerup("RollerBot", "RollerBot.png", rollerBotDesc, new RegularDie(), testBot);
 		testDicePirate();
 		testApprenticeDie();
+		testBasicPowerup("Dice bros.", "DiceBros.png", "TODO", new DiceBros(), testBot);
+		testBasicPowerup("Optimizing die", "OptimizingDie.png", "TODO", new OptimizingDie(), testBot);
 	}
 	
 	private void testDicePirate() {

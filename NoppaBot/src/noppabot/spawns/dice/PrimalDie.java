@@ -64,7 +64,7 @@ public class PrimalDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new TribalDie();
 	}
 	

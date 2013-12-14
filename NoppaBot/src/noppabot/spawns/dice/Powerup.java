@@ -78,7 +78,7 @@ public abstract class Powerup implements ISpawnable {
 		return false;
 	}
 	
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return null;
 	}
 	

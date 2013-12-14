@@ -52,7 +52,7 @@ public class VolatileDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade() {
+	public Powerup upgrade(INoppaBot bot) {
 		return new OptimizingDie();
 	}
 	
