@@ -55,16 +55,18 @@ public class WeightedDie extends Powerup {
 	// Upgrade
 	public static class CrushingDie extends Powerup {
 		private static final int dmgSides = 30;
+		private static final int humongousDmgSides = 10;
+		private static final int humongousDmgBonus = 20;
 		
-		private boolean wasHumongousDie;
+		private boolean humongous;
 		
-		public CrushingDie(boolean wasHumongousDie) {
-			this.wasHumongousDie = wasHumongousDie;
+		public CrushingDie(boolean humongous) {
+			this.humongous = humongous;
 		}
 		
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			if (wasHumongousDie) return HumongousDie.doContestRoll(bot, nick, roll);
+			if (humongous) return HumongousDie.doContestRoll(bot, nick, roll);
 			else {
 				bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %d! %s", nick, roll,
 					bot.grade(roll));
@@ -74,7 +76,12 @@ public class WeightedDie extends Powerup {
 		
 		@Override
 		public int onOpponentRoll(INoppaBot bot, String owner, String opponent, int roll) {
-			int damage = wasHumongousDie ? dmgSides : (Powerups.powerupRnd.nextInt(dmgSides) + 1);
+			if (humongous) return doHumongousCrush(bot, owner, opponent, roll);
+			else return doStandardCrush(bot, owner, opponent, roll);
+		}
+
+		private int doStandardCrush(INoppaBot bot, String owner, String opponent, int roll) {
+			int damage = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int result = roll - damage;
 			result = clamp(result);
 			bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %d damage and drops down to %d.", 
@@ -82,15 +89,27 @@ public class WeightedDie extends Powerup {
 			return result;
 		}
 		
+		private int doHumongousCrush(INoppaBot bot, String owner, String opponent, int roll) {
+			int damageRoll = Powerups.powerupRnd.nextInt(humongousDmgSides) + 1;
+			int totalDamage = damageRoll + humongousDmgBonus;
+			int result = roll - totalDamage;
+			result = clamp(result);
+			bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %d + %d = %d damage and drops down to %d.", 
+				owner, getName(), opponent, damageRoll, humongousDmgBonus, totalDamage, result);
+			return result;
+		}
+		
 		@Override
 		public String getName() {
-			return wasHumongousDie ? "HUMONGOUS CRUSHING DIE" : "Crushing Die";
+			return humongous ? "HUMONGOUS CRUSHING DIE" : "Crushing Die";
 		}
 		
 		@Override
 		public String getUpgradeDescription(INoppaBot bot, String nick) {
-			if (wasHumongousDie) return String.format("It now deals %d crushing damage to others' rolls!", dmgSides);
-			else return String.format("It loses its bonus, but now deals d%d crushing damage to others' rolls!", dmgSides);
+			if (humongous) return String.format("It now deals d%d + %d " +
+				"crushing damage to others' rolls!", humongousDmgSides, humongousDmgBonus);
+			else return String.format("It loses its bonus, but now deals d%d " +
+				"crushing damage to others' rolls!", dmgSides);
 		}
 	}
 }

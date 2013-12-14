@@ -74,7 +74,7 @@ public class HumongousDie extends Powerup {
 	
 	@Override
 	public float getSpawnChance() {
-		return 0.25f;
+		return 0.33f;
 	}
 	
 	@Override
