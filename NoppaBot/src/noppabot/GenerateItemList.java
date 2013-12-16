@@ -7,7 +7,8 @@ package noppabot;
 import java.io.*;
 import java.util.*;
 
-import noppabot.spawns.Spawner;
+import noppabot.NoppaBot.SpawnTask;
+import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.VolatileDie.OptimizingDie;
 import noppabot.spawns.events.Event;
@@ -363,13 +364,28 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public Object scheduleSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups,
+		public List<String> getRandomPowerupOwners() {
+			return null;
+		}
+
+		@Override
+		public SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn) {
+			return null;
+		}
+
+		@Override
+		public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups,
 			Spawner<Event> allowedEvents) {
 			return null;
 		}
 
 		@Override
-		public List<String> getRandomPowerupOwners() {
+		public Calendar getRollPeriodStartTime() {
+			return null;
+		}
+
+		@Override
+		public Calendar getSpawnEndTime() {
 			return null;
 		}
 	}

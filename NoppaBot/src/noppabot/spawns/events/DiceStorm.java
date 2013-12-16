@@ -14,7 +14,7 @@ public class DiceStorm extends Event {
 		
 		int count = 3 + Powerups.powerupRnd.nextInt(2);
 		for (int i = 0; i < count; i++) {
-			bot.scheduleSpawn(null, Powerups.diceStormPowerups, null);
+			bot.scheduleRandomSpawn(null, Powerups.diceStormPowerups, null);
 		}
 	}
 	

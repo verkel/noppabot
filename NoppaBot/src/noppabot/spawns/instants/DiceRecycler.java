@@ -36,7 +36,7 @@ public class DiceRecycler extends Powerup {
 		bot.getPowerups().remove(nick);
 		bot.sendChannelFormat("The recycler tosses %s's %s into a peculiar shredder machine. " +
 			"One moment later, something pops out:", nick, oldPowerup);
-		bot.scheduleSpawn(null, Powerups.firstPowerup, null);
+		bot.scheduleRandomSpawn(null, Powerups.firstPowerup, null);
 	}
 
 	@Override

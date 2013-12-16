@@ -7,11 +7,12 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import noppabot.spawns.Spawner;
+import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.WeightedDie.CrushingDie;
 import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
+import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.PircBot;
 
@@ -103,6 +104,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
 	private Set<String> autorolls = new HashSet<String>();
+	private Calendar rollPeriodStartTime;
+	private Calendar rollPeriodEndTime;
+	private Calendar spawnEndTime;
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -159,6 +163,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 		});
 		
+		computeTimes();
 		schedulePowerupsOfTheDay();
 		scheduler.start();
 		
@@ -252,22 +257,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void giveFreePowerup() {
 		sendChannel("Spawning item manually");
-		scheduleSpawn(null, Powerups.allPowerups, null);
+		scheduleRandomSpawn(null, Powerups.allPowerups, null);
 	}
 
 	private void schedulePowerupsOfTheDay() {
-		Calendar rollPeriodStart = Calendar.getInstance();
-		rollPeriodStart.add(Calendar.DATE, 1);
-		rollPeriodStart.set(Calendar.HOUR_OF_DAY, 0);
-		rollPeriodStart.set(Calendar.MINUTE, 0);
-		rollPeriodStart.set(Calendar.SECOND, 0);
-		
-		Calendar rollPeriodEnd = (Calendar)rollPeriodStart.clone();
-		rollPeriodEnd.set(Calendar.MINUTE, 10);
-		
-		Calendar spawnEndTime = (Calendar)rollPeriodStart.clone();
-		spawnEndTime.add(Calendar.MINUTE, -1);
-		
 		Calendar spawnTime = Calendar.getInstance();
 		if (spawnTime.get(Calendar.HOUR_OF_DAY) < 10) {
 			spawnTime.set(Calendar.HOUR_OF_DAY, 10);
@@ -282,12 +275,27 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		while (spawnTime.before(spawnEndTime)) {
 			if (n > 0) spawnPowerups = Powerups.allPowerups;
 			if (n > 2) spawnEvents = Powerups.allEventsMinusFourthWall;
-			Object spawn = scheduleSpawn(spawnTime, spawnPowerups, spawnEvents);
+			ISpawnable spawn = scheduleRandomSpawn(spawnTime, spawnPowerups, spawnEvents).spawn;
 			// Only allow one 4th wall break per day
 			if (spawn instanceof FourthWallBreaks) spawnEvents = Powerups.allEventsMinusFourthWall;
 			incrementSpawnTime(spawnTime);
 			n++;
 		}
+	}
+
+
+	private void computeTimes() {
+		rollPeriodStartTime = Calendar.getInstance();
+		rollPeriodStartTime.add(Calendar.DATE, 1);
+		rollPeriodStartTime.set(Calendar.HOUR_OF_DAY, 0);
+		rollPeriodStartTime.set(Calendar.MINUTE, 0);
+		rollPeriodStartTime.set(Calendar.SECOND, 0);
+		
+		rollPeriodEndTime = (Calendar)rollPeriodStartTime.clone();
+		rollPeriodEndTime.set(Calendar.MINUTE, 10);
+		
+		spawnEndTime = (Calendar)rollPeriodStartTime.clone();
+		spawnEndTime.add(Calendar.MINUTE, -1);
 	}
 
 	private void incrementSpawnTime(Calendar spawnTime) {
@@ -296,15 +304,19 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		spawnTime.add(Calendar.MINUTE, minutesIncr);
 	}
 	
-	private class SpawnTask extends Task implements Comparable<SpawnTask> {
-		public Object spawn;
+	public class SpawnTask extends Task implements Comparable<SpawnTask> {
+		public ISpawnable spawn;
 		public Date time;
 		public String id;
 		public ExpireTask expireTask;
 		
-		public SpawnTask(Date time, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
+//		public SpawnTask(Date time, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
+//			this(time, Powerups.getRandomPowerupOrEvent(NoppaBot.this, spawnPowerups, spawnEvents));
+//		}
+		
+		public SpawnTask(Date time, ISpawnable spawn) {
 			this.time = time;
-			spawn = Powerups.getRandomPowerupOrEvent(NoppaBot.this, spawnPowerups, spawnEvents);
+			this.spawn = spawn;
 		}
 		
 		public Powerup getPowerup() {
@@ -339,7 +351,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private class ExpireTask extends Task {
+	public class ExpireTask extends Task {
 		public Powerup powerup;
 		public String id;
 		
@@ -368,16 +380,20 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		availablePowerups.clear();
 	}
+
+	@Override
+	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups, Spawner<Event> allowedEvents) {
+		ISpawnable spawn = Powerups.getRandomPowerupOrEvent(NoppaBot.this, allowedPowerups, allowedEvents);
+		return scheduleSpawn(spawnTime, spawn);
+	}
 	
 	/**
 	 * Schedule a powerup/event spawn or spawn it immediately
 	 * 
 	 * @param spawnTime Spawn time or null for spawn immediately
-	 * @param spawnEvents Spawn events too
-	 * @param allowFourthWallBreaks Allow the fourth wall falls event
 	 */
 	@Override
-	public Object scheduleSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups, Spawner<Event> allowedEvents) {
+	public SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn) {
 		boolean immediateSpawn = (spawnTime == null);
 		if (immediateSpawn) spawnTime = Calendar.getInstance();
 		
@@ -389,7 +405,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		final String expirePattern = String.format("%d %d * * *",
 			expireTime.get(Calendar.MINUTE), expireTime.get(Calendar.HOUR_OF_DAY));
 
-		SpawnTask spawnTask = new SpawnTask(spawnTime.getTime(), allowedPowerups, allowedEvents);
+		SpawnTask spawnTask = new SpawnTask(spawnTime.getTime(), spawn);
 		Powerup powerup = spawnTask.getPowerup();
 		
 		if (immediateSpawn) {
@@ -409,7 +425,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		if (debug) System.out.printf("Spawning %s on %tR, expires on %tR\n", spawnTask.spawn, spawnTime.getTime(), expireTime.getTime());
 		
-		return spawnTask.spawn;
+		return spawnTask;
 	}
 	
 	private void clearPowerupTasks() {
@@ -505,14 +521,19 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (!hasFavor(nick)) return;
 		favorsUsed.add(nick);
 		
-		String spawn = null;
+		String spawnInfo = null;
+		ISpawnable spawn = null;
 		boolean lastSpawn = spawnTasks.size() == 1;
-		if (!spawnTasks.isEmpty()) spawn = spawnTasks.first().toString();
+		if (!spawnTasks.isEmpty()) {
+			SpawnTask task = spawnTasks.first();
+			spawnInfo = task.toString();
+			spawn = task.spawn;
+		}
 		
 		StringBuilder buf = new StringBuilder();
-		if (spawn != null) {
+		if (spawnInfo != null) {
 			buf.append("Next up is: ");
-			buf.append(spawn).append(". ");
+			buf.append(spawnInfo).append(". ");
 			if (lastSpawn) {
 				buf.append("That will be the last event for today.");
 			}
@@ -525,6 +546,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		
 		sendChannel(buf.toString());
+		
+		if (spawn != null && spawn instanceof Bomb) {
+			sendChannel("That item seems suspicious somehow...");
+		}
 	}
 
 	private boolean hasFavor(String nick) {
@@ -1027,6 +1052,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		
 		return buf.toString();
+	}
+	
+	@Override
+	public Calendar getRollPeriodStartTime() {
+		return rollPeriodStartTime;
+	}
+	
+	
+	@Override
+	public Calendar getSpawnEndTime() {
+		return spawnEndTime;
 	}
 	
 	/**

@@ -35,7 +35,7 @@ public class Powerups {
 		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(), new DiceBros(),
 			new DicePirate(), new DiceRecycler(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), new FastDie(),
 			new GroundhogDie(), new HumongousDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
-			new RollingProfessional(), new WeightedDie()));
+			new RollingProfessional(), new TrollingProfessional(), new WeightedDie()));
 
 		diceBrosPowerupsList.addAll(Arrays.asList(new BagOfDice(), new EnchantedDie(),
 			new ExtremeDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
@@ -63,7 +63,7 @@ public class Powerups {
 		allEventsMinusFourthWall = new Spawner<Event>(allEventsMinusFourthWallList, lastEvent);
 	}
 
-	public static Object getRandomPowerupOrEvent(INoppaBot bot, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
+	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
 		if (spawnEvents != null && powerupRnd.nextFloat() < 0.08f) {
 			return getRandomEvent(spawnEvents);
 		}
