@@ -95,7 +95,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private State state = State.NORMAL;
 	private Map<String, Integer> rolls = new HashMap<String, Integer>();
 	private Set<String> tiebreakers = new TreeSet<String>();
-	private List<String> powerupSpawnTaskIDs = new ArrayList<String>();
+//	private List<String> powerupSpawnTaskIDs = new ArrayList<String>();
+	private NavigableSet<SpawnTask> spawnTasks = new TreeSet<SpawnTask>();
+	private Set<ExpireTask> expireTasks = new HashSet<ExpireTask>();
 	//private Powerup powerup = null;
 	private List<Powerup> availablePowerups = new ArrayList<Powerup>();
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
@@ -294,7 +296,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		spawnTime.add(Calendar.MINUTE, minutesIncr);
 	}
 	
-	private class SpawnTask extends Task {
+	private class SpawnTask extends Task implements Comparable<SpawnTask> {
 		public Object spawn;
 		public Date time;
 		public String id;
@@ -312,7 +314,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		@Override
 		public void execute(TaskExecutionContext context) {
-			powerupSpawnTaskIDs.remove(id);
+			spawnTasks.remove(this);
 			scheduler.deschedule(id);
 			
 			if (spawn instanceof Powerup) {
@@ -330,6 +332,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		public String toString() {
 			return String.format("[%tR] %s", time, spawn);
 		}
+
+		@Override
+		public int compareTo(SpawnTask other) {
+			return this.time.compareTo(other.time);
+		}
 	}
 	
 	private class ExpireTask extends Task {
@@ -342,7 +349,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		@Override
 		public void execute(TaskExecutionContext context) {
-			powerupSpawnTaskIDs.remove(id);
+			expireTasks.remove(this);
 			scheduler.deschedule(id);
 			
 			expirePowerup(powerup);
@@ -390,13 +397,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		else {
 			spawnTask.id = scheduler.schedule(pattern, spawnTask);
-			powerupSpawnTaskIDs.add(spawnTask.id);
+			spawnTasks.add(spawnTask);
 		}
 		
 		if (powerup != null) {
 			ExpireTask expireTask = new ExpireTask(powerup);
 			expireTask.id = scheduler.schedule(expirePattern, expireTask);
-			powerupSpawnTaskIDs.add(expireTask.id);
+			expireTasks.add(expireTask);
 			spawnTask.expireTask = expireTask; // If we want to change the powerup, we want to alter the expire task too
 		}
 		
@@ -405,11 +412,16 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return spawnTask.spawn;
 	}
 	
-	private void clearPowerupSpawnTasks() {
-		for (String id : powerupSpawnTaskIDs) {
-			scheduler.deschedule(id);
+	private void clearPowerupTasks() {
+		for (SpawnTask task : spawnTasks) {
+			scheduler.deschedule(task.id);
 		}
-		powerupSpawnTaskIDs.clear();
+		spawnTasks.clear();
+		
+		for (ExpireTask task : expireTasks) {
+			scheduler.deschedule(task.id);
+		}
+		expireTasks.clear();
 	}
 	
 	private boolean isInRollPeriod() {
@@ -494,19 +506,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		favorsUsed.add(nick);
 		
 		String spawn = null;
-		boolean lastSpawn = true;
-		for (String id : powerupSpawnTaskIDs) {
-			Task task = scheduler.getTask(id);
-			if (task instanceof SpawnTask) {
-				if (spawn == null) {
-					spawn = task.toString();
-				}
-				else {
-					lastSpawn = false;
-					break;
-				}
-			}
-		}
+		boolean lastSpawn = spawnTasks.size() == 1;
+		if (!spawnTasks.isEmpty()) spawn = spawnTasks.first().toString();
 		
 		StringBuilder buf = new StringBuilder();
 		if (spawn != null) {
@@ -742,7 +743,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private void doTasksBeforeRollPeriodStart() {
 		expireAllPowerups();
-		clearPowerupSpawnTasks();
+		clearPowerupTasks();
 
 		listItems(true);
 	}
@@ -751,7 +752,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		state = State.ROLL_PERIOD;
 		
 		// Do this again, because doTasksBeforeRollPeriodStart() isn't guaranteed to occur
-		clearPowerupSpawnTasks();
+		clearPowerupTasks();
 
 		sendChannel(randomRollStartMsg());
 		
@@ -1019,13 +1020,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public String remainingSpawnsInfo() {
 		StringBuilder buf = new StringBuilder();
 		boolean first = true;
-		for (String id : powerupSpawnTaskIDs) {
-			Task task = scheduler.getTask(id);
-			if (task instanceof SpawnTask) {
-				if (!first) buf.append(", ");
-				buf.append(task);
-				first = false;
-			}
+		for (SpawnTask task : spawnTasks) {
+			if (!first) buf.append(", ");
+			buf.append(task);
+			first = false;
 		}
 		
 		return buf.toString();
@@ -1036,15 +1034,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	 */
 	@Override
 	public void insertApprenticeDice() {
-		for (String id : powerupSpawnTaskIDs) {
-			Task task = scheduler.getTask(id);
-			if (task instanceof SpawnTask) {
-				SpawnTask spawnTask = (SpawnTask)task;
-				if (spawnTask.getPowerup() != null && commonRandom.nextFloat() < 0.15f) {
-					ApprenticeDie apprenticeDie = new ApprenticeDie();
-					spawnTask.spawn = apprenticeDie;
-					spawnTask.expireTask.powerup = apprenticeDie;
-				}
+		for (SpawnTask task : spawnTasks) {
+			if (task.getPowerup() != null && commonRandom.nextFloat() < 0.15f) {
+				ApprenticeDie apprenticeDie = new ApprenticeDie();
+				task.spawn = apprenticeDie;
+				task.expireTask.powerup = apprenticeDie;
 			}
 		}
 	}
