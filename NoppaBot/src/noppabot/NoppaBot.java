@@ -788,10 +788,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void autorollFor(Set<String> autorolls) {
-		if (!autorolls.isEmpty()) {
-			sendChannelFormat("I'll roll for: %s", join(autorolls, ", "));
+		
+		// Filter people who have rolled
+		Set<String> rollers = new TreeSet<String>(autorolls);
+		rollers.removeAll(rolls.keySet());
+		
+		if (!rollers.isEmpty()) {
+			sendChannelFormat("I'll roll for: %s", join(rollers, ", "));
 			
-			for (String nick : autorolls) {
+			for (String nick : rollers) {
 				roll(nick, 100);
 			}
 		}
