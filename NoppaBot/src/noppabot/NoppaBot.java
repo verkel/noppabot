@@ -509,6 +509,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				if (cmd.equalsIgnoreCase("items")) {
 					listItems(false);
 				}
+				else if (cmd.equalsIgnoreCase("look")) {
+					listAvailablePowerups();
+				}
 				else if (cmd.equalsIgnoreCase("rolls")) {
 					listRolls();
 				}
@@ -623,6 +626,16 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		if (buf.length() > 0) sendChannel(buf.toString());
 		else sendChannel("Nobody has rolled yet.");
+	}
+	
+	private void listAvailablePowerups() {
+		if (availablePowerups.isEmpty()) {
+			sendChannelFormat("%s: you see nothing of interest.", nick);
+		}
+		else {
+			String items = join(availablePowerups, ", ");
+			sendChannelFormat("%s: You see: %s.", nick, items);
+		}
 	}
 
 	private void grabPowerup(String nick, String powerupName) {
