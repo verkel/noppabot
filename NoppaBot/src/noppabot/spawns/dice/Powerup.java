@@ -82,11 +82,6 @@ public abstract class Powerup implements ISpawnable {
 		return null;
 	}
 	
-//	/**
-//	 * Cost or value of the die
-//	 */
-//	public abstract int getCost();
-	
 	@Override
 	public float getSpawnChance() {
 		return 1;
@@ -97,8 +92,9 @@ public abstract class Powerup implements ISpawnable {
 		return getName();
 	}
 	
-	public static int clamp(int roll) {
-		return Math.max(0, Math.min(100, roll));
+	public static int clamp(INoppaBot bot, int roll) {
+		if (bot.getRules().cappedRolls) return Math.max(0, Math.min(100, roll));
+		else return roll;
 	}
 	
 	@Override

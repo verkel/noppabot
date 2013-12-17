@@ -81,7 +81,7 @@ public class BagOfDice extends Powerup {
 			first = false;
 		}
 		String resultStr = buf.toString();
-		result = clamp(result);
+		result = clamp(bot, result);
 
 		bot.sendChannelFormat("%s rolls with the dice (%s). %s = %d", nick, bagToString(), resultStr, result);
 //		System.out.println(result);

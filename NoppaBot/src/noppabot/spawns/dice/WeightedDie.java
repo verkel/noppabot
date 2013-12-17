@@ -29,7 +29,7 @@ public class WeightedDie extends Powerup {
 	@Override
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		int result = roll + bonus;
-		result = clamp(result);
+		result = clamp(bot, result);
 		bot.sendChannelFormat(
 			"%s's weighted die is so fairly weighted, that the roll goes very smoothly!", nick);
 		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
@@ -83,7 +83,7 @@ public class WeightedDie extends Powerup {
 		private int doStandardCrush(INoppaBot bot, String owner, String opponent, int roll) {
 			int damage = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int result = roll - damage;
-			result = clamp(result);
+			result = clamp(bot, result);
 			bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %d damage and drops down to %d.", 
 				owner, getName(), opponent, damage, result);
 			return result;
@@ -93,7 +93,7 @@ public class WeightedDie extends Powerup {
 			int damageRoll = Powerups.powerupRnd.nextInt(humongousDmgSides) + 1;
 			int totalDamage = damageRoll + humongousDmgBonus;
 			int result = roll - totalDamage;
-			result = clamp(result);
+			result = clamp(bot, result);
 			bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %d + %d = %d damage and drops down to %d.", 
 				owner, getName(), opponent, damageRoll, humongousDmgBonus, totalDamage, result);
 			return result;

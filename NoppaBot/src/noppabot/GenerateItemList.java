@@ -388,6 +388,11 @@ public class GenerateItemList {
 		public Calendar getSpawnEndTime() {
 			return null;
 		}
+
+		@Override
+		public Rules getRules() {
+			return null;
+		}
 	}
 	
 	class LazyBot extends TestBot {

@@ -56,4 +56,6 @@ public interface INoppaBot {
 	public Calendar getRollPeriodStartTime();
 	
 	public Calendar getSpawnEndTime();
+	
+	public Rules getRules();
 }

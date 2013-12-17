@@ -26,10 +26,7 @@ public class User implements Comparable<User> {
 
 	@Override
 	public int compareTo(User user) {
-		return -compare(this.wins, user.wins);
+		return -MathUtils.compare(this.wins, user.wins);
 	}
-	
-   public static int compare(int x, int y) {
-      return (x < y) ? -1 : ((x == y) ? 0 : 1);
-  }
+
 }

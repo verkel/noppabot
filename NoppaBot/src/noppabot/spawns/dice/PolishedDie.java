@@ -29,7 +29,7 @@ public class PolishedDie extends Powerup {
 	@Override
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		int result = roll + bonus;
-		result = clamp(result);
+		result = clamp(bot, result);
 		bot.sendChannelFormat("The polished die adds a nice bonus to %s's roll.", nick);
 		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
 			bot.grade(result));
@@ -59,7 +59,7 @@ public class PolishedDie extends Powerup {
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			int result = roll + bonus;
-			result = clamp(result);
+			result = clamp(bot, result);
 			bot.sendChannelFormat("The %s adds a sweet bonus to %s's roll.", name.toLowerCase(), nick);
 			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
 				bot.grade(result));

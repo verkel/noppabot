@@ -47,7 +47,8 @@ public class Powerups {
 		diceStormPowerupsList.addAll(allPowerupsList);
 		diceStormPowerupsList.removeAll(Arrays.asList(new DicePirate()));
 		
-		allEventsList.addAll(Arrays.asList(new DiceMutation(), new DiceStorm(), new FourthWallBreaks()));
+		allEventsList.addAll(Arrays.asList(new DiceMutation(), new DiceStorm(), 
+			new FourthWallBreaks(), new RulesChange()));
 		
 		allEventsMinusFourthWallList.addAll(allEventsList);
 		allEventsMinusFourthWallList.remove(new FourthWallBreaks());

@@ -90,6 +90,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([^\\s]+)\\s*");
 	public static final Pattern commandAndArgument = Pattern.compile("^(\\w+)(?:\\s+(.+)?)?");
 	
+	private Rules rules = new Rules();
 	private Map<String, PeekableRandom> randoms = new HashMap<String, PeekableRandom>();
 	private Random commonRandom = new Random();
 	private Scheduler scheduler = new Scheduler();
@@ -589,13 +590,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 
 		List<Entry<String, Integer>> rollsList = new ArrayList<Entry<String, Integer>>();
-		Comparator<Entry<String, Integer>> comp = new Comparator<Entry<String, Integer>>() {
-
-			@Override
-			public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
-				return -e1.getValue().compareTo(e2.getValue());
-			}
-		};
+		Comparator<Entry<String, Integer>> comp = rules.winCondition; // Is a comparator too! :)
 		rollsList.addAll(rolls.entrySet());
 		Collections.sort(rollsList, comp);
 		
@@ -677,9 +672,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			// Do the normal roll if no powerup was used
 			if (!powerupUsed) sendDefaultContestRollMessage(nick, roll);
 			
-			// Activate powerups which affect opponent rolls
 			if (!participated && rollOrTiebreakPeriod) {
+				// Activate powerups which affect opponent rolls
 				roll = fireOpponentRolled(nick, roll);
+
+				// If win condition is non-standard, tell how this roll will be scored
+				rules.winCondition.onContestRoll(this, nick, roll);
 			}
 			
 			participate(nick, roll);
@@ -781,6 +779,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		sendChannel(randomRollStartMsg());
 		
+		rules.winCondition.onRollPeriodStart(this);
+		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
 			powerup.onRollPeriodStart(this, nick);
@@ -810,24 +810,24 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			return;
 		}
 		else {
-			List<String> highestRollers = getHighestRollers(rolls);
-			if (highestRollers.size() == 1) {
-				endRollPeriod(highestRollers);
+			List<String> winningRollers = getWinningRollers();
+			if (winningRollers.size() == 1) {
+				endRollPeriod(winningRollers);
 			}
 			else {
-				startSettleTie(highestRollers);
+				startSettleTie(winningRollers);
 			}
 		}
 	}
 
-	private void startSettleTie(List<String> highestRollers) {
-		String tiebreakersStr = join(highestRollers, ", ");
-		int roll = rolls.get(highestRollers.get(0));
+	private void startSettleTie(List<String> winningRollers) {
+		String tiebreakersStr = join(winningRollers, ", ");
+		int roll = rolls.get(winningRollers.get(0));
 		String msg = String.format(
 			"The roll %d was tied between %s. Roll again within 10 minutes to settle the score!", 
 			roll, tiebreakersStr);
 		sendChannel(msg);
-		tiebreakers.addAll(highestRollers);
+		tiebreakers.addAll(winningRollers);
 		
 		rolls.clear();
 		
@@ -870,8 +870,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private void endRollPeriod(List<String> highestRollers) {
-		String winner = highestRollers.get(0);
+	private void endRollPeriod(List<String> winningRollers) {
+		String winner = winningRollers.get(0);
 		int roll = rolls.get(winner);
 		String msg = String.format(randomRollEndMsg(), winner, roll);
 		sendChannel(msg);
@@ -884,6 +884,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		favorsUsed.clear();
 		autorolls.clear();
 		schedulePowerupsOfTheDay();
+		
+		if (rules.reset()) {
+			sendChannel("The non-standard rules return to normal.");
+		}
 		
 		state = State.NORMAL;
 	}
@@ -1015,17 +1019,18 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return count;
 	}
 	
-	public static List<String> getHighestRollers(Map<String, Integer> rolls) {
+	public List<String> getWinningRollers() {
 		int max = Integer.MIN_VALUE;
 		List<String> highestRollers = new ArrayList<String>();
 		for (String nick : rolls.keySet()) {
 			int roll = rolls.get(nick);
-			if (roll > max) {
-				max = roll;
+			int score = rules.winCondition.assignScore(roll);
+			if (score > max) {
+				max = score;
 				highestRollers.clear();
 				highestRollers.add(nick);
 			}
-			else if (roll == max) {
+			else if (score == max) {
 				highestRollers.add(nick);
 			}
 		}
@@ -1068,6 +1073,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	@Override
 	public Calendar getSpawnEndTime() {
 		return spawnEndTime;
+	}
+	
+	@Override
+	public Rules getRules() {
+		return rules;
 	}
 	
 	/**

@@ -33,7 +33,7 @@ public class FastDie extends Powerup {
 		int penalty = MathUtils.clamp(seconds - 10, 0, maxBonus);
 		int bonus = maxBonus - penalty;
 		int result = roll + bonus;
-		result = clamp(result);
+		result = clamp(bot, result);
 		bot.sendChannelFormat("%s waited %d seconds before rolling. The fast die awards %d - %d = %d speed bonus!", 
 			nick, seconds, maxBonus, penalty, bonus);
 		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result, bot.grade(result));
@@ -72,7 +72,7 @@ public class FastDie extends Powerup {
 			int penalty = MathUtils.clamp(seconds, 0, maxBonus);
 			int bonus = maxBonus - penalty;
 			int result = roll + bonus;
-			result = clamp(result);
+			result = clamp(bot, result);
 			bot.sendChannelFormat("%s waited %d seconds before rolling. The faster die awards %d - %d = %d speed bonus!", 
 				nick, seconds, maxBonus, penalty, bonus);
 			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result, bot.grade(result));

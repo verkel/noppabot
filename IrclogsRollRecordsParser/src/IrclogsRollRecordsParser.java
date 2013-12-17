@@ -5,7 +5,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.regex.*;
 
-import noppabot.*;
+import noppabot.RollRecords;
 
 import org.joda.time.LocalTime;
 
@@ -71,7 +71,7 @@ public class IrclogsRollRecordsParser {
 					
 					// Decide a winner for today
 					if (!winnerFound && time.isAfter(rollPeriodEnd) && !rolls.isEmpty()) {
-						List<String> highestRollers = NoppaBot.getHighestRollers(rolls);
+						List<String> highestRollers = getHighestRollers(rolls);
 						if (highestRollers.size() == 1) {
 							String winnerNick = highestRollers.get(0);
 							rollRecords.incrementWins(winnerNick);
@@ -101,5 +101,23 @@ public class IrclogsRollRecordsParser {
 		catch (IOException e) {
 			System.err.printf("Exception when reading %s: %s\n", file, e);
 		}
+	}
+	
+	public List<String> getHighestRollers(Map<String, Integer> rolls) {
+		int max = Integer.MIN_VALUE;
+		List<String> highestRollers = new ArrayList<String>();
+		for (String nick : rolls.keySet()) {
+			int roll = rolls.get(nick);
+			if (roll > max) {
+				max = roll;
+				highestRollers.clear();
+				highestRollers.add(nick);
+			}
+			else if (roll == max) {
+				highestRollers.add(nick);
+			}
+		}
+		
+		return highestRollers;
 	}
 }

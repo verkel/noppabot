@@ -29,7 +29,7 @@ public class EnchantedDie extends Powerup {
 	@Override
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		int result = roll + bonus;
-		result = clamp(result);
+		result = clamp(bot, result);
 		bot.sendChannelFormat(
 			"The enchanted die grants %s either eternal fame and fortune, or a substantial roll bonus. %s chooses the latter.",
 			nick, nick);
@@ -65,7 +65,7 @@ public class EnchantedDie extends Powerup {
 		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			int result = roll + bonus;
-			result = clamp(result);
+			result = clamp(bot, result);
 			bot.sendChannelFormat("The potent die grants the utmost magical advantage for %s's roll!",
 				nick);
 			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,

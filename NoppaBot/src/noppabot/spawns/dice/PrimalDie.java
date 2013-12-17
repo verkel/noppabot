@@ -39,7 +39,7 @@ public class PrimalDie extends Powerup {
 	public int onContestRoll(INoppaBot bot, String nick, int roll) {
 		if (primes.contains(roll)) {
 			int result = roll + bonus;
-			result = clamp(result);
+			result = clamp(bot, result);
 			bot.sendChannelFormat(
 				"%s rolls %d, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %d + %d = %d.",
 				nick, roll, roll, bonus, result);
@@ -96,7 +96,7 @@ public class PrimalDie extends Powerup {
 					"increasing it to %d", otherPrimesTotalBonus, nick, result);
 			}
 			
-			result = clamp(result);
+			result = clamp(bot, result);
 			return result;
 		}
 		

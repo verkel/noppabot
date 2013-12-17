@@ -114,7 +114,7 @@ public class TrollingProfessional extends Powerup {
 			int damageRoll = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int totalDamage = damageRoll + dmgBonus;
 			int result = roll - totalDamage;
-			result = clamp(result);
+			result = clamp(bot, result);
 			
 			bot.sendDefaultContestRollMessage(nick, roll);
 			bot.sendChannelFormat("The bomb on %s explodes, causing %d + %d = %d damage to the roll! " +

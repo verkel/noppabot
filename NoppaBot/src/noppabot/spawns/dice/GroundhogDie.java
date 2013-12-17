@@ -78,6 +78,7 @@ public class GroundhogDie extends Powerup {
 			
 			if (lastRoll != null && lastRoll > 0) {
 				int result = lastRoll + bonus;
+				result = clamp(bot, result);
 				bot.sendChannelFormat("%s's self-improving die analyzes the yesterday's roll of %d.",
 					nick, lastRoll);
 				bot.sendChannelFormat("%s's self-improving die rolls %d + %d = %d! %s", 
