@@ -70,7 +70,7 @@ public class Rules {
 		public void onContestRoll(INoppaBot bot, String nick, int roll) {
 			int dist = Math.abs(rollTarget - roll);
 			if (dist > 0) bot.sendChannelFormat("%s's roll is %d points off the target", nick, dist);
-			else bot.sendChannelFormat("%s's roll hit the target!");
+			else bot.sendChannelFormat("%s's roll hit the target!", nick);
 		}
 	};
 	
