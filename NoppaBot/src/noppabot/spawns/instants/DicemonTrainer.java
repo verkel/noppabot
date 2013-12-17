@@ -8,6 +8,8 @@ import noppabot.INoppaBot;
 import noppabot.spawns.dice.Powerup;
 
 public class DicemonTrainer extends Powerup {
+	public static final String NAME = "Dicemon Trainer";
+	
 	@Override
 	public void onSpawn(INoppaBot bot) {
 		bot.sendChannelFormat("A Dicemon trainer appears!");
@@ -55,7 +57,7 @@ public class DicemonTrainer extends Powerup {
 
 	@Override
 	public String getName() {
-		return "Dicemon Trainer";
+		return NAME;
 	}
 	
 	@Override

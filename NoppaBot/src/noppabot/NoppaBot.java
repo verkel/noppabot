@@ -495,22 +495,32 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (commandMatcher.matches()) {
 			String cmd = commandMatcher.group(1);
 			String args = commandMatcher.group(2);
+			String[] argsSplit = args == null ? new String[0] : args.split("\\s+");
 			
 			if (cmd.equalsIgnoreCase("grab") || cmd.equalsIgnoreCase("pick") 
 				|| cmd.equalsIgnoreCase("take") || cmd.equalsIgnoreCase("get")) {
 				grabPowerup(sender, args);
 			}
-			else if (cmd.equalsIgnoreCase("items")) {
-				listItems(false);
+			else if (cmd.equalsIgnoreCase("roll")) {
+				if (argsSplit.length == 0) roll(sender, 100);
+				else if (argsSplit.length == 1) roll(argsSplit[0], 100);
 			}
-			else if (cmd.equalsIgnoreCase("rolls")) {
-				listRolls();
-			}
-			else if (cmd.equalsIgnoreCase("peek")) {
-				peekNextSpawn(sender);
-			}
-			else if (cmd.equalsIgnoreCase("autoroll")) {
-				autorollFor(sender);
+			else if (args == null) {
+				if (cmd.equalsIgnoreCase("items")) {
+					listItems(false);
+				}
+				else if (cmd.equalsIgnoreCase("rolls")) {
+					listRolls();
+				}
+				else if (cmd.equalsIgnoreCase("peek")) {
+					peekNextSpawn(sender);
+				}
+				else if (cmd.equalsIgnoreCase("autoroll")) {
+					autorollFor(sender);
+				}
+				else if (cmd.equalsIgnoreCase("train")) {
+					grabPowerup(nick, DicemonTrainer.NAME);
+				}
 			}
 		}
 	}
