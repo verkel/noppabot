@@ -109,6 +109,19 @@ public class TrollingProfessional extends Powerup {
 		}
 		
 		@Override
+		public void onPickup(INoppaBot bot, String nick) {
+			bot.sendChannelFormat("%s grabs the %s! On a closer inspection, you recognize " +
+				"it's actually a BOMB! This can't be good for the upcoming roll.", nick, name);
+			name = "BOMB!";
+		}
+		
+		@Override
+		public void onExpire(INoppaBot bot) {
+			bot.sendChannelFormat("... the %s explodes! You realize it probably wasn't a %s to begin with. " +
+				"Gladly no-one took it!", name, name);
+		}
+		
+		@Override
 		public int onContestRoll(INoppaBot bot, String nick, int roll) {
 			
 			int damageRoll = Powerups.powerupRnd.nextInt(dmgSides) + 1;

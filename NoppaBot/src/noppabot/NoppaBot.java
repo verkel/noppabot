@@ -180,19 +180,19 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerups.put("kessu", new ApprenticeDie());
 //		powerups.put("frodo", new ApprenticeDie());
 //		powerups.put("bilbo", new ApprenticeDie());
-		Powerup p = new MasterDie(); p.initialize(this);
-		powerups.put("Verkel", p);
+//		Powerup p = new Bomb(); p.initialize(this);
+//		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
 //		rolls.put("Verkel", 100);
 //		rolls.put("jlindval", 100);
 //		autorolls.add("jlindval");
 		
-		new RulesChange().run(this);
+//		new RulesChange().run(this);
 		
 //		availablePowerups.add(p);
-		availablePowerups.add(new DiceBros());
-		availablePowerups.add(new DiceRecycler());
+		availablePowerups.add(new TrollingProfessional());
+		availablePowerups.add(new Bomb());
 		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
