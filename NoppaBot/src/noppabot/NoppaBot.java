@@ -105,6 +105,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
 	private Set<String> autorolls = new HashSet<String>();
+	private Calendar lastTiebreakPeriodStartTime;
+	
 	private Calendar rollPeriodStartTime;
 	private Calendar rollPeriodEndTime;
 	private Calendar spawnEndTime;
@@ -178,15 +180,19 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		powerups.put("hassu", new CrushingDie(false));
 //		powerups.put("hessu", new ApprenticeDie());
 //		powerups.put("kessu", new ApprenticeDie());
-//		powerups.put("frodo", new ApprenticeDie());
-//		powerups.put("bilbo", new ApprenticeDie());
-//		Powerup p = new Bomb(); p.initialize(this);
-//		powerups.put("Verkel", p);
+		powerups.put("frodo", new FastDie());
+		powerups.put("bilbo", new MasterDie());
+		Powerup p = new FastDie(); p.initialize(this);
+		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
-//		rolls.put("Verkel", 100);
-//		rolls.put("jlindval", 100);
-//		autorolls.add("jlindval");
+		rolls.put("Verkel", 100);
+		rolls.put("hassu", 100);
+		rolls.put("frodo", 100);
+		rolls.put("bilbo", 100);
+		autorolls.add("hassu");
+		autorolls.add("frodo");
+		autorolls.add("bilbo");
 		
 //		new RulesChange().run(this);
 		
@@ -824,6 +830,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void startSettleTie(List<String> winningRollers) {
+		lastTiebreakPeriodStartTime = Calendar.getInstance();
 		String tiebreakersStr = join(winningRollers, ", ");
 		int roll = rolls.get(winningRollers.get(0));
 		String msg = String.format(
@@ -843,17 +850,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		state = State.SETTLE_TIE;
 
-		// Autoroll for tiebreakers with autoroll set
+		// Schedule autoroll for tiebreakers
 		Set<String> tiebreakerAutorolls = new TreeSet<String>();
 		tiebreakerAutorolls.addAll(tiebreakers);
 		tiebreakerAutorolls.retainAll(autorolls);
-		autorollFor(tiebreakerAutorolls);
+		scheduleSettleTieAutorolls(tiebreakerAutorolls);
 	}
 
 
 	private void scheduleSettleTieTimeout() {
 		SettleTieTimeoutTask timeoutTask = new SettleTieTimeoutTask();
-		Calendar time = Calendar.getInstance();
+		Calendar time = (Calendar)lastTiebreakPeriodStartTime.clone();
 		time.add(Calendar.MINUTE, 10);
 		final String pattern = String.format("%d %d * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
 		timeoutTask.id = scheduler.schedule(pattern, timeoutTask);
@@ -868,6 +875,31 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				sendChannel("I'm calling this now...");
 				tiebreakers.clear();
 				tryEndRollPeriod();
+			}
+			scheduler.deschedule(id);
+		}
+	}
+	
+	private void scheduleSettleTieAutorolls(Set<String> autorolls) {
+		SettleTieAutorollsTask autorollTask = new SettleTieAutorollsTask(autorolls);
+		Calendar time = (Calendar)lastTiebreakPeriodStartTime.clone();
+		time.add(Calendar.MINUTE, 5);
+		final String pattern = String.format("%d %d * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
+		autorollTask.id = scheduler.schedule(pattern, autorollTask);
+	}
+	
+	private class SettleTieAutorollsTask extends Task {
+		public String id;
+		private Set<String> autorolls;
+		
+		public SettleTieAutorollsTask(Set<String> autorolls) {
+			this.autorolls = autorolls;
+		}
+		
+		@Override
+		public void execute(TaskExecutionContext arg0) throws RuntimeException {
+			if (state == State.SETTLE_TIE) {
+				autorollFor(autorolls);
 			}
 			scheduler.deschedule(id);
 		}
@@ -1042,14 +1074,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public int getSecondsAfterMidnight() {
-		Calendar c = Calendar.getInstance();
-		long now = c.getTimeInMillis();
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		long passed = now - c.getTimeInMillis();
+	public int getSecondsAfterPeriodStart() {
+		long now = Calendar.getInstance().getTimeInMillis();
+		Calendar periodStart;
+		if (state == State.ROLL_PERIOD) periodStart = rollPeriodStartTime;
+		else if (state == State.SETTLE_TIE) periodStart = lastTiebreakPeriodStartTime;
+		else throw new IllegalStateException("Not in roll or tie period");
+		long passed = now - periodStart.getTimeInMillis();
 		long secondsPassed = passed / 1000;
 		return (int)secondsPassed;
 	}

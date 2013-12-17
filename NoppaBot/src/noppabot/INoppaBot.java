@@ -41,7 +41,7 @@ public interface INoppaBot {
 	
 	public Map<String, Integer> getRolls();
 	
-	public int getSecondsAfterMidnight();
+	public int getSecondsAfterPeriodStart();
 	
 	public void sendMessage(String nick, String msg);
 	

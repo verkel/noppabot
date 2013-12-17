@@ -327,7 +327,7 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public int getSecondsAfterMidnight() {
+		public int getSecondsAfterPeriodStart() {
 			return 0;
 		}
 
@@ -397,7 +397,7 @@ public class GenerateItemList {
 	
 	class LazyBot extends TestBot {
 		@Override
-		public int getSecondsAfterMidnight() {
+		public int getSecondsAfterPeriodStart() {
 			return rnd.nextInt(60);
 		}
 	}
