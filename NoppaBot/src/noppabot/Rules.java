@@ -97,6 +97,15 @@ public class Rules {
 		reset();
 	}
 	
+	public void onRollPeriodStart(INoppaBot bot) {
+		if (cappedRolls != cappedRollsDefault) {
+			bot.sendChannel("Remember, the rolls are not restricted to the 0-100 range now.");
+		}
+		if (winCondition != winConditionDefault) {
+			winCondition.onRollPeriodStart(bot);
+		}
+	}
+	
 	/**
 	 * Reset the rules
 	 * 

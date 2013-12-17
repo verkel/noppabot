@@ -44,7 +44,7 @@ public class MasterDie extends Powerup {
 		int uncappedResult = bot.getRollFor(nick, sides);
 		int result = clamp(bot, uncappedResult);
 		bot.sendChannelFormat("%s rolls d%d with %s...", nick, sides, dieName);
-		if (uncappedResult > 100) {
+		if (result == 100 && uncappedResult > 100) {
 			bot.sendChannelFormat("%s rolls %d (= 100)! %s", nick, uncappedResult, bot.grade(result));
 		}
 		else bot.sendDefaultContestRollMessage(nick, result);

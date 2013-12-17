@@ -29,7 +29,7 @@ public class RulesChange extends Event {
 			int rollTarget = Powerups.powerupRnd.nextInt(100) + 1;
 			rules.rollTarget = rollTarget;
 			rules.winCondition = rules.ROLL_CLOSEST_TO_TARGET;
-			bot.sendChannelFormat("The roll closest to number %d now wins the contest!");
+			bot.sendChannelFormat("The roll closest to number %d now wins the contest!", rollTarget);
 		}
 	}
 	

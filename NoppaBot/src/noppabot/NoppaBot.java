@@ -180,13 +180,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerups.put("kessu", new ApprenticeDie());
 //		powerups.put("frodo", new ApprenticeDie());
 //		powerups.put("bilbo", new ApprenticeDie());
-//		Powerup p = new JackpotDie(); p.initialize(this);
-//		powerups.put("Verkel", p);
+		Powerup p = new MasterDie(); p.initialize(this);
+		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
 //		rolls.put("Verkel", 100);
 //		rolls.put("jlindval", 100);
 //		autorolls.add("jlindval");
+		
+		new RulesChange().run(this);
 		
 //		availablePowerups.add(p);
 		availablePowerups.add(new DiceBros());
@@ -718,20 +720,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public String grade(int value) {
-		if (value == 100) return "You showed us....the ULTIMATE roll!";
-		else if (value >= 95) return "You are a super roller!";
-		else if (value >= 90) return "Amazing!";
-		else if (value >= 80) return "Nicely done!";
-		else if (value >= 70) return "Quite good!";
-		else if (value >= 60) return "That's ok!";
-		else if (value >= 50) return "... That's decent!";
-		else if (value >= 40) return "... Could've gone better!";
-		else if (value >= 30) return "That's kind of a low roll!";
-		else if (value >= 20) return "Not having much luck today? :(";
-		else if (value >= 10) return "Still at two digits!";
-		else if (value > 1) return "Seek some advice from your local qualified rolling professional!";
-		else if (value == 1) return "Yikes!";
+	public String grade(int roll) {
+		int score = rules.winCondition.assignScore(roll);
+		if (score == 100) return "You showed us....the ULTIMATE roll!";
+		else if (score >= 95) return "You are a super roller!";
+		else if (score >= 90) return "Amazing!";
+		else if (score >= 80) return "Nicely done!";
+		else if (score >= 70) return "Quite good!";
+		else if (score >= 60) return "That's ok!";
+		else if (score >= 50) return "... That's decent!";
+		else if (score >= 40) return "... Could've gone better!";
+		else if (score >= 30) return "That's kind of a low roll!";
+		else if (score >= 20) return "Not having much luck today? :(";
+		else if (score >= 10) return "Still at two digits!";
+		else if (score > 1) return "Seek some advice from your local qualified rolling professional!";
+		else if (score == 1) return "Yikes!";
 		else return "Huh?";
 	}
 	
@@ -779,7 +782,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		sendChannel(randomRollStartMsg());
 		
-		rules.winCondition.onRollPeriodStart(this);
+		rules.onRollPeriodStart(this);
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
