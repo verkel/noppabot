@@ -41,13 +41,11 @@ public class MasterDie extends Powerup {
 	}
 	
 	private static int doContestRoll(String dieName, int sides, INoppaBot bot, String nick) {
-		int uncappedResult = bot.getRollFor(nick, sides);
-		int result = clamp(bot, uncappedResult);
-		bot.sendChannelFormat("%s rolls d%d with %s...", nick, sides, dieName);
-		if (result == 100 && uncappedResult > 100) {
-			bot.sendChannelFormat("%s rolls %d (= 100)! %s", nick, uncappedResult, bot.grade(result));
-		}
-		else bot.sendDefaultContestRollMessage(nick, result);
+		int result = bot.getRollFor(nick, sides);
+		String resultStr = rollToString(bot, result);
+		result = clamp(bot, result);
+		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
+			nick, sides, dieName, resultStr, bot.grade(result));
 		rollUnusedApprenticeDies(bot, result);
 		return result;
 	}

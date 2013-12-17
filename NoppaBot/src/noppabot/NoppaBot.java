@@ -714,21 +714,22 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	@Override
-	public void sendDefaultContestRollMessage(String nick, int value) {
-		sendChannel(getDefaultContestRollMessage(nick, value));
+	public void sendDefaultContestRollMessage(String nick, int roll) {
+		sendChannel(getDefaultContestRollMessage(nick, roll));
 	}
 
 	@Override
-	public String getDefaultContestRollMessage(String nick, int value) {
+	public String getDefaultContestRollMessage(String nick, int roll) {
 		String participatedMsg = participated(nick) ? 
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
-		return String.format("%s rolls %d! %s%s", nick, value, grade(value), participatedMsg);
+		String rollStr = Powerup.rollToString(this, roll);
+		return String.format("%s rolls %s! %s%s", nick, rollStr, grade(roll), participatedMsg);
 	}
 	
 	@Override
 	public String grade(int roll) {
 		int score = rules.winCondition.assignScore(roll);
-		if (score == 100) return "You showed us....the ULTIMATE roll!";
+		if (score >= 100) return "You showed us....the ULTIMATE roll!";
 		else if (score >= 95) return "You are a super roller!";
 		else if (score >= 90) return "Amazing!";
 		else if (score >= 80) return "Nicely done!";

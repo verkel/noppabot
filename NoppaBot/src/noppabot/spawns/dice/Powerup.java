@@ -92,6 +92,20 @@ public abstract class Powerup implements ISpawnable {
 		return getName();
 	}
 	
+	public static String rollToString(INoppaBot bot, int roll) {
+		if (roll <= 100 && roll >= 0) {
+			return String.valueOf(roll);
+		}
+		else {
+			if (bot.getRules().cappedRolls) {
+				return String.format("%d (= %d)", roll, clamp(bot, roll));
+			}
+			else {
+				return String.valueOf(roll);
+			}
+		}
+	}
+	
 	public static int clamp(INoppaBot bot, int roll) {
 		if (bot.getRules().cappedRolls) return Math.max(0, Math.min(100, roll));
 		else return roll;
