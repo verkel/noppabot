@@ -14,7 +14,7 @@ public class VariableDie extends Powerup {
 	
 	@Override
 	public void initialize(INoppaBot bot) {
-		sides = 80 + Powerups.powerupRnd.nextInt(80);
+		sides = 80 + 10 * Powerups.powerupRnd.nextInt(7);
 	}
 	
 	@Override
@@ -29,7 +29,7 @@ public class VariableDie extends Powerup {
 
 	@Override
 	public void onExpire(INoppaBot bot) {
-		bot.sendChannelFormat("... the variable die breaks due to its irregular number of sides.");
+		bot.sendChannelFormat("... the variable die breaks due to its unstable and irregular structure.");
 	}
 
 	@Override
@@ -67,8 +67,9 @@ public class VariableDie extends Powerup {
 		
 		public ChaosDie(INoppaBot bot) {
 			Rules rules = bot.getRules();
-			if (sides < 100) RulesChange.changeToLeastRollWins(rules);
-			else RulesChange.changeToUncappedRolls(rules);
+			if (sides < 100) ruleChangeDescr = RulesChange.changeToLeastRollWins(rules);
+			else if (sides > 100) ruleChangeDescr = RulesChange.changeToUncappedRolls(rules);
+			else ruleChangeDescr = RulesChange.changeToRollClosestToTargetWins(rules);
 		}
 		
 		@Override
@@ -84,7 +85,7 @@ public class VariableDie extends Powerup {
 		
 		@Override
 		public String getUpgradeDescription(INoppaBot bot, String nick) {
-			return String.format("It triggers the following rule change: %s", ruleChangeDescr);
+			return String.format("It bends the rules to its liking: %s", ruleChangeDescr);
 		}
 	}
 }

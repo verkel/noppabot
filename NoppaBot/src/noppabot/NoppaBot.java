@@ -9,7 +9,6 @@ import java.util.regex.*;
 
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import noppabot.spawns.dice.WeightedDie.CrushingDie;
 import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
@@ -177,28 +176,28 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("hassu", new CrushingDie(false));
+//		powerups.put("hassu", new CrushingDie(false));
 //		powerups.put("hessu", new ApprenticeDie());
 //		powerups.put("kessu", new ApprenticeDie());
-		powerups.put("frodo", new FastDie());
-		powerups.put("bilbo", new MasterDie());
-		Powerup p = new FastDie(); p.initialize(this);
-		powerups.put("Verkel", p);
+//		powerups.put("frodo", new FastDie());
+//		powerups.put("bilbo", new MasterDie());
+		Powerup p = new VariableDie(); p.initialize(this);
+//		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
-		rolls.put("Verkel", 100);
-		rolls.put("hassu", 100);
-		rolls.put("frodo", 100);
-		rolls.put("bilbo", 100);
-		autorolls.add("hassu");
-		autorolls.add("frodo");
-		autorolls.add("bilbo");
+//		rolls.put("Verkel", 100);
+//		rolls.put("hassu", 100);
+//		rolls.put("frodo", 100);
+//		rolls.put("bilbo", 100);
+//		autorolls.add("hassu");
+//		autorolls.add("frodo");
+//		autorolls.add("bilbo");
 		
 //		new RulesChange().run(this);
 		
-//		availablePowerups.add(p);
+		availablePowerups.add(p);
 		availablePowerups.add(new TrollingProfessional());
-		availablePowerups.add(new Bomb());
+//		availablePowerups.add(new Bomb());
 		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
