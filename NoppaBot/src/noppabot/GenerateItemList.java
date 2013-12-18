@@ -90,9 +90,9 @@ public class GenerateItemList {
 		buf.append("</table>\n");
 
 		buf.append("<h2>Evolved Dice</h2>\n");
-		buf.append("<p>These dice are evolved from the basic dice by grabbing the Dicemon Trainer " +
-			"or by the Dice Mutation event. They don't spawn on the channel. They are generally " +
-			"more powerful than the basic dice.</p>\n");
+		buf.append("<p>These dice are evolved from the basic die you carry at the moment by grabbing " +
+			"the Dicemon Trainer or by the Dice Mutation event. They don't spawn on the channel. " +
+			"They are generally more powerful than the basic dice.</p>\n");
 		buf.append("<table class='itemtable'>\n");
 		buf.append("<tr><th>Item</th><th>Name</th><th>EV</th><th>SD</th>" +
 		"<th class=\"desc\">Description</th>\n");
