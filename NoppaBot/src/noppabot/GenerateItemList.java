@@ -10,7 +10,6 @@ import java.util.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import noppabot.spawns.dice.VolatileDie.OptimizingDie;
 import noppabot.spawns.events.Event;
 
 public class GenerateItemList {
@@ -21,21 +20,25 @@ public class GenerateItemList {
 	
 	private List<TestResult> results = new ArrayList<TestResult>();
 	private Random rnd = new Random();
-	private static final int iterations = 1000000; // test
-//	private static final int iterations = 10000000; // good accuracy
+//	private static final int iterations = 1000000; // test
+	private static final int iterations = 10000000; // good accuracy
 //	private static final int iterations = 100000000; // excellent accuracy
 	
 	class TestResult implements Comparable<TestResult> {
+		public DiceType diceType;
 		public String name;
 		public String image;
 		public String description;
 		public double ev;
 		public double sd;
+		public String evolvesTo;
 		
-		public TestResult(String name, String image, String description, double ev, double sd) {
+		public TestResult(DiceType diceType, String name, String image, String description, String evolvesTo, double ev, double sd) {
+			this.diceType = diceType;
 			this.name = name;
 			this.image = image;
 			this.description = description;
+			this.evolvesTo = evolvesTo;
 			this.ev = ev;
 			this.sd = sd;
 		}
@@ -72,26 +75,76 @@ public class GenerateItemList {
 		
 		appendCSS(buf);
 		
-		buf.append("<h2>Item list</h2>\n");
+		buf.append("<h2>Basic Dice</h2>\n");
+		buf.append("<p>Basic dice are items that boost your rolling powers. They spawn on " +
+			"the channel at random times, and you can take them with the \"grab\" command. " +
+			"Grabbing a die takes up your item slot &mdash; you can only have one at a time.</p>\n");
 		buf.append("<p><b>EV</b> = Expected value, <b>SD</b> = Standard deviation</p>\n");
-		buf.append("<table>\n");
+		buf.append("<table class='itemtable'>\n");
+		buf.append("<tr><th>Item</th><th>Name</th><th>Evolves To</th><th>EV</th><th>SD</th>" +
+			"<th class=\"desc\">Description</th>\n");
+		testBasicDice();
+		Collections.sort(results);
+		appendResults(buf);
+		results.clear();
+		buf.append("</table>\n");
+
+		buf.append("<h2>Evolved Dice</h2>\n");
+		buf.append("<p>These dice are evolved from the basic dice by grabbing the Dicemon Trainer " +
+			"or by the Dice Mutation event. They don't spawn on the channel. They are generally " +
+			"more powerful than the basic dice.</p>\n");
+		buf.append("<table class='itemtable'>\n");
+		buf.append("<tr><th>Item</th><th>Name</th><th>EV</th><th>SD</th>" +
+		"<th class=\"desc\">Description</th>\n");
+		testEvolvedDice();
+		Collections.sort(results);
+		appendResults(buf);
+		results.clear();
+		buf.append("</table>\n");
+		
+		buf.append("<h2>Instants</h2>\n");
+		buf.append("<p>Instants are items (or people) which spawn on the channel and can be grabbed " +
+			"like basic dice. They differ from basic dice in that their effect is activated " +
+			"instantly, and not during the roll contest. They vanish after use and don't take up " +
+			"your item slot.</p>\n");
+		buf.append("<table class='itemtable'>\n");
 		buf.append("<tr><th>Item</th><th>Name</th><th>EV</th><th>SD</th>" +
 			"<th class=\"desc\">Description</th>\n");
-		
-		testBasicPowerups();
+		listInstants();
 		Collections.sort(results);
+		appendResults(buf);
+		buf.append("</table>\n");
 		
-		for (TestResult result : results) {
-			appendResult(result, buf);
-		}
+		buf.append("<h2>Events</h2>\n");
+		buf.append("<p>Events are occurrances which automatically happen without player interaction. " +
+			"Events are much rarer than regular item spawns.</p>\n");
+		buf.append("<table class='itemtable'>\n");
+		buf.append("<tr><th>Event</th><th>Name</th>" +
+		"<th class=\"desc\">Description</th>\n");
+		listEvents(buf);
+		buf.append("</table>\n");
 		
-		buf.append("</table>\n").append("</body>\n").append("</html>\n");
+		buf.append("</body>\n").append("</html>\n");
 		
 		BufferedWriter writer = new BufferedWriter(new FileWriter(path));
 		writer.append(buf);
 		writer.close();
 		
 		System.out.print(" Done!");
+	}
+
+	private void appendEvent(String name, String image, String desc, StringBuilder buf) {
+		buf.append("<tr>\n");
+		buf.append("<td>").append("<img src=\"").append("items/").append(image).append("\"> ").append("</td>\n");
+		buf.append("<td class=\"big bold\">").append(name).append("</td>\n");
+		buf.append("<td class=\"desc\">").append(desc).append("</td>\n");
+		buf.append("</tr>\n");
+	}
+
+	private void appendResults(StringBuilder buf) {
+		for (TestResult result : results) {
+			appendResult(result, buf);
+		}
 	}
 
 	private void appendCSS(StringBuilder buf) throws IOException {
@@ -113,65 +166,171 @@ public class GenerateItemList {
 		}
 	}
 
-	private void testBasicPowerups() {
-		testBasicPowerup("Regular die", "RegularDie.png", regularDieDesc, new RegularDie(), testBot);
-		testBasicPowerup("Polished die", "PolishedDie.png", polishedDieDesc, new PolishedDie(), testBot);
-		testBasicPowerup("Weighted die", "WeightedDie.png", weightedDieDesc, new WeightedDie(), testBot);
-		testBasicPowerup("Enchanted die", "EnchantedDie.png", enchantedDieDesc, new EnchantedDie(), testBot);
-		testBasicPowerup("Primal die", "PrimalDie.png", primalDieDesc, new PrimalDie(), testBot);
-		testBasicPowerup("Lucky die", "LuckyDie.png", luckyDieDesc, new LuckyDie(), testBot);
-		testBasicPowerup("Master die", "MasterDie.png", masterDieDesc, new MasterDie(), testBot);
-		testBasicPowerup("Fast die<br><small>(rolled at 00:00:00)</small>", "FastDie.png",
-			fastDieDesc, new FastDie(), testBot);
-		testBasicPowerup("Fast die<br><small>(rolled randomly within 00:01)</small>", "FastDie.png",
-			fastDieDesc, new FastDie(), new LazyBot());
-		testBasicPowerup("Volatile die", "VolatileDie.png", volatileDieDesc, new VolatileDie(), testBot);
-		testBasicPowerup("Extreme die", "ExtremeDie.png", extremeDieDesc,
-			new ExtremeDie(), testBot);
-		testBagOfDice();
-		testGroundhogDie();
-		testBasicPowerup("Rolling professional", "RollingProfessional.png", rollingProfessionalDesc,
-			new RollingProfessional(), testBot);
-		testDiceteller();
-		testBasicPowerup("RollerBot", "RollerBot.png", rollerBotDesc, new RegularDie(), testBot);
-		testDicePirate();
-		testApprenticeDie();
-		testBasicPowerup("Dice bros.", "DiceBros.png", "TODO", new DiceBros(), testBot);
-		testBasicPowerup("Optimizing die", "OptimizingDie.png", "TODO", new OptimizingDie(), testBot);
-	}
-	
-	private void testDicePirate() {
-		results.add(new TestResult("Dice pirate", "DicePirate.png", dicePirateDesc, -1, -1));
-		System.out.print('.');
-	}
-	
-	private void testApprenticeDie() {
-		results.add(new TestResult("Apprentice die", "ApprenticeDie.png", apprenticeDieDesc, -1, -1));
-		System.out.print('.');
-	}
+	private void testBasicDice() {
+		testBasicPowerup("Regular Die", "RegularDie.png", regularDieDesc, "Nothing", new RegularDie(), bot);
+		testBasicPowerup("Polished Die", "PolishedDie.png", polishedDieDesc, "Very Polished Die", new PolishedDie(), bot);
+		testBasicPowerup("Weighted Die", "WeightedDie.png", weightedDieDesc, "Crushing Die", new WeightedDie(), bot);
+		testBasicPowerup("Enchanted Die", "EnchantedDie.png", enchantedDieDesc, "Potent Die", new EnchantedDie(), bot);
+		testBasicPowerup("Primal Die", "PrimalDie.png", primalDieDesc, "Tribal Die", new PrimalDie(), bot);
+		testBasicPowerup("Lucky Die", "LuckyDie.png", luckyDieDesc, "Jackpot Die", new LuckyDie(), bot);
+		testBasicPowerup("Master Die", "MasterDie.png", masterDieDesc, "The One Die", new MasterDie(), bot);
+		testBasicPowerup("Fast Die<br><small>(rolled within 10 s)</small>", "FastDie.png",
+			fastDieDesc, "Faster Die", new FastDie(), bot);
+		testBasicPowerup("Extreme Die", "ExtremeDie.png", extremeDieDesc, "Daring Die", new ExtremeDie(), bot);
+		
+		testPowerup("Bag of Dice", "BagOfDice.png", bagOfDiceDesc, "Bag of Many Dice", new Builder() {
+			@Override
+			public Powerup createPowerup() {
+				BagOfDice bag = new BagOfDice();
+				bag.initialize(bot);
+				return bag;
+			};
+		}, bot, false, DiceType.BASIC);
+		
+		addEntry("Groundhog Die", "GroundhogDie.png", groundhogDieDesc, "Self-Improving Die");
+		testBasicPowerup("Rolling Professional", "RollingProfessional.png", rollingProfessionalDesc,
+			"Rolling Professor", new RollingProfessional(), bot);
 
-	private void testBasicPowerup(String name, String image, String desc, Powerup powerup, TestBot bot) {
-		double ev = computePowerupEV(powerup, bot);
+		addEntry("Apprentice Die", "ApprenticeDie.png", apprenticeDieDesc, "Master Die");
+		testBasicPowerup("Dice Bros.", "Locked.png", diceBrosDesc, "Super Dice Bros", new DiceBros(), bot);
+		
+		testPowerup("Variable Die", "Locked.png", variableDieDesc, "Chaos Die", new Builder() {
+			@Override
+			public Powerup createPowerup() {
+				VariableDie die = new VariableDie();
+				die.initialize(bot);
+				return die;
+			};
+		}, bot, false, DiceType.BASIC);
+		
+		// Figlet runs take time so we don't want to actually test the humongous die
+		testBasicPowerup("Humongous Die", "Locked.png", humongousDieDesc, "Humongous Crushing Die", new RegularDie(), bot);
+	}
+	
+	private void testEvolvedDice() {
+		testEvolvedPowerup("Very Polished Die", "Locked.png", veryPolishedDieDesc, new PolishedDie().upgrade(bot), bot);
+		testEvolvedPowerup("Crushing Die", "Locked.png", crushingDieDesc, new WeightedDie().upgrade(bot), bot);
+		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(bot), bot);
+		testEvolvedPowerup("Tribal Die", "Locked.png", tribalDieDesc, new PrimalDie().upgrade(bot), bot);
+		testEvolvedPowerup("Jackpot Die", "Locked.png", jackpotDieDesc, new LuckyDie().upgrade(bot), bot);
+		testEvolvedPowerup("The One Die", "Locked.png", theOneDieDesc, new MasterDie().upgrade(bot), bot);
+		testEvolvedPowerup("Faster Die<br><small>(rolled immediately)</small>", "Placeholder.png",
+			fasterDieDesc, new FastDie().upgrade(bot), bot);
+		testEvolvedPowerup("Daring Die", "Locked.png", daringDieDesc, new ExtremeDie().upgrade(bot), bot);
+
+		testPowerup("Bag of Many Dice", "Placeholder.png", bagOfManyDiceDesc, null, new Builder() {
+			@Override
+			public Powerup createPowerup() {
+				BagOfDice bag = new BagOfDice();
+				bag.initialize(bot);
+				return bag.upgrade(bot);
+			};
+		}, bot, false, DiceType.EVOLVED);
+		
+		addEntry("Self-Improving Die", "Placeholder.png", selfImprovingDieDesc, null);
+		testEvolvedPowerup("Rolling Professor", "Locked.png", rollingProfessorDesc,
+			new RollingProfessional().upgrade(bot), bot);
+
+		testPowerup("Super Dice Bros", "Locked.png", superDiceBrosDesc, null, new Builder() {
+			@Override
+			public Powerup createPowerup() {
+				DiceBros bros = new DiceBros();
+				bros.initialize(bot);
+				return bros.upgrade(bot);
+			};
+		}, bot, false, DiceType.EVOLVED);
+		
+		testPowerup("Chaos Die", "Locked.png", chaosDieDesc, null, new Builder() {
+			@Override
+			public Powerup createPowerup() {
+				VariableDie die = new VariableDie();
+				die.initialize(bot);
+				return die.upgrade(bot);
+			};
+		}, bot, false, DiceType.EVOLVED);
+		
+		// Figlet runs take time so we don't want to actually test the humongous die
+		testEvolvedPowerup("Humongous Crushing Die", "Locked.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(bot), bot);
+	}
+	
+	private void listInstants() {
+		addEntry("Dicemon Trainer", "Placeholder.png", dicemonTrainerDesc, null);
+		addEntry("Dice Pirate", "DicePirate.png", dicePirateDesc, null);
+		addEntry("Dice Recycler", "Placeholder.png", diceRecyclerDesc, null);
+		testDiceteller();
+		addEntry("Trolling Professional", "Locked.png", trollingProfessionalDesc, null);
+	}
+	
+	private void listEvents(StringBuilder buf) {
+		appendEvent("Dice Mutation", "Event.png", diceMutationDesc, buf);
+		appendEvent("Dice Storm", "Event.png", diceStormDesc, buf);
+		appendEvent("Fourth Wall Breaks", "Event.png", fourthWallBreaksDesc, buf);
+		appendEvent("Rules Change", "Locked.png", rulesChangeDesc, buf);
+	}
+	
+	
+	abstract class Builder {
+		public abstract Powerup createPowerup();
+	}
+	
+	class SingleInstance extends Builder {
+		private Powerup powerup;
+
+		public SingleInstance(Powerup powerup) {
+			this.powerup = powerup;
+			powerup.initialize(bot);
+		}
+
+		@Override
+		public Powerup createPowerup() { 
+			return powerup;
+		}
+	}
+	
+	private void addEntry(String name, String image, String description, String evolvesTo) {
+		results.add(new TestResult(null, name, image, description, evolvesTo, -1, -1));
 		System.out.print('.');
-		double sd = computePowerupSD(powerup, bot, ev);
+	}
+	
+	enum DiceType {
+		BASIC, EVOLVED
+	}
+	
+	private void testBasicPowerup(String name, String image, String desc, String evolvesTo, Powerup powerup, TestBot bot) {
+		testPowerup(name, image, desc, evolvesTo, new SingleInstance(powerup), bot, false, DiceType.BASIC);
+	}
+	
+	private void testEvolvedPowerup(String name, String image, String desc, Powerup powerup, TestBot bot) {
+		testPowerup(name, image, desc, null, new SingleInstance(powerup), bot, false, DiceType.EVOLVED);
+	}
+	
+	private void testPowerup(String name, String image, String desc, String evolvesTo, 
+		Builder builder, TestBot bot, boolean printRolls, DiceType diceType) {
+		
+		double ev = computePowerupEV(builder, bot, printRolls);
 		System.out.print('.');
-		TestResult result = new TestResult(name, image, desc, ev, sd);
+		double sd = computePowerupSD(builder, bot, ev);
+		System.out.print('.');
+		TestResult result = new TestResult(diceType, name, image, desc, evolvesTo, ev, sd);
 		results.add(result);
 	}
 	
-	private double computePowerupEV(Powerup powerup, TestBot bot) {
+	private double computePowerupEV(Builder builder, TestBot bot, boolean printRolls) {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
+			Powerup powerup = builder.createPowerup();
 			int roll = bot.getRollFor(TESTER_NAME, 100);
 			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
+			if (printRolls) System.out.println(roll);
 			sum += roll;
 		}
 		return sum / (double)iterations;
 	}
 	
-	private double computePowerupSD(Powerup powerup, TestBot bot, double ev) {
+	private double computePowerupSD(Builder builder, TestBot bot, double ev) {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
+			Powerup powerup = builder.createPowerup();
 			int roll = bot.getRollFor(TESTER_NAME, 100);
 			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
 			double diff = roll - ev;
@@ -187,9 +346,9 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = new BagOfDice();
-			powerup.onSpawn(testBot);
-			int roll = testBot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(testBot, TESTER_NAME, roll);
+			powerup.initialize(bot);
+			int roll = bot.getRollFor(TESTER_NAME, 100);
+			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
 			sum += roll;
 		}
 		double ev = sum / (double)iterations;
@@ -199,24 +358,24 @@ public class GenerateItemList {
 		sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = new BagOfDice();
-			powerup.onSpawn(testBot);
-			int roll = testBot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(testBot, TESTER_NAME, roll);
+			powerup.initialize(bot);
+			int roll = bot.getRollFor(TESTER_NAME, 100);
+			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
 			double diff = roll - ev;
 			sum += diff*diff;
 		}
 		double sd = Math.sqrt(sum / (double)iterations);
 		System.out.print('.');
 		
-		results.add(new TestResult("Bag of dice", "BagOfDice.png", bagOfDiceDesc, ev, sd));
+		results.add(new TestResult(DiceType.BASIC, "Bag of dice", "BagOfDice.png", bagOfDiceDesc, "Bag of Many Dice", ev, sd));
 	}
 	
 	private void testDiceteller() {
 		// EV
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
-			int roll = testBot.getRollFor(TESTER_NAME, 100);
-			if (roll < REGULAR_DICE_EV) roll = testBot.getRollFor(TESTER_NAME, 100);
+			int roll = bot.getRollFor(TESTER_NAME, 100);
+			if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
 			sum += roll;
 		}
 		double ev = sum / (double)iterations;
@@ -225,15 +384,15 @@ public class GenerateItemList {
 		// SD
 		sum = 0;
 		for (int i = 0; i < iterations; i++) {
-			int roll = testBot.getRollFor(TESTER_NAME, 100);
-			if (roll < REGULAR_DICE_EV) roll = testBot.getRollFor(TESTER_NAME, 100);
+			int roll = bot.getRollFor(TESTER_NAME, 100);
+			if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
 			double diff = roll - ev;
 			sum += diff*diff;
 		}
 		double sd = Math.sqrt(sum / (double)iterations);
 		System.out.print('.');
 		
-		results.add(new TestResult("Diceteller", "Diceteller.png", dicetellerDesc, ev, sd));
+		results.add(new TestResult(null, "Diceteller", "Diceteller.png", dicetellerDesc, null, ev, sd));
 		System.out.print('.');
 	}
 	
@@ -243,7 +402,7 @@ public class GenerateItemList {
 		int lastRoll = 0, lastLastRoll = 0;
 		for (int i = 0; i < iterations; i++) {
 			int roll;
-			if (lastRoll == lastLastRoll || lastRoll < REGULAR_DICE_EV) roll = testBot.getRollFor(TESTER_NAME, 100);
+			if (lastRoll == lastLastRoll || lastRoll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
 			else roll = lastRoll;
 			sum += roll;
 			lastLastRoll = lastRoll;
@@ -257,7 +416,7 @@ public class GenerateItemList {
 		lastRoll = 0; lastLastRoll = 0;
 		for (int i = 0; i < iterations; i++) {
 			int roll;
-			if (lastRoll == lastLastRoll || lastRoll < REGULAR_DICE_EV) roll = testBot.getRollFor(TESTER_NAME, 100);
+			if (lastRoll == lastLastRoll || lastRoll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
 			else roll = lastRoll;
 			double diff = roll - ev;
 			sum += diff * diff;
@@ -267,23 +426,32 @@ public class GenerateItemList {
 		double sd = Math.sqrt(sum / (double)iterations);
 		System.out.print('.');
 		
-		results.add(new TestResult("Groundhog die", "GroundhogDie.png", groundhogDieDesc, ev, sd));
+		results.add(new TestResult(DiceType.BASIC, "Groundhog die", "GroundhogDie.png", groundhogDieDesc, "Self-Improving Die", ev, sd));
 		System.out.print('.');
 	}
 	
 	private void appendResult(TestResult r, StringBuilder buf) {
 		buf.append("<tr>\n");
 		buf.append("<td>").append("<img src=\"").append("items/").append(r.image).append("\"> ").append("</td>\n");
-		buf.append("<td class=\"big bold\">").append(r.name).append("</td>\n");
+		String anchor = r.name;
+		if (anchor.startsWith("Faster Die")) anchor = "Faster Die"; // Fix subtitle leaking into anchor
+		String nameContent = String.format("<a name='%s'>%s</a>", anchor, r.name);
+		buf.append("<td class=\"big bold\">").append(nameContent).append("</td>\n");
+		if (r.evolvesTo != null) {
+			String content = r.evolvesTo.equals("Nothing") ? "Nothing" : 
+				String.format("<a href='#%s'>%s</a>", r.evolvesTo, r.evolvesTo);
+			buf.append("<td>").append(content).append("</td>\n");
+		}
 		buf.append("<td class=\"big bold\">").append(r.getEv()).append("</td>\n");
 		buf.append("<td class=\"big\">").append(r.getSd()).append("</td>\n");
 		buf.append("<td class=\"desc\">").append(r.description).append("</td>\n");
 		buf.append("</tr>\n");
 	}
 	
-	private TestBot testBot = new TestBot();
+	private TestBot bot = new TestBot();
 	
 	class TestBot implements INoppaBot {
+		private Rules rules = new Rules();
 		
 		@Override
 		public void sendDefaultContestRollMessage(String nick, int value) {
@@ -391,7 +559,7 @@ public class GenerateItemList {
 
 		@Override
 		public Rules getRules() {
-			return null;
+			return rules;
 		}
 	}
 	
@@ -403,24 +571,50 @@ public class GenerateItemList {
 	}
 	
 	private static final String regularDieDesc = "Regular die is the d100.";
-	private static final String dicePirateDesc = "Dice pirate steals item from another contestant.";
-	private static final String rollerBotDesc = "Roller bot rolls automatically when the contest starts.";
-	private static final String luckyDieDesc = "Lucky die gives a +25 bonus if the roll contains any sevens.";
-	private static final String bagOfDiceDesc = "Bag of dice contains 1 to 8 random dice ranging from d4 to d100." +
+	private static final String dicePirateDesc = "Steals item from another contestant.";
+	private static final String luckyDieDesc = "Gives a +25 bonus if the roll contains any sevens.";
+	private static final String bagOfDiceDesc = "Contains 1 to 8 random dice ranging from d4 to d100." +
 		" Your roll result is the summed result from throwing all the dice.";
-	private static final String primalDieDesc = "Primal die gives a +20 bonus if the <a href=\"http://www.prime-numbers.net/prime-numbers-1-100-chart.html\">roll is a prime</a>.";
-	private static final String polishedDieDesc = "Polished die gives a +5 bonus.";
-	private static final String fastDieDesc = "Fast die gives a bonus of 30 - (seconds passed since the contest started). " +
-		"After 30 seconds the bonus will be 0.";
-	private static final String groundhogDieDesc = "Groundhog die repeats your last roll.";
-	private static final String weightedDieDesc = "Weighted die gives a +10 bonus.";
-	private static final String rollingProfessionalDesc = "Rolling professional ensures your roll is at least 50.";
-	private static final String dicetellerDesc = "Diceteller tells what your next roll will be.";
-	private static final String enchantedDieDesc = "Enchanted die gives a +15 bonus.";
-	private static final String volatileDieDesc = "After the initial roll, the volatile die may reroll itself. " +
-		"The chance for reroll is 100% - (lastRoll)%. The roll after which the volatile die stops is your result.";
-	private static final String extremeDieDesc = "Extreme die changes rolls 1..10 and 90..99 into 100.";
-	private static final String masterDieDesc = "Master die lets you roll d200 (the result is capped into 100).";
+	private static final String primalDieDesc = "Gives a +20 bonus if the <a href=\"http://www.prime-numbers.net/prime-numbers-1-100-chart.html\">roll is a prime</a>.";
+	private static final String polishedDieDesc = "Gives a +5 bonus.";
+	private static final String fastDieDesc = "Gives a bonus of 20 if you roll during the first 10 seconds. After that, the bonus will decrease by 1 per second.";
+	private static final String groundhogDieDesc = "Repeats your last roll.";
+	private static final String weightedDieDesc = "Gives a +10 bonus.";
+	private static final String rollingProfessionalDesc = "Ensures your roll is at least 50.";
+	private static final String dicetellerDesc = "Tells what your next roll will be.";
+	private static final String enchantedDieDesc = "Gives a +15 bonus.";
+	private static final String extremeDieDesc = "Changes rolls 1..10 and 90..99 into 100.";
+	private static final String masterDieDesc = "Lets you roll the d150 (the result is capped into 100).";
 	private static final String apprenticeDieDesc = "After a master die is rolled, the apprentice " +
 		"die will roll the same result. If the apprentice die ends up in the tiebreaker round, it turns into a master die.";
+	
+	private static final String undiscovered = "<span class='undiscovered'>Undiscovered!</span>";
+	
+	private static final String diceBrosDesc = undiscovered;
+	private static final String variableDieDesc = undiscovered;
+	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
+	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one.";
+	private static final String trollingProfessionalDesc = undiscovered;
+	private static final String humongousDieDesc = undiscovered;
+	
+	private static final String diceMutationDesc = "Some of the currently owned items mutate into more powerful dice. " +
+		"The number of mutated dice is random, and ranges from 1 to all owned dice.";
+	private static final String diceStormDesc = "Spawns from 3 to 5 new items at once.";
+	private static final String fourthWallBreaksDesc = "Reveals all of the events that are yet to happen today.";
+	private static final String rulesChangeDesc = undiscovered;
+	
+	private static final String veryPolishedDieDesc = undiscovered; // = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
+	private static final String crushingDieDesc = undiscovered; // = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
+	private static final String potentDieDesc = "Gives a +20 bonus.";
+	private static final String tribalDieDesc = undiscovered; // = "In addition to tribal die's effect, you get +10 bonus for every prime rolled by an opponent.";
+	private static final String jackpotDieDesc = undiscovered; // = "Gives a +40 bonus if the roll contains any sevens";
+	private static final String theOneDieDesc = undiscovered; // = "Lets you roll the d200 (the result is capped into 100).";
+	private static final String daringDieDesc = undiscovered; // = "You roll the d30. Changes rolls 1..10 into 100.";
+	private static final String bagOfManyDiceDesc = "Two additional dice are put into the dice bag. May be upgraded infinitely for more dice.";
+	private static final String selfImprovingDieDesc = "Repeats your last roll +10.";
+	private static final String superDiceBrosDesc = undiscovered; // = "The dice bros. get random powerups each.";
+	private static final String chaosDieDesc = undiscovered; // = "Triggers a rules change. If the die is weaker than d100, the least roll will win tonight. If the die is stronger than d100, the roll cap of 100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
+	private static final String humongousCrushingDieDesc = undiscovered; // = "Deals d10+20 damage to others' rolls.";
+	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
+	private static final String rollingProfessorDesc = undiscovered; // = "Ensures your roll is at least 70";
 }
