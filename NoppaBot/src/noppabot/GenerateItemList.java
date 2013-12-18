@@ -16,15 +16,19 @@ public class GenerateItemList {
 
 	private static final double REGULAR_DICE_EV = 50.50d;
 	private static final String TESTER_NAME = "Tester";
-	public static final File path = new File("index.html");
+	public static final File outputPath = new File("index.html");
+	public static final File cachePath = new File("results.cache");
 	
 	private List<TestResult> results = new ArrayList<TestResult>();
 	private Random rnd = new Random();
 //	private static final int iterations = 1000000; // test
-	private static final int iterations = 10000000; // good accuracy
-//	private static final int iterations = 100000000; // excellent accuracy
+//	private static final int iterations = 10000000; // good accuracy
+	private static final int iterations = 100000000; // excellent accuracy
 	
-	class TestResult implements Comparable<TestResult> {
+	public Map<String, TestResult> resultsCache;
+	private Mode mode;
+	
+	private static class TestResult implements Comparable<TestResult>, Serializable {
 		public DiceType diceType;
 		public String name;
 		public String image;
@@ -61,12 +65,43 @@ public class GenerateItemList {
 		}
 	}
 	
-	public static void main(String[] args) throws IOException {
-		new GenerateItemList().run();
+	public enum Mode {
+		COMPUTE, COMPUTE_AND_CACHE, LOAD_CACHED
+	}
+	
+	public static void main(String[] args) throws Exception {
+		Mode mode = Mode.COMPUTE;
+		String arg;
+		if (args.length == 0) {
+			System.out.print("Input action (compute, cache, load -- nothing for compute): ");
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			arg = br.readLine();
+			br.close();
+		}
+		else {
+			arg = args[0];
+		}
+		
+		if (arg.equals("cache")) mode = Mode.COMPUTE_AND_CACHE;
+		else if (arg.equals("load")) mode = Mode.LOAD_CACHED;
+		
+		new GenerateItemList().run(mode);
 	}
 
-	private void run() throws IOException {
-		System.out.print("Computing ranking list");
+	@SuppressWarnings("unchecked")
+	private void run(Mode mode) throws IOException, ClassNotFoundException {
+		this.mode = mode;
+		if (mode == Mode.COMPUTE) System.out.print("Computing ranking list");
+		else if (mode == Mode.COMPUTE_AND_CACHE) {
+			System.out.print("Computing & caching ranking list");
+			resultsCache = new TreeMap<String, TestResult>();
+		}
+		else if (mode == Mode.LOAD_CACHED) {
+			System.out.print("Loading cached ranking list");
+			ObjectInputStream stream = new ObjectInputStream(new FileInputStream(cachePath));
+			resultsCache = (TreeMap<String, TestResult>)stream.readObject();
+			stream.close();
+		}
 		
 		StringBuilder buf = new StringBuilder();
 		buf.append("<html>\n");
@@ -126,9 +161,15 @@ public class GenerateItemList {
 		
 		buf.append("</body>\n").append("</html>\n");
 		
-		BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));
 		writer.append(buf);
 		writer.close();
+		
+		if (mode == Mode.COMPUTE_AND_CACHE) {
+			ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(cachePath));
+			stream.writeObject(resultsCache);
+			stream.close();
+		}
 		
 		System.out.print(" Done!");
 	}
@@ -307,12 +348,21 @@ public class GenerateItemList {
 	private void testPowerup(String name, String image, String desc, String evolvesTo, 
 		Builder builder, TestBot bot, boolean printRolls, DiceType diceType) {
 		
-		double ev = computePowerupEV(builder, bot, printRolls);
-		System.out.print('.');
-		double sd = computePowerupSD(builder, bot, ev);
-		System.out.print('.');
+		double ev, sd;
+		if (mode == Mode.LOAD_CACHED) {
+			TestResult cachedResult = resultsCache.get(name);
+			ev = cachedResult.ev;
+			sd = cachedResult.sd;
+		}
+		else {
+			ev = computePowerupEV(builder, bot, printRolls);
+			System.out.print('.');
+			sd = computePowerupSD(builder, bot, ev);
+			System.out.print('.');
+		}
 		TestResult result = new TestResult(diceType, name, image, desc, evolvesTo, ev, sd);
 		results.add(result);
+		if (mode == Mode.COMPUTE_AND_CACHE) resultsCache.put(name, result);
 	}
 	
 	private double computePowerupEV(Builder builder, TestBot bot, boolean printRolls) {
@@ -339,94 +389,41 @@ public class GenerateItemList {
 		return Math.sqrt(sum / (double)iterations);
 	}
 	
-	private void testBagOfDice() {
-		double iterations = GenerateItemList.iterations / 10;
-		
-		// EV
-		double sum = 0;
-		for (int i = 0; i < iterations; i++) {
-			Powerup powerup = new BagOfDice();
-			powerup.initialize(bot);
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
-			sum += roll;
-		}
-		double ev = sum / (double)iterations;
-		System.out.print('.');
-		
-		// SD
-		sum = 0;
-		for (int i = 0; i < iterations; i++) {
-			Powerup powerup = new BagOfDice();
-			powerup.initialize(bot);
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
-			double diff = roll - ev;
-			sum += diff*diff;
-		}
-		double sd = Math.sqrt(sum / (double)iterations);
-		System.out.print('.');
-		
-		results.add(new TestResult(DiceType.BASIC, "Bag of dice", "BagOfDice.png", bagOfDiceDesc, "Bag of Many Dice", ev, sd));
-	}
-	
 	private void testDiceteller() {
-		// EV
-		double sum = 0;
-		for (int i = 0; i < iterations; i++) {
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
-			sum += roll;
-		}
-		double ev = sum / (double)iterations;
-		System.out.print('.');
 		
-		// SD
-		sum = 0;
-		for (int i = 0; i < iterations; i++) {
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
-			double diff = roll - ev;
-			sum += diff*diff;
+		String name = "Diceteller";
+		double ev, sd;
+		if (mode == Mode.LOAD_CACHED) {
+			TestResult cachedResult = resultsCache.get(name);
+			ev = cachedResult.ev;
+			sd = cachedResult.sd;
 		}
-		double sd = Math.sqrt(sum / (double)iterations);
-		System.out.print('.');
-		
-		results.add(new TestResult(null, "Diceteller", "Diceteller.png", dicetellerDesc, null, ev, sd));
-		System.out.print('.');
-	}
-	
-	private void testGroundhogDie() {
-		// EV
-		double sum = 0;
-		int lastRoll = 0, lastLastRoll = 0;
-		for (int i = 0; i < iterations; i++) {
-			int roll;
-			if (lastRoll == lastLastRoll || lastRoll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
-			else roll = lastRoll;
-			sum += roll;
-			lastLastRoll = lastRoll;
-			lastRoll = roll;
+		else {
+			// EV
+			double sum = 0;
+			for (int i = 0; i < iterations; i++) {
+				int roll = bot.getRollFor(TESTER_NAME, 100);
+				if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
+				sum += roll;
+			}
+			ev = sum / (double)iterations;
+			System.out.print('.');
+			
+			// SD
+			sum = 0;
+			for (int i = 0; i < iterations; i++) {
+				int roll = bot.getRollFor(TESTER_NAME, 100);
+				if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
+				double diff = roll - ev;
+				sum += diff*diff;
+			}
+			sd = Math.sqrt(sum / (double)iterations);
+			System.out.print('.');
 		}
-		double ev = sum / (double)iterations;
-		System.out.print('.');
 		
-		// SD
-		sum = 0;
-		lastRoll = 0; lastLastRoll = 0;
-		for (int i = 0; i < iterations; i++) {
-			int roll;
-			if (lastRoll == lastLastRoll || lastRoll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
-			else roll = lastRoll;
-			double diff = roll - ev;
-			sum += diff * diff;
-			lastLastRoll = lastRoll;
-			lastRoll = roll;
-		}
-		double sd = Math.sqrt(sum / (double)iterations);
-		System.out.print('.');
-		
-		results.add(new TestResult(DiceType.BASIC, "Groundhog die", "GroundhogDie.png", groundhogDieDesc, "Self-Improving Die", ev, sd));
+		TestResult result = new TestResult(null, name, "Diceteller.png", dicetellerDesc, null, ev, sd);
+		results.add(result);
+		if (mode == Mode.COMPUTE_AND_CACHE) resultsCache.put(name, result);
 		System.out.print('.');
 	}
 	
