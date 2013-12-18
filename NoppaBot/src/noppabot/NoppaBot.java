@@ -656,7 +656,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			// User didn't specify which item to grab
 			else if (powerupName == null) {
 				String items = join(availablePowerups, ", ");
-				sendChannelFormat("%s: There are multiple dice available: %s. Specify which one you want!", nick, items);
+				sendChannelFormat("%s: There are multiple items available: %s. Specify which one you want!", nick, items);
 			}
 			// Unknown item
 			else {
