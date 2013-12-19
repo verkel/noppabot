@@ -4,36 +4,35 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
 
 public class ApprenticeDie extends Powerup {
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("An apprentice die appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the apprentice die will find no masters today.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
-		bot.sendChannelFormat("%s grabs the apprentice die and it looks forward to learning from the Master Die.", nick);
+	public void onPickup() {
+		bot.sendChannelFormat("%s grabs the apprentice die and it looks forward to learning from the Master Die.", ownerColored);
 	}
 	
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		bot.sendChannelFormat("%s rolls with the apprentice die, but it really just wanted " +
-			"to see the Master Die do it, first.", nick);
-		return super.onContestRoll(bot, nick, roll); // Normal behaviour
+			"to see the Master Die do it, first.", ownerColored);
+		return super.onContestRoll(roll); // Normal behaviour
 	}
 	
 	@Override
-	public void onTiebreakPeriodStart(INoppaBot bot, String nick) {
-		bot.sendChannelFormat("%s's apprentice die has learned enough and evolves into a Master Die!", nick);
-		bot.getPowerups().put(nick, new MasterDie());
+	public void onTiebreakPeriodStart() {
+		bot.sendChannelFormat("%s's apprentice die has learned enough and evolves into a Master Die!", ownerColored);
+		bot.getPowerups().put(owner, new MasterDie());
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public class ApprenticeDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new MasterDie();
 	}
 }

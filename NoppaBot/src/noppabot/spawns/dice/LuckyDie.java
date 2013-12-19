@@ -4,7 +4,6 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
 
 
 public class LuckyDie extends Powerup {
@@ -12,34 +11,34 @@ public class LuckyDie extends Powerup {
 	public static final int bonus = 25;
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A lucky die appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the lucky die rolls away.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 		bot.sendChannelFormat(
-			"%s grabs the lucky die and it wishes good luck for tonight's roll.", nick);
+			"%s grabs the lucky die and it wishes good luck for tonight's roll.", ownerColored);
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		if (String.valueOf(roll).contains("7")) {
 			int result = roll + bonus;
 			result = clamp(bot, result);
 			bot.sendChannelFormat(
 				"%s rolls %d! The lucky die likes sevens in numbers, so it tinkers with your roll, making it %d + %d = %d. Lucky!",
-				nick, roll, roll, bonus, result);
+				ownerColored, roll, roll, bonus, result);
 			return result;
 		}
 		else {
 			bot.sendChannelFormat(
-				"%s rolls %d! The lucky die doesn't seem to like this number, though.", nick, roll);
+				"%s rolls %d! The lucky die doesn't seem to like this number, though.", ownerColored, roll);
 			return roll;
 		}
 	}
@@ -55,7 +54,7 @@ public class LuckyDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new JackpotDie();
 	}
 	
@@ -64,18 +63,18 @@ public class LuckyDie extends Powerup {
 		private static final int jackpotBonus = 40;
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+		public int onContestRoll(int roll) {
 			if (String.valueOf(roll).contains("7")) {
 				int result = roll + jackpotBonus;
 				result = clamp(bot, result);
 				bot.sendChannelFormat(
 					"%s rolls %d! You win the JACKPOT! Your final roll is %d + %d = %d.",
-					nick, roll, roll, jackpotBonus, result);
+					ownerColored, roll, roll, jackpotBonus, result);
 				return result;
 			}
 			else {
 				bot.sendChannelFormat(
-					"%s rolls %d! No jackpot for you.", nick, roll);
+					"%s rolls %d! No jackpot for you.", ownerColored, roll);
 				return roll;
 			}
 		}
@@ -86,7 +85,7 @@ public class LuckyDie extends Powerup {
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("If your roll contains the digit 7, you now get the jackpot bonus of +%d!", jackpotBonus);
 		}
 	}

@@ -4,7 +4,6 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
 
 
 public class PolishedDie extends Powerup {
@@ -12,26 +11,26 @@ public class PolishedDie extends Powerup {
 	public static final int bonus = 5;
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A polished die appears!");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
-		bot.sendChannelFormat("%s grabs the polished die.", nick);
+	public void onPickup() {
+		bot.sendChannelFormat("%s grabs the polished die.", ownerColored);
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the polished die fades away.");
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		int result = roll + bonus;
 		result = clamp(bot, result);
-		bot.sendChannelFormat("The polished die adds a nice bonus to %s's roll.", nick);
-		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
+		bot.sendChannelFormat("The polished die adds a nice bonus to %s's roll.", owner);
+		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result,
 			bot.grade(result));
 		return result;
 	}
@@ -47,7 +46,7 @@ public class PolishedDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new VeryPolishedDie();
 	}
 	
@@ -57,11 +56,11 @@ public class PolishedDie extends Powerup {
 		private int bonus = PolishedDie.bonus + 10;
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+		public int onContestRoll(int roll) {
 			int result = roll + bonus;
 			result = clamp(bot, result);
-			bot.sendChannelFormat("The %s adds a sweet bonus to %s's roll.", name.toLowerCase(), nick);
-			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
+			bot.sendChannelFormat("The %s adds a sweet bonus to %s's roll.", name.toLowerCase(), owner);
+			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result,
 				bot.grade(result));
 			return result;
 		}
@@ -77,14 +76,14 @@ public class PolishedDie extends Powerup {
 		}
 		
 		@Override
-		public Powerup upgrade(INoppaBot bot) {
+		public Powerup upgrade() {
 			name = "Very " + name;
 			bonus += 10;
 			return this;
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("It now has +10 further bonus, for a total of +%d!", bonus);
 		}
 	}

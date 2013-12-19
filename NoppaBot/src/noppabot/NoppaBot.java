@@ -181,7 +181,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerups.put("kessu", new ApprenticeDie());
 //		powerups.put("frodo", new FastDie());
 //		powerups.put("bilbo", new MasterDie());
-		Powerup p = new VariableDie(); p.initialize(this);
+//		Powerup p = new VariableDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
@@ -195,9 +195,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		new RulesChange().run(this);
 		
-		availablePowerups.add(p);
+//		availablePowerups.add(p);
 		availablePowerups.add(new TrollingProfessional());
-//		availablePowerups.add(new Bomb());
+		availablePowerups.add(new BagOfDice());
 		availablePowerups.add(new DicemonTrainer());
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
@@ -339,7 +339,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			
 			if (spawn instanceof Powerup) {
 				Powerup powerup = (Powerup)spawn;
-				powerup.onSpawn(NoppaBot.this);
+				powerup.onSpawn();
 				availablePowerups.add(powerup);
 			}
 			else {
@@ -378,13 +378,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void expirePowerup(Powerup powerup) {
 		if (availablePowerups.remove(powerup)) {
-			powerup.onExpire(this);
+			powerup.onExpire();
 		}
 	}
 
 	private void expireAllPowerups() {
 		for (Powerup powerup : availablePowerups) {
-			powerup.onExpire(this);
+			powerup.onExpire();
 		}
 		availablePowerups.clear();
 	}
@@ -644,12 +644,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (availablePowerups.isEmpty()) {
 			sendChannelFormat("%s: nothing to grab.", nick);
 		}
-		else if (powerup != null && !powerup.canPickUp(this, nick)) {
+		else if (powerup != null && !powerup.canPickUp(nick)) {
 			// canPickUp(*) will warn the user
 		}
 		else {
 			if (powerup != null) {
-				powerup.onPickup(this, nick);
+				powerup.setOwner(nick);
+				powerup.onPickup();
 				if (powerup.isCarried()) powerups.put(nick, powerup);
 				availablePowerups.remove(powerup);
 			}
@@ -691,11 +692,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			if (powerups.containsKey(nick) && !participated) {
 				Powerup powerup = powerups.get(nick);
 				if (rollOrTiebreakPeriod) {
-					roll = powerup.onContestRoll(this, nick, roll);
+					roll = powerup.onContestRoll(roll);
 					powerupUsed = true;
 				}
 				else {
-					roll = powerup.onNormalRoll(this, nick, roll);
+					roll = powerup.onNormalRoll(roll);
 				}
 			}
 			
@@ -722,14 +723,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		for (String powerupOwner : powerups.keySet()) {
 			if (!powerupOwner.equals(nick)) {
 				Powerup powerup = powerups.get(powerupOwner);
-				roll = powerup.onOpponentRoll(this, powerupOwner, nick, roll);
+				roll = powerup.onOpponentRoll(nick, roll);
 			}
 		}
 		// Late -- the roll is now determined, do something else
 		for (String powerupOwner : powerups.keySet()) {
 			if (!powerupOwner.equals(nick)) {
 				Powerup powerup = powerups.get(powerupOwner);
-				powerup.onOpponentRollLate(this, powerupOwner, nick, roll);
+				powerup.onOpponentRollLate(nick, roll);
 			}
 		}
 		return roll;
@@ -745,7 +746,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		String participatedMsg = participated(nick) ? 
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
 		String rollStr = Powerup.rollToString(this, roll);
-		return String.format("%s rolls %s! %s%s", nick, rollStr, grade(roll), participatedMsg);
+		return String.format("%s rolls %s! %s%s", ColorStr.nick(nick), rollStr, grade(roll), participatedMsg);
 	}
 	
 	@Override
@@ -815,7 +816,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
-			powerup.onRollPeriodStart(this, nick);
+			powerup.onRollPeriodStart();
 		}
 	}
 	
@@ -866,7 +867,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		for (String tiebreakerNick : tiebreakers) {
 			Powerup powerup = powerups.get(tiebreakerNick);
-			if (powerup != null) powerup.onTiebreakPeriodStart(this, tiebreakerNick);
+			if (powerup != null) powerup.onTiebreakPeriodStart();
 		}
 		
 		scheduleSettleTieTimeout();

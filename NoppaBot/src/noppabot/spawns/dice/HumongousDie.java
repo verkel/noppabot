@@ -30,23 +30,23 @@ public class HumongousDie extends Powerup {
 	}
 	
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A HUMONGOUS DIE APPEARS!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... THE HUMONGOUS DIE COLLAPSES UNDER ITS OWN WEIGHT");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
-		bot.sendChannelFormat("%s GRABS THE HUMONGOUS DIE", nick.toUpperCase());
+	public void onPickup() {
+		bot.sendChannelFormat("%s GRABS THE HUMONGOUS DIE", ownerColored.toUpperCase());
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
-		return doContestRoll(bot, nick, roll);
+	public int onContestRoll(int roll) {
+		return doContestRoll(bot, owner, roll);
 	}
 	
 	public static int doContestRoll(INoppaBot bot, String nick, int roll) {
@@ -83,7 +83,7 @@ public class HumongousDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new CrushingDie(true);
 	}
 }

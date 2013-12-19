@@ -4,19 +4,18 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.INoppaBot;
 import noppabot.spawns.dice.Powerup;
 
 public class DicemonTrainer extends Powerup {
 	public static final String NAME = "Dicemon Trainer";
 	
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannelFormat("A Dicemon trainer appears!");
 	}
 	
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the Dicemon trainer used FLY! He flew away.");
 	}
 	
@@ -26,7 +25,7 @@ public class DicemonTrainer extends Powerup {
 	}
 	
 	@Override
-	public boolean canPickUp(INoppaBot bot, String nick) {
+	public boolean canPickUp(String nick) {
 		if (bot.getPowerups().containsKey(nick)) { // Has item
 			Powerup powerup = bot.getPowerups().get(nick);
 			if (powerup.isUpgradeable()) {
@@ -44,15 +43,15 @@ public class DicemonTrainer extends Powerup {
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
-		Powerup oldPowerup = bot.getPowerups().get(nick);
+	public void onPickup() {
+		Powerup oldPowerup = bot.getPowerups().get(owner);
 		String oldName = oldPowerup.getName();
-		Powerup newPowerup = oldPowerup.upgrade(bot);
+		Powerup newPowerup = oldPowerup.upgrade();
 		String newName = newPowerup.getName();
-		String descr = newPowerup.getUpgradeDescription(bot, nick);
-		bot.getPowerups().put(nick, newPowerup);
+		String descr = newPowerup.getUpgradeDescription();
+		bot.getPowerups().put(owner, newPowerup);
 		bot.sendChannelFormat("The trainer says: I'll unlock the hidden potential in your dice!");
-		bot.sendChannelFormat("%s's %s evolved into %s! %s", nick, oldName, newName, descr);
+		bot.sendChannelFormat("%s's %s evolved into %s! %s", owner, oldName, newName, descr);
 	}
 
 	@Override

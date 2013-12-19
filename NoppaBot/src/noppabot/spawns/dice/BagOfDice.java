@@ -6,8 +6,6 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
-import noppabot.INoppaBot;
-
 public class BagOfDice extends Powerup {
 	
 	private static final List<Integer> dice;
@@ -46,35 +44,35 @@ public class BagOfDice extends Powerup {
 	}
 
 	@Override
-	public void initialize(INoppaBot bot) {
+	public void doInitialize() {
 		int count = 1 + Powerups.powerupRnd.nextInt(8);
 		diceBag.addAll(grabSomeDice(count));
 		Collections.sort(diceBag);
 	}
 	
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A bag of dice appears!");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
-		bot.sendChannelFormat("%s grabs and opens the dice bag! It contains the following dice: %s", nick, bagToString());
+	public void onPickup() {
+		bot.sendChannelFormat("%s grabs and opens the dice bag! It contains the following dice: %s", ownerColored, bagToString());
 
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... who wants some random dice bag anyway. There could be anything in there.");
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		StringBuilder buf = new StringBuilder();
 		boolean first = true;
 		int result = 0;
 		for (int die : diceBag) {
-			int subroll = bot.getRollFor(nick, die);
+			int subroll = bot.getRollFor(owner, die);
 			result += subroll;
 			if (!first) buf.append(" + ");
 			buf.append(subroll);
@@ -83,7 +81,7 @@ public class BagOfDice extends Powerup {
 		String resultStr = buf.toString();
 		result = clamp(bot, result);
 
-		bot.sendChannelFormat("%s rolls with the dice (%s). %s = %d", nick, bagToString(), resultStr, result);
+		bot.sendChannelFormat("%s rolls with the dice (%s). %s = %d", ownerColored, bagToString(), resultStr, result);
 //		System.out.println(result);
 		return result;
 	}
@@ -99,7 +97,7 @@ public class BagOfDice extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new BagOfManyDice();
 	}
 	
@@ -121,8 +119,8 @@ public class BagOfDice extends Powerup {
 		}
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			return BagOfDice.this.onContestRoll(bot, nick, roll);
+		public int onContestRoll(int roll) {
+			return BagOfDice.this.onContestRoll(roll);
 		}
 		
 		@Override
@@ -136,14 +134,14 @@ public class BagOfDice extends Powerup {
 		}
 		
 		@Override
-		public Powerup upgrade(INoppaBot bot) {
+		public Powerup upgrade() {
 			manyMany = "Many " + manyMany;
 			putMoreDice();
 			return this;
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("You look inside the bag, and it now contains two additional dice: %s",
 				diceToString(newDice));
 		}

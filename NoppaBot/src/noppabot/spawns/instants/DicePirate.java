@@ -6,26 +6,25 @@ package noppabot.spawns.instants;
 
 import java.util.*;
 
-import noppabot.INoppaBot;
 import noppabot.spawns.dice.Powerup;
 
 
 public class DicePirate extends Powerup {
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A DicePirate appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the DicePirate smells better loot elsewhere and leaves.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 		Map<String, Powerup> powerups = bot.getPowerups();
-		bot.sendChannelFormat("The DicePirate will plunder dice and other shiny things for 100 gold dubloons! %s gladly pays him.", nick);
+		bot.sendChannelFormat("The DicePirate will plunder dice and other shiny things for 100 gold dubloons! %s gladly pays him.", owner);
 		Random rnd = new Random();
 		Set<String> owners = new TreeSet<String>(powerups.keySet());
 		int size = owners.size();
@@ -44,14 +43,14 @@ public class DicePirate extends Powerup {
 		
 		if (targetOwner == null) {
 			bot.sendChannelFormat("There was no loot in sight for the DicePirate and he just runs off with your gold.");
-			powerups.remove(nick);
+			powerups.remove(owner);
 		}
 		else {
 			Powerup stolenPowerup = powerups.remove(targetOwner);
-//			stolenPowerup = clonePowerup(bot, stolenPowerup); // onPickup() stuff aren't carried anymore, so no need to clone
-			powerups.put(nick, stolenPowerup);
+			powerups.put(owner, stolenPowerup);
+			stolenPowerup.setOwner(owner);
 			bot.sendChannelFormat("The dice pirate looted %s's %s!", targetOwner, stolenPowerup);
-			if (stolenPowerup instanceof Diceteller) stolenPowerup.onPickup(bot, nick);
+			if (stolenPowerup instanceof Diceteller) stolenPowerup.onPickup();
 		}
 	}
 

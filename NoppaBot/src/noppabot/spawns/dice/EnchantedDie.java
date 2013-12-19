@@ -4,36 +4,35 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
 
 public class EnchantedDie extends Powerup {
 
 	public static final int bonus = 15;
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("An enchanted die appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the spell on the enchanted die expires and nobody really wants it anymore.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 		bot.sendChannelFormat(
-			"%s grabs the enchanted die and feels a tingling sensation at the fingertips.", nick);
+			"%s grabs the enchanted die and feels a tingling sensation at the fingertips.", ownerColored);
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		int result = roll + bonus;
 		result = clamp(bot, result);
 		bot.sendChannelFormat(
 			"The enchanted die grants %s either eternal fame and fortune, or a substantial roll bonus. %s chooses the latter.",
-			nick, nick);
-		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
+			owner, owner);
+		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result,
 			bot.grade(result));
 		return result;
 	}
@@ -54,7 +53,7 @@ public class EnchantedDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new PotentDie();
 	}
 	
@@ -63,12 +62,12 @@ public class EnchantedDie extends Powerup {
 		private static final int bonus = EnchantedDie.bonus + 5;
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+		public int onContestRoll(int roll) {
 			int result = roll + bonus;
 			result = clamp(bot, result);
 			bot.sendChannelFormat("The potent die grants the utmost magical advantage for %s's roll!",
-				nick);
-			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
+				owner);
+			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", owner, roll, bonus, result,
 				bot.grade(result));
 			return result;
 		}
@@ -79,7 +78,7 @@ public class EnchantedDie extends Powerup {
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("It is now enchanted with the most potent magics, granting it +20 total roll bonus!", bonus);
 		}
 	}

@@ -7,24 +7,23 @@ package noppabot.spawns.instants;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import noppabot.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.dice.*;
 
 
 public class TrollingProfessional extends Powerup {
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A certified trolling professional appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the trolling professional walks away.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 		Calendar now = Calendar.getInstance();
 		Calendar end = bot.getSpawnEndTime();
 		long deltaMs = end.getTimeInMillis() - now.getTimeInMillis();
@@ -36,11 +35,11 @@ public class TrollingProfessional extends Powerup {
 		SpawnTask task = bot.scheduleSpawn(spawnTime, bomb);
 		
 		bot.sendChannelFormat("%s grabs the trolling professional! %s and the trolling trofessional " +
-		"briefly discuss about something.", nick, nick);
+		"briefly discuss about something.", owner, owner);
 		
-		bot.sendMessageFormat(nick, "Hi! I set us up the Bomb on %s. I suggest you don't take it.",
+		bot.sendMessageFormat(owner, "Hi! I set us up the Bomb on %s. I suggest you don't take it.",
 			task);
-		bot.sendMessageFormat(nick, "Regards, The Trolling Professional");
+		bot.sendMessageFormat(owner, "Regards, The Trolling Professional");
 	}
 
 	@Override
@@ -109,29 +108,29 @@ public class TrollingProfessional extends Powerup {
 		}
 		
 		@Override
-		public void onPickup(INoppaBot bot, String nick) {
+		public void onPickup() {
 			bot.sendChannelFormat("%s grabs the %s! On a closer inspection, you recognize " +
-				"it's actually a BOMB! This can't be good for the upcoming roll.", nick, name);
+				"it's actually a BOMB! This can't be good for the upcoming roll.", owner, name);
 			name = "BOMB!";
 		}
 		
 		@Override
-		public void onExpire(INoppaBot bot) {
+		public void onExpire() {
 			bot.sendChannelFormat("... the %s explodes! You realize it probably wasn't a %s to begin with. " +
 				"Gladly no-one took it!", name, name);
 		}
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+		public int onContestRoll(int roll) {
 			
 			int damageRoll = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int totalDamage = damageRoll + dmgBonus;
 			int result = roll - totalDamage;
 			result = clamp(bot, result);
 			
-			bot.sendDefaultContestRollMessage(nick, roll);
+			bot.sendDefaultContestRollMessage(owner, roll);
 			bot.sendChannelFormat("The bomb on %s explodes, causing %d + %d = %d damage to the roll! " +
-				"%s's roll drops down to %d.", nick, damageRoll, dmgBonus, totalDamage, nick, result);
+				"%s's roll drops down to %d.", owner, damageRoll, dmgBonus, totalDamage, owner, result);
 			
 			return result;
 		}

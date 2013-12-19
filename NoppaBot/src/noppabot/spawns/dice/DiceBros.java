@@ -10,45 +10,45 @@ import noppabot.INoppaBot;
 public class DiceBros extends Powerup {
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("The Dice bros. appear!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the Dice bros. have some plumbing to do, and leave.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the Dice bros! They will show off their rolling skills tonight.",
-			nick);
+			ownerColored);
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int marioRoll) {
-		int luigiRoll = bot.getRollFor(nick, 100);
+	public int onContestRoll(int marioRoll) {
+		int luigiRoll = bot.getRollFor(owner, 100);
 		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %d! Luigi Dice rolls %d!",
-			nick, marioRoll, luigiRoll);
-		return chooseBetterRoll(bot, nick, marioRoll, luigiRoll);
+			ownerColored, marioRoll, luigiRoll);
+		return chooseBetterRoll(bot, ownerColored, marioRoll, luigiRoll);
 		
 //		return 100 - Math.abs(marioRoll - luigiRoll);
 	}
 
-	private static int chooseBetterRoll(INoppaBot bot, String nick, int marioRoll, int luigiRoll) {
+	private static int chooseBetterRoll(INoppaBot bot, String ownerColored, int marioRoll, int luigiRoll) {
 		if (marioRoll > luigiRoll) {
 			bot.sendChannelFormat("The bros. choose Mario's roll, %d, as %s's result. %s", 
-				marioRoll, nick, bot.grade(marioRoll));
+				marioRoll, ownerColored, bot.grade(marioRoll));
 			return marioRoll;
 		}
 		else if (luigiRoll > marioRoll) {
 			bot.sendChannelFormat("The bros. choose Luigi's roll, %d, as %s's result. %s", 
-				luigiRoll, nick, bot.grade(luigiRoll));
+				luigiRoll, ownerColored, bot.grade(luigiRoll));
 			return luigiRoll;
 		}
 		else {
 			bot.sendChannelFormat("The bros. rolled the same number! The bro code dictates " +
-				"this is a cause for celebration, and that %s's roll result should be 100!", nick); 
+				"this is a cause for celebration, and that %s's roll result should be 100!", ownerColored); 
 			return 100;
 		}
 	}
@@ -65,7 +65,7 @@ public class DiceBros extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new SuperDiceBros(bot);
 	}
 	
@@ -82,18 +82,20 @@ public class DiceBros extends Powerup {
 
 		public SuperDiceBros(INoppaBot bot) {
 			marioItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
+			marioItem.setOwner("Mario");
 			luigiItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
+			luigiItem.setOwner("Luigi");
 		}
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int marioRoll) {
-			int luigiRoll = bot.getRollFor(nick, 100);
+		public int onContestRoll(int marioRoll) {
+			int luigiRoll = bot.getRollFor(owner, 100);
 
-			bot.sendChannelFormat("The Super Dice bros. roll for %s.", nick);
-			marioRoll = marioItem.onContestRoll(bot, "Mario", marioRoll);
-			luigiRoll = luigiItem.onContestRoll(bot, "Luigi", luigiRoll);
+			bot.sendChannelFormat("The Super Dice bros. roll for %s.", ownerColored);
+			marioRoll = marioItem.onContestRoll(marioRoll);
+			luigiRoll = luigiItem.onContestRoll(luigiRoll);
 			
-			return chooseBetterRoll(bot, nick, marioRoll, luigiRoll);
+			return chooseBetterRoll(bot, ownerColored, marioRoll, luigiRoll);
 		}
 		
 		@Override
@@ -102,7 +104,7 @@ public class DiceBros extends Powerup {
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("Both bros. now get special dice. Mario has the %s! Luigi has the %s!",
 				marioItem, luigiItem);
 		}

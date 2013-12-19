@@ -249,35 +249,35 @@ public class GenerateItemList {
 	}
 	
 	private void testEvolvedDice() {
-		testEvolvedPowerup("Very Polished Die", "Locked.png", veryPolishedDieDesc, new PolishedDie().upgrade(bot), bot);
-		testEvolvedPowerup("Crushing Die", "Locked.png", crushingDieDesc, new WeightedDie().upgrade(bot), bot);
-		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(bot), bot);
-		testEvolvedPowerup("Tribal Die", "Locked.png", tribalDieDesc, new PrimalDie().upgrade(bot), bot);
-		testEvolvedPowerup("Jackpot Die", "Locked.png", jackpotDieDesc, new LuckyDie().upgrade(bot), bot);
-		testEvolvedPowerup("The One Die", "Locked.png", theOneDieDesc, new MasterDie().upgrade(bot), bot);
+		testEvolvedPowerup("Very Polished Die", "Locked.png", veryPolishedDieDesc, new PolishedDie().upgrade(), bot);
+		testEvolvedPowerup("Crushing Die", "Locked.png", crushingDieDesc, new WeightedDie().upgrade(), bot);
+		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(), bot);
+		testEvolvedPowerup("Tribal Die", "Locked.png", tribalDieDesc, new PrimalDie().upgrade(), bot);
+		testEvolvedPowerup("Jackpot Die", "Locked.png", jackpotDieDesc, new LuckyDie().upgrade(), bot);
+		testEvolvedPowerup("The One Die", "Locked.png", theOneDieDesc, new MasterDie().upgrade(), bot);
 		testEvolvedPowerup("Faster Die<br><small>(rolled immediately)</small>", "Placeholder.png",
-			fasterDieDesc, new FastDie().upgrade(bot), bot);
-		testEvolvedPowerup("Daring Die", "Locked.png", daringDieDesc, new ExtremeDie().upgrade(bot), bot);
+			fasterDieDesc, new FastDie().upgrade(), bot);
+		testEvolvedPowerup("Daring Die", "Locked.png", daringDieDesc, new ExtremeDie().upgrade(), bot);
 
 		testPowerup("Bag of Many Dice", "Placeholder.png", bagOfManyDiceDesc, null, new Builder() {
 			@Override
 			public Powerup createPowerup() {
 				BagOfDice bag = new BagOfDice();
 				bag.initialize(bot);
-				return bag.upgrade(bot);
+				return bag.upgrade();
 			};
 		}, bot, false, DiceType.EVOLVED);
 		
 		addEntry("Self-Improving Die", "Placeholder.png", selfImprovingDieDesc, null);
 		testEvolvedPowerup("Rolling Professor", "Locked.png", rollingProfessorDesc,
-			new RollingProfessional().upgrade(bot), bot);
+			new RollingProfessional().upgrade(), bot);
 
 		testPowerup("Super Dice Bros", "Locked.png", superDiceBrosDesc, null, new Builder() {
 			@Override
 			public Powerup createPowerup() {
 				DiceBros bros = new DiceBros();
 				bros.initialize(bot);
-				return bros.upgrade(bot);
+				return bros.upgrade();
 			};
 		}, bot, false, DiceType.EVOLVED);
 		
@@ -286,12 +286,12 @@ public class GenerateItemList {
 			public Powerup createPowerup() {
 				VariableDie die = new VariableDie();
 				die.initialize(bot);
-				return die.upgrade(bot);
+				return die.upgrade();
 			};
 		}, bot, false, DiceType.EVOLVED);
 		
 		// Figlet runs take time so we don't want to actually test the humongous die
-		testEvolvedPowerup("Humongous Crushing Die", "Locked.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(bot), bot);
+		testEvolvedPowerup("Humongous Crushing Die", "Locked.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(), bot);
 	}
 	
 	private void listInstants() {
@@ -370,7 +370,7 @@ public class GenerateItemList {
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
 			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
+			roll = powerup.onContestRoll(roll);
 			if (printRolls) System.out.println(roll);
 			sum += roll;
 		}
@@ -382,7 +382,7 @@ public class GenerateItemList {
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
 			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(bot, TESTER_NAME, roll);
+			roll = powerup.onContestRoll(roll);
 			double diff = roll - ev;
 			sum += diff*diff;
 		}

@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
-import noppabot.INoppaBot;
+import noppabot.ColorStr;
 
 public class PrimalDie extends Powerup {
 
@@ -20,34 +20,34 @@ public class PrimalDie extends Powerup {
 	}
 	
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A primal die appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... nobody wanted the primal die. Now it disappears.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the primal die and gains knowledge about prime numbers.",
-			nick);
+			ownerColored);
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		if (primes.contains(roll)) {
 			int result = roll + bonus;
 			result = clamp(bot, result);
 			bot.sendChannelFormat(
 				"%s rolls %d, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %d + %d = %d.",
-				nick, roll, roll, bonus, result);
+				ownerColored, roll, roll, bonus, result);
 			return result;
 		}
 		else {
 			bot.sendChannelFormat(
-				"%s rolls %d! It's not a prime, however, and the primal die disapproves.", nick,
+				"%s rolls %d! It's not a prime, however, and the primal die disapproves.", ownerColored,
 				roll);
 			return roll;
 		}
@@ -64,7 +64,7 @@ public class PrimalDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new TribalDie();
 	}
 	
@@ -75,25 +75,25 @@ public class PrimalDie extends Powerup {
 		private int otherPrimesTotalBonus = 0;
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+		public int onContestRoll(int roll) {
 			int result = roll;
 			if (primes.contains(roll)) {
 				result += bonus;
 				bot.sendChannelFormat(
 					"%s rolls %d, which is a prime! The tribe of primal dies grants you an offering of" +
 					" bonus points. The modified roll is %d + %d = %d.",
-					nick, roll, roll, bonus, result);
+					ownerColored, roll, roll, bonus, result);
 			}
 			else {
 				bot.sendChannelFormat(
-					"%s rolls %d! The tribe of primal dice seem uninterested.", nick,
+					"%s rolls %d! The tribe of primal dice seem uninterested.", ownerColored,
 					roll);
 			}
 			
 			if (otherPrimesTotalBonus > 0) {
 				result += otherPrimesTotalBonus;
 				bot.sendChannelFormat("The tribal gifts of %d points are added to %s's roll, " +
-					"increasing it to %d", otherPrimesTotalBonus, nick, result);
+					"increasing it to %d", otherPrimesTotalBonus, ownerColored, result);
 			}
 			
 			result = clamp(bot, result);
@@ -101,7 +101,7 @@ public class PrimalDie extends Powerup {
 		}
 		
 		@Override
-		public void onOpponentRollLate(INoppaBot bot, String owner, String opponent, int roll) {
+		public void onOpponentRollLate(String opponent, int roll) {
 			Map<String, Integer> rolls = bot.getRolls();
 			
 			if (primes.contains(roll)) {
@@ -110,13 +110,13 @@ public class PrimalDie extends Powerup {
 					rolls.put(owner, totalRoll);
 					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
 						"%s gets an offering of %d points from the tribe! %s's roll is now %d.",
-						opponent, roll, owner, otherPrimesBonus, owner, totalRoll);
+						ColorStr.nick(opponent), roll, owner, otherPrimesBonus, ownerColored, totalRoll);
 				}
 				else {
 					otherPrimesTotalBonus += otherPrimesBonus;
 					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
 						"%s gets an offering of %d points from the tribe!",
-						opponent, roll,  owner, otherPrimesBonus);
+						ColorStr.nick(opponent), roll, ownerColored, otherPrimesBonus);
 				}
 			}
 		}
@@ -127,7 +127,7 @@ public class PrimalDie extends Powerup {
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("The whole tribe of primal dies now support you, and will grant" +
 				" %d bonus for every prime rolled by an opponent.", otherPrimesBonus);
 		}

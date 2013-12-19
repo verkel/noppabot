@@ -4,47 +4,61 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 import noppabot.spawns.ISpawnable;
 
 public abstract class Powerup implements ISpawnable {
 	
+	protected INoppaBot bot;
+	protected String owner; // The owner
+	protected String ownerColored; // The owner, colored
+	
 	public abstract String getName();
 
-	public void initialize(INoppaBot bot) {
+	public final void initialize(INoppaBot bot) {
+		this.bot = bot;
+		doInitialize();
+	}
+	
+	public final void setOwner(String owner) {
+		this.owner = owner;
+		this.ownerColored = ColorStr.nick(owner);
+	}
+	
+	public void doInitialize() {
 	}
 	
 	/**
 	 * Say something when the item spawns. Don't initialize the item here, as
 	 * it won't be called when a dice pirate generates a new item.
 	 */
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 	}
 
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 	}
 
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 	}
 
-	public void onRollPeriodStart(INoppaBot bot, String nick) {
+	public void onRollPeriodStart() {
 	}
 	
-	public void onTiebreakPeriodStart(INoppaBot bot, String nick) {
+	public void onTiebreakPeriodStart() {
 	}
 
-	public int onNormalRoll(INoppaBot bot, String nick, int roll) {
+	public int onNormalRoll(int roll) {
 		return roll;
 	}
 	
-	public int onOpponentRoll(INoppaBot bot, String owner, String opponent, int roll) {
+	public int onOpponentRoll(String opponent, int roll) {
 		return roll;
 	}
 	
-	public void onOpponentRollLate(INoppaBot bot, String owner, String opponent, int roll) {
+	public void onOpponentRollLate(String opponent, int roll) {
 	}
 	
-	public String getUpgradeDescription(INoppaBot bot, String nick) {
+	public String getUpgradeDescription() {
 		return "";
 	}
 
@@ -53,8 +67,8 @@ public abstract class Powerup implements ISpawnable {
 	 * 
 	 * @return a modified roll
 	 */
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
-		bot.sendDefaultContestRollMessage(nick, roll);
+	public int onContestRoll(int roll) {
+		bot.sendDefaultContestRollMessage(owner, roll);
 		return roll;
 	}
 	
@@ -65,7 +79,7 @@ public abstract class Powerup implements ISpawnable {
 		return true;
 	}
 	
-	public boolean canPickUp(INoppaBot bot, String nick) {
+	public boolean canPickUp(String nick) {
 		if (isCarried() && bot.getPowerups().containsKey(nick)) {
 			bot.sendChannelFormat("%s: you already have the %s.", nick, bot.getPowerups().get(nick));
 			return false;
@@ -78,7 +92,7 @@ public abstract class Powerup implements ISpawnable {
 		return false;
 	}
 	
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return null;
 	}
 	

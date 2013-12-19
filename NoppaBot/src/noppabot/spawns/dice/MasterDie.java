@@ -15,37 +15,37 @@ public class MasterDie extends Powerup {
 	private static final int sides = 150;
 	
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("The Master Die appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... nobody took the Master Die?! Maybe you should learn some " +
 			"dice appraisal skills at the certified rolling professional.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
+	public void onPickup() {
 		bot.sendChannelFormat(
 			"%s wrestles for the Master Die with the other contestants and barely comes on top. " +
 			"Surely the Master Die must be worth all the trouble!",
-			nick);
+			ownerColored);
 		
 		bot.insertApprenticeDice();
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
-		return doContestRoll(getName(), sides, bot, nick);
+	public int onContestRoll(int roll) {
+		return doContestRoll(getName(), sides);
 	}
 	
-	private static int doContestRoll(String dieName, int sides, INoppaBot bot, String nick) {
-		int result = bot.getRollFor(nick, sides);
+	private int doContestRoll(String dieName, int sides) {
+		int result = bot.getRollFor(owner, sides);
 		String resultStr = rollToString(bot, result);
 		result = clamp(bot, result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
-			nick, sides, dieName, resultStr, bot.grade(result));
+			ownerColored, sides, dieName, resultStr, bot.grade(result));
 		rollUnusedApprenticeDies(bot, result);
 		return result;
 	}
@@ -80,18 +80,18 @@ public class MasterDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new TheOneDie();
 	}
 	
 	// Upgrade
-	public static class TheOneDie extends Powerup {
+	public class TheOneDie extends Powerup {
 		
 		private static final int sides = 200;
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			return doContestRoll(getName(), sides, bot, nick);
+		public int onContestRoll(int roll) {
+			return doContestRoll(getName(), sides);
 		}
 		
 		@Override
@@ -100,7 +100,7 @@ public class MasterDie extends Powerup {
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("Bearing %d sides, this truly is the die to rule them all.", 200);
 		}
 	}

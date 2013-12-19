@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 
 
 public class WeightedDie extends Powerup {
@@ -12,27 +12,27 @@ public class WeightedDie extends Powerup {
 	public static final int bonus = 10;
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A weighted die appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the weighted die falls into emptiness.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
-		bot.sendChannelFormat("%s grabs the weighted die.", nick);
+	public void onPickup() {
+		bot.sendChannelFormat("%s grabs the weighted die.", ownerColored);
 	}
 
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		int result = roll + bonus;
 		result = clamp(bot, result);
 		bot.sendChannelFormat(
-			"%s's weighted die is so fairly weighted, that the roll goes very smoothly!", nick);
-		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", nick, roll, bonus, result,
+			"%s's weighted die is so fairly weighted, that the roll goes very smoothly!", owner);
+		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result,
 			bot.grade(result));
 		return result;
 	}
@@ -48,7 +48,7 @@ public class WeightedDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new CrushingDie(false);
 	}
 	
@@ -65,17 +65,17 @@ public class WeightedDie extends Powerup {
 		}
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
-			if (humongous) return HumongousDie.doContestRoll(bot, nick, roll);
+		public int onContestRoll(int roll) {
+			if (humongous) return HumongousDie.doContestRoll(bot, owner, roll);
 			else {
-				bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %d! %s", nick, roll,
+				bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %d! %s", ownerColored, roll,
 					bot.grade(roll));
 				return roll;
 			}
 		}
 		
 		@Override
-		public int onOpponentRoll(INoppaBot bot, String owner, String opponent, int roll) {
+		public int onOpponentRoll(String opponent, int roll) {
 			if (humongous) return doHumongousCrush(bot, owner, opponent, roll);
 			else return doStandardCrush(bot, owner, opponent, roll);
 		}
@@ -85,7 +85,7 @@ public class WeightedDie extends Powerup {
 			int result = roll - damage;
 			result = clamp(bot, result);
 			bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %d damage and drops down to %d.", 
-				owner, getName(), opponent, damage, result);
+				owner, getName(), ColorStr.nick(opponent), damage, result);
 			return result;
 		}
 		
@@ -95,7 +95,7 @@ public class WeightedDie extends Powerup {
 			int result = roll - totalDamage;
 			result = clamp(bot, result);
 			bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %d + %d = %d damage and drops down to %d.", 
-				owner, getName(), opponent, damageRoll, humongousDmgBonus, totalDamage, result);
+				owner, getName(), ColorStr.nick(opponent), damageRoll, humongousDmgBonus, totalDamage, result);
 			return result;
 		}
 		
@@ -105,7 +105,7 @@ public class WeightedDie extends Powerup {
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			if (humongous) return String.format("It now deals d%d + %d " +
 				"crushing damage to others' rolls!", humongousDmgSides, humongousDmgBonus);
 			else return String.format("It loses its bonus, but now deals d%d " +

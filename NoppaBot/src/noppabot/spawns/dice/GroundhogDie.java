@@ -4,41 +4,41 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.*;
+import noppabot.RollRecords;
 
 public class GroundhogDie extends Powerup {
 
 	@Override
-	public void onSpawn(INoppaBot bot) {
+	public void onSpawn() {
 		bot.sendChannel("A groundhog die appears!");
 	}
 
 	@Override
-	public void onExpire(INoppaBot bot) {
+	public void onExpire() {
 		bot.sendChannelFormat("... the groundhog die will now move on.");
 	}
 
 	@Override
-	public void onPickup(INoppaBot bot, String nick) {
-		bot.sendChannelFormat("%s grabs the groundhog die and ensures that history will repeat itself.", nick);
+	public void onPickup() {
+		bot.sendChannelFormat("%s grabs the groundhog die and ensures that history will repeat itself.", owner);
 	}
 	
 	@Override
-	public int onContestRoll(INoppaBot bot, String nick, int roll) {
+	public int onContestRoll(int roll) {
 		Integer lastRoll = null;
 		RollRecords records = bot.loadRollRecords();
 		if (records != null) {
-			lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
+			lastRoll = records.getOrAddUser(owner).lastRolls.peekFirst();
 		}
 		
 		if (lastRoll != null && lastRoll > 0) {
-			bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.", nick);
-			bot.sendChannelFormat("%s rolls %d! %s", nick, lastRoll, bot.grade(lastRoll));
+			bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.", owner);
+			bot.sendChannelFormat("%s rolls %d! %s", ownerColored, lastRoll, bot.grade(lastRoll));
 			return lastRoll;
 		}
 		else {
 			bot.sendChannel("The groundhog die fails to repeat yesterday's events.");
-			return super.onContestRoll(bot, nick, roll); // Normal behaviour
+			return super.onContestRoll(roll); // Normal behaviour
 		}
 	}
 
@@ -59,7 +59,7 @@ public class GroundhogDie extends Powerup {
 	}
 	
 	@Override
-	public Powerup upgrade(INoppaBot bot) {
+	public Powerup upgrade() {
 		return new SelfImprovingDie();
 	}
 	
@@ -69,25 +69,25 @@ public class GroundhogDie extends Powerup {
 		private static final int bonus = 10;
 		
 		@Override
-		public int onContestRoll(INoppaBot bot, String nick, int roll) {
+		public int onContestRoll(int roll) {
 			Integer lastRoll = null;
 			RollRecords records = bot.loadRollRecords();
 			if (records != null) {
-				lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
+				lastRoll = records.getOrAddUser(owner).lastRolls.peekFirst();
 			}
 			
 			if (lastRoll != null && lastRoll > 0) {
 				int result = lastRoll + bonus;
 				result = clamp(bot, result);
 				bot.sendChannelFormat("%s's self-improving die analyzes the yesterday's roll of %d.",
-					nick, lastRoll);
+					owner, lastRoll);
 				bot.sendChannelFormat("%s's self-improving die rolls %d + %d = %d! %s", 
-					nick, lastRoll, bonus, result, bot.grade(result));
+					ownerColored, lastRoll, bonus, result, bot.grade(result));
 				return result;
 			}
 			else {
 				bot.sendChannel("The self-improving die fails to improve on yesterday's events.");
-				return super.onContestRoll(bot, nick, roll); // Normal behaviour
+				return super.onContestRoll(roll); // Normal behaviour
 			}
 		}
 		
@@ -97,7 +97,7 @@ public class GroundhogDie extends Powerup {
 		}
 		
 		@Override
-		public String getUpgradeDescription(INoppaBot bot, String nick) {
+		public String getUpgradeDescription() {
 			return String.format("The self-improving die will roll the yesterday's roll + %d.", bonus);
 		}
 	}
