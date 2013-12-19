@@ -6,7 +6,7 @@ package noppabot.spawns.instants;
 
 import noppabot.spawns.*;
 
-public class DicemonTrainer extends BasicPowerup {
+public class DicemonTrainer extends Instant {
 	public static final String NAME = "Dicemon Trainer";
 	
 	@Override
@@ -17,11 +17,6 @@ public class DicemonTrainer extends BasicPowerup {
 	@Override
 	public void onExpire() {
 		bot.sendChannelFormat("... the Dicemon trainer used FLY! He flew away.");
-	}
-	
-	@Override
-	public boolean isCarried() {
-		return false;
 	}
 	
 	@Override
@@ -45,12 +40,12 @@ public class DicemonTrainer extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		Powerup oldPowerup = bot.getPowerups().get(owner);
-		String oldName = oldPowerup.getName();
+		String oldName = oldPowerup.getNameColored();
 		Powerup newPowerup = oldPowerup.upgrade();
-		String newName = newPowerup.getName();
+		String newName = newPowerup.getNameColored();
 		String descr = newPowerup.getUpgradeDescription();
 		bot.getPowerups().put(owner, newPowerup);
-		bot.sendChannelFormat("The trainer says: I'll unlock the hidden potential in your dice!");
+		bot.sendChannelFormat("The trainer unlocks the hidden potential in your die!");
 		bot.sendChannelFormat("%s's %s evolved into %s! %s", owner, oldName, newName, descr);
 	}
 

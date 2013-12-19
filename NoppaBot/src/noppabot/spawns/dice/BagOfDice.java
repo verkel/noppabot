@@ -59,13 +59,14 @@ public class BagOfDice extends BasicPowerup {
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs and opens the dice bag! It contains the following dice: %s", ownerColored, bagToString());
+		bot.sendChannelFormat("%s grabs and opens the %s! It contains the following dice: %s", 
+			ownerColored, getNameColored(), bagToString());
 
 	}
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... who wants some random dice bag anyway. There could be anything in there.");
+		sendExpireMessageFormat("... who wants some random dice bag anyway. There could be anything in there.");
 	}
 
 	@Override

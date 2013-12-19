@@ -16,12 +16,13 @@ public class GroundhogDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the groundhog die will now move on.");
+		sendExpireMessageFormat("... the groundhog die will now move on.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the groundhog die and ensures that history will repeat itself.", owner);
+		bot.sendChannelFormat("%s grabs the %s and ensures that history will repeat itself.", 
+			owner, getNameColored());
 	}
 	
 	@Override

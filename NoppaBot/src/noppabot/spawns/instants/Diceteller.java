@@ -4,10 +4,10 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.spawns.BasicPowerup;
+import noppabot.spawns.Instant;
 
 
-public class Diceteller extends BasicPowerup {
+public class Diceteller extends Instant {
 
 	@Override
 	public void onSpawn() {
@@ -24,15 +24,10 @@ public class Diceteller extends BasicPowerup {
 	public void onPickup() {
 		int result = bot.peekRollFor(owner);
 		bot.sendChannelFormat(
-			"The diceteller, glancing at his crystal ball, whispers to %s: \"Your next roll will be %d.\"",
-			owner, result);
+			"The diceteller, glancing at his crystal ball, whispers to %s: \"Your next roll will be %s.\"",
+			ownerColored, resultStr(result));
 	}
 
-	@Override
-	public boolean isCarried() {
-		return false;
-	}
-	
 	@Override
 	public String getName() {
 		return "Diceteller";

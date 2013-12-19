@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import java.util.regex.*;
 
 import noppabot.spawns.*;
-import noppabot.spawns.dice.ApprenticeDie;
+import noppabot.spawns.dice.*;
 import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
@@ -179,11 +179,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-//		powerups.put("hassu", new CrushingDie(false));
-//		powerups.put("hessu", new ApprenticeDie());
-//		powerups.put("kessu", new ApprenticeDie());
-//		powerups.put("frodo", new FastDie());
-//		powerups.put("bilbo", new MasterDie());
+		powerups.put("hassu", new WeightedDie().upgrade());
+		powerups.put("hessu", new ApprenticeDie());
+		powerups.put("kessu", new ApprenticeDie());
+		powerups.put("frodo", new FastDie());
+		powerups.put("bilbo", new MasterDie());
 //		Powerup p = new VariableDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
@@ -322,7 +322,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		spawnTime.add(Calendar.MINUTE, minutesIncr);
 	}
 	
-	public class SpawnTask extends Task implements Comparable<SpawnTask> {
+	public class SpawnTask extends Task implements Comparable<SpawnTask>, IColorStrConvertable {
 		public ISpawnable spawn;
 		public Date time;
 		public String id;
@@ -361,6 +361,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		@Override
 		public String toString() {
 			return String.format("[%tR] %s", time, spawn);
+		}
+		
+		@Override
+		public String toStringColored() {
+			return String.format("[%tR] %s", time, spawn.toStringColored());
 		}
 
 		@Override
@@ -567,7 +572,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		boolean lastSpawn = spawnTasks.size() == 1;
 		if (!spawnTasks.isEmpty()) {
 			SpawnTask task = spawnTasks.first();
-			spawnInfo = task.toString();
+			spawnInfo = task.toStringColored();
 			spawn = task.spawn;
 		}
 		
@@ -614,7 +619,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			else buf.append("Items: ");
 			boolean first = true;
 			for (String nick : powerups.keySet()) {
-				String powerupName = powerups.get(nick).getName();
+				String powerupName = powerups.get(nick).getNameColored();
 				if (!first) buf.append(", ");
 				buf.append(String.format("%s (%s)", powerupName, nick));
 				first = false;
@@ -650,7 +655,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: you see nothing of interest.", nick);
 		}
 		else {
-			String items = join(availablePowerups, ", ");
+			String items = joinColored(availablePowerups, ", ");
 			sendChannelFormat("%s: You see: %s.", ColorStr.nick(nick), items);
 		}
 	}
@@ -673,7 +678,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 			// User didn't specify which item to grab
 			else if (powerupName == null) {
-				String items = join(availablePowerups, ", ");
+				String items = joinColored(availablePowerups, ", ");
 				sendChannelFormat("%s: There are multiple items available: %s. Specify which one you want!", 
 					ColorStr.nick(nick), items);
 			}
@@ -1131,15 +1136,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	public String remainingSpawnsInfo() {
-		StringBuilder buf = new StringBuilder();
-		boolean first = true;
-		for (SpawnTask task : spawnTasks) {
-			if (!first) buf.append(", ");
-			buf.append(task);
-			first = false;
-		}
-		
-		return buf.toString();
+//		StringBuilder buf = new StringBuilder();
+//		boolean first = true;
+//		for (SpawnTask task : spawnTasks) {
+//			if (!first) buf.append(", ");
+//			buf.append(task);
+//			first = false;
+//		}
+//		return buf.toString();
+
+		String info = joinColored(spawnTasks, ", ");
+		return info;
 	}
 	
 	@Override
@@ -1234,6 +1241,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	    if (!iter.hasNext()) return "";
 	    StringBuilder buffer = new StringBuilder(iter.next().toString());
 	    while (iter.hasNext()) buffer.append(delimiter).append(iter.next().toString());
+	    return buffer.toString();
+	}
+	
+	public static String joinColored(Iterable<? extends IColorStrConvertable> s, String delimiter) {
+	    Iterator<? extends IColorStrConvertable> iter = s.iterator();
+	    if (!iter.hasNext()) return "";
+	    StringBuilder buffer = new StringBuilder(iter.next().toStringColored());
+	    while (iter.hasNext()) buffer.append(delimiter).append(iter.next().toStringColored());
 	    return buffer.toString();
 	}
 	

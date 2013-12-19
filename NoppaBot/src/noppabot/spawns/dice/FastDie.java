@@ -18,14 +18,14 @@ public class FastDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the fast die was too fast for you.");
+		sendExpireMessageFormat("... the fast die was too fast for you.");
 	}
 
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat(
-			"%s quickly grabs the fast die! It asks you if you can throw it even faster when the time comes.",
-			ownerColored);
+			"%s quickly grabs the %s! It asks you if you can throw it even faster when the time comes.",
+			ownerColored, getNameColored());
 	}
 
 	@Override

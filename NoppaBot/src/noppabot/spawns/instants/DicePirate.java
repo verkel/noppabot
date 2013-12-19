@@ -9,7 +9,7 @@ import java.util.*;
 import noppabot.spawns.*;
 
 
-public class DicePirate extends BasicPowerup {
+public class DicePirate extends Instant {
 
 	@Override
 	public void onSpawn() {
@@ -24,7 +24,8 @@ public class DicePirate extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		Map<String, Powerup> powerups = bot.getPowerups();
-		bot.sendChannelFormat("The DicePirate will plunder dice and other shiny things for 100 gold dubloons! %s gladly pays him.", owner);
+		bot.sendChannelFormat("The %s will plunder dice and other shiny things for 100 gold dubloons! " +
+			"%s gladly pays him.", getNameColored(), owner);
 		Random rnd = new Random();
 		Set<String> owners = new TreeSet<String>(powerups.keySet());
 		int size = owners.size();
@@ -56,11 +57,6 @@ public class DicePirate extends BasicPowerup {
 	@Override
 	public String getName() {
 		return "DicePirate";
-	}
-	
-	@Override
-	public boolean isCarried() {
-		return false;
 	}
 	
 	@Override

@@ -18,12 +18,13 @@ public class RollingProfessional extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... nobody seems to want to polish their skills, so the rolling professional walks away.");
+		sendExpireMessageFormat("... nobody seems to want to polish their skills, so the rolling professional walks away.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("The rolling professional will assist %s in tonight's roll.", ownerColored);
+		bot.sendChannelFormat("The %s will assist %s in tonight's roll.", 
+			ownerColored, getNameColored());
 	}
 
 	@Override

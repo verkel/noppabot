@@ -19,13 +19,13 @@ public class LuckyDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the lucky die rolls away.");
+		sendExpireMessageFormat("... the lucky die rolls away.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat(
-			"%s grabs the lucky die and it wishes good luck for tonight's roll.", ownerColored);
+		bot.sendChannelFormat("%s grabs the %s and it wishes good luck for tonight's roll.",
+			ownerColored, getNameColored());
 	}
 
 	@Override

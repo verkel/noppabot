@@ -22,16 +22,16 @@ public class MasterDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... nobody took the Master Die?! Maybe you should learn some " +
+		sendExpireMessageFormat("... nobody took the Master Die?! Maybe you should learn some " +
 			"dice appraisal skills at the certified rolling professional.");
 	}
 
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat(
-			"%s wrestles for the Master Die with the other contestants and barely comes on top. " +
+			"%s wrestles for %s with the other contestants and barely comes on top. " +
 			"Surely the Master Die must be worth all the trouble!",
-			ownerColored);
+			ownerColored, getNameColored());
 		
 		bot.insertApprenticeDice();
 	}

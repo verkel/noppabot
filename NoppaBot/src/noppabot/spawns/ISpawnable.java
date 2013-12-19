@@ -4,6 +4,8 @@
  */
 package noppabot.spawns;
 
-public interface ISpawnable {
+import noppabot.IColorStrConvertable;
+
+public interface ISpawnable extends IColorStrConvertable {
 	public float getSpawnChance();
 }

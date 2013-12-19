@@ -27,13 +27,13 @@ public class PrimalDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... nobody wanted the primal die. Now it disappears.");
+		sendExpireMessageFormat("... nobody wanted the primal die. Now it disappears.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the primal die and gains knowledge about prime numbers.",
-			ownerColored);
+		bot.sendChannelFormat("%s grabs the %s and gains knowledge about prime numbers.",
+			ownerColored, getNameColored());
 	}
 
 	@Override

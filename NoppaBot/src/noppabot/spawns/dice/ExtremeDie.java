@@ -17,14 +17,14 @@ public class ExtremeDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the extreme die gets bored sitting still and takes off.");
+		sendExpireMessageFormat("... the extreme die gets bored sitting still and takes off.");
 	}
 
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat(
-			"%s grabs the extreme die! You discuss about various subcultures popular with radical dice.",
-			ownerColored);
+			"%s grabs the %s! You discuss about various subcultures popular with radical dice.",
+			ownerColored, getNameColored());
 	}
 
 	@Override

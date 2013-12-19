@@ -19,12 +19,13 @@ public class WeightedDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the weighted die falls into emptiness.");
+		sendExpireMessageFormat("... the weighted die falls into emptiness.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the weighted die.", ownerColored);
+		bot.sendChannelFormat("%s grabs the %s. It weights just the right amount!", 
+			ownerColored, getNameColored());
 	}
 
 	@Override

@@ -4,7 +4,7 @@
  */
 package noppabot.spawns;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 
 
 public abstract class EvolvedPowerup extends Powerup {
@@ -43,5 +43,10 @@ public abstract class EvolvedPowerup extends Powerup {
 	
 	public int clamp(int roll) {
 		return base.clamp(roll);
+	}
+	
+	@Override
+	public String getNameColored() {
+		return ColorStr.evolvedPowerup(getName());
 	}
 }

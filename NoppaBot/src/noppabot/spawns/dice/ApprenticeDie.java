@@ -16,12 +16,13 @@ public class ApprenticeDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the apprentice die will find no masters today.");
+		sendExpireMessageFormat("... the apprentice die will find no masters today.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the apprentice die and it looks forward to learning from the Master Die.", ownerColored);
+		bot.sendChannelFormat("%s grabs the %s and it looks forward to learning from the Master Die.", 
+			ownerColored, getNameColored());
 	}
 	
 	@Override

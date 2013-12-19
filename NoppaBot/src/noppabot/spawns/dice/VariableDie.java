@@ -25,12 +25,13 @@ public class VariableDie extends BasicPowerup {
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the variable die. It's the d%d!", ownerColored, sides);
+		bot.sendChannelFormat("%s grabs the %s. It's the d%d!", 
+			ownerColored, getNameColored(), sides);
 	}
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the variable die breaks due to its unstable and irregular structure.");
+		sendExpireMessageFormat("... the variable die breaks due to its unstable and irregular structure.");
 	}
 
 	@Override

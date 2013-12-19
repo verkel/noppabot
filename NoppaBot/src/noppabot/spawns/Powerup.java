@@ -4,11 +4,13 @@
  */
 package noppabot.spawns;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 
-public abstract class Powerup implements ISpawnable {
+public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	
 	public abstract String getName();
+	
+	public abstract String getNameColored();
 	
 	public abstract void initialize(INoppaBot bot);
 	
@@ -65,6 +67,11 @@ public abstract class Powerup implements ISpawnable {
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	@Override
+	public String toStringColored() {
+		return getNameColored();
 	}
 
 	@Override

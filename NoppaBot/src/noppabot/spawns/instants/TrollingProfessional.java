@@ -11,7 +11,7 @@ import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 
 
-public class TrollingProfessional extends BasicPowerup {
+public class TrollingProfessional extends Instant {
 	@Override
 	public void onSpawn() {
 		bot.sendChannel("A certified trolling professional appears!");
@@ -46,11 +46,6 @@ public class TrollingProfessional extends BasicPowerup {
 	@Override
 	public String getName() {
 		return "Trolling Professional";
-	}
-	
-	@Override
-	public boolean isCarried() {
-		return false;
 	}
 	
 	@Override

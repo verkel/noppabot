@@ -37,12 +37,12 @@ public class HumongousDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... THE HUMONGOUS DIE COLLAPSES UNDER ITS OWN WEIGHT");
+		sendExpireMessageFormat("... THE HUMONGOUS DIE COLLAPSES UNDER ITS OWN WEIGHT");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s GRABS THE HUMONGOUS DIE", ownerColored.toUpperCase());
+		bot.sendChannelFormat("%s GRABS THE %s", ownerColored.toUpperCase(), getNameColored());
 	}
 
 	@Override

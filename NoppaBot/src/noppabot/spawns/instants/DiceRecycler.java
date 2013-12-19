@@ -4,10 +4,11 @@
  */
 package noppabot.spawns.instants;
 
+import noppabot.ColorStr;
 import noppabot.spawns.*;
 
 
-public class DiceRecycler extends BasicPowerup {
+public class DiceRecycler extends Instant {
 	@Override
 	public void onSpawn() {
 		bot.sendChannel("A dice recycler appears!");
@@ -24,7 +25,7 @@ public class DiceRecycler extends BasicPowerup {
 			return true;
 		}
 		else {
-			bot.sendChannelFormat("%s: The recycler says you have no items to recycle.", nick);
+			bot.sendChannelFormat("%s: The recycler says you have no items to recycle.", ColorStr.nick(nick));
 			return false;
 		}
 	}
@@ -34,15 +35,10 @@ public class DiceRecycler extends BasicPowerup {
 		Powerup oldPowerup = bot.getPowerups().get(owner);
 		bot.getPowerups().remove(owner);
 		bot.sendChannelFormat("The recycler tosses %s's %s into a peculiar shredder machine. " +
-			"One moment later, something pops out:", owner, oldPowerup);
+			"One moment later, something pops out:", ownerColored, oldPowerup);
 		bot.scheduleRandomSpawn(null, Powerups.firstPowerup, null);
 	}
 
-	@Override
-	public boolean isCarried() {
-		return false;
-	}
-	
 	@Override
 	public String getName() {
 		return "Dice Recycler";

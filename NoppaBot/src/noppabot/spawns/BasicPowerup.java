@@ -32,6 +32,11 @@ public abstract class BasicPowerup extends Powerup {
 		this.colorRoll = colorRoll;
 	}
 	
+	@Override
+	public String getNameColored() {
+		return ColorStr.basicPowerup(getName());
+	}
+	
 	public void doInitialize() {
 	}
 	
@@ -46,6 +51,10 @@ public abstract class BasicPowerup extends Powerup {
 	}
 
 	public void onExpire() {
+	}
+	
+	public void sendExpireMessageFormat(String msg, Object... args) {
+		bot.sendChannelFormat(ColorStr.expires(msg), args);
 	}
 
 	/**

@@ -4,7 +4,7 @@
  */
 package noppabot.spawns;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 
 
 public abstract class Event implements ISpawnable {
@@ -12,6 +12,15 @@ public abstract class Event implements ISpawnable {
 	
 	public abstract String getName();
 
+	public String getNameColored() {
+		return ColorStr.event(getName());
+	}
+	
+	@Override
+	public String toStringColored() {
+		return getNameColored();
+	}
+	
 	@Override
 	public String toString() {
 		return getName();

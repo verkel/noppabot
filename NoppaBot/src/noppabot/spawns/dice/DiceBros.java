@@ -17,13 +17,13 @@ public class DiceBros extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the Dice bros. have some plumbing to do, and leave.");
+		sendExpireMessageFormat("... the Dice bros. have some plumbing to do, and leave.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the Dice bros! They will show off their rolling skills tonight.",
-			ownerColored);
+		bot.sendChannelFormat("%s grabs the %s! They will show off their rolling skills tonight.",
+			ownerColored, getNameColored());
 	}
 
 	@Override

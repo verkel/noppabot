@@ -18,13 +18,13 @@ public class EnchantedDie extends BasicPowerup {
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the spell on the enchanted die expires and nobody really wants it anymore.");
+		sendExpireMessageFormat("... the spell on the enchanted die expires and nobody really wants it anymore.");
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat(
-			"%s grabs the enchanted die and feels a tingling sensation at the fingertips.", ownerColored);
+		bot.sendChannelFormat("%s grabs the %s and feels a tingling sensation at the fingertips.", 
+			ownerColored, getNameColored());
 	}
 
 	@Override

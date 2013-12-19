@@ -19,12 +19,12 @@ public class PolishedDie extends BasicPowerup {
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the polished die.", ownerColored);
+		bot.sendChannelFormat("%s grabs the %s.", ownerColored, getNameColored());
 	}
 
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the polished die fades away.");
+		sendExpireMessageFormat("... the polished die fades away.");
 	}
 
 	@Override
