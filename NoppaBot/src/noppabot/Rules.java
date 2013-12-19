@@ -56,10 +56,10 @@ public class Rules {
 		}
 	};
 	
-	public final WinCondition LEAST_ROLL = new WinCondition() {
+	public final WinCondition LOWEST_ROLL = new WinCondition() {
 		@Override
 		public void onRollPeriodStart(INoppaBot bot) {
-			bot.sendChannel("Tonight we are looking for the least roll!");
+			bot.sendChannel("Tonight we are looking for the lowest roll!");
 		}
 		
 		@Override

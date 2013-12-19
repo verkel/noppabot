@@ -47,8 +47,8 @@ public class RulesChange extends Event {
 	}
 
 	public static String changeToLeastRollWins(Rules rules) {
-		rules.winCondition = rules.LEAST_ROLL;
-		return "The least roll now wins the contest!";
+		rules.winCondition = rules.LOWEST_ROLL;
+		return "The lowest roll now wins the contest!";
 	}
 
 	public static String changeToUncappedRolls(Rules rules) {
