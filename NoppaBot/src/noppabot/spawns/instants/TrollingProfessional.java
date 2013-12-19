@@ -130,7 +130,7 @@ public class TrollingProfessional extends BasicPowerup {
 			String resultStr = resultStr(result);
 			result = clamp(result);
 			
-			bot.sendDefaultContestRollMessage(owner, roll);
+			sendDefaultContestRollMessage(roll);
 			bot.sendChannelFormat("The bomb on %s explodes, causing %d + %d = %d damage to the roll! " +
 				"%s's roll drops down to %s.", owner, damageRoll, dmgBonus, totalDamage, ownerColored, resultStr);
 			

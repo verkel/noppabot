@@ -85,8 +85,10 @@ public class DiceBros extends BasicPowerup {
 		public SuperDiceBros(INoppaBot bot) {
 			super(DiceBros.this);
 			marioItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
+			marioItem.setColors(false, false);
 			marioItem.setOwner("Mario");
 			luigiItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
+			luigiItem.setColors(false, false);
 			luigiItem.setOwner("Luigi");
 		}
 		
@@ -94,7 +96,7 @@ public class DiceBros extends BasicPowerup {
 		public int onContestRoll(int marioRoll) {
 			int luigiRoll = bot.getRollFor(owner, 100);
 
-			bot.sendChannelFormat("The Super Dice bros. roll for %s.", ownerColored);
+			bot.sendChannelFormat("The Super Dice bros. roll for %s.", owner);
 			marioRoll = marioItem.onContestRoll(marioRoll);
 			luigiRoll = luigiItem.onContestRoll(luigiRoll);
 			

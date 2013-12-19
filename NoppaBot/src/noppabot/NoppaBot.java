@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 import java.util.regex.*;
 
 import noppabot.spawns.*;
-import noppabot.spawns.dice.*;
-import noppabot.spawns.events.*;
+import noppabot.spawns.dice.ApprenticeDie;
+import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
@@ -719,7 +719,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 			
 			// Do the normal roll if no powerup was used
-			if (!powerupUsed) sendDefaultContestRollMessage(nick, roll);
+			if (!powerupUsed) sendDefaultContestRollMessage(nick, roll, true, true);
 			
 			if (!participated && rollOrTiebreakPeriod) {
 				// Activate powerups which affect opponent rolls
@@ -755,16 +755,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	@Override
-	public void sendDefaultContestRollMessage(String nick, int roll) {
-		sendChannel(getDefaultContestRollMessage(nick, roll));
+	public void sendDefaultContestRollMessage(String nick, int roll, boolean colorNick, boolean colorRoll) {
+		sendChannel(getDefaultContestRollMessage(nick, roll, colorNick, colorRoll));
 	}
 
 	@Override
-	public String getDefaultContestRollMessage(String nick, int roll) {
+	public String getDefaultContestRollMessage(String nick, int roll, boolean colorNick, boolean colorRoll) {
 		String participatedMsg = participated(nick) ? 
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
-		String rollStr = rollToString(roll);
-		return String.format("%s rolls %s! %s%s", ColorStr.nick(nick), rollStr, grade(roll), participatedMsg);
+		String rollStr = rollToString(roll, colorRoll);
+		String nickColored = colorNick ? ColorStr.nick(nick) : nick;
+		return String.format("%s rolls %s! %s%s", nickColored, rollStr, grade(roll), participatedMsg);
 	}
 	
 	@Override
@@ -1191,17 +1192,27 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	public String rollToString(int roll) {
+		return rollToString(roll, true);
+	}
+	
+	@Override
+	public String rollToString(int roll, boolean colorRoll) {
 		if (roll <= 100 && roll >= 0) {
-			return colorRoll(roll);
+			return maybeColorRoll(roll, colorRoll);
 		}
 		else {
 			if (rules.cappedRolls) {
-				return String.format("%d (= %s)", roll, colorRoll(clampRoll(roll)));
+				return String.format("%d (= %s)", roll, maybeColorRoll(clampRoll(roll), colorRoll));
 			}
 			else {
-				return colorRoll(roll);
+				return maybeColorRoll(roll, colorRoll);
 			}
 		}
+	}
+	
+	private String maybeColorRoll(int roll, boolean colorRoll) {
+		if (colorRoll) return colorRoll(roll);
+		else return String.valueOf(roll);
 	}
 	
 	@Override

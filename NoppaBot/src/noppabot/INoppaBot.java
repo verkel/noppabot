@@ -15,9 +15,9 @@ public interface INoppaBot {
 	
 	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents);
 	
-	public void sendDefaultContestRollMessage(String nick, int value);
+	public void sendDefaultContestRollMessage(String nick, int value, boolean colorNick, boolean colorRoll);
 
-	public String getDefaultContestRollMessage(String nick, int value);
+	public String getDefaultContestRollMessage(String nick, int value, boolean colorNick, boolean colorRoll);
 
 	public String grade(int value);
 
@@ -60,6 +60,8 @@ public interface INoppaBot {
 	public void onRulesChanged();
 
 	int clampRoll(int roll);
-
+	
 	String rollToString(int roll);
+
+	String rollToString(int roll, boolean colorRoll);
 }

@@ -94,8 +94,7 @@ public class GroundhogDie extends BasicPowerup {
 			else {
 				bot.sendChannel("The self-improving die fails to improve on yesterday's events.");
 				// Normal behaviour
-				bot.sendDefaultContestRollMessage(owner, roll);
-				return roll;
+				return super.onContestRoll(roll);
 			}
 		}
 		

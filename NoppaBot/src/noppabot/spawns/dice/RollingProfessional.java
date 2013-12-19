@@ -29,7 +29,7 @@ public class RollingProfessional extends BasicPowerup {
 	@Override
 	public int onContestRoll(int roll) {
 		if (roll >= minRoll) {
-			bot.sendDefaultContestRollMessage(owner, roll);
+			sendDefaultContestRollMessage(roll);
 			bot.sendChannelFormat(
 				"The rolling professional compliments %s for the proper rolling technique.", owner);
 			return roll;
@@ -70,7 +70,7 @@ public class RollingProfessional extends BasicPowerup {
 		@Override
 		public int onContestRoll(int roll) {
 			if (roll >= minRoll) {
-				bot.sendDefaultContestRollMessage(owner, roll);
+				sendDefaultContestRollMessage(roll);
 				bot.sendChannelFormat(
 					"The rolling professor gives %s an A+ for this roll!", owner);
 				return roll;

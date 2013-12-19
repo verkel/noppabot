@@ -10,6 +10,8 @@ import noppabot.*;
 public abstract class BasicPowerup extends Powerup {
 	
 	protected INoppaBot bot;
+	protected boolean colorOwner = true;
+	protected boolean colorRoll = true;
 	protected String owner; // The owner
 	protected String ownerColored; // The owner, colored
 
@@ -22,7 +24,12 @@ public abstract class BasicPowerup extends Powerup {
 	@Override
 	public final void setOwner(String owner) {
 		this.owner = owner;
-		this.ownerColored = ColorStr.nick(owner);
+		this.ownerColored = colorOwner ? ColorStr.nick(owner) : owner;
+	}
+	
+	public final void setColors(boolean colorOwner, boolean colorRoll) {
+		this.colorOwner = colorOwner;
+		this.colorRoll = colorRoll;
 	}
 	
 	public void doInitialize() {
@@ -48,7 +55,7 @@ public abstract class BasicPowerup extends Powerup {
 	 */
 	@Override
 	public int onContestRoll(int roll) {
-		bot.sendDefaultContestRollMessage(owner, roll);
+		bot.sendDefaultContestRollMessage(owner, roll, colorOwner, colorRoll);
 		return roll;
 	}
 	
@@ -62,7 +69,7 @@ public abstract class BasicPowerup extends Powerup {
 	}
 	
 	public String resultStr(int roll) {
-		return bot.rollToString(roll);
+		return bot.rollToString(roll, colorRoll);
 	}
 	
 	public int clamp(int roll) {
@@ -79,5 +86,9 @@ public abstract class BasicPowerup extends Powerup {
 	
 	public String ownerColored() {
 		return ownerColored;
+	}
+	
+	public void sendDefaultContestRollMessage(int roll) {
+		bot.sendDefaultContestRollMessage(owner, roll, colorOwner, colorRoll);
 	}
 }

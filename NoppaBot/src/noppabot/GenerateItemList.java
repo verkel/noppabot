@@ -450,10 +450,6 @@ public class GenerateItemList {
 		private Rules rules = new Rules();
 		
 		@Override
-		public void sendDefaultContestRollMessage(String nick, int value) {
-		}
-		
-		@Override
 		public void sendChannelFormat(String msg, Object... args) {
 		}
 		
@@ -485,11 +481,6 @@ public class GenerateItemList {
 			return Collections.emptyMap();
 		}
 		
-		@Override
-		public String getDefaultContestRollMessage(String nick, int value) {
-			return null;
-		}
-
 		@Override
 		public int getSecondsAfterPeriodStart() {
 			return 0;
@@ -569,6 +560,22 @@ public class GenerateItemList {
 		@Override
 		public SpawnTask scheduleRandomSpawn(Calendar spawnTime,
 			Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
+			return null;
+		}
+
+		@Override
+		public String rollToString(int roll, boolean colorRoll) {
+			return null;
+		}
+
+		@Override
+		public void sendDefaultContestRollMessage(String nick, int value, boolean colorNick,
+			boolean colorRoll) {
+		}
+
+		@Override
+		public String getDefaultContestRollMessage(String nick, int value, boolean colorNick,
+			boolean colorRoll) {
 			return null;
 		}
 	}
