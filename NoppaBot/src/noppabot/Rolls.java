@@ -20,9 +20,10 @@ public class Rolls {
 	
 	public void onRulesChanged() {
 		// Recreate the values set with different comparator
-		// Rules can't change during the roll period, so no need to copy any values
-		Comparator<Integer> cmp = bot.getRules().winCondition.rollComparator;
-		values = new TreeSet<Integer>(cmp);
+		Comparator<Integer> cmp = getRollComparator();
+		NavigableSet<Integer> newValues = new TreeSet<Integer>(cmp);
+		if (values != null) newValues.addAll(values);
+		values = newValues;
 	}
 	
 	public boolean isEmpty() {
@@ -55,7 +56,8 @@ public class Rolls {
 		if (values.isEmpty()) return true;
 		else {
 			int topRoll = values.first();
-			return roll >= topRoll;
+			// The equivalent rolls listed first are currently winning
+			return getRollComparator().compare(roll, topRoll) <= 0;
 		}
 	}
 	
@@ -78,5 +80,9 @@ public class Rolls {
 		rollsList.addAll(forParticipant.entrySet());
 		Collections.sort(rollsList, comp);
 		return rollsList;
+	}
+	
+	private Comparator<Integer> getRollComparator() {
+		return bot.getRules().winCondition.rollComparator;
 	}
 }

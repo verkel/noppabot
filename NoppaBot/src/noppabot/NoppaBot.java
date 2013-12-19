@@ -13,7 +13,7 @@ import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
-import org.jibble.pircbot.PircBot;
+import org.jibble.pircbot.*;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
@@ -189,14 +189,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
 //		rolls.put("Verkel", 100);
-		rolls.put("hassu", 77);
-		rolls.put("frodo", 77);
+		rolls.put("hassu", 78);
+		rolls.put("frodo", 78);
 		rolls.put("bilbo", 61);
+		rolls.put("noob", 3);
 //		autorolls.add("hassu");
 //		autorolls.add("frodo");
 //		autorolls.add("bilbo");
 		
 //		new RulesChange().run(this);
+		rules.cappedRolls = false;
+		onRulesChanged();
 		
 //		availablePowerups.add(p);
 //		availablePowerups.add(new TrollingProfessional());
@@ -643,11 +646,20 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			String nick = entry.getKey();
 			int roll = entry.getValue();
 			if (!first) buf.append(", ");
-			buf.append(String.format("%s (%s)", colorRoll(roll), nick));
+			buf.append(String.format("%s %s(%s)", colorRoll(roll), offTargetInfo(roll), nick));
 			first = false;
 		}
 		if (buf.length() > 0) sendChannel(buf.toString());
 		else sendChannel("Nobody has rolled yet.");
+	}
+	
+	private String offTargetInfo(int roll) {
+		if (rules.winCondition == rules.ROLL_CLOSEST_TO_TARGET) {
+			int rollTarget = rules.rollTarget;
+			int dist = Math.abs(rollTarget - roll);
+			return ColorStr.custom("[" + dist + " off] ", Colors.DARK_GRAY);
+		}
+		else return "";
 	}
 	
 	private void listAvailablePowerups(String nick) {
