@@ -21,17 +21,22 @@ public class RulesChange extends Event {
 	public static String doRandomRulesChange(INoppaBot bot) {
 		Rules rules = bot.getRules();
 		int rnd = Powerups.powerupRnd.nextInt(3);
+		String explanation;
 		if (rnd == 0) {
-			return changeToUncappedRolls(rules);
+			explanation = changeToUncappedRolls(rules);
 		}
 		else if (rnd == 1) {
-			return changeToLeastRollWins(rules);
+			explanation = changeToLeastRollWins(rules);
 		}
 		else if (rnd == 2) {
-			return changeToRollClosestToTargetWins(rules);
+			explanation = changeToRollClosestToTargetWins(rules);
+		}
+		else {
+			throw new IllegalStateException();
 		}
 		
-		throw new IllegalStateException();
+		bot.onRulesChanged();
+		return explanation;
 	}
 
 	public static String changeToRollClosestToTargetWins(Rules rules) {

@@ -11,7 +11,7 @@ import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.dice.*;
 
 
-public class TrollingProfessional extends Powerup {
+public class TrollingProfessional extends BasicPowerup {
 	@Override
 	public void onSpawn() {
 		bot.sendChannel("A certified trolling professional appears!");
@@ -126,11 +126,12 @@ public class TrollingProfessional extends Powerup {
 			int damageRoll = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int totalDamage = damageRoll + dmgBonus;
 			int result = roll - totalDamage;
-			result = clamp(bot, result);
+			String resultStr = resultStr(result);
+			result = clamp(result);
 			
 			bot.sendDefaultContestRollMessage(owner, roll);
 			bot.sendChannelFormat("The bomb on %s explodes, causing %d + %d = %d damage to the roll! " +
-				"%s's roll drops down to %d.", owner, damageRoll, dmgBonus, totalDamage, owner, result);
+				"%s's roll drops down to %s.", owner, damageRoll, dmgBonus, totalDamage, ownerColored, resultStr);
 			
 			return result;
 		}

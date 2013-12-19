@@ -4,10 +4,10 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.spawns.dice.Powerup;
+import noppabot.spawns.dice.BasicPowerup;
 
 
-public class Diceteller extends Powerup {
+public class Diceteller extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {

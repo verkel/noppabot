@@ -8,7 +8,7 @@ import noppabot.Rules;
 import noppabot.spawns.events.RulesChange;
 
 
-public class VariableDie extends Powerup {
+public class VariableDie extends BasicPowerup {
 
 	private int sides;
 	
@@ -40,8 +40,8 @@ public class VariableDie extends Powerup {
 
 	private int doContestRoll(String dieName) {
 		int result = bot.getRollFor(owner, sides);
-		String resultStr = rollToString(bot, result);
-		result = clamp(bot, result);
+		String resultStr = resultStr(result);
+		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
 			ownerColored, sides, dieName, resultStr, bot.grade(result));
 		return result;
@@ -70,6 +70,7 @@ public class VariableDie extends Powerup {
 			if (sides < 100) ruleChangeDescr = RulesChange.changeToLeastRollWins(rules);
 			else if (sides > 100) ruleChangeDescr = RulesChange.changeToUncappedRolls(rules);
 			else ruleChangeDescr = RulesChange.changeToRollClosestToTargetWins(rules);
+			bot.onRulesChanged();
 		}
 		
 		@Override

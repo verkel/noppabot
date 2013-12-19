@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 
 
-public class LuckyDie extends Powerup {
+public class LuckyDie extends BasicPowerup {
 
 	public static final int bonus = 25;
 
@@ -30,10 +30,11 @@ public class LuckyDie extends Powerup {
 	public int onContestRoll(int roll) {
 		if (String.valueOf(roll).contains("7")) {
 			int result = roll + bonus;
-			result = clamp(bot, result);
+			String resultStr = resultStr(result);
+			result = clamp(result);
 			bot.sendChannelFormat(
-				"%s rolls %d! The lucky die likes sevens in numbers, so it tinkers with your roll, making it %d + %d = %d. Lucky!",
-				ownerColored, roll, roll, bonus, result);
+				"%s rolls %d! The lucky die likes sevens in numbers, so it tinkers with your roll, making it %d + %d = %s. Lucky!",
+				ownerColored, roll, roll, bonus, resultStr);
 			return result;
 		}
 		else {
@@ -59,17 +60,18 @@ public class LuckyDie extends Powerup {
 	}
 	
 	// Upgrade
-	public static class JackpotDie extends Powerup {
+	public class JackpotDie extends Powerup {
 		private static final int jackpotBonus = 40;
 		
 		@Override
 		public int onContestRoll(int roll) {
 			if (String.valueOf(roll).contains("7")) {
 				int result = roll + jackpotBonus;
-				result = clamp(bot, result);
+				String resultStr = resultStr(result);
+				result = clamp(result);
 				bot.sendChannelFormat(
-					"%s rolls %d! You win the JACKPOT! Your final roll is %d + %d = %d.",
-					ownerColored, roll, roll, jackpotBonus, result);
+					"%s rolls %d! You win the JACKPOT! Your final roll is %d + %d = %s.",
+					ownerColored, roll, roll, jackpotBonus, resultStr);
 				return result;
 			}
 			else {

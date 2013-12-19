@@ -6,10 +6,10 @@ package noppabot.spawns.instants;
 
 import java.util.*;
 
-import noppabot.spawns.dice.Powerup;
+import noppabot.spawns.dice.*;
 
 
-public class DicePirate extends Powerup {
+public class DicePirate extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {

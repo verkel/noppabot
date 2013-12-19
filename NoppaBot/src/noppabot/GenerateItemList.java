@@ -510,11 +510,6 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public Map<String, Integer> getRolls() {
-			return null;
-		}
-
-		@Override
 		public int peekRollFor(String nick) {
 			return 0;
 		}
@@ -557,6 +552,25 @@ public class GenerateItemList {
 		@Override
 		public Rules getRules() {
 			return rules;
+		}
+
+		@Override
+		public void onRulesChanged() {
+		}
+
+		@Override
+		public Rolls getRolls() {
+			return null;
+		}
+
+		@Override
+		public int clampRoll(int roll) {
+			return 0;
+		}
+
+		@Override
+		public String rollToString(int roll) {
+			return null;
 		}
 	}
 	

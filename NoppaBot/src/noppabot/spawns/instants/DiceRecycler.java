@@ -7,7 +7,7 @@ package noppabot.spawns.instants;
 import noppabot.spawns.dice.*;
 
 
-public class DiceRecycler extends Powerup {
+public class DiceRecycler extends BasicPowerup {
 	@Override
 	public void onSpawn() {
 		bot.sendChannel("A dice recycler appears!");

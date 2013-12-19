@@ -8,7 +8,7 @@ import java.util.*;
 
 
 
-public class Spawner<S extends ISpawnable> {
+public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	private NavigableMap<Float, S> chances = new TreeMap<Float, S>();
 	private Random random = new Random();
 	private LastSpawn lastSpawn;
@@ -39,6 +39,28 @@ public class Spawner<S extends ISpawnable> {
 		
 		S value = chances.get(key);
 		return clone(value);
+	}
+	
+	@Override
+	public Iterator<S> iterator() {
+		return new Iterator<S>() {
+			private Iterator<S> it = chances.values().iterator();
+
+			@Override
+			public boolean hasNext() {
+				return it.hasNext();
+			}
+
+			@Override
+			public S next() {
+				return Spawner.this.clone(it.next());
+			}
+
+			@Override
+			public void remove() {
+			}
+			
+		};
 	}
 	
 	@SuppressWarnings("unchecked")

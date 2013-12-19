@@ -6,9 +6,9 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
-import noppabot.ColorStr;
+import noppabot.*;
 
-public class PrimalDie extends Powerup {
+public class PrimalDie extends BasicPowerup {
 
 	private static final Set<Integer> primes = new HashSet<Integer>();
 	
@@ -39,16 +39,17 @@ public class PrimalDie extends Powerup {
 	public int onContestRoll(int roll) {
 		if (primes.contains(roll)) {
 			int result = roll + bonus;
-			result = clamp(bot, result);
+			String resultStr = resultStr(result);
+			result = clamp(result);
 			bot.sendChannelFormat(
-				"%s rolls %d, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %d + %d = %d.",
-				ownerColored, roll, roll, bonus, result);
+				"%s rolls %d, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %d + %d = %s.",
+				ownerColored, roll, roll, bonus, resultStr);
 			return result;
 		}
 		else {
 			bot.sendChannelFormat(
-				"%s rolls %d! It's not a prime, however, and the primal die disapproves.", ownerColored,
-				roll);
+				"%s rolls %s! It's not a prime, however, and the primal die disapproves.", ownerColored,
+				resultStr(roll));
 			return roll;
 		}
 	}
@@ -69,7 +70,7 @@ public class PrimalDie extends Powerup {
 	}
 	
 	// Upgrade
-	public static class TribalDie extends Powerup {
+	public class TribalDie extends Powerup {
 		
 		private static final int otherPrimesBonus = 10;
 		private int otherPrimesTotalBonus = 0;
@@ -79,30 +80,33 @@ public class PrimalDie extends Powerup {
 			int result = roll;
 			if (primes.contains(roll)) {
 				result += bonus;
+				String resultStr = resultStr(result);
+				result = clamp(result);
 				bot.sendChannelFormat(
 					"%s rolls %d, which is a prime! The tribe of primal dies grants you an offering of" +
-					" bonus points. The modified roll is %d + %d = %d.",
-					ownerColored, roll, roll, bonus, result);
+					" bonus points. The modified roll is %d + %d = %s.",
+					ownerColored, roll, roll, bonus, resultStr);
 			}
 			else {
 				bot.sendChannelFormat(
-					"%s rolls %d! The tribe of primal dice seem uninterested.", ownerColored,
-					roll);
+					"%s rolls %s! The tribe of primal dice seem uninterested.", ownerColored,
+					resultStr(roll));
 			}
 			
 			if (otherPrimesTotalBonus > 0) {
 				result += otherPrimesTotalBonus;
+				String resultStr = resultStr(result);
+				result = clamp(result);
 				bot.sendChannelFormat("The tribal gifts of %d points are added to %s's roll, " +
-					"increasing it to %d", otherPrimesTotalBonus, ownerColored, result);
+					"increasing it to %s", otherPrimesTotalBonus, ownerColored, resultStr);
 			}
 			
-			result = clamp(bot, result);
 			return result;
 		}
 		
 		@Override
 		public void onOpponentRollLate(String opponent, int roll) {
-			Map<String, Integer> rolls = bot.getRolls();
+			Rolls rolls = bot.getRolls();
 			
 			if (primes.contains(roll)) {
 				if (bot.participated(owner)) {

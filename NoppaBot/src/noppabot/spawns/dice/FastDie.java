@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 import noppabot.MathUtils;
 
-public class FastDie extends Powerup {
+public class FastDie extends BasicPowerup {
 
 	private static final int maxBonus = 20;
 	
@@ -33,10 +33,11 @@ public class FastDie extends Powerup {
 		int penalty = MathUtils.clamp(seconds - 10, 0, maxBonus);
 		int bonus = maxBonus - penalty;
 		int result = roll + bonus;
-		result = clamp(bot, result);
+		String resultStr = resultStr(result);
+		result = clamp(result);
 		bot.sendChannelFormat("%s waited %d seconds before rolling. The fast die awards %d - %d = %d speed bonus!", 
 			owner, seconds, maxBonus, penalty, bonus);
-		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result, bot.grade(result));
+		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr, bot.grade(result));
 		return result;
 	}
 
@@ -62,7 +63,7 @@ public class FastDie extends Powerup {
 	}
 	
 	// Upgrade
-	public static class FasterDie extends Powerup {
+	public class FasterDie extends Powerup {
 		
 		private static final int maxBonus = 30;
 		
@@ -72,10 +73,11 @@ public class FastDie extends Powerup {
 			int penalty = MathUtils.clamp(seconds, 0, maxBonus);
 			int bonus = maxBonus - penalty;
 			int result = roll + bonus;
-			result = clamp(bot, result);
+			String resultStr = resultStr(result);
+			result = clamp(result);
 			bot.sendChannelFormat("%s waited %d seconds before rolling. The faster die awards %d - %d = %d speed bonus!", 
 				owner, seconds, maxBonus, penalty, bonus);
-			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result, bot.grade(result));
+			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr, bot.grade(result));
 			return result;
 		}
 		

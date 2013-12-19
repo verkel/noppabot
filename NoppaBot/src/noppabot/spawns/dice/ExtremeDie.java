@@ -4,10 +4,9 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
 
 
-public class ExtremeDie extends Powerup {
+public class ExtremeDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
@@ -28,21 +27,25 @@ public class ExtremeDie extends Powerup {
 
 	@Override
 	public int onContestRoll(int roll) {
-		return doContestRoll(getName(), 100, bot, ownerColored, roll);
+		return doContestRoll(getName(), 100, roll);
 	}
 
-	private static int doContestRoll(String dieName, int sides, INoppaBot bot, String ownerColored, int roll) {
+	private int doContestRoll(String dieName, int sides, int roll) {
 		if (roll == 100) {
-			bot.sendChannelFormat("%s rolls d%d with the extreme die! %d! That's the most extreme roll and the die is ecstatic!", ownerColored, sides, roll); 
+			bot.sendChannelFormat("%s rolls d%d with the extreme die! %s! That's the most extreme roll and the die is ecstatic!", 
+				ownerColored, sides, resultStr(roll)); 
 			return roll;
 		}
 		else if (roll > 10 && roll < 90) {
-			bot.sendChannelFormat("%s rolls d%d with the extreme die! %d! This number is quite ordinary, says the die.", ownerColored, sides, roll);
+			bot.sendChannelFormat("%s rolls d%d with the extreme die! %s! This number is quite ordinary, says the die.", 
+				ownerColored, sides, resultStr(roll));
 			return roll;
 		}
 		else {
-			bot.sendChannelFormat("%s rolls d%d with the extreme die! %d! This number is very extremal! says the die.", ownerColored, sides, roll);
-			bot.sendChannelFormat("The extreme die rewards %s with the most extreme roll, 100!", ownerColored);
+			bot.sendChannelFormat("%s rolls d%d with the extreme die! %d! This number is very extremal! says the die.", 
+				owner, sides, roll);
+			bot.sendChannelFormat("The extreme die rewards %s with the most extreme roll, %s!",
+				ownerColored, resultStr(100));
 			return 100;
 		}
 	}
@@ -63,14 +66,14 @@ public class ExtremeDie extends Powerup {
 	}
 	
 	// Upgrade
-	public static class DaringDie extends Powerup {
+	public class DaringDie extends Powerup {
 		
 		private static final int sides = 30;
 		
 		@Override
 		public int onContestRoll(int roll) {
 			int newRoll = bot.getRollFor(owner, sides);
-			return doContestRoll(getName(), sides, bot, owner, newRoll);
+			return doContestRoll(getName(), sides, newRoll);
 		}
 		
 		@Override

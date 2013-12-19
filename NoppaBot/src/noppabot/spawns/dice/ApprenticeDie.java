@@ -5,7 +5,7 @@
 package noppabot.spawns.dice;
 
 
-public class ApprenticeDie extends Powerup {
+public class ApprenticeDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {

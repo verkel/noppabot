@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import noppabot.INoppaBot;
 
 
-public class MasterDie extends Powerup {
+public class MasterDie extends BasicPowerup {
 
 	private static final int sides = 150;
 	
@@ -42,8 +42,8 @@ public class MasterDie extends Powerup {
 	
 	private int doContestRoll(String dieName, int sides) {
 		int result = bot.getRollFor(owner, sides);
-		String resultStr = rollToString(bot, result);
-		result = clamp(bot, result);
+		String resultStr = resultStr(result);
+		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
 			ownerColored, sides, dieName, resultStr, bot.grade(result));
 		rollUnusedApprenticeDies(bot, result);

@@ -20,4 +20,12 @@ public class ColorStr {
 	public static String nick(String nick) {
 		return custom(nick, Colors.TEAL);
 	}
+	
+	public static String winningRoll(int roll) {
+		return custom(String.valueOf(roll), Colors.GREEN);
+	}
+	
+	public static String losingRoll(int roll) {
+		return custom(String.valueOf(roll), Colors.RED);
+	}
 }

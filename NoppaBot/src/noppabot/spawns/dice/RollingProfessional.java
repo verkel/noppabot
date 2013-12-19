@@ -5,7 +5,7 @@
 package noppabot.spawns.dice;
 
 
-public class RollingProfessional extends Powerup {
+public class RollingProfessional extends BasicPowerup {
 
 	private static final int minRoll = 50;
 
@@ -57,7 +57,7 @@ public class RollingProfessional extends Powerup {
 	}
 	
 	// Upgrade
-	public static class RollingProfessor extends Powerup {
+	public class RollingProfessor extends Powerup {
 		
 		private static final int minRoll = 70;
 		

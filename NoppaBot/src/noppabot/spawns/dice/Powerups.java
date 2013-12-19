@@ -16,18 +16,18 @@ public class Powerups {
 
 	public static Random powerupRnd = new Random();
 
-	public static final Spawner<Powerup> allPowerups;
-	public static final Spawner<Powerup> firstPowerup;
-	public static final Spawner<Powerup> diceStormPowerups;
-	public static final Spawner<Powerup> diceBrosPowerups;
+	public static final Spawner<BasicPowerup> allPowerups;
+	public static final Spawner<BasicPowerup> firstPowerup;
+	public static final Spawner<BasicPowerup> diceStormPowerups;
+	public static final Spawner<BasicPowerup> diceBrosPowerups;
 	public static final Spawner<Event> allEvents;
 	public static final Spawner<Event> allEventsMinusFourthWall;
 	
 	static {
-		List<Powerup> allPowerupsList = new ArrayList<Powerup>();
-		List<Powerup> firstPowerupList = new ArrayList<Powerup>();
-		List<Powerup> diceStormPowerupsList = new ArrayList<Powerup>();
-		List<Powerup> diceBrosPowerupsList = new ArrayList<Powerup>();
+		List<BasicPowerup> allPowerupsList = new ArrayList<BasicPowerup>();
+		List<BasicPowerup> firstPowerupList = new ArrayList<BasicPowerup>();
+		List<BasicPowerup> diceStormPowerupsList = new ArrayList<BasicPowerup>();
+		List<BasicPowerup> diceBrosPowerupsList = new ArrayList<BasicPowerup>();
 		List<Event> allEventsList = new ArrayList<Event>();
 		List<Event> allEventsMinusFourthWallList = new ArrayList<Event>();
 		
@@ -56,15 +56,15 @@ public class Powerups {
 		LastSpawn lastPowerup = new LastSpawn();
 		LastSpawn lastEvent = new LastSpawn();
 		
-		allPowerups = new Spawner<Powerup>(allPowerupsList, lastPowerup);
-		firstPowerup = new Spawner<Powerup>(firstPowerupList, lastPowerup);
-		diceStormPowerups = new Spawner<Powerup>(diceStormPowerupsList, lastPowerup);
-		diceBrosPowerups = new Spawner<Powerup>(diceBrosPowerupsList, new LastSpawn());
+		allPowerups = new Spawner<BasicPowerup>(allPowerupsList, lastPowerup);
+		firstPowerup = new Spawner<BasicPowerup>(firstPowerupList, lastPowerup);
+		diceStormPowerups = new Spawner<BasicPowerup>(diceStormPowerupsList, lastPowerup);
+		diceBrosPowerups = new Spawner<BasicPowerup>(diceBrosPowerupsList, new LastSpawn());
 		allEvents = new Spawner<Event>(allEventsList, lastEvent);
 		allEventsMinusFourthWall = new Spawner<Event>(allEventsMinusFourthWallList, lastEvent);
 	}
 
-	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
+	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups, Spawner<Event> spawnEvents) {
 		if (spawnEvents != null && powerupRnd.nextFloat() < 0.08f) {
 			return getRandomEvent(spawnEvents);
 		}
@@ -73,8 +73,8 @@ public class Powerups {
 		}
 	}
 	
-	public static Powerup getRandomPowerup(INoppaBot bot, Spawner<Powerup> spawnPowerups) {
-		Powerup powerup = spawnPowerups.spawn();
+	public static BasicPowerup getRandomPowerup(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups) {
+		BasicPowerup powerup = spawnPowerups.spawn();
 		powerup.initialize(bot);
 		return powerup;
 	}

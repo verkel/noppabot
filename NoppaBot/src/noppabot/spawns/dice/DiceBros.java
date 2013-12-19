@@ -7,7 +7,7 @@ package noppabot.spawns.dice;
 import noppabot.INoppaBot;
 
 
-public class DiceBros extends Powerup {
+public class DiceBros extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
@@ -29,26 +29,27 @@ public class DiceBros extends Powerup {
 	public int onContestRoll(int marioRoll) {
 		int luigiRoll = bot.getRollFor(owner, 100);
 		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %d! Luigi Dice rolls %d!",
-			ownerColored, marioRoll, luigiRoll);
-		return chooseBetterRoll(bot, ownerColored, marioRoll, luigiRoll);
+			owner, marioRoll, luigiRoll);
+		return chooseBetterRoll(marioRoll, luigiRoll);
 		
 //		return 100 - Math.abs(marioRoll - luigiRoll);
 	}
 
-	private static int chooseBetterRoll(INoppaBot bot, String ownerColored, int marioRoll, int luigiRoll) {
+	private int chooseBetterRoll(int marioRoll, int luigiRoll) {
 		if (marioRoll > luigiRoll) {
-			bot.sendChannelFormat("The bros. choose Mario's roll, %d, as %s's result. %s", 
-				marioRoll, ownerColored, bot.grade(marioRoll));
+			bot.sendChannelFormat("The bros. choose Mario's roll, %s, as %s's result. %s", 
+				resultStr(marioRoll), ownerColored, bot.grade(marioRoll));
 			return marioRoll;
 		}
 		else if (luigiRoll > marioRoll) {
-			bot.sendChannelFormat("The bros. choose Luigi's roll, %d, as %s's result. %s", 
-				luigiRoll, ownerColored, bot.grade(luigiRoll));
+			bot.sendChannelFormat("The bros. choose Luigi's roll, %s, as %s's result. %s", 
+				resultStr(luigiRoll), ownerColored, bot.grade(luigiRoll));
 			return luigiRoll;
 		}
 		else {
 			bot.sendChannelFormat("The bros. rolled the same number! The bro code dictates " +
-				"this is a cause for celebration, and that %s's roll result should be 100!", ownerColored); 
+				"this is a cause for celebration, and that %s's roll result should be %s!", 
+				ownerColored, resultStr(100)); 
 			return 100;
 		}
 	}
@@ -75,10 +76,10 @@ public class DiceBros extends Powerup {
 	}
 	
 	// Upgrade
-	public static class SuperDiceBros extends Powerup {
+	public class SuperDiceBros extends Powerup {
 		
-		private Powerup marioItem;
-		private Powerup luigiItem;
+		private BasicPowerup marioItem;
+		private BasicPowerup luigiItem;
 
 		public SuperDiceBros(INoppaBot bot) {
 			marioItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
@@ -95,7 +96,7 @@ public class DiceBros extends Powerup {
 			marioRoll = marioItem.onContestRoll(marioRoll);
 			luigiRoll = luigiItem.onContestRoll(luigiRoll);
 			
-			return chooseBetterRoll(bot, ownerColored, marioRoll, luigiRoll);
+			return chooseBetterRoll(marioRoll, luigiRoll);
 		}
 		
 		@Override

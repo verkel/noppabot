@@ -39,7 +39,7 @@ public interface INoppaBot {
 	
 	public Map<String, Powerup> getPowerups();
 	
-	public Map<String, Integer> getRolls();
+	public Rolls getRolls();
 	
 	public int getSecondsAfterPeriodStart();
 	
@@ -58,4 +58,10 @@ public interface INoppaBot {
 	public Calendar getSpawnEndTime();
 	
 	public Rules getRules();
+
+	public void onRulesChanged();
+
+	int clampRoll(int roll);
+
+	String rollToString(int roll);
 }

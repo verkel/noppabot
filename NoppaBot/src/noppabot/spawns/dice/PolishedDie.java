@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 
 
-public class PolishedDie extends Powerup {
+public class PolishedDie extends BasicPowerup {
 
 	public static final int bonus = 5;
 
@@ -28,9 +28,10 @@ public class PolishedDie extends Powerup {
 	@Override
 	public int onContestRoll(int roll) {
 		int result = roll + bonus;
-		result = clamp(bot, result);
+		String resultStr = resultStr(result);
+		result = clamp(result);
 		bot.sendChannelFormat("The polished die adds a nice bonus to %s's roll.", owner);
-		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result,
+		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
 			bot.grade(result));
 		return result;
 	}
@@ -51,16 +52,17 @@ public class PolishedDie extends Powerup {
 	}
 	
 	// Upgrade
-	public static class VeryPolishedDie extends Powerup {
+	public class VeryPolishedDie extends Powerup {
 		private String name = "Very Polished Die";
 		private int bonus = PolishedDie.bonus + 10;
 		
 		@Override
 		public int onContestRoll(int roll) {
 			int result = roll + bonus;
-			result = clamp(bot, result);
+			String resultStr = resultStr(result);
+			result = clamp(result);
 			bot.sendChannelFormat("The %s adds a sweet bonus to %s's roll.", name.toLowerCase(), owner);
-			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result,
+			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
 				bot.grade(result));
 			return result;
 		}

@@ -5,7 +5,7 @@
 package noppabot.spawns.dice;
 
 
-public class EnchantedDie extends Powerup {
+public class EnchantedDie extends BasicPowerup {
 
 	public static final int bonus = 15;
 
@@ -28,11 +28,12 @@ public class EnchantedDie extends Powerup {
 	@Override
 	public int onContestRoll(int roll) {
 		int result = roll + bonus;
-		result = clamp(bot, result);
+		String resultStr = resultStr(result);
+		result = clamp(result);
 		bot.sendChannelFormat(
 			"The enchanted die grants %s either eternal fame and fortune, or a substantial roll bonus. %s chooses the latter.",
 			owner, owner);
-		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, result,
+		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
 			bot.grade(result));
 		return result;
 	}
@@ -58,16 +59,17 @@ public class EnchantedDie extends Powerup {
 	}
 	
 	// Upgrade
-	public static class PotentDie extends Powerup {
+	public class PotentDie extends Powerup {
 		private static final int bonus = EnchantedDie.bonus + 5;
 		
 		@Override
 		public int onContestRoll(int roll) {
 			int result = roll + bonus;
-			result = clamp(bot, result);
+			String resultStr = resultStr(result);
+			result = clamp(result);
 			bot.sendChannelFormat("The potent die grants the utmost magical advantage for %s's roll!",
 				owner);
-			bot.sendChannelFormat("%s rolls %d + %d = %d! %s", owner, roll, bonus, result,
+			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", owner, roll, bonus, resultStr,
 				bot.grade(result));
 			return result;
 		}

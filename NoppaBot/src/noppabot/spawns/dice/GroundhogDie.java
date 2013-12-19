@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 import noppabot.RollRecords;
 
-public class GroundhogDie extends Powerup {
+public class GroundhogDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
@@ -64,7 +64,7 @@ public class GroundhogDie extends Powerup {
 	}
 	
 	// Upgrade
-	public static class SelfImprovingDie extends Powerup {
+	public class SelfImprovingDie extends Powerup {
 		
 		private static final int bonus = 10;
 		
@@ -78,16 +78,19 @@ public class GroundhogDie extends Powerup {
 			
 			if (lastRoll != null && lastRoll > 0) {
 				int result = lastRoll + bonus;
-				result = clamp(bot, result);
+				String resultStr = resultStr(result);
+				result = clamp(result);
 				bot.sendChannelFormat("%s's self-improving die analyzes the yesterday's roll of %d.",
 					owner, lastRoll);
-				bot.sendChannelFormat("%s's self-improving die rolls %d + %d = %d! %s", 
-					ownerColored, lastRoll, bonus, result, bot.grade(result));
+				bot.sendChannelFormat("%s's self-improving die rolls %d + %d = %s! %s", 
+					ownerColored, lastRoll, bonus, resultStr, bot.grade(result));
 				return result;
 			}
 			else {
 				bot.sendChannel("The self-improving die fails to improve on yesterday's events.");
-				return super.onContestRoll(roll); // Normal behaviour
+				// Normal behaviour
+				bot.sendDefaultContestRollMessage(owner, roll);
+				return roll;
 			}
 		}
 		

@@ -9,13 +9,27 @@ import java.util.Map.Entry;
 
 
 public class Rules {
-	public abstract class WinCondition implements Comparator<Entry<String, Integer>> {
+	public abstract class WinCondition { // implements Comparator<Entry<String, Integer>> {
 		public abstract int assignScore(int roll);
 		
-		@Override
-		public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
-			return compare(e1.getValue(), e2.getValue());
-		}
+		public final Comparator<Entry<String, Integer>> rollEntryComparator = 
+			new Comparator<Map.Entry<String,Integer>>() {
+			
+			@Override
+			public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
+				int cmp = WinCondition.this.compare(e1.getValue(), e2.getValue());
+				if (cmp != 0) return cmp;
+				return e1.getKey().compareTo(e2.getKey());
+			}
+		};
+		
+		public final Comparator<Integer> rollComparator = new Comparator<Integer>() {
+			
+			@Override
+			public int compare(Integer r1, Integer r2) {
+				return WinCondition.this.compare(r1, r2);
+			}
+		};
 		
 		protected int compare(int roll1, int roll2) {
 			return -MathUtils.compare(assignScore(roll1), assignScore(roll2));

@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
-public class BagOfDice extends Powerup {
+public class BagOfDice extends BasicPowerup {
 	
 	private static final List<Integer> dice;
 	
@@ -78,10 +78,11 @@ public class BagOfDice extends Powerup {
 			buf.append(subroll);
 			first = false;
 		}
-		String resultStr = buf.toString();
-		result = clamp(bot, result);
+		String sumStr = buf.toString();
+		String resultStr = resultStr(result);
+		result = clamp(result);
 
-		bot.sendChannelFormat("%s rolls with the dice (%s). %s = %d", ownerColored, bagToString(), resultStr, result);
+		bot.sendChannelFormat("%s rolls with the dice (%s). %s = %s", ownerColored, bagToString(), sumStr, resultStr);
 //		System.out.println(result);
 		return result;
 	}

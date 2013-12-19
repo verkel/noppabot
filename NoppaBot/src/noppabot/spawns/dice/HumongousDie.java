@@ -13,7 +13,7 @@ import org.gnu.jfiglet.FIGDriver;
 import org.gnu.jfiglet.core.*;
 
 
-public class HumongousDie extends Powerup {
+public class HumongousDie extends BasicPowerup {
 	
 	private static FIGDriver figDriver;
 	private static FIGFont font;
