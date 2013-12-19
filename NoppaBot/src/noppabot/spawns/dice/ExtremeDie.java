@@ -12,7 +12,7 @@ public class ExtremeDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("The extreme die appears!");
+		bot.sendChannelFormat("An %s appears!", getNameColored());
 	}
 
 	@Override

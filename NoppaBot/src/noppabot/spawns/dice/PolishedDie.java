@@ -14,7 +14,7 @@ public class PolishedDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A polished die appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

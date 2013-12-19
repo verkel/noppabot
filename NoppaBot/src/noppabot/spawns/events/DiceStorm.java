@@ -10,7 +10,7 @@ import noppabot.spawns.*;
 public class DiceStorm extends Event {
 	@Override
 	public void run(INoppaBot bot) {
-		bot.sendChannelFormat("Suddenly, a DiceStorm breaks out! It's now raining dice!");
+		bot.sendChannelFormat("Suddenly, a %s breaks out! It's now raining dice!", getNameColored());
 		
 		int count = 3 + Powerups.powerupRnd.nextInt(2);
 		for (int i = 0; i < count; i++) {

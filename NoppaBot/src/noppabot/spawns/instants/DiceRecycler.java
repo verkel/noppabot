@@ -11,7 +11,7 @@ import noppabot.spawns.*;
 public class DiceRecycler extends Instant {
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A dice recycler appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

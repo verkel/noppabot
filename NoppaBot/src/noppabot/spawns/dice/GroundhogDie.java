@@ -11,7 +11,7 @@ public class GroundhogDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A groundhog die appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

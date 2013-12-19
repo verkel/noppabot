@@ -11,7 +11,7 @@ public class Diceteller extends Instant {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A Diceteller appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

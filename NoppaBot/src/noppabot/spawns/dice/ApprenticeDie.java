@@ -11,7 +11,7 @@ public class ApprenticeDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("An apprentice die appears!");
+		bot.sendChannelFormat("An %s appears!", getNameColored());
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public class HumongousDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A HUMONGOUS DIE APPEARS!");
+		bot.sendChannelFormat("A %s APPEARS!", getNameColored());
 	}
 
 	@Override

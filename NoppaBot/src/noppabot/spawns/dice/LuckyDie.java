@@ -14,7 +14,7 @@ public class LuckyDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A lucky die appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

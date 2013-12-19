@@ -20,7 +20,7 @@ public class VariableDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A variable die appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

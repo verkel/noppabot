@@ -11,7 +11,7 @@ public class DicemonTrainer extends Instant {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A Dicemon trainer appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 	
 	@Override

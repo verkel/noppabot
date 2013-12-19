@@ -11,8 +11,8 @@ import noppabot.spawns.*;
 public class RulesChange extends Event {
 	@Override
 	public void run(INoppaBot bot) {
-		bot.sendChannel("In today's Roll News, you read that the DiceRuler has issued " +
-			"a temporary rules change to spice things up:");
+		bot.sendChannelFormat("In today's Roll News, you read that the DiceRuler has issued " +
+			"a temporary %s to spice things up:", getNameColored());
 		
 		String descr = doRandomRulesChange(bot);
 		bot.sendChannel(descr);

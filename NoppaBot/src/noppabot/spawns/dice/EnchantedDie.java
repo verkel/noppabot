@@ -13,7 +13,7 @@ public class EnchantedDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("An enchanted die appears!");
+		bot.sendChannelFormat("An %s appears!", getNameColored());
 	}
 
 	@Override

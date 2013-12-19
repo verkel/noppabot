@@ -7,6 +7,7 @@ package noppabot.spawns.instants;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import noppabot.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 
@@ -14,7 +15,7 @@ import noppabot.spawns.*;
 public class TrollingProfessional extends Instant {
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A certified trolling professional appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override
@@ -38,8 +39,8 @@ public class TrollingProfessional extends Instant {
 		bot.sendChannelFormat("%s grabs the trolling professional! %s and the trolling trofessional " +
 		"briefly discuss about something.", owner, owner);
 		
-		bot.sendMessageFormat(owner, "Hi! I set us up the Bomb on %s. I suggest you don't take it.",
-			task);
+		bot.sendMessageFormat(owner, "Hi! I set us up the %s on %s. I suggest you don't take it.",
+			ColorStr.basicPowerup("Bomb"), task.toStringColored());
 		bot.sendMessageFormat(owner, "Regards, The Trolling Professional");
 	}
 
@@ -56,6 +57,8 @@ public class TrollingProfessional extends Instant {
 	public static class Bomb extends BasicPowerup {
 		private static final int dmgSides = 10;
 		private static final int dmgBonus = 10;
+		
+		private static final String BOMB_NAME = "BOMB!";
 		
 		public static String[] powerupNames = {
 			"Bag of Dice",
@@ -106,8 +109,9 @@ public class TrollingProfessional extends Instant {
 		@Override
 		public void onPickup() {
 			bot.sendChannelFormat("%s grabs the %s! On a closer inspection, you recognize " +
-				"it's actually a BOMB! This can't be good for the upcoming roll.", owner, name);
-			name = "BOMB!";
+				"it's actually a BOMB! This can't be good for the upcoming roll.", 
+				ownerColored, ColorStr.basicPowerup(BOMB_NAME), ColorStr.basicPowerup(name));
+			name = BOMB_NAME;
 		}
 		
 		@Override

@@ -17,7 +17,7 @@ public class MasterDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("The Master Die appears!");
+		bot.sendChannelFormat("%s appears!", getNameColored());
 	}
 
 	@Override

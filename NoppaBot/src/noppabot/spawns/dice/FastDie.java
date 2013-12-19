@@ -13,7 +13,7 @@ public class FastDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("The fast die appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

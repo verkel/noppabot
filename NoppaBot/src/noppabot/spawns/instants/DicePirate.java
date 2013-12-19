@@ -13,7 +13,7 @@ public class DicePirate extends Instant {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A DicePirate appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

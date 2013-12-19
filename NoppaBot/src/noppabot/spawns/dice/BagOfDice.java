@@ -54,7 +54,7 @@ public class BagOfDice extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("A bag of dice appears!");
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	@Override

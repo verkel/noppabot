@@ -12,7 +12,7 @@ public class DiceBros extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannel("The Dice bros. appear!");
+		bot.sendChannelFormat("The %s appear!", getNameColored());
 	}
 
 	@Override
