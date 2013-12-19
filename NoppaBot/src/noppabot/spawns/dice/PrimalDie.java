@@ -7,6 +7,7 @@ package noppabot.spawns.dice;
 import java.util.*;
 
 import noppabot.*;
+import noppabot.spawns.*;
 
 public class PrimalDie extends BasicPowerup {
 
@@ -70,10 +71,14 @@ public class PrimalDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class TribalDie extends Powerup {
+	public class TribalDie extends EvolvedPowerup {
 		
 		private static final int otherPrimesBonus = 10;
 		private int otherPrimesTotalBonus = 0;
+		
+		public TribalDie() {
+			super(PrimalDie.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {

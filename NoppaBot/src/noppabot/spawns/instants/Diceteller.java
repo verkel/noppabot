@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.spawns.dice.BasicPowerup;
+import noppabot.spawns.BasicPowerup;
 
 
 public class Diceteller extends BasicPowerup {

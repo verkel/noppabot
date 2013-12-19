@@ -2,7 +2,7 @@
  * Created on 19.12.2013
  * @author verkel
  */
-package noppabot.spawns.dice;
+package noppabot.spawns;
 
 import noppabot.*;
 
@@ -13,11 +13,13 @@ public abstract class BasicPowerup extends Powerup {
 	protected String owner; // The owner
 	protected String ownerColored; // The owner, colored
 
+	@Override
 	public final void initialize(INoppaBot bot) {
 		this.bot = bot;
 		doInitialize();
 	}
 
+	@Override
 	public final void setOwner(String owner) {
 		this.owner = owner;
 		this.ownerColored = ColorStr.nick(owner);
@@ -67,4 +69,15 @@ public abstract class BasicPowerup extends Powerup {
 		return bot.clampRoll(roll);
 	}
 	
+	public INoppaBot bot() {
+		return bot;
+	}
+	
+	public String owner() {
+		return owner;
+	}
+	
+	public String ownerColored() {
+		return ownerColored;
+	}
 }

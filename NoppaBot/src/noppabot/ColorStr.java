@@ -11,8 +11,6 @@ public class ColorStr {
 	private ColorStr() {
 	}
 
-	private static char ctrlC = '\u0003';//0x3;
-
 	public static String custom(String str, String colorStr) {
 		return colorStr + str + Colors.NORMAL;
 	}

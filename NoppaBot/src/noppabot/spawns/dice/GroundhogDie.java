@@ -5,6 +5,7 @@
 package noppabot.spawns.dice;
 
 import noppabot.RollRecords;
+import noppabot.spawns.*;
 
 public class GroundhogDie extends BasicPowerup {
 
@@ -64,9 +65,13 @@ public class GroundhogDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class SelfImprovingDie extends Powerup {
+	public class SelfImprovingDie extends EvolvedPowerup {
 		
 		private static final int bonus = 10;
+		
+		public SelfImprovingDie() {
+			super(GroundhogDie.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {

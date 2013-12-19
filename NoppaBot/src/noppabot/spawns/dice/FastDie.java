@@ -5,6 +5,7 @@
 package noppabot.spawns.dice;
 
 import noppabot.MathUtils;
+import noppabot.spawns.*;
 
 public class FastDie extends BasicPowerup {
 
@@ -63,9 +64,13 @@ public class FastDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class FasterDie extends Powerup {
+	public class FasterDie extends EvolvedPowerup {
 		
 		private static final int maxBonus = 30;
+		
+		public FasterDie() {
+			super(FastDie.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {

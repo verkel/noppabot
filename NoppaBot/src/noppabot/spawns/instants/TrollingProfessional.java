@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import noppabot.NoppaBot.SpawnTask;
-import noppabot.spawns.dice.*;
+import noppabot.spawns.*;
 
 
 public class TrollingProfessional extends BasicPowerup {
@@ -32,6 +32,7 @@ public class TrollingProfessional extends BasicPowerup {
 		Calendar spawnTime = (Calendar)now.clone();
 		spawnTime.add(Calendar.MINUTE, addMins);
 		Bomb bomb = new Bomb();
+		bomb.initialize(bot);
 		SpawnTask task = bot.scheduleSpawn(spawnTime, bomb);
 		
 		bot.sendChannelFormat("%s grabs the trolling professional! %s and the trolling trofessional " +
@@ -57,7 +58,7 @@ public class TrollingProfessional extends BasicPowerup {
 		return 0.5f;
 	}
 	
-	public static class Bomb extends Powerup {
+	public static class Bomb extends BasicPowerup {
 		private static final int dmgSides = 10;
 		private static final int dmgBonus = 10;
 		

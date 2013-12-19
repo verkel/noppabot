@@ -5,6 +5,7 @@
 package noppabot.spawns.dice;
 
 import noppabot.INoppaBot;
+import noppabot.spawns.*;
 
 
 public class DiceBros extends BasicPowerup {
@@ -76,12 +77,13 @@ public class DiceBros extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class SuperDiceBros extends Powerup {
+	public class SuperDiceBros extends EvolvedPowerup {
 		
 		private BasicPowerup marioItem;
 		private BasicPowerup luigiItem;
 
 		public SuperDiceBros(INoppaBot bot) {
+			super(DiceBros.this);
 			marioItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
 			marioItem.setOwner("Mario");
 			luigiItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);

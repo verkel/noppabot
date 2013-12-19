@@ -8,14 +8,12 @@ import java.util.*;
 
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
-import noppabot.spawns.dice.Powerup;
-import noppabot.spawns.events.Event;
 
 public interface INoppaBot {
 
 	public SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn);
 	
-	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups, Spawner<Event> allowedEvents);
+	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents);
 	
 	public void sendDefaultContestRollMessage(String nick, int value);
 

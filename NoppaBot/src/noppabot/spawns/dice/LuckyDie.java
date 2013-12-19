@@ -4,6 +4,8 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.spawns.*;
+
 
 
 public class LuckyDie extends BasicPowerup {
@@ -60,8 +62,12 @@ public class LuckyDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class JackpotDie extends Powerup {
+	public class JackpotDie extends EvolvedPowerup {
 		private static final int jackpotBonus = 40;
+		
+		public JackpotDie() {
+			super(LuckyDie.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {

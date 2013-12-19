@@ -2,13 +2,13 @@
  * Created on 27.10.2013
  * @author verkel
  */
-package noppabot.spawns.dice;
+package noppabot.spawns;
 
 import java.util.*;
 
 import noppabot.INoppaBot;
-import noppabot.spawns.*;
 import noppabot.spawns.Spawner.LastSpawn;
+import noppabot.spawns.dice.*;
 import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
 
@@ -30,6 +30,13 @@ public class Powerups {
 		List<BasicPowerup> diceBrosPowerupsList = new ArrayList<BasicPowerup>();
 		List<Event> allEventsList = new ArrayList<Event>();
 		List<Event> allEventsMinusFourthWallList = new ArrayList<Event>();
+		
+		/*
+		 * Instances are used here because some metadata is stored in instance
+		 * getters. Namely the spawn chance. Because static methods cannot be
+		 * specified in interfaces, you'd need to have this data as annotations to
+		 * be accessible without instantiating...
+		 */
 		
 		// Apprentice die is not put here, but can be spawned regardless if there are master dies
 		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(), new DiceBros(),
@@ -83,6 +90,4 @@ public class Powerups {
 		Event event = spawnEvents.spawn();
 		return event;
 	}
-	
-	// DupedDie -- choose the better one of two rolls
 }

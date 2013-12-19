@@ -7,7 +7,8 @@ package noppabot.spawns.dice;
 import java.io.UnsupportedEncodingException;
 
 import noppabot.INoppaBot;
-import noppabot.spawns.dice.WeightedDie.CrushingDie;
+import noppabot.spawns.*;
+import noppabot.spawns.evolved.CrushingDie;
 
 import org.gnu.jfiglet.FIGDriver;
 import org.gnu.jfiglet.core.*;
@@ -84,6 +85,6 @@ public class HumongousDie extends BasicPowerup {
 	
 	@Override
 	public Powerup upgrade() {
-		return new CrushingDie(true);
+		return new CrushingDie(this, true);
 	}
 }

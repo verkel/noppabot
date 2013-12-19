@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.spawns.dice.*;
+import noppabot.spawns.*;
 
 
 public class DiceRecycler extends BasicPowerup {

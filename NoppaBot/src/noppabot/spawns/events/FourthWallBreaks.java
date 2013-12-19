@@ -5,6 +5,7 @@
 package noppabot.spawns.events;
 
 import noppabot.INoppaBot;
+import noppabot.spawns.Event;
 
 public class FourthWallBreaks extends Event {
 	@Override

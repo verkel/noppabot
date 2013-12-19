@@ -5,6 +5,7 @@
 package noppabot.spawns.dice;
 
 import noppabot.Rules;
+import noppabot.spawns.*;
 import noppabot.spawns.events.RulesChange;
 
 
@@ -62,10 +63,11 @@ public class VariableDie extends BasicPowerup {
 		return new ChaosDie();
 	}
 	
-	public class ChaosDie extends Powerup {
+	public class ChaosDie extends EvolvedPowerup {
 		private String ruleChangeDescr;
 		
 		public ChaosDie() {
+			super(VariableDie.this);
 			Rules rules = bot.getRules();
 			if (sides < 100) ruleChangeDescr = RulesChange.changeToLeastRollWins(rules);
 			else if (sides > 100) ruleChangeDescr = RulesChange.changeToUncappedRolls(rules);

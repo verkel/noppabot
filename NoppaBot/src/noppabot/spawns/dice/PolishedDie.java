@@ -4,6 +4,8 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.spawns.*;
+
 
 
 public class PolishedDie extends BasicPowerup {
@@ -52,9 +54,13 @@ public class PolishedDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class VeryPolishedDie extends Powerup {
+	public class VeryPolishedDie extends EvolvedPowerup {
 		private String name = "Very Polished Die";
 		private int bonus = PolishedDie.bonus + 10;
+		
+		public VeryPolishedDie() {
+			super(PolishedDie.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {

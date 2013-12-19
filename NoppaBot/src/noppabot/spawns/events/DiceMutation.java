@@ -7,7 +7,7 @@ package noppabot.spawns.events;
 import java.util.List;
 
 import noppabot.INoppaBot;
-import noppabot.spawns.dice.Powerup;
+import noppabot.spawns.*;
 
 
 public class DiceMutation extends Event {

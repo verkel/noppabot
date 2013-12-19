@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.spawns.dice.*;
+import noppabot.spawns.*;
 
 public class DicemonTrainer extends BasicPowerup {
 	public static final String NAME = "Dicemon Trainer";

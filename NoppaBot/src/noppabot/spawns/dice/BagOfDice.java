@@ -6,6 +6,8 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
+import noppabot.spawns.*;
+
 public class BagOfDice extends BasicPowerup {
 	
 	private static final List<Integer> dice;
@@ -103,12 +105,13 @@ public class BagOfDice extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class BagOfManyDice extends Powerup {
+	public class BagOfManyDice extends EvolvedPowerup {
 		
 		private String manyMany = "Many";
 		private List<Integer> newDice;
 		
 		public BagOfManyDice() {
+			super(BagOfDice.this);
 			putMoreDice();
 		}
 		

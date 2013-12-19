@@ -2,13 +2,17 @@
  * Created on 12.12.2013
  * @author verkel
  */
-package noppabot.spawns.dice;
+package noppabot.spawns;
 
-import noppabot.spawns.ISpawnable;
+import noppabot.INoppaBot;
 
 public abstract class Powerup implements ISpawnable {
 	
 	public abstract String getName();
+	
+	public abstract void initialize(INoppaBot bot);
+	
+	public abstract void setOwner(String owner);
 
 	public void onRollPeriodStart() {
 	}

@@ -101,7 +101,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private NavigableSet<SpawnTask> spawnTasks = new TreeSet<SpawnTask>();
 	private Set<ExpireTask> expireTasks = new HashSet<ExpireTask>();
 	//private Powerup powerup = null;
-	private List<Powerup> availablePowerups = new ArrayList<Powerup>();
+	private List<BasicPowerup> availablePowerups = new ArrayList<BasicPowerup>();
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
 	private Set<String> autorolls = new HashSet<String>();
@@ -212,7 +212,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void spawnAllPowerups() {
-		for (Powerup powerup : Powerups.allPowerups) {
+		for (BasicPowerup powerup : Powerups.allPowerups) {
 			powerup.initialize(this);
 			availablePowerups.add(powerup);
 		}
@@ -287,7 +287,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		incrementSpawnTime(spawnTime);
 		
-		Spawner<Powerup> spawnPowerups = Powerups.firstPowerup;
+		Spawner<BasicPowerup> spawnPowerups = Powerups.firstPowerup;
 		Spawner<Event> spawnEvents = Powerups.allEvents;
 		int n = 0;
 		while (spawnTime.before(spawnEndTime)) {
@@ -337,8 +337,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			this.spawn = spawn;
 		}
 		
-		public Powerup getPowerup() {
-			if (spawn instanceof Powerup) return (Powerup)spawn;
+		public BasicPowerup getPowerup() {
+			if (spawn instanceof BasicPowerup) return (BasicPowerup)spawn;
 			else return null;
 		}
 
@@ -347,8 +347,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTasks.remove(this);
 			scheduler.deschedule(id);
 			
-			if (spawn instanceof Powerup) {
-				Powerup powerup = (Powerup)spawn;
+			if (spawn instanceof BasicPowerup) {
+				BasicPowerup powerup = (BasicPowerup)spawn;
 				powerup.onSpawn();
 				availablePowerups.add(powerup);
 			}
@@ -370,10 +370,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	public class ExpireTask extends Task {
-		public Powerup powerup;
+		public BasicPowerup powerup;
 		public String id;
 		
-		public ExpireTask(Powerup powerup) {
+		public ExpireTask(BasicPowerup powerup) {
 			this.powerup = powerup;
 		}
 		
@@ -386,21 +386,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private void expirePowerup(Powerup powerup) {
+	private void expirePowerup(BasicPowerup powerup) {
 		if (availablePowerups.remove(powerup)) {
 			powerup.onExpire();
 		}
 	}
 
 	private void expireAllPowerups() {
-		for (Powerup powerup : availablePowerups) {
+		for (BasicPowerup powerup : availablePowerups) {
 			powerup.onExpire();
 		}
 		availablePowerups.clear();
 	}
 
 	@Override
-	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups, Spawner<Event> allowedEvents) {
+	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
 		ISpawnable spawn = Powerups.getRandomPowerupOrEvent(NoppaBot.this, allowedPowerups, allowedEvents);
 		return scheduleSpawn(spawnTime, spawn);
 	}
@@ -424,7 +424,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			expireTime.get(Calendar.MINUTE), expireTime.get(Calendar.HOUR_OF_DAY));
 
 		SpawnTask spawnTask = new SpawnTask(spawnTime.getTime(), spawn);
-		Powerup powerup = spawnTask.getPowerup();
+		BasicPowerup powerup = spawnTask.getPowerup();
 		
 		if (immediateSpawn) {
 			spawnTask.execute(null);
@@ -656,7 +656,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void grabPowerup(String nick, String powerupName) {
-		Powerup powerup = findPowerup(powerupName);
+		BasicPowerup powerup = findPowerup(powerupName);
 
 		if (availablePowerups.isEmpty()) {
 			sendChannelFormat("%s: nothing to grab.", ColorStr.nick(nick));
@@ -684,13 +684,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private Powerup findPowerup(String name) {
+	private BasicPowerup findPowerup(String name) {
 		if (name == null) {
 			if (availablePowerups.size() == 1) return availablePowerups.get(0);
 			else return null;
 		}
 		
-		for (Powerup powerup : availablePowerups) {
+		for (BasicPowerup powerup : availablePowerups) {
 			if (powerup.getName().toLowerCase().contains(name.toLowerCase())) return powerup;
 		}
 		

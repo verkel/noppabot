@@ -5,7 +5,7 @@
 package noppabot.spawns.events;
 
 import noppabot.INoppaBot;
-import noppabot.spawns.dice.Powerups;
+import noppabot.spawns.*;
 
 public class DiceStorm extends Event {
 	@Override

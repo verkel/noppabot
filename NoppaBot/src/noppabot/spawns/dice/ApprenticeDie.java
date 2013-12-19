@@ -4,6 +4,8 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.spawns.*;
+
 
 public class ApprenticeDie extends BasicPowerup {
 

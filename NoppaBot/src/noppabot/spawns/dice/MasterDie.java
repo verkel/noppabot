@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import noppabot.INoppaBot;
+import noppabot.spawns.*;
 
 
 public class MasterDie extends BasicPowerup {
@@ -85,9 +86,13 @@ public class MasterDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class TheOneDie extends Powerup {
+	public class TheOneDie extends EvolvedPowerup {
 		
 		private static final int sides = 200;
+		
+		public TheOneDie() {
+			super(MasterDie.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {

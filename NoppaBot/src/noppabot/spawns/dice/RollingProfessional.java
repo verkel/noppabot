@@ -4,6 +4,8 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.spawns.*;
+
 
 public class RollingProfessional extends BasicPowerup {
 
@@ -57,9 +59,13 @@ public class RollingProfessional extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class RollingProfessor extends Powerup {
+	public class RollingProfessor extends EvolvedPowerup {
 		
 		private static final int minRoll = 70;
+		
+		public RollingProfessor() {
+			super(RollingProfessional.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {

@@ -2,10 +2,9 @@
  * Created on 12.12.2013
  * @author verkel
  */
-package noppabot.spawns.events;
+package noppabot.spawns;
 
 import noppabot.INoppaBot;
-import noppabot.spawns.ISpawnable;
 
 
 public abstract class Event implements ISpawnable {

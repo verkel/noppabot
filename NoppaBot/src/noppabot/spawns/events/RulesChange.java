@@ -5,7 +5,7 @@
 package noppabot.spawns.events;
 
 import noppabot.*;
-import noppabot.spawns.dice.Powerups;
+import noppabot.spawns.*;
 
 
 public class RulesChange extends Event {

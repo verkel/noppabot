@@ -10,7 +10,6 @@ import java.util.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import noppabot.spawns.events.Event;
 
 public class GenerateItemList {
 
@@ -199,7 +198,7 @@ public class GenerateItemList {
 		buf.append("</style>\n");
 	}
 	
-	class RegularDie extends Powerup {
+	class RegularDie extends BasicPowerup {
 
 		@Override
 		public String getName() {
@@ -534,12 +533,6 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<Powerup> allowedPowerups,
-			Spawner<Event> allowedEvents) {
-			return null;
-		}
-
-		@Override
 		public Calendar getRollPeriodStartTime() {
 			return null;
 		}
@@ -570,6 +563,12 @@ public class GenerateItemList {
 
 		@Override
 		public String rollToString(int roll) {
+			return null;
+		}
+
+		@Override
+		public SpawnTask scheduleRandomSpawn(Calendar spawnTime,
+			Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
 			return null;
 		}
 	}

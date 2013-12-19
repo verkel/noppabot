@@ -6,7 +6,7 @@ package noppabot.spawns.instants;
 
 import java.util.*;
 
-import noppabot.spawns.dice.*;
+import noppabot.spawns.*;
 
 
 public class DicePirate extends BasicPowerup {
@@ -50,7 +50,6 @@ public class DicePirate extends BasicPowerup {
 			powerups.put(owner, stolenPowerup);
 			stolenPowerup.setOwner(owner);
 			bot.sendChannelFormat("The dice pirate looted %s's %s!", targetOwner, stolenPowerup);
-			if (stolenPowerup instanceof Diceteller) stolenPowerup.onPickup();
 		}
 	}
 

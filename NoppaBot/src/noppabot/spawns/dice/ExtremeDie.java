@@ -4,6 +4,8 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.spawns.*;
+
 
 
 public class ExtremeDie extends BasicPowerup {
@@ -66,9 +68,13 @@ public class ExtremeDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class DaringDie extends Powerup {
+	public class DaringDie extends EvolvedPowerup {
 		
 		private static final int sides = 30;
+		
+		public DaringDie() {
+			super(ExtremeDie.this);
+		}
 		
 		@Override
 		public int onContestRoll(int roll) {
