@@ -72,7 +72,7 @@ public class Powerups {
 	}
 
 	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups, Spawner<Event> spawnEvents) {
-		if (spawnEvents != null && powerupRnd.nextFloat() < 0.08f) {
+		if (spawnEvents != null && powerupRnd.nextFloat() < 0.10f) {
 			return getRandomEvent(spawnEvents);
 		}
 		else {
