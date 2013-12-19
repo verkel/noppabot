@@ -179,19 +179,19 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("hassu", new WeightedDie().upgrade());
-		powerups.put("hessu", new ApprenticeDie());
-		powerups.put("kessu", new ApprenticeDie());
-		powerups.put("frodo", new FastDie());
-		powerups.put("bilbo", new MasterDie());
+		powerups.put("hassu", new WeightedDie().initialize(this).upgrade());
+		powerups.put("hessu", new ApprenticeDie().initialize(this));
+		powerups.put("kessu", new ApprenticeDie().initialize(this));
+		powerups.put("frodo", new FastDie().initialize(this));
+		powerups.put("bilbo", new MasterDie().initialize(this));
 //		Powerup p = new VariableDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
 //		rolls.put("Verkel", 100);
-//		rolls.put("hassu", 100);
-//		rolls.put("frodo", 100);
-//		rolls.put("bilbo", 100);
+		rolls.put("hassu", 77);
+		rolls.put("frodo", 77);
+		rolls.put("bilbo", 61);
 //		autorolls.add("hassu");
 //		autorolls.add("frodo");
 //		autorolls.add("bilbo");

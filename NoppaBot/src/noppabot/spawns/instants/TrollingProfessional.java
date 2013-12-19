@@ -37,10 +37,10 @@ public class TrollingProfessional extends Instant {
 		SpawnTask task = bot.scheduleSpawn(spawnTime, bomb);
 		
 		bot.sendChannelFormat("%s grabs the trolling professional! %s and the trolling trofessional " +
-		"briefly discuss about something.", owner, owner);
+			"briefly discuss about something.", owner, owner);
 		
 		bot.sendMessageFormat(owner, "Hi! I set us up the %s on %s. I suggest you don't take it.",
-			ColorStr.basicPowerup("Bomb"), task.toStringColored());
+			ColorStr.basicPowerup(Bomb.BOMB_NAME), task.toStringColored());
 		bot.sendMessageFormat(owner, "Regards, The Trolling Professional");
 	}
 
@@ -58,7 +58,7 @@ public class TrollingProfessional extends Instant {
 		private static final int dmgSides = 10;
 		private static final int dmgBonus = 10;
 		
-		private static final String BOMB_NAME = "BOMB!";
+		public static final String BOMB_NAME = "BOMB!";
 		
 		public static String[] powerupNames = {
 			"Bag of Dice",

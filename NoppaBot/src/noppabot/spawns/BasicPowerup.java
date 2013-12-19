@@ -16,9 +16,10 @@ public abstract class BasicPowerup extends Powerup {
 	protected String ownerColored; // The owner, colored
 
 	@Override
-	public final void initialize(INoppaBot bot) {
+	public final BasicPowerup initialize(INoppaBot bot) {
 		this.bot = bot;
 		doInitialize();
+		return this;
 	}
 
 	@Override

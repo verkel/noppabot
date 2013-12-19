@@ -12,7 +12,7 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	
 	public abstract String getNameColored();
 	
-	public abstract void initialize(INoppaBot bot);
+	public abstract Powerup initialize(INoppaBot bot);
 	
 	public abstract void setOwner(String owner);
 

@@ -24,7 +24,7 @@ public class RollingProfessional extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("The %s will assist %s in tonight's roll.", 
-			ownerColored, getNameColored());
+			getNameColored(), ownerColored);
 	}
 
 	@Override
@@ -38,8 +38,8 @@ public class RollingProfessional extends BasicPowerup {
 		else {
 			bot.sendChannelFormat(
 				"The rolling professional notices that %s's rolling technique needs work! "
-					+ "%s was about to roll a lowly %d, but rolling pro shows how it's done and rolls %d!",
-				owner, ownerColored, roll, minRoll);
+					+ "%s was about to roll a lowly %d, but rolling pro shows how it's done and rolls %s!",
+				owner, ownerColored, roll, resultStr(minRoll));
 			return minRoll;
 		}
 	}

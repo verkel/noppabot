@@ -35,7 +35,7 @@ public class GroundhogDie extends BasicPowerup {
 		
 		if (lastRoll != null && lastRoll > 0) {
 			bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.", owner);
-			bot.sendChannelFormat("%s rolls %d! %s", ownerColored, lastRoll, bot.grade(lastRoll));
+			sendDefaultContestRollMessage(lastRoll);
 			return lastRoll;
 		}
 		else {

@@ -15,8 +15,9 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
-	public final void initialize(INoppaBot bot) {
+	public final EvolvedPowerup initialize(INoppaBot bot) {
 		base.initialize(bot);
+		return this;
 	}
 	
 	@Override

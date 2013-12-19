@@ -24,8 +24,8 @@ public class Diceteller extends Instant {
 	public void onPickup() {
 		int result = bot.peekRollFor(owner);
 		bot.sendChannelFormat(
-			"The diceteller, glancing at his crystal ball, whispers to %s: \"Your next roll will be %s.\"",
-			ownerColored, resultStr(result));
+			"The %s, glancing at his crystal ball, whispers to %s: \"Your next roll will be %s.\"",
+			getNameColored(), ownerColored, resultStr(result));
 	}
 
 	@Override

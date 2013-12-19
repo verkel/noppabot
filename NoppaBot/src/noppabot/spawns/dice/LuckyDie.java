@@ -41,7 +41,7 @@ public class LuckyDie extends BasicPowerup {
 		}
 		else {
 			bot.sendChannelFormat(
-				"%s rolls %d! The lucky die doesn't seem to like this number, though.", ownerColored, roll);
+				"%s rolls %s! The lucky die doesn't seem to like this number, though.", ownerColored, resultStr(roll));
 			return roll;
 		}
 	}

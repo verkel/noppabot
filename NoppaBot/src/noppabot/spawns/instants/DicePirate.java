@@ -6,6 +6,7 @@ package noppabot.spawns.instants;
 
 import java.util.*;
 
+import noppabot.ColorStr;
 import noppabot.spawns.*;
 
 
@@ -25,7 +26,7 @@ public class DicePirate extends Instant {
 	public void onPickup() {
 		Map<String, Powerup> powerups = bot.getPowerups();
 		bot.sendChannelFormat("The %s will plunder dice and other shiny things for 100 gold dubloons! " +
-			"%s gladly pays him.", getNameColored(), owner);
+			"%s gladly pays him.", getNameColored(), ownerColored);
 		Random rnd = new Random();
 		Set<String> owners = new TreeSet<String>(powerups.keySet());
 		int size = owners.size();
@@ -43,14 +44,15 @@ public class DicePirate extends Instant {
 		}
 		
 		if (targetOwner == null) {
-			bot.sendChannelFormat("There was no loot in sight for the DicePirate and he just runs off with your gold.");
+			bot.sendChannelFormat("There was no loot in sight for the %s and he just runs off with your gold.", getNameColored());
 			powerups.remove(owner);
 		}
 		else {
 			Powerup stolenPowerup = powerups.remove(targetOwner);
 			powerups.put(owner, stolenPowerup);
 			stolenPowerup.setOwner(owner);
-			bot.sendChannelFormat("The dice pirate looted %s's %s!", targetOwner, stolenPowerup);
+			bot.sendChannelFormat("%s's %s was stolen by the pirate!", 
+				ColorStr.nick(targetOwner), stolenPowerup.getNameColored());
 		}
 	}
 

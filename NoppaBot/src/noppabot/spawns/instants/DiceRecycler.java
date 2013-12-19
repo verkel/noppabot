@@ -35,7 +35,7 @@ public class DiceRecycler extends Instant {
 		Powerup oldPowerup = bot.getPowerups().get(owner);
 		bot.getPowerups().remove(owner);
 		bot.sendChannelFormat("The recycler tosses %s's %s into a peculiar shredder machine. " +
-			"One moment later, something pops out:", ownerColored, oldPowerup);
+			"One moment later, something pops out:", ownerColored, oldPowerup.getNameColored());
 		bot.scheduleRandomSpawn(null, Powerups.firstPowerup, null);
 	}
 

@@ -7,7 +7,7 @@ package noppabot.spawns.dice;
 import java.util.*;
 import java.util.Map.Entry;
 
-import noppabot.INoppaBot;
+import noppabot.ColorStr;
 import noppabot.spawns.*;
 
 
@@ -47,17 +47,18 @@ public class MasterDie extends BasicPowerup {
 		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
 			ownerColored, sides, dieName, resultStr, bot.grade(result));
-		rollUnusedApprenticeDies(bot, result);
+		rollUnusedApprenticeDies(result);
 		return result;
 	}
 	
-	private static void rollUnusedApprenticeDies(INoppaBot bot, int roll) {
+	private void rollUnusedApprenticeDies(int roll) {
 		Map<String, Powerup> powerups = bot.getPowerups();
 		for (Entry<String, Powerup> entry : powerups.entrySet()) {
 			String owner = entry.getKey();
 			Powerup powerup = entry.getValue();
 			if (powerup instanceof ApprenticeDie && !bot.participated(owner)) {
-				bot.sendChannelFormat("%s's apprentice die observes and then rolls %d.", owner, roll);
+				bot.sendChannelFormat("%s's apprentice die observes and then rolls %s.", 
+					ColorStr.nick(owner), resultStr(roll));
 				// Don't use participate so we wont end the contest on overtime
 				// and forget the master die's roll
 				bot.getRolls().put(owner, roll);

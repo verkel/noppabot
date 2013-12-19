@@ -35,7 +35,7 @@ public class WeightedDie extends BasicPowerup {
 		result = clamp(result);
 		bot.sendChannelFormat(
 			"%s's weighted die is so fairly weighted, that the roll goes very smoothly!", owner);
-		bot.sendChannelFormat("%s rolls %d + %d = %d! %s", ownerColored, roll, bonus, resultStr,
+		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
 			bot.grade(result));
 		return result;
 	}
