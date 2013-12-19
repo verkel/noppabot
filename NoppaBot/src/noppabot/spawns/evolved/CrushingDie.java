@@ -6,7 +6,7 @@ package noppabot.spawns.evolved;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.dice.*;
+import noppabot.spawns.dice.HumongousDie;
 
 
 // Upgrade
@@ -28,8 +28,8 @@ public class CrushingDie extends EvolvedPowerup {
 	public int onContestRoll(int roll) {
 		if (humongous) return HumongousDie.doContestRoll(bot, owner(), roll);
 		else {
-			bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %d! %s", ownerColored(), roll,
-				bot.grade(roll));
+			bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %s! %s", 
+				ownerColored(), resultStr(roll), bot.grade(roll));
 			return roll;
 		}
 	}

@@ -198,8 +198,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		autorolls.add("bilbo");
 		
 //		new RulesChange().run(this);
-		rules.cappedRolls = false;
-		onRulesChanged();
+//		rules.cappedRolls = false;
+//		onRulesChanged();
 		
 //		availablePowerups.add(p);
 //		availablePowerups.add(new TrollingProfessional());

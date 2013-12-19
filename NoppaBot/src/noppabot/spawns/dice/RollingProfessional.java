@@ -79,8 +79,8 @@ public class RollingProfessional extends BasicPowerup {
 			else {
 				bot.sendChannelFormat("The rolling professor scolds %s for not listening on his applied " +
 						"dicetology lectures. %s was about to roll only %d, but the professor steps in and " +
-						"demonstrates how to roll %d!",
-					owner, ownerColored, roll, minRoll);
+						"demonstrates how to roll %s!",
+					owner, ownerColored, roll, resultStr(minRoll));
 				return minRoll;
 			}
 		}
