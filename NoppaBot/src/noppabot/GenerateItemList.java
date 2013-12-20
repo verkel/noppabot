@@ -254,7 +254,7 @@ public class GenerateItemList {
 		testEvolvedPowerup("Very Polished Die", "Locked.png", veryPolishedDieDesc, new PolishedDie().upgrade(), bot);
 		testEvolvedPowerup("Crushing Die", "Locked.png", crushingDieDesc, new WeightedDie().upgrade(), bot);
 		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(), bot);
-		testEvolvedPowerup("Tribal Die", "Locked.png", tribalDieDesc, new PrimalDie().upgrade(), bot);
+		testEvolvedPowerup("Tribal Die", "Placeholder.png", tribalDieDesc, new PrimalDie().upgrade(), bot);
 		testEvolvedPowerup("Jackpot Die", "Locked.png", jackpotDieDesc, new LuckyDie().upgrade(), bot);
 		testEvolvedPowerup("The One Die", "Locked.png", theOneDieDesc, new MasterDie().upgrade(), bot);
 		testEvolvedPowerup("Faster Die<br><small>(rolled immediately)</small>", "Placeholder.png",
@@ -627,7 +627,7 @@ public class GenerateItemList {
 	private static final String veryPolishedDieDesc = undiscovered; // = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
 	private static final String crushingDieDesc = undiscovered; // = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
 	private static final String potentDieDesc = "Gives a +20 bonus.";
-	private static final String tribalDieDesc = undiscovered; // = "In addition to tribal die's effect, you get +10 bonus for every prime rolled by an opponent.";
+	private static final String tribalDieDesc = "In addition to tribal die's effect, you get +10 bonus for every prime rolled by an opponent.";
 	private static final String jackpotDieDesc = undiscovered; // = "Gives a +40 bonus if the roll contains any sevens";
 	private static final String theOneDieDesc = undiscovered; // = "Lets you roll the d200 (the result is capped into 100).";
 	private static final String daringDieDesc = undiscovered; // = "You roll the d30. Changes rolls 1..10 into 100.";
