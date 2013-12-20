@@ -44,6 +44,6 @@ public class ColorStr {
 	}
 	
 	public static String expires(String expireMsg) {
-		return custom(expireMsg, Colors.DARK_GRAY);
+		return custom(expireMsg, Colors.NORMAL);
 	}
 }
