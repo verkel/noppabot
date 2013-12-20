@@ -21,4 +21,10 @@ public class FourthWallBreaks extends Event {
 	public String getName() {
 		return "Fourth Wall Breaks";
 	}
+	
+	@Override
+	public float getSpawnChance() {
+		// Compensate that it can only be the 1st to 3rd event. 
+		return 2.0f;
+	}
 }
