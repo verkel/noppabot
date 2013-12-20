@@ -1200,8 +1200,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public List<String> getRandomPowerupOwners() {
 		ArrayList<String> owners = new ArrayList<String>(getPowerups().keySet());
 		Collections.shuffle(owners);
-		int removeCount = commonRandom.nextInt(owners.size());
-		return owners.subList(0, owners.size() - removeCount);
+		if (owners.isEmpty()) return owners;
+		else {
+			int removeCount = commonRandom.nextInt(owners.size());
+			return owners.subList(0, owners.size() - removeCount);
+		}
 	}
 	
 	public String colorRoll(int roll) {
