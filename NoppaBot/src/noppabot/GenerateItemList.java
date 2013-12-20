@@ -293,7 +293,7 @@ public class GenerateItemList {
 		}, bot, false, DiceType.EVOLVED);
 		
 		// Figlet runs take time so we don't want to actually test the humongous die
-		testEvolvedPowerup("Humongous Crushing Die", "Locked.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(), bot);
+		testEvolvedPowerup("Humongous Crushing Die", "Placeholder.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(), bot);
 	}
 	
 	private void listInstants() {
@@ -635,7 +635,7 @@ public class GenerateItemList {
 	private static final String selfImprovingDieDesc = "Repeats your last roll +10.";
 	private static final String superDiceBrosDesc = undiscovered; // = "The dice bros. get random powerups each.";
 	private static final String chaosDieDesc = undiscovered; // = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
-	private static final String humongousCrushingDieDesc = undiscovered; // = "Deals d10+20 damage to others' rolls.";
+	private static final String humongousCrushingDieDesc = "Deals d10+20 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
 	private static final String rollingProfessorDesc = undiscovered; // = "Ensures your roll is at least 70";
 }
