@@ -70,7 +70,7 @@ public class VariableDie extends BasicPowerup {
 		public ChaosDie() {
 			super(VariableDie.this);
 			Rules rules = bot.getRules();
-			if (sides < 100) ruleChangeDescr = RulesChange.changeToLeastRollWins(rules);
+			if (sides < 100) ruleChangeDescr = RulesChange.changeToLowestRollWins(rules);
 			else if (sides > 100) ruleChangeDescr = RulesChange.changeToUncappedRolls(rules);
 			else ruleChangeDescr = RulesChange.changeToRollClosestToTargetWins(rules);
 			bot.onRulesChanged();

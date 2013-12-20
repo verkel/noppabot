@@ -26,7 +26,7 @@ public class RulesChange extends Event {
 			explanation = changeToUncappedRolls(rules);
 		}
 		else if (rnd == 1) {
-			explanation = changeToLeastRollWins(rules);
+			explanation = changeToLowestRollWins(rules);
 		}
 		else if (rnd == 2) {
 			explanation = changeToRollClosestToTargetWins(rules);
@@ -46,7 +46,7 @@ public class RulesChange extends Event {
 		return String.format("The roll closest to number %d now wins the contest!", rollTarget);
 	}
 
-	public static String changeToLeastRollWins(Rules rules) {
+	public static String changeToLowestRollWins(Rules rules) {
 		rules.winCondition = rules.LOWEST_ROLL;
 		return "The lowest roll now wins the contest!";
 	}
