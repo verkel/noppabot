@@ -64,22 +64,22 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		};
 		
 		rollEndMsgs = new String[] {
-			"The winner has been decided! It is %s with the roll %d!",
-			"Our tonight's champion has been elected! %s scored the mighty %d points!",
-			"The score is settled! This time, %s won with the roll %d.",
-			"The dice gods have finalized the outcome! %s won with the roll %d!",
-			"The contest is over! Our lucky winner is %s with %d points!",
-			"The die has been cast. Tonight, %s is the dice emperor with %d points!",
-			"%s won the compo this time, with %d points. Was he lucky, or maybe he was using... the MASTER DIE?!",
-			"Using dice is the best way to make decisions. %s knows this best, beating others with his roll %d!",
-			"Tonight, %s was the high roller with %d points!",
-			"%s beat the others with the outstanding roll of %d!",
-			"%s is certified as the new local rolling professional after the superb %d roll!",
-			"The dice favored %s tonight, granting the victory with %d points!",
+			"The winner has been decided! It is %s with the roll %s!",
+			"Our tonight's champion has been elected! %s scored the mighty %s points!",
+			"The score is settled! This time, %s won with the roll %s.",
+			"The dice gods have finalized the outcome! %s won with the roll %s!",
+			"The contest is over! Our lucky winner is %s with %s points!",
+			"The die has been cast. Tonight, %s is the dice emperor with %s points!",
+			"%s won the compo this time, with %s points. Was he lucky, or maybe he was using... the MASTER DIE?!",
+			"Using dice is the best way to make decisions. %s knows this best, beating others with his roll %s!",
+			"Tonight, %s was the high roller with %s points!",
+			"%s beat the others with the outstanding roll of %s!",
+			"%s is certified as the new local rolling professional after the superb %s roll!",
+			"The dice favored %s tonight, granting the victory with %s points!",
 			"The demo \"Choose 100 polys and a roll\" by %s entertained all of us tonight. "
-			+ "It crushed the competition by a large margin with %d votes!",
+			+ "It crushed the competition by a large margin with %s votes!",
 			"%s has clicked on lots of candies, cows and cookies, and is experienced in picking the "
-			+ "most profitable die, resulting the roll %d!",
+			+ "most profitable die, resulting the roll %s!",
 		};
 	}
 	
@@ -968,7 +968,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void endRollPeriod(List<String> winningRollers) {
 		String winner = winningRollers.get(0);
 		int roll = rolls.get(winner);
-		String msg = String.format(randomRollEndMsg(), winner, roll);
+		String msg = String.format(randomRollEndMsg(), ColorStr.nick(winner), colorRoll(roll));
 		sendChannel(msg);
 		
 		updateRecords(winner);
