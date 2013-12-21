@@ -237,7 +237,7 @@ public class GenerateItemList {
 		addEntry("Apprentice Die", "ApprenticeDie.png", apprenticeDieDesc, "Master Die");
 		testBasicPowerup("Dice Bros.", "Placeholder.png", diceBrosDesc, "Super Dice Bros", new DiceBros(), bot);
 		
-		testPowerup("Variable Die", "Locked.png", variableDieDesc, "Chaos Die", new Builder() {
+		testPowerup("Variable Die", "Placeholder.png", variableDieDesc, "Chaos Die", new Builder() {
 			@Override
 			public Powerup createPowerup() {
 				VariableDie die = new VariableDie();
@@ -612,7 +612,7 @@ public class GenerateItemList {
 	private static final String undiscovered = "<span class='undiscovered'>Undiscovered!</span>";
 	
 	private static final String diceBrosDesc = "Rolls two d100 dice and chooses higher roll as the result.";
-	private static final String variableDieDesc = undiscovered;
+	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d150, d160.";
 	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
 	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one.";
 	private static final String trollingProfessionalDesc = undiscovered;
