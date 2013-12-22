@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
-import noppabot.*;
+import noppabot.Rolls;
 import noppabot.spawns.*;
 
 public class PrimalDie extends BasicPowerup {
@@ -116,16 +116,18 @@ public class PrimalDie extends BasicPowerup {
 			if (primes.contains(roll)) {
 				if (bot.participated(owner)) {
 					int totalRoll = rolls.get(owner) + otherPrimesBonus;
+					String totalRollStr = resultStr(totalRoll);
+					totalRoll = clamp(totalRoll);
 					rolls.put(owner, totalRoll);
 					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
-						"%s gets an offering of %d points from the tribe! %s's roll is now %d.",
-						ColorStr.nick(opponent), roll, owner, otherPrimesBonus, ownerColored, totalRoll);
+						"%s gets an offering of %d points from the tribe! %s's roll is now %s.",
+						opponent, roll, owner, otherPrimesBonus, ownerColored, totalRollStr);
 				}
 				else {
 					otherPrimesTotalBonus += otherPrimesBonus;
 					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
 						"%s gets an offering of %d points from the tribe!",
-						ColorStr.nick(opponent), roll, ownerColored, otherPrimesBonus);
+						opponent, roll, ownerColored, otherPrimesBonus);
 				}
 			}
 		}
