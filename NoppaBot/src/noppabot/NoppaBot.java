@@ -288,6 +288,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTime.set(Calendar.MINUTE, 0);
 			spawnTime.set(Calendar.SECOND, 0);
 		}
+		else {
+			System.out.println("Scheduling spawns at non-midnight");
+		}
 		incrementSpawnTime(spawnTime);
 		
 		Spawner<BasicPowerup> spawnPowerups = Powerups.firstPowerup;
