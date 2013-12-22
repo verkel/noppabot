@@ -21,6 +21,17 @@ public class DicePirate extends Instant {
 	public void onExpire() {
 		bot.sendChannelFormat("... the DicePirate smells better loot elsewhere and leaves.");
 	}
+	
+	@Override
+	public boolean canPickUp(String nick) {
+		if (bot.getPowerups().containsKey(nick)) { // Has item
+			Powerup powerup = bot.getPowerups().get(nick);
+			bot.sendChannelFormat("%s: you already have the %s! You wouldn't be able to carry any " +
+				"loot stolen by the pirate.", ownerColored, powerup.getNameColored());
+			return false;
+		}
+		else return true;
+	}
 
 	@Override
 	public void onPickup() {
