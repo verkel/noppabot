@@ -599,7 +599,7 @@ public class GenerateItemList {
 	private static final String primalDieDesc = "Gives a +20 bonus if the <a href=\"http://www.prime-numbers.net/prime-numbers-1-100-chart.html\">roll is a prime</a>.";
 	private static final String polishedDieDesc = "Gives a +5 bonus.";
 	private static final String fastDieDesc = "Gives a bonus of 20 if you roll during the first 10 seconds. After that, the bonus will decrease by 1 per second.";
-	private static final String groundhogDieDesc = "Repeats your last roll.";
+	private static final String groundhogDieDesc = "Repeats your yesterday's roll.";
 	private static final String weightedDieDesc = "Gives a +10 bonus.";
 	private static final String rollingProfessionalDesc = "Ensures your roll is at least 50.";
 	private static final String dicetellerDesc = "Tells what your next roll will be.";
@@ -614,7 +614,7 @@ public class GenerateItemList {
 	private static final String diceBrosDesc = "Rolls two d100 dice and chooses higher roll as the result.";
 	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d150, d160.";
 	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
-	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one.";
+	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one to the ground, for anyone to grab.";
 	private static final String trollingProfessionalDesc = undiscovered;
 	private static final String humongousDieDesc = undiscovered;
 	
@@ -632,7 +632,7 @@ public class GenerateItemList {
 	private static final String theOneDieDesc = undiscovered; // = "Lets you roll the d200 (the result is capped into 100).";
 	private static final String daringDieDesc = undiscovered; // = "You roll the d30. Changes rolls 1..10 into 100.";
 	private static final String bagOfManyDiceDesc = "Two additional dice are put into the dice bag. May be upgraded infinitely for more dice.";
-	private static final String selfImprovingDieDesc = "Repeats your last roll +10.";
+	private static final String selfImprovingDieDesc = "Repeats your yesterday's roll +10.";
 	private static final String superDiceBrosDesc = undiscovered; // = "The dice bros. get random powerups each.";
 	private static final String chaosDieDesc = undiscovered; // = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
 	private static final String humongousCrushingDieDesc = "Deals d10 + 20 damage to others' rolls.";
