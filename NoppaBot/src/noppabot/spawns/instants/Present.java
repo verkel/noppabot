@@ -7,13 +7,12 @@ package noppabot.spawns.instants;
 import java.util.Arrays;
 
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.LastSpawn;
 
 
 public class Present extends Instant {
 	
 	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
-		Arrays.<BasicPowerup>asList(new Present()), new LastSpawn());
+		Arrays.<BasicPowerup>asList(new Present()), Spawner.ALLOW_SAME_SPAWNS);
 	
 	@Override
 	public void onSpawn() {

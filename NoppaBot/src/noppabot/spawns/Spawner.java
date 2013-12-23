@@ -33,9 +33,11 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	public S spawn() {
 		// Prevent two same spawns in a row
 		float rnd, key;
-		do { rnd = random.nextFloat(); }
-		while ((key = chances.higherKey(rnd)) == lastSpawn.key);
-		lastSpawn.key = key;
+		do { 
+			rnd = random.nextFloat();
+		}
+		while ((key = chances.higherKey(rnd)) == lastSpawn.getKey());
+		lastSpawn.setKey(key);
 		
 		S value = chances.get(key);
 		return clone(value);
@@ -76,6 +78,20 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	
 	// So that we may share the lastSpawn between multiple spawners
 	public static class LastSpawn {
-		public float key = -1f;
+		private float key = -1f;
+
+		public float getKey() {
+			return key;
+		}
+
+		public void setKey(float key) {
+			this.key = key;
+		}
 	}
+	
+	public static LastSpawn ALLOW_SAME_SPAWNS = new LastSpawn() {
+		@Override
+		public void setKey(float key) {
+		}
+	};
 }
