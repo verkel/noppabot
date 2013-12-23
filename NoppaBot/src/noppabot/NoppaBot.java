@@ -168,7 +168,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 		});
 		
-		computeTimes();
 		schedulePowerupsOfTheDay();
 		scheduler.start();
 		
@@ -189,10 +188,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		powerup = new DicePirate();
 //		powerup.onSpawn(this);
 //		rolls.put("Verkel", 100);
-		rolls.put("hassu", 78);
-		rolls.put("frodo", 78);
-		rolls.put("bilbo", 61);
-		rolls.put("noob", 3);
+//		rolls.put("hassu", 78);
+//		rolls.put("frodo", 78);
+//		rolls.put("bilbo", 61);
+//		rolls.put("noob", 3);
 //		autorolls.add("hassu");
 //		autorolls.add("frodo");
 //		autorolls.add("bilbo");
@@ -282,6 +281,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void schedulePowerupsOfTheDay() {
+		computeTimes();
 		Calendar spawnTime = Calendar.getInstance();
 		if (spawnTime.get(Calendar.HOUR_OF_DAY) < 10) {
 			spawnTime.set(Calendar.HOUR_OF_DAY, 10);
@@ -289,7 +289,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTime.set(Calendar.SECOND, 0);
 		}
 		else {
-			System.out.println("Scheduling spawns at non-midnight");
+			System.out.println("Scheduling spawns at non-midnight, " + spawnTime.getTime());
 		}
 		incrementSpawnTime(spawnTime);
 		
