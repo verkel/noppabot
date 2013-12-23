@@ -12,7 +12,8 @@ import noppabot.spawns.Spawner.LastSpawn;
 
 public class Present extends Instant {
 	
-	public static Spawner<Present> spawner = new Spawner<Present>(Arrays.asList(new Present()), new LastSpawn());
+	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
+		Arrays.<BasicPowerup>asList(new Present()), new LastSpawn());
 	
 	@Override
 	public void onSpawn() {
