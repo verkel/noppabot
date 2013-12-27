@@ -627,14 +627,14 @@ public class GenerateItemList {
 	private static final String veryPolishedDieDesc = undiscovered; // = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
 	private static final String crushingDieDesc = undiscovered; // = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
 	private static final String potentDieDesc = "Gives a +20 bonus.";
-	private static final String tribalDieDesc = "In addition to tribal die's effect, you get +10 bonus for every prime rolled by an opponent.";
+	private static final String tribalDieDesc = "In addition to primal die's effect, you get +10 bonus for every prime rolled by an opponent.";
 	private static final String jackpotDieDesc = undiscovered; // = "Gives a +40 bonus if the roll contains any sevens";
-	private static final String theOneDieDesc = undiscovered; // = "Lets you roll the d200 (the result is capped into 100).";
+	private static final String theOneDieDesc = "Lets you roll the d200 (the result is capped into 100).";
 	private static final String daringDieDesc = undiscovered; // = "You roll the d30. Changes rolls 1..10 into 100.";
 	private static final String bagOfManyDiceDesc = "Two additional dice are put into the dice bag. May be upgraded infinitely for more dice.";
 	private static final String selfImprovingDieDesc = "Repeats your yesterday's roll +10.";
 	private static final String superDiceBrosDesc = undiscovered; // = "The dice bros. get random powerups each.";
-	private static final String chaosDieDesc = undiscovered; // = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
+	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
 	private static final String humongousCrushingDieDesc = "Deals d10 + 20 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
 	private static final String rollingProfessorDesc = undiscovered; // = "Ensures your roll is at least 70";
