@@ -24,7 +24,7 @@ public class WeightedDie extends BasicPowerup {
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the %s. It weights just the right amount!", 
+		bot.sendChannelFormat("%s grabs the %s. It weighs just the right amount!", 
 			ownerColored, getNameColored());
 	}
 
