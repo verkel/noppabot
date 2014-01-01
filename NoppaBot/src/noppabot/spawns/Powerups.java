@@ -55,7 +55,8 @@ public class Powerups {
 		diceStormPowerupsList.removeAll(Arrays.asList(new DicePirate()));
 		
 		allEventsList.addAll(Arrays.asList(new DiceMutation(), new DiceStorm(), 
-			new FourthWallBreaks(), new RulesChange()));
+			new FourthWallBreaks()/*, new RulesChange()*/));
+		// FIXME rules change reseting seems to 
 		
 		allEventsMinusFourthWallList.addAll(allEventsList);
 		allEventsMinusFourthWallList.remove(new FourthWallBreaks());
