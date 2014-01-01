@@ -667,7 +667,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void listAvailablePowerups(String nick) {
 		if (availablePowerups.isEmpty()) {
-			sendChannelFormat("%s: you see nothing of interest.", nick);
+			sendChannelFormat("%s: you see nothing of interest.", ColorStr.nick(nick));
 		}
 		else {
 			String items = joinColored(availablePowerups, ", ");
