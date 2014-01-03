@@ -46,6 +46,7 @@ public abstract class BasicPowerup extends Powerup {
 	 * it won't be called when a dice pirate generates a new item.
 	 */
 	public void onSpawn() {
+		bot.sendChannelFormat("A %s appears!", getNameColored());
 	}
 
 	public void onPickup() {
