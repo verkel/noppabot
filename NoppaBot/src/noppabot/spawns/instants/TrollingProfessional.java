@@ -36,8 +36,8 @@ public class TrollingProfessional extends Instant {
 		bomb.initialize(bot);
 		SpawnTask task = bot.scheduleSpawn(spawnTime, bomb);
 		
-		bot.sendChannelFormat("%s grabs the trolling professional! %s and the trolling trofessional " +
-			"briefly discuss about something.", owner, owner);
+		bot.sendChannelFormat("%s grabs the %s! %s and the trolling trofessional " +
+			"briefly discuss about something.", owner, getNameColored(), owner);
 		
 		bot.sendMessageFormat(owner, "Hi! I set us up the %s on %s. I suggest you don't take it.",
 			ColorStr.basicPowerup(Bomb.BOMB_NAME), task.toStringColored());
