@@ -247,7 +247,7 @@ public class GenerateItemList {
 		}, bot, false, DiceType.BASIC);
 		
 		// Figlet runs take time so we don't want to actually test the humongous die
-		testBasicPowerup("Humongous Die", "Locked.png", humongousDieDesc, "Humongous Crushing Die", new RegularDie(), bot);
+		testBasicPowerup("Humongous Die", "Placeholder.png", humongousDieDesc, "Humongous Crushing Die", new RegularDie(), bot);
 	}
 	
 	private void testEvolvedDice() {
@@ -616,7 +616,7 @@ public class GenerateItemList {
 	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
 	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one to the ground, for anyone to grab.";
 	private static final String trollingProfessionalDesc = undiscovered;
-	private static final String humongousDieDesc = undiscovered;
+	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
 	
 	private static final String diceMutationDesc = "Some of the currently owned items mutate into more powerful dice. " +
 		"The number of mutated dice is random, and ranges from 1 to all owned dice.";
