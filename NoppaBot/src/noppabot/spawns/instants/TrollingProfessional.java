@@ -109,8 +109,8 @@ public class TrollingProfessional extends Instant {
 		@Override
 		public void onPickup() {
 			bot.sendChannelFormat("%s grabs the %s! On a closer inspection, you recognize " +
-				"it's actually a BOMB! This can't be good for the upcoming roll.", 
-				ownerColored, ColorStr.basicPowerup(BOMB_NAME), ColorStr.basicPowerup(name));
+				"it's actually a %s This can't be good for the upcoming roll.", 
+				ownerColored, ColorStr.basicPowerup(name), ColorStr.basicPowerup(BOMB_NAME));
 			name = BOMB_NAME;
 		}
 		
