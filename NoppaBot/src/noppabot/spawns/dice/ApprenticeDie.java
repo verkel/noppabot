@@ -43,6 +43,10 @@ public class ApprenticeDie extends BasicPowerup {
 		return "Apprentice Die";
 	}
 	
+	@Override
+	public int getSides() {
+		return 100;
+	}
 	
 	@Override
 	public boolean isUpgradeable() {

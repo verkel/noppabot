@@ -61,6 +61,10 @@ public class DiceBros extends BasicPowerup {
 		return "Dice Bros.";
 	}
 
+	@Override
+	public int getSides() {
+		return 100;
+	}
 	
 	@Override
 	public boolean isUpgradeable() {
@@ -106,6 +110,11 @@ public class DiceBros extends BasicPowerup {
 		@Override
 		public String getName() {
 			return "Super Dice Bros.";
+		}
+		
+		@Override
+		public int getSides() {
+			return marioItem.getSides();
 		}
 		
 		@Override

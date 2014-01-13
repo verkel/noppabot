@@ -75,7 +75,7 @@ public class BagOfDice extends BasicPowerup {
 		boolean first = true;
 		int result = 0;
 		for (int die : diceBag) {
-			int subroll = bot.getRollFor(owner, die);
+			int subroll = bot.getRoll(owner, die);
 			result += subroll;
 			if (!first) buf.append(" + ");
 			buf.append(subroll);
@@ -93,6 +93,11 @@ public class BagOfDice extends BasicPowerup {
 	@Override
 	public String getName() {
 		return "Bag of Dice";
+	}
+	
+	@Override
+	public int getSides() {
+		return diceBag.get(diceBag.size()-1);
 	}
 	
 	@Override

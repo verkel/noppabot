@@ -42,7 +42,7 @@ public class MasterDie extends BasicPowerup {
 	}
 	
 	private int doContestRoll(String dieName, int sides) {
-		int result = bot.getRollFor(owner, sides);
+		int result = bot.getRoll(owner, sides);
 		String resultStr = resultStr(result);
 		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
@@ -69,6 +69,11 @@ public class MasterDie extends BasicPowerup {
 	@Override
 	public String getName() {
 		return "The Master Die";
+	}
+	
+	@Override
+	public int getSides() {
+		return sides;
 	}
 	
 	@Override
@@ -103,6 +108,11 @@ public class MasterDie extends BasicPowerup {
 		@Override
 		public String getName() {
 			return "The One Die";
+		}
+		
+		@Override
+		public int getSides() {
+			return sides;
 		}
 		
 		@Override

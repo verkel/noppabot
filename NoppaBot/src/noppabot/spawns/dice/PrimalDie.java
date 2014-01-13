@@ -62,6 +62,11 @@ public class PrimalDie extends BasicPowerup {
 	}
 	
 	@Override
+	public int getSides() {
+		return 100;
+	}
+	
+	@Override
 	public boolean isUpgradeable() {
 		return true;
 	}

@@ -9,6 +9,8 @@ import noppabot.spawns.*;
 
 
 public class ExtremeDie extends BasicPowerup {
+	
+	private static final int sides = 100;
 
 	@Override
 	public void onSpawn() {
@@ -29,7 +31,7 @@ public class ExtremeDie extends BasicPowerup {
 
 	@Override
 	public int onContestRoll() {
-		return doContestRoll(getName(), 100);
+		return doContestRoll(getName(), sides);
 	}
 
 	private int doContestRoll(String dieName, int sides) {
@@ -59,6 +61,11 @@ public class ExtremeDie extends BasicPowerup {
 	}
 	
 	@Override
+	public int getSides() {
+		return sides;
+	}
+	
+	@Override
 	public boolean isUpgradeable() {
 		return true;
 	}
@@ -85,6 +92,11 @@ public class ExtremeDie extends BasicPowerup {
 		@Override
 		public String getName() {
 			return "Daring Die";
+		}
+		
+		@Override
+		public int getSides() {
+			return sides;
 		}
 		
 		@Override

@@ -48,7 +48,12 @@ public class RollingProfessional extends BasicPowerup {
 	@Override
 	public String getName() {
 		return "Rolling Professional";
-	}	
+	}
+	
+	@Override
+	public int getSides() {
+		return 100;
+	}
 	
 	@Override
 	public boolean isUpgradeable() {

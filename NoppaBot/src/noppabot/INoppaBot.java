@@ -31,9 +31,9 @@ public interface INoppaBot {
 
 	public void sendChannel(String msg);
 
-	public int getRollFor(String nick, int sides);
+	public int getRoll(String nick, int sides);
 	
-	public int peekRollFor(String nick);
+	public int peekRoll(String nick, int sides);
 	
 	public Map<String, Powerup> getPowerups();
 	

@@ -536,6 +536,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				if (argsSplit.length == 0) roll(sender, 100);
 				else if (argsSplit.length == 1) roll(argsSplit[0], 100);
 			}
+			else if (cmd.equalsIgnoreCase("nextrolls")) {
+				if (argsSplit.length == 0) listNextRolls(sender);
+				else if (argsSplit.length == 1) listNextRolls(argsSplit[0]);
+			}
+			
+			// No-arg commands
 			else if (args == null) {
 				if (cmd.equalsIgnoreCase("items")) {
 					listItems(false);
@@ -674,6 +680,32 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: You see: %s.", ColorStr.nick(nick), items);
 		}
 	}
+	
+	private void listNextRolls(String nick) {
+		Powerup powerup = powerups.get(nick);
+		final int dieSides = powerup == null ? 100 : powerup.getSides();
+		PeekableRandom random = randoms.get(nick); // Don't create a new random if there isn't one
+		
+		if (random != null) {
+			Map<Integer, Integer> nextRolls = random.getNextRolls();
+			if (!nextRolls.isEmpty()) {
+				
+				String predictions = join(nextRolls.entrySet(), ", ", new StringConverter<Map.Entry<Integer, Integer>>() {
+					@Override
+					public String toString(Map.Entry<Integer, Integer> pair) {
+						int sides = pair.getKey();
+						int roll = pair.getValue();
+						String sidesStr = (sides == dieSides) ? ColorStr.custom("d" + sides, Colors.WHITE) : ("d" + sides);
+						return String.format("%s = %d", sidesStr, roll);
+					};
+				});
+				sendChannelFormat("%s's predicted rolls are: %s.", ColorStr.nick(nick), predictions);
+				return;
+			}
+		}
+		
+		sendChannelFormat("No rolls are predicted for %s.", ColorStr.nick(nick));
+	}
 
 	private void grabPowerup(String nick, String powerupName) {
 		BasicPowerup powerup = findPowerup(powerupName);
@@ -750,8 +782,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
+	@Override
 	public int doNormalRoll(String nick, int sides) {
-		int roll = getRollFor(nick, sides);
+		int roll = getRoll(nick, sides);
 		if (sides == 100) {
 			sendDefaultContestRollMessage(nick, roll, true, true);
 		}
@@ -1104,15 +1137,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public int getRollFor(String nick, int sides) {
+	public int getRoll(String nick, int sides) {
 		PeekableRandom random = getRandomFor(nick);
-		return random.nextInt(sides) + 1;
+		return random.nextRoll(sides);
 	}
 	
 	@Override
-	public int peekRollFor(String nick) {
+	public int peekRoll(String nick, int sides) {
 		PeekableRandom random = getRandomFor(nick);
-		return random.peek() + 1;
+		return random.peek(sides);
 	}
 	
 	public int countPowerups(Class<? extends Powerup> type) {
@@ -1260,20 +1293,38 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return false;
 	}
 	
-	public static String join(Iterable<?> s, String delimiter) {
-	    Iterator<?> iter = s.iterator();
+	public static interface StringConverter<T> {
+		public String toString(T value);
+	}
+	
+	private static StringConverter<Object> defaultStringConverter = new StringConverter<Object>() {
+		@Override
+		public String toString(Object value) {
+			return value.toString();
+		};
+	};
+	
+	private static StringConverter<IColorStrConvertable> colorStringConverter = new StringConverter<IColorStrConvertable>() {
+		@Override
+		public String toString(IColorStrConvertable value) {
+			return value.toStringColored();
+		};
+	};
+
+	public static <T> String join(Iterable<T> s, String delimiter) {
+		return join(s, delimiter, defaultStringConverter);
+	}
+	
+	public static <T> String join(Iterable<T> iterable, String delimiter, StringConverter<? super T> converter) {
+	    Iterator<T> iter = iterable.iterator();
 	    if (!iter.hasNext()) return "";
-	    StringBuilder buffer = new StringBuilder(iter.next().toString());
-	    while (iter.hasNext()) buffer.append(delimiter).append(iter.next().toString());
+	    StringBuilder buffer = new StringBuilder(converter.toString(iter.next()));
+	    while (iter.hasNext()) buffer.append(delimiter).append(converter.toString(iter.next()));
 	    return buffer.toString();
 	}
 	
-	public static String joinColored(Iterable<? extends IColorStrConvertable> s, String delimiter) {
-	    Iterator<? extends IColorStrConvertable> iter = s.iterator();
-	    if (!iter.hasNext()) return "";
-	    StringBuilder buffer = new StringBuilder(iter.next().toStringColored());
-	    while (iter.hasNext()) buffer.append(delimiter).append(iter.next().toStringColored());
-	    return buffer.toString();
+	public static String joinColored(Iterable<? extends IColorStrConvertable> iterable, String delimiter) {
+		return join(iterable, delimiter, colorStringConverter);
 	}
 	
 	public static void close(Closeable c) {

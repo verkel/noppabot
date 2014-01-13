@@ -48,6 +48,10 @@ public class FastDie extends BasicPowerup {
 		return "Fast Die";
 	}
 	
+	@Override
+	public int getSides() {
+		return 100;
+	}
 	
 	@Override
 	public float getSpawnChance() {

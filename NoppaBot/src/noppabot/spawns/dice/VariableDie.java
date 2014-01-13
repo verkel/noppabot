@@ -41,7 +41,7 @@ public class VariableDie extends BasicPowerup {
 	}
 
 	private int doContestRoll(String dieName) {
-		int result = bot.getRollFor(owner, sides);
+		int result = bot.getRoll(owner, sides);
 		String resultStr = resultStr(result);
 		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
@@ -52,6 +52,11 @@ public class VariableDie extends BasicPowerup {
 	@Override
 	public String getName() {
 		return "Variable Die";
+	}
+	
+	@Override
+	public int getSides() {
+		return sides;
 	}
 	
 	@Override

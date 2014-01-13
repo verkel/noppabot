@@ -73,6 +73,10 @@ public class HumongousDie extends BasicPowerup {
 		return "HUMONGOUS DIE";
 	}
 	
+	@Override
+	public int getSides() {
+		return 100;
+	}
 	
 	@Override
 	public float getSpawnChance() {

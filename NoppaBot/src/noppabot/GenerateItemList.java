@@ -207,6 +207,11 @@ public class GenerateItemList {
 		public String getName() {
 			return "Regular Die";
 		}
+
+		@Override
+		public int getSides() {
+			return 100;
+		}
 	}
 
 	private void testBasicDice() {
@@ -375,7 +380,7 @@ public class GenerateItemList {
 			if (printRolls) System.out.println(roll);
 			sum += roll;
 		}
-		return sum / (double)iterations;
+		return sum / iterations;
 	}
 	
 	private double computePowerupSD(Builder builder, TestBot bot, double ev) {
@@ -386,7 +391,7 @@ public class GenerateItemList {
 			double diff = roll - ev;
 			sum += diff*diff;
 		}
-		return Math.sqrt(sum / (double)iterations);
+		return Math.sqrt(sum / iterations);
 	}
 	
 	private void testDiceteller() {
@@ -402,22 +407,22 @@ public class GenerateItemList {
 			// EV
 			double sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRollFor(TESTER_NAME, 100);
-				if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
+				int roll = bot.getRoll(TESTER_NAME, 100);
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100);
 				sum += roll;
 			}
-			ev = sum / (double)iterations;
+			ev = sum / iterations;
 			System.out.print('.');
 			
 			// SD
 			sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRollFor(TESTER_NAME, 100);
-				if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
+				int roll = bot.getRoll(TESTER_NAME, 100);
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100);
 				double diff = roll - ev;
 				sum += diff*diff;
 			}
-			sd = Math.sqrt(sum / (double)iterations);
+			sd = Math.sqrt(sum / iterations);
 			System.out.print('.');
 		}
 		
@@ -474,7 +479,7 @@ public class GenerateItemList {
 		}
 		
 		@Override
-		public int getRollFor(String nick, int sides) {
+		public int getRoll(String nick, int sides) {
 			return rnd.nextInt(sides)+1;
 		}
 		
@@ -499,11 +504,6 @@ public class GenerateItemList {
 		@Override
 		public boolean participated(String nick) {
 			return false;
-		}
-
-		@Override
-		public int peekRollFor(String nick) {
-			return 0;
 		}
 
 		@Override
@@ -584,6 +584,11 @@ public class GenerateItemList {
 		@Override
 		public int doNormalRoll(String nick, int sides) {
 			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int peekRoll(String nick, int sides) {
 			return 0;
 		}
 	}

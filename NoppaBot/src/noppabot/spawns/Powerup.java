@@ -59,6 +59,14 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	public float getSpawnChance() {
 		return 1;
 	}
+	
+	/**
+	 * Get the number of sides the die used in this powerup has. If the powerup
+	 * rolls multiple dice, return the number of sides in the largest die. The
+	 * Diceteller will use this value to predict a roll of a suitable die, if
+	 * a powerup is equipped.
+	 */
+	public abstract int getSides();
 
 	@Override
 	public String toString() {

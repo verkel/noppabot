@@ -49,6 +49,10 @@ public class GroundhogDie extends BasicPowerup {
 		return "Groundhog Die";
 	}
 	
+	@Override
+	public int getSides() {
+		return 100;
+	}
 	
 	@Override
 	public float getSpawnChance() {

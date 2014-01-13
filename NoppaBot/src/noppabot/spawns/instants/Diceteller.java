@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.spawns.Instant;
+import noppabot.spawns.*;
 
 
 public class Diceteller extends Instant {
@@ -22,10 +22,14 @@ public class Diceteller extends Instant {
 
 	@Override
 	public void onPickup() {
-		int result = bot.peekRollFor(owner);
+		Powerup powerup = bot.getPowerups().get(owner);
+		int sides;
+		if (powerup == null) sides = 100;
+		else sides = powerup.getSides();
+		int result = bot.peekRoll(owner, sides);
 		bot.sendChannelFormat(
-			"The %s, glancing at his crystal ball, whispers to %s: \"Your next roll will be %s.\"",
-			getNameColored(), ownerColored, resultStr(result));
+			"The %s, glancing at his crystal ball, whispers to %s: \"Your next roll of d%d will be %s.\"",
+			getNameColored(), ownerColored, sides, resultStr(result));
 	}
 
 	@Override

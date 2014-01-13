@@ -140,5 +140,10 @@ public class TrollingProfessional extends Instant {
 		public String getName() {
 			return name;
 		}
+		
+		@Override
+		public int getSides() {
+			return 100;
+		}
 	}
 }

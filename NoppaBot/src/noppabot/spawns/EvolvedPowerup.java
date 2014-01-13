@@ -57,6 +57,11 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
+	public int getSides() {
+		return base.getSides();
+	}
+	
+	@Override
 	public int roll(int sides) {
 		return base.roll(sides);
 	}
