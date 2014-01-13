@@ -29,7 +29,8 @@ public class FastDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		int seconds = bot.getSecondsAfterPeriodStart();
 		int penalty = MathUtils.clamp(seconds - 10, 0, maxBonus);
 		int bonus = maxBonus - penalty;
@@ -73,7 +74,8 @@ public class FastDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
+			int roll = roll();
 			int seconds = bot.getSecondsAfterPeriodStart();
 			int penalty = MathUtils.clamp(seconds, 0, maxBonus);
 			int bonus = maxBonus - penalty;

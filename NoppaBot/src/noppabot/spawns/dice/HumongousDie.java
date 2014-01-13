@@ -46,12 +46,13 @@ public class HumongousDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
-		return doContestRoll(bot, owner, roll);
+	public int onContestRoll() {
+		return doContestRoll(this, owner);
 	}
 	
-	public static int doContestRoll(INoppaBot bot, String nick, int roll) {
-		sendFigletText(bot, String.format("%s  rolls  %d !", nick, roll));
+	public static int doContestRoll(Powerup self, String nick) {
+		int roll = self.roll();
+		sendFigletText(self.getBot(), String.format("%s  rolls  %d !", nick, roll));
 		return roll;
 	}
 	

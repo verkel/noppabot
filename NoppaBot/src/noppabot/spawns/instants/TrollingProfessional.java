@@ -77,16 +77,16 @@ public class TrollingProfessional extends Instant {
 		};
 		
 		public static String[] powerupTypos = {
-			"Bag of Doge",
-			"Duke Bros.",
+			"Bag of Die",
+			"Dice Pros",
 			"Enchaented Die",
 			"Xxtreme Die",
 			"Fats Die",
 			"Groinhog Die",
 			"Humungus Die",
 			"Lucky Dye",
-			"Masterr Die",
-			"Polishd Dei",
+			"Master Dei",
+			"Polishd Die",
 			"Pirmal Die",
 			"Rolling Professioanal",
 			"Weigthed Die"
@@ -121,8 +121,8 @@ public class TrollingProfessional extends Instant {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			
+		public int onContestRoll() {
+			int roll = roll();
 			int damageRoll = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int totalDamage = damageRoll + dmgBonus;
 			int result = roll - totalDamage;

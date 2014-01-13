@@ -27,13 +27,14 @@ public class DiceBros extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int marioRoll) {
-		int luigiRoll = bot.getRollFor(owner, 100);
+	public int onContestRoll() {
+		int marioRoll = roll();
+		int luigiRoll = roll();
+		
 		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %d! Luigi Dice rolls %d!",
 			owner, marioRoll, luigiRoll);
-		return chooseBetterRoll(marioRoll, luigiRoll);
 		
-//		return 100 - Math.abs(marioRoll - luigiRoll);
+		return chooseBetterRoll(marioRoll, luigiRoll);
 	}
 
 	private int chooseBetterRoll(int marioRoll, int luigiRoll) {
@@ -93,12 +94,11 @@ public class DiceBros extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int marioRoll) {
-			int luigiRoll = bot.getRollFor(owner, 100);
-
+		public int onContestRoll() {
 			bot.sendChannelFormat("The Super Dice bros. roll for %s.", owner);
-			marioRoll = marioItem.onContestRoll(marioRoll);
-			luigiRoll = luigiItem.onContestRoll(luigiRoll);
+			
+			int marioRoll = marioItem.onContestRoll();
+			int luigiRoll = luigiItem.onContestRoll();
 			
 			return chooseBetterRoll(marioRoll, luigiRoll);
 		}

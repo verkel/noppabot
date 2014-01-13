@@ -29,7 +29,8 @@ public class LuckyDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		if (String.valueOf(roll).contains("7")) {
 			int result = roll + bonus;
 			String resultStr = resultStr(result);
@@ -70,7 +71,8 @@ public class LuckyDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
+			int roll = roll();
 			if (String.valueOf(roll).contains("7")) {
 				int result = roll + jackpotBonus;
 				String resultStr = resultStr(result);

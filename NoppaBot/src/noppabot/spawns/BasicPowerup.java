@@ -21,6 +21,11 @@ public abstract class BasicPowerup extends Powerup {
 		doInitialize();
 		return this;
 	}
+	
+	@Override
+	public INoppaBot getBot() {
+		return bot;
+	}
 
 	@Override
 	public final void setOwner(String owner) {
@@ -65,9 +70,13 @@ public abstract class BasicPowerup extends Powerup {
 	 * @return a modified roll
 	 */
 	@Override
-	public int onContestRoll(int roll) {
-		bot.sendDefaultContestRollMessage(owner, roll, colorOwner, colorRoll);
-		return roll;
+	public int onContestRoll() {
+		return bot.doNormalRoll(owner, 100);
+	}
+	
+	@Override
+	public int onNormalRoll() {
+		return bot.doNormalRoll(owner, 100);
 	}
 	
 	public boolean canPickUp(String nick) {
@@ -97,6 +106,11 @@ public abstract class BasicPowerup extends Powerup {
 	
 	public String ownerColored() {
 		return ownerColored;
+	}
+	
+	@Override
+	public int roll(int sides) {
+		return bot.doNormalRoll(owner, sides);
 	}
 	
 	public void sendDefaultContestRollMessage(int roll) {

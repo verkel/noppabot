@@ -29,7 +29,8 @@ public class WeightedDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		int result = roll + bonus;
 		String resultStr = resultStr(result);
 		result = clamp(result);

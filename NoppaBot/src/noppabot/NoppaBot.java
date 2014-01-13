@@ -718,31 +718,25 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void roll(String nick, int sides) {
-		int roll = getRollFor(nick, sides);
-		if (nick.equalsIgnoreCase("etsura")) roll = -roll;
-		
 		if (sides == 100) {
 			boolean participated = participated(nick);
 			boolean rollOrTiebreakPeriod = state == State.ROLL_PERIOD || state == State.SETTLE_TIE;
-			
-			// Activate the carried powerup
-			boolean powerupUsed = false;
+
+			// Generate a roll
+			int roll;
 			if (powerups.containsKey(nick) && !participated) {
+				// ... with the carried power-up
 				Powerup powerup = powerups.get(nick);
-				if (rollOrTiebreakPeriod) {
-					roll = powerup.onContestRoll(roll);
-					powerupUsed = true;
-				}
-				else {
-					roll = powerup.onNormalRoll(roll);
-				}
+				if (rollOrTiebreakPeriod) roll = powerup.onContestRoll();
+				else roll = powerup.onNormalRoll();
+			}
+			else {
+				// ... with the normal d100
+				roll = doNormalRoll(nick, sides);
 			}
 			
-			// Do the normal roll if no powerup was used
-			if (!powerupUsed) sendDefaultContestRollMessage(nick, roll, true, true);
-			
 			if (!participated && rollOrTiebreakPeriod) {
-				// Activate powerups which affect opponent rolls
+				// Activate power-ups which affect opponent rolls
 				roll = fireOpponentRolled(nick, roll);
 
 				// If win condition is non-standard, tell how this roll will be scored
@@ -752,8 +746,20 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			participate(nick, roll);
 		}
 		else {
-			sendChannelFormat("%s rolls %d!", nick, roll);
+			doNormalRoll(nick, sides);
 		}
+	}
+	
+	public int doNormalRoll(String nick, int sides) {
+		int roll = getRollFor(nick, sides);
+		if (sides == 100) {
+			sendDefaultContestRollMessage(nick, roll, true, true);
+		}
+		else {
+			sendChannelFormat("%s rolls %s!", ColorStr.nick(nick), 
+				ColorStr.custom(String.valueOf(roll), Colors.WHITE));
+		}
+		return roll;
 	}
 
 	private int fireOpponentRolled(String nick, int roll) {

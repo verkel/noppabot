@@ -371,8 +371,7 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(roll);
+			int roll = powerup.onContestRoll();
 			if (printRolls) System.out.println(roll);
 			sum += roll;
 		}
@@ -383,8 +382,7 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(roll);
+			int roll = powerup.onContestRoll();
 			double diff = roll - ev;
 			sum += diff*diff;
 		}
@@ -581,6 +579,12 @@ public class GenerateItemList {
 		public String getDefaultContestRollMessage(String nick, int value, boolean colorNick,
 			boolean colorRoll) {
 			return null;
+		}
+
+		@Override
+		public int doNormalRoll(String nick, int sides) {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 	}
 	

@@ -37,7 +37,7 @@ public class MasterDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
 		return doContestRoll(getName(), sides);
 	}
 	
@@ -96,7 +96,7 @@ public class MasterDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
 			return doContestRoll(getName(), sides);
 		}
 		

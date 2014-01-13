@@ -25,8 +25,9 @@ public class CrushingDie extends EvolvedPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
-		if (humongous) return HumongousDie.doContestRoll(bot, owner(), roll);
+	public int onContestRoll() {
+		int roll = roll();
+		if (humongous) return HumongousDie.doContestRoll(this, owner());
 		else {
 			bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %s! %s", 
 				ownerColored(), resultStr(roll), bot.grade(roll));

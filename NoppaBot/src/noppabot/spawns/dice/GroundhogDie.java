@@ -26,7 +26,7 @@ public class GroundhogDie extends BasicPowerup {
 	}
 	
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
 		Integer lastRoll = null;
 		RollRecords records = bot.loadRollRecords();
 		if (records != null) {
@@ -40,7 +40,7 @@ public class GroundhogDie extends BasicPowerup {
 		}
 		else {
 			bot.sendChannel("The groundhog die fails to repeat yesterday's events.");
-			return super.onContestRoll(roll); // Normal behaviour
+			return super.onContestRoll(); // Normal behaviour
 		}
 	}
 
@@ -75,7 +75,7 @@ public class GroundhogDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
 			Integer lastRoll = null;
 			RollRecords records = bot.loadRollRecords();
 			if (records != null) {
@@ -95,7 +95,7 @@ public class GroundhogDie extends BasicPowerup {
 			else {
 				bot.sendChannel("The self-improving die fails to improve on yesterday's events.");
 				// Normal behaviour
-				return super.onContestRoll(roll);
+				return super.onContestRoll();
 			}
 		}
 		

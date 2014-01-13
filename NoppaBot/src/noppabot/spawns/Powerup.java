@@ -22,16 +22,12 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	public void onTiebreakPeriodStart() {
 	}
 
-	public int onNormalRoll(int roll) {
-		return roll;
-	}
+	public abstract int onNormalRoll();
 
 	/**
-	 * Say the appropriate roll message and return the modified roll
-	 * 
-	 * @return a modified roll
+	 * Say the appropriate roll message and return the final roll
 	 */
-	public abstract int onContestRoll(int roll);
+	public abstract int onContestRoll();
 	
 	public int onOpponentRoll(String opponent, int roll) {
 		return roll;
@@ -73,6 +69,17 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	public String toStringColored() {
 		return getNameColored();
 	}
+	
+	public abstract int roll(int sides);
+	
+	/**
+	 * Roll d100 and return the result
+	 */
+	public int roll() {
+		return roll(100);
+	}
+	
+	public abstract INoppaBot getBot();
 
 	@Override
 	public boolean equals(Object obj) {

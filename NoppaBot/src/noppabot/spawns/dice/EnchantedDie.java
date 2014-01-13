@@ -28,7 +28,8 @@ public class EnchantedDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		int result = roll + bonus;
 		String resultStr = resultStr(result);
 		result = clamp(result);
@@ -69,7 +70,8 @@ public class EnchantedDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
+			int roll = roll();
 			int result = roll + bonus;
 			String resultStr = resultStr(result);
 			result = clamp(result);

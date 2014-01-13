@@ -35,7 +35,7 @@ public class VariableDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
 		int result = doContestRoll(getName());
 		return result;
 	}
@@ -77,7 +77,7 @@ public class VariableDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
 			int result = doContestRoll(getName());
 			return result;
 		}

@@ -37,7 +37,8 @@ public class PrimalDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		if (primes.contains(roll)) {
 			int result = roll + bonus;
 			String resultStr = resultStr(result);
@@ -81,12 +82,12 @@ public class PrimalDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			int result = roll;
+		public int onContestRoll() {
+			int roll = roll();
 			if (primes.contains(roll)) {
-				result += bonus;
-				String resultStr = resultStr(result);
-				result = clamp(result);
+				roll += bonus;
+				String resultStr = resultStr(roll);
+				roll = clamp(roll);
 				bot.sendChannelFormat(
 					"%s rolls %d, which is a prime! The tribe of primal dies grants you an offering of" +
 					" bonus points. The modified roll is %d + %d = %s.",
@@ -99,14 +100,14 @@ public class PrimalDie extends BasicPowerup {
 			}
 			
 			if (otherPrimesTotalBonus > 0) {
-				result += otherPrimesTotalBonus;
-				String resultStr = resultStr(result);
-				result = clamp(result);
+				roll += otherPrimesTotalBonus;
+				String resultStr = resultStr(roll);
+				roll = clamp(roll);
 				bot.sendChannelFormat("The tribal gifts of %d points are added to %s's roll, " +
 					"increasing it to %s", otherPrimesTotalBonus, ownerColored, resultStr);
 			}
 			
-			return result;
+			return roll;
 		}
 		
 		@Override

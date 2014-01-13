@@ -70,7 +70,7 @@ public class BagOfDice extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
 		StringBuilder buf = new StringBuilder();
 		boolean first = true;
 		int result = 0;
@@ -124,8 +124,8 @@ public class BagOfDice extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			return BagOfDice.this.onContestRoll(roll);
+		public int onContestRoll() {
+			return BagOfDice.this.onContestRoll();
 		}
 		
 		@Override

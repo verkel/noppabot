@@ -64,4 +64,6 @@ public interface INoppaBot {
 	String rollToString(int roll);
 
 	String rollToString(int roll, boolean colorRoll);
+	
+	public int doNormalRoll(String nick, int sides);
 }

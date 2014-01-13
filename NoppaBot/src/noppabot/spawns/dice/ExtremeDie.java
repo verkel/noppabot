@@ -28,11 +28,12 @@ public class ExtremeDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
-		return doContestRoll(getName(), 100, roll);
+	public int onContestRoll() {
+		return doContestRoll(getName(), 100);
 	}
 
-	private int doContestRoll(String dieName, int sides, int roll) {
+	private int doContestRoll(String dieName, int sides) {
+		int roll = roll(sides);
 		if (roll == 100) {
 			bot.sendChannelFormat("%s rolls d%d with the extreme die! %s! That's the most extreme roll and the die is ecstatic!", 
 				ownerColored, sides, resultStr(roll)); 
@@ -77,9 +78,8 @@ public class ExtremeDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			int newRoll = bot.getRollFor(owner, sides);
-			return doContestRoll(getName(), sides, newRoll);
+		public int onContestRoll() {
+			return doContestRoll(getName(), sides);
 		}
 		
 		@Override
