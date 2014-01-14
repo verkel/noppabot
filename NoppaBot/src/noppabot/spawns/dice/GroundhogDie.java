@@ -56,7 +56,7 @@ public class GroundhogDie extends BasicPowerup {
 	
 	@Override
 	public float getSpawnChance() {
-		return 0.75f;
+		return 0.33f;
 	}
 	
 	@Override

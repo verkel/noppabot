@@ -23,6 +23,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private final File rollRecordsPath;
 	private final boolean debug;
 	private final boolean executeDebugStuff;
+	private final boolean dryRun;
 	
 	private static final String ROLL_PERIOD_ABOUT_TO_START = "59 23 * * *";
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
@@ -126,13 +127,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		server = properties.getProperty("server");
 		debug = Boolean.parseBoolean(properties.getProperty("debug"));
 		executeDebugStuff = Boolean.parseBoolean(properties.getProperty("executeDebugStuff"));
+		dryRun = Boolean.parseBoolean(properties.getProperty("dryRun"));
 		
 		setVerbose(false); // Print stacktraces, but also useless server messages
 		setLogin(botNick);
 		setName(botNick);
-		connect(server);
-		joinChannel(channel);
-//		sendChannel("Eat a happy meal!");
 		
 		rolls = new Rolls(this);
 		
@@ -174,7 +173,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (executeDebugStuff) debugStuff();
 //		giveFreePowerup(); // spawn one right now
 		
-		handleConsoleCommands();
+		if (dryRun) {
+			scheduler.stop();
+			System.out.println("Dry run complete. Quitting.");
+		}
+		else {
+			connect(server);
+			joinChannel(channel);
+			handleConsoleCommands();
+		}
 	}
 	
 	private void debugStuff() {
@@ -283,14 +290,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void schedulePowerupsOfTheDay() {
 		computeTimes();
 		Calendar spawnTime = Calendar.getInstance();
-		if (spawnTime.get(Calendar.HOUR_OF_DAY) < 10) {
-			spawnTime.set(Calendar.HOUR_OF_DAY, 10);
+		if (debug) {
+			spawnTime.set(Calendar.HOUR_OF_DAY, 0);
 			spawnTime.set(Calendar.MINUTE, 0);
 			spawnTime.set(Calendar.SECOND, 0);
 		}
-		else {
-			System.out.println("Scheduling spawns at non-midnight, " + spawnTime.getTime());
-		}
+//		else {
+//			System.out.println("Scheduling spawns at non-midnight, " + spawnTime.getTime());
+//		}
 		incrementSpawnTime(spawnTime);
 		
 		Spawner<BasicPowerup> spawnPowerups = Powerups.firstPowerup;
@@ -298,7 +305,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		int n = 0;
 		while (spawnTime.before(spawnEndTime)) {
 			if (n > 0) spawnPowerups = Powerups.allPowerups;
-			if (n > 2) spawnEvents = Powerups.allEventsMinusFourthWall;
+			if (spawnTime.get(Calendar.HOUR_OF_DAY) >= 18) spawnEvents = Powerups.allEventsMinusFourthWall;
 			ISpawnable spawn = scheduleRandomSpawn(spawnTime, spawnPowerups, spawnEvents).spawn;
 			// Only allow one 4th wall break per day
 			if (spawn instanceof FourthWallBreaks) spawnEvents = Powerups.allEventsMinusFourthWall;
@@ -323,7 +330,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void incrementSpawnTime(Calendar spawnTime) {
-		int minutesRandomRange = 480 - 15 * spawnTime.get(Calendar.HOUR_OF_DAY);
+		int minutesRandomRange = 260 - 5 * spawnTime.get(Calendar.HOUR_OF_DAY);
 		int minutesIncr = commonRandom.nextInt(minutesRandomRange);
 		spawnTime.add(Calendar.MINUTE, minutesIncr);
 	}
