@@ -136,7 +136,7 @@ public class Rules {
 
 	public Rules(INoppaBot bot) {
 		this.bot = bot;
-		reset();
+		doReset();
 	}
 	
 	public void onRollPeriodStart() {
@@ -154,20 +154,24 @@ public class Rules {
 	 * @return if the rules changed
 	 */
 	public boolean reset() {
-		boolean changed =  
-			isCappedRollsChanged() || 
-			isWinConditionChanged() ||
-			isRollTargetChanged() ||
-			isCanDropItemsChanged();
-		
+		boolean changed = isChanged();
+		doReset();
+		if (changed) bot.onRulesChanged();
+		return changed;
+	}
+
+	private void doReset() {
 		cappedRolls = cappedRollsDefault;
 		winCondition = winConditionDefault;
 		rollTarget = rollTargetDefault;
 		canDropItems = canDropItemsDefault;
-		
-		if (changed) bot.onRulesChanged();
-		
-		return changed;
+	}
+	
+	private boolean isChanged() {
+		return isCappedRollsChanged() || 
+		isWinConditionChanged() ||
+		isRollTargetChanged() ||
+		isCanDropItemsChanged();
 	}
 	
 	private boolean isCappedRollsChanged() {
@@ -186,15 +190,14 @@ public class Rules {
 		return canDropItems != canDropItemsDefault;
 	}
 	
-	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are now not limited to the 0-100 range.";
-	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + ColorStr.custom("drop", Colors.WHITE) + " command";
+	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are not limited to the 0-100 range.";
+	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + ColorStr.custom("drop", Colors.WHITE) + " command.";
 	
-	public void explain() {
+	public String getExplanation() {
 		List<String> list = new ArrayList<String>();
 		list.add(winCondition.getExplanation());
 		if (isCanDropItemsChanged()) list.add(EXPLAIN_CAN_DROP_ITEMS);
 		if (isCappedRollsChanged()) list.add(EXPLAIN_UNCAPPED_ROLLS);
-		String explanation = StringUtils.join(list, ", ");
-		bot.sendChannel(explanation);
+		return StringUtils.join(list, " ");
 	}
 }

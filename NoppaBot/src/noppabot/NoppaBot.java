@@ -9,8 +9,8 @@ import java.util.regex.*;
 
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
-import noppabot.spawns.dice.*;
-import noppabot.spawns.events.FourthWallBreaks;
+import noppabot.spawns.dice.ApprenticeDie;
+import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
@@ -91,7 +91,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([^\\s]+)\\s*");
 	public static final Pattern commandAndArgument = Pattern.compile("^(\\w+)(?:\\s+(.+)?)?");
 	
-	private Rules rules = new Rules(this);
+	private Rules rules;
 	private Map<String, PeekableRandom> randoms = new HashMap<String, PeekableRandom>();
 	private Random commonRandom = new Random();
 	private Scheduler scheduler = new Scheduler();
@@ -134,6 +134,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		setLogin(botNick);
 		setName(botNick);
 		
+		rules = new Rules(this);
 		rolls = new Rolls(this);
 		
 		initMessages();
@@ -186,11 +187,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		powerups.put("hassu", new WeightedDie().initialize(this).upgrade());
-		powerups.put("hessu", new ApprenticeDie().initialize(this));
-		powerups.put("kessu", new ApprenticeDie().initialize(this));
-		powerups.put("frodo", new FastDie().initialize(this));
-		powerups.put("bilbo", new MasterDie().initialize(this));
+		for (int i = 0; i < 5; i++) new RulesChange().run(this);
+		
+//		powerups.put("hassu", new WeightedDie().initialize(this).upgrade());
+//		powerups.put("hessu", new ApprenticeDie().initialize(this));
+//		powerups.put("kessu", new ApprenticeDie().initialize(this));
+//		powerups.put("frodo", new FastDie().initialize(this));
+//		powerups.put("bilbo", new MasterDie().initialize(this));
 //		Powerup p = new VariableDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
@@ -578,13 +581,16 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("drop")) {
 					dropPowerup(sender);
 				}
+				else if (cmd.equalsIgnoreCase("rules")) {
+					listRules(sender);
+				}
 				else if (cmd.equalsIgnoreCase("train")) {
 					grabPowerup(sender, DicemonTrainer.NAME);
 				}
 			}
 		}
 	}
-	
+
 	private void dropPowerup(String nick) {
 		Powerup powerup = powerups.get(nick);
 		if (powerup == null) {
@@ -745,6 +751,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		
 		sendChannelFormat("No rolls are predicted for %s.", ColorStr.nick(nick));
+	}
+	
+	
+	private void listRules(String nick) {
+		String explanation = rules.getExplanation();
+		sendChannelFormat("%s: %s", ColorStr.nick(nick), explanation);
 	}
 
 	private void grabPowerup(String nick, String powerupName) {
