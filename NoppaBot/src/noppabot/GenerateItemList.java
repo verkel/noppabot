@@ -255,7 +255,7 @@ public class GenerateItemList {
 		testEvolvedPowerup("Crushing Die", "Locked.png", crushingDieDesc, new WeightedDie().upgrade(), bot);
 		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(), bot);
 		testEvolvedPowerup("Tribal Die", "Placeholder.png", tribalDieDesc, new PrimalDie().upgrade(), bot);
-		testEvolvedPowerup("Jackpot Die", "Locked.png", jackpotDieDesc, new LuckyDie().upgrade(), bot);
+		testEvolvedPowerup("Jackpot Die", "Placeholder.png", jackpotDieDesc, new LuckyDie().upgrade(), bot);
 		testEvolvedPowerup("The One Die", "Placeholder.png", theOneDieDesc, new MasterDie().upgrade(), bot);
 		testEvolvedPowerup("Faster Die<br><small>(rolled immediately)</small>", "Placeholder.png",
 			fasterDieDesc, new FastDie().upgrade(), bot);
@@ -628,7 +628,7 @@ public class GenerateItemList {
 	private static final String crushingDieDesc = undiscovered; // = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
 	private static final String potentDieDesc = "Gives a +20 bonus.";
 	private static final String tribalDieDesc = "In addition to primal die's effect, you get +10 bonus for every prime rolled by an opponent.";
-	private static final String jackpotDieDesc = undiscovered; // = "Gives a +40 bonus if the roll contains any sevens";
+	private static final String jackpotDieDesc = "Gives a +40 bonus if the roll contains any sevens";
 	private static final String theOneDieDesc = "Lets you roll the d200 (the result is capped into 100).";
 	private static final String daringDieDesc = "You roll the d30. Changes rolls 1..10 into 100.";
 	private static final String bagOfManyDiceDesc = "Two additional dice are put into the dice bag. May be upgraded infinitely for more dice.";
