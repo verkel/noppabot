@@ -12,7 +12,7 @@ import noppabot.spawns.*;
 public class Present extends Instant {
 	
 	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
-		Arrays.<BasicPowerup>asList(new Present()), Spawner.ALLOW_SAME_SPAWNS);
+		Arrays.<BasicPowerup>asList(new Present()));
 	
 	@Override
 	public void onSpawn() {
