@@ -22,7 +22,7 @@ public class PrimalDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -33,11 +33,12 @@ public class PrimalDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and gains knowledge about prime numbers.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		if (primes.contains(roll)) {
 			int result = roll + bonus;
 			String resultStr = resultStr(result);
@@ -56,8 +57,13 @@ public class PrimalDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Primal Die";
+	}
+	
+	@Override
+	public int sides() {
+		return 100;
 	}
 	
 	@Override
@@ -81,12 +87,12 @@ public class PrimalDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			int result = roll;
+		public int onContestRoll() {
+			int roll = roll();
 			if (primes.contains(roll)) {
-				result += bonus;
-				String resultStr = resultStr(result);
-				result = clamp(result);
+				roll += bonus;
+				String resultStr = resultStr(roll);
+				roll = clamp(roll);
 				bot.sendChannelFormat(
 					"%s rolls %d, which is a prime! The tribe of primal dies grants you an offering of" +
 					" bonus points. The modified roll is %d + %d = %s.",
@@ -99,14 +105,14 @@ public class PrimalDie extends BasicPowerup {
 			}
 			
 			if (otherPrimesTotalBonus > 0) {
-				result += otherPrimesTotalBonus;
-				String resultStr = resultStr(result);
-				result = clamp(result);
+				roll += otherPrimesTotalBonus;
+				String resultStr = resultStr(roll);
+				roll = clamp(roll);
 				bot.sendChannelFormat("The tribal gifts of %d points are added to %s's roll, " +
 					"increasing it to %s", otherPrimesTotalBonus, ownerColored, resultStr);
 			}
 			
-			return result;
+			return roll;
 		}
 		
 		@Override
@@ -133,7 +139,7 @@ public class PrimalDie extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Tribal Die";
 		}
 		

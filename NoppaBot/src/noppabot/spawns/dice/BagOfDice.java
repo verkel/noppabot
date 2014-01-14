@@ -54,13 +54,13 @@ public class BagOfDice extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs and opens the %s! It contains the following dice: %s", 
-			ownerColored, getNameColored(), bagToString());
+			ownerColored, nameColored(), bagToString());
 
 	}
 
@@ -70,12 +70,12 @@ public class BagOfDice extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
 		StringBuilder buf = new StringBuilder();
 		boolean first = true;
 		int result = 0;
 		for (int die : diceBag) {
-			int subroll = bot.getRollFor(owner, die);
+			int subroll = bot.getRoll(owner, die);
 			result += subroll;
 			if (!first) buf.append(" + ");
 			buf.append(subroll);
@@ -91,8 +91,13 @@ public class BagOfDice extends BasicPowerup {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Bag of Dice";
+	}
+	
+	@Override
+	public int sides() {
+		return diceBag.get(diceBag.size()-1);
 	}
 	
 	@Override
@@ -124,12 +129,12 @@ public class BagOfDice extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			return BagOfDice.this.onContestRoll(roll);
+		public int onContestRoll() {
+			return BagOfDice.this.onContestRoll();
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Bag of " + manyMany + " Dice";
 		}
 		

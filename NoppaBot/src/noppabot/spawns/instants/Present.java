@@ -12,11 +12,11 @@ import noppabot.spawns.*;
 public class Present extends Instant {
 	
 	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
-		Arrays.<BasicPowerup>asList(new Present()), Spawner.ALLOW_SAME_SPAWNS);
+		Arrays.<BasicPowerup>asList(new Present()));
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class Present extends Instant {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Present";
 	}
 }

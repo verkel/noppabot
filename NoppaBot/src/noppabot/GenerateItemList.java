@@ -7,6 +7,7 @@ package noppabot;
 import java.io.*;
 import java.util.*;
 
+import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
@@ -204,8 +205,13 @@ public class GenerateItemList {
 	class RegularDie extends BasicPowerup {
 
 		@Override
-		public String getName() {
+		public String name() {
 			return "Regular Die";
+		}
+
+		@Override
+		public int sides() {
+			return 100;
 		}
 	}
 
@@ -251,7 +257,7 @@ public class GenerateItemList {
 	}
 	
 	private void testEvolvedDice() {
-		testEvolvedPowerup("Very Polished Die", "Locked.png", veryPolishedDieDesc, new PolishedDie().upgrade(), bot);
+		testEvolvedPowerup("Very Polished Die", "Placeholder.png", veryPolishedDieDesc, new PolishedDie().upgrade(), bot);
 		testEvolvedPowerup("Crushing Die", "Locked.png", crushingDieDesc, new WeightedDie().upgrade(), bot);
 		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(), bot);
 		testEvolvedPowerup("Tribal Die", "Placeholder.png", tribalDieDesc, new PrimalDie().upgrade(), bot);
@@ -271,7 +277,7 @@ public class GenerateItemList {
 		}, bot, false, DiceType.EVOLVED);
 		
 		addEntry("Self-Improving Die", "Placeholder.png", selfImprovingDieDesc, null);
-		testEvolvedPowerup("Rolling Professor", "Locked.png", rollingProfessorDesc,
+		testEvolvedPowerup("Rolling Professor", "Placeholder.png", rollingProfessorDesc,
 			new RollingProfessional().upgrade(), bot);
 
 		testPowerup("Super Dice Bros", "Locked.png", superDiceBrosDesc, null, new Builder() {
@@ -371,24 +377,22 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(roll);
+			int roll = powerup.onContestRoll();
 			if (printRolls) System.out.println(roll);
 			sum += roll;
 		}
-		return sum / (double)iterations;
+		return sum / iterations;
 	}
 	
 	private double computePowerupSD(Builder builder, TestBot bot, double ev) {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = bot.getRollFor(TESTER_NAME, 100);
-			roll = powerup.onContestRoll(roll);
+			int roll = powerup.onContestRoll();
 			double diff = roll - ev;
 			sum += diff*diff;
 		}
-		return Math.sqrt(sum / (double)iterations);
+		return Math.sqrt(sum / iterations);
 	}
 	
 	private void testDiceteller() {
@@ -404,22 +408,22 @@ public class GenerateItemList {
 			// EV
 			double sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRollFor(TESTER_NAME, 100);
-				if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
+				int roll = bot.getRoll(TESTER_NAME, 100);
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100);
 				sum += roll;
 			}
-			ev = sum / (double)iterations;
+			ev = sum / iterations;
 			System.out.print('.');
 			
 			// SD
 			sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRollFor(TESTER_NAME, 100);
-				if (roll < REGULAR_DICE_EV) roll = bot.getRollFor(TESTER_NAME, 100);
+				int roll = bot.getRoll(TESTER_NAME, 100);
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100);
 				double diff = roll - ev;
 				sum += diff*diff;
 			}
-			sd = Math.sqrt(sum / (double)iterations);
+			sd = Math.sqrt(sum / iterations);
 			System.out.print('.');
 		}
 		
@@ -451,7 +455,7 @@ public class GenerateItemList {
 	private TestBot bot = new TestBot();
 	
 	class TestBot implements INoppaBot {
-		private Rules rules = new Rules();
+		private Rules rules = new Rules(this);
 		
 		@Override
 		public void sendChannelFormat(String msg, Object... args) {
@@ -476,7 +480,7 @@ public class GenerateItemList {
 		}
 		
 		@Override
-		public int getRollFor(String nick, int sides) {
+		public int getRoll(String nick, int sides) {
 			return rnd.nextInt(sides)+1;
 		}
 		
@@ -501,11 +505,6 @@ public class GenerateItemList {
 		@Override
 		public boolean participated(String nick) {
 			return false;
-		}
-
-		@Override
-		public int peekRollFor(String nick) {
-			return 0;
 		}
 
 		@Override
@@ -582,6 +581,22 @@ public class GenerateItemList {
 			boolean colorRoll) {
 			return null;
 		}
+
+		@Override
+		public int doNormalRoll(String nick, int sides) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int peekRoll(String nick, int sides) {
+			return 0;
+		}
+
+		@Override
+		public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
+			return null;
+		}
 	}
 	
 	class LazyBot extends TestBot {
@@ -624,7 +639,7 @@ public class GenerateItemList {
 	private static final String fourthWallBreaksDesc = "Reveals all of the events that are yet to happen today.";
 	private static final String rulesChangeDesc = "Randomly <a href='#rulechanges'>changes one rule</a> for the next rolling contest.";
 	
-	private static final String veryPolishedDieDesc = undiscovered; // = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
+	private static final String veryPolishedDieDesc = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
 	private static final String crushingDieDesc = undiscovered; // = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
 	private static final String potentDieDesc = "Gives a +20 bonus.";
 	private static final String tribalDieDesc = "In addition to primal die's effect, you get +10 bonus for every prime rolled by an opponent.";
@@ -637,5 +652,5 @@ public class GenerateItemList {
 	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
 	private static final String humongousCrushingDieDesc = "Deals d10 + 20 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
-	private static final String rollingProfessorDesc = undiscovered; // = "Ensures your roll is at least 70";
+	private static final String rollingProfessorDesc = "Ensures your roll is at least 70.";
 }

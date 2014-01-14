@@ -14,7 +14,7 @@ public class LuckyDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -25,11 +25,12 @@ public class LuckyDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and it wishes good luck for tonight's roll.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		if (String.valueOf(roll).contains("7")) {
 			int result = roll + bonus;
 			String resultStr = resultStr(result);
@@ -47,8 +48,13 @@ public class LuckyDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Lucky Die";
+	}
+	
+	@Override
+	public int sides() {
+		return 100;
 	}
 	
 	@Override
@@ -70,7 +76,8 @@ public class LuckyDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
+			int roll = roll();
 			if (String.valueOf(roll).contains("7")) {
 				int result = roll + jackpotBonus;
 				String resultStr = resultStr(result);
@@ -88,7 +95,7 @@ public class LuckyDie extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Jackpot Die";
 		}
 		

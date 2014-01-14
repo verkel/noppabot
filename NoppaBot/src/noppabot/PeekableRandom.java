@@ -4,37 +4,45 @@
  */
 package noppabot;
 
-import java.util.Random;
+import java.util.*;
 
 /**
- * Using this random you can peek what the next d100 roll is
+ * Using this random you can peek what the next result is.
  */
 public class PeekableRandom {
-	private int nextD100 = -1;
+//	private int nextD100 = -1;
+	private Map<Integer, Integer> nextRolls = new HashMap<Integer, Integer>();
 	private Random random;
 	
 	public PeekableRandom() {
 		random = new Random();
 	}
 
-	public int nextInt(int n) {
-		// Return the peeked result for d100 roll if there was one
-		if (nextD100 != -1 && n == 100) {
-			int result = nextD100;
-			nextD100 = -1;
-			return result;
+	public int nextRoll(int sides) {
+		// Pop the peeked result for n if there is one
+		if (nextRolls.containsKey(sides)) {
+			return nextRolls.remove(sides);
 		}
-		// Else return a new number, and wipe the peeked result
+		// Else return a new number
 		else {
-			nextD100 = -1;
-			return random.nextInt(n);
+			return roll(sides);
 		}
 	}
 	
-	public int peek() {
-		if (nextD100 == -1) {
-			nextD100 = random.nextInt(100);
+	public int peek(int sides) {
+		if (!nextRolls.containsKey(sides)) {
+			int roll = roll(sides);
+			nextRolls.put(sides, roll);
 		}
-		return nextD100;
+		
+		return nextRolls.get(sides);
+	}
+	
+	public Map<Integer, Integer> getNextRolls() {
+		return nextRolls;
+	}
+	
+	private int roll(int sides) {
+		return random.nextInt(sides) + 1;
 	}
 }

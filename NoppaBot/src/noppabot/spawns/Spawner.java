@@ -11,21 +11,32 @@ import java.util.*;
 public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	private NavigableMap<Float, S> chances = new TreeMap<Float, S>();
 	private Random random = new Random();
-	private LastSpawn lastSpawn;
+	private LastSpawn<S> lastSpawn;
 	
-	public Spawner(Collection<S> spawnables, LastSpawn lastSpawn) {
+	/**
+	 * Allow subsequent same spawns
+	 */
+	public Spawner(Collection<S> spawnables) {
+		this(spawnables, Spawner.<S>allowSameSpawns());
+	}
+
+	/**
+	 * Disallow subsequent same spawns. Share the lastSpawn object with spawners
+	 * you wish to combine the last spawn tracking with.
+	 */
+	public Spawner(Collection<S> spawnables, LastSpawn<S> lastSpawn) {
 		this.lastSpawn = lastSpawn;
 		
 		// Compute sum of spawn chances
 		float sum = 0f;
 		for (S s : spawnables) {
-			sum += s.getSpawnChance();
+			sum += s.spawnChance();
 		}
 		
 		// Build the probability distribution
 		float chanceCeil = 0f;
 		for (S s : spawnables) {
-			chanceCeil += s.getSpawnChance() / sum;
+			chanceCeil += s.spawnChance() / sum;
 			chances.put(chanceCeil, s);
 		}
 	}
@@ -33,13 +44,15 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	public S spawn() {
 		// Prevent two same spawns in a row
 		float rnd, key;
+		S value;
 		do { 
 			rnd = random.nextFloat();
+			key = chances.higherKey(rnd);
+			value = chances.get(key);
 		}
-		while ((key = chances.higherKey(rnd)) == lastSpawn.getKey());
-		lastSpawn.setKey(key);
+		while (lastSpawn.isSame(value));
+		lastSpawn.setValue(value);
 		
-		S value = chances.get(key);
 		return clone(value);
 	}
 	
@@ -77,21 +90,28 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	}
 	
 	// So that we may share the lastSpawn between multiple spawners
-	public static class LastSpawn {
-		private float key = -1f;
+	public static class LastSpawn<S> {
+		private S value = null;
 
-		public float getKey() {
-			return key;
+		public S getValue() {
+			return value;
+		}
+		
+		public boolean isSame(S newValue) {
+			if (value == null) return false;
+			return newValue.equals(value);
 		}
 
-		public void setKey(float key) {
-			this.key = key;
+		public void setValue(S value) {
+			this.value = value;
 		}
 	}
 	
-	public static LastSpawn ALLOW_SAME_SPAWNS = new LastSpawn() {
-		@Override
-		public void setKey(float key) {
-		}
-	};
+	public static <S> LastSpawn<S> allowSameSpawns() {
+		return new LastSpawn<S>() {
+			@Override
+			public void setValue(S value) {
+			}
+		};
+	}
 }

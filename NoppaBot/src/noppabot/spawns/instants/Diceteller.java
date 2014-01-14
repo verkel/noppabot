@@ -4,14 +4,14 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.spawns.Instant;
+import noppabot.spawns.*;
 
 
 public class Diceteller extends Instant {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -22,19 +22,23 @@ public class Diceteller extends Instant {
 
 	@Override
 	public void onPickup() {
-		int result = bot.peekRollFor(owner);
+		Powerup powerup = bot.getPowerups().get(owner);
+		int sides;
+		if (powerup == null) sides = 100;
+		else sides = powerup.sides();
+		int result = bot.peekRoll(owner, sides);
 		bot.sendChannelFormat(
-			"The %s, glancing at his crystal ball, whispers to %s: \"Your next roll will be %s.\"",
-			getNameColored(), ownerColored, resultStr(result));
+			"The %s, glancing at his crystal ball, whispers to %s: \"Your next roll of d%d will be %s.\"",
+			nameColored(), ownerColored, sides, resultStr(result));
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Diceteller";
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 2.0f;
 	}
 }

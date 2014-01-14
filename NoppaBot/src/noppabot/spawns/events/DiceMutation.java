@@ -22,9 +22,9 @@ public class DiceMutation extends Event {
 		for (String owner : owners) {
 			Powerup oldPowerup = bot.getPowerups().get(owner);
 			if (oldPowerup.isUpgradeable()) {
-				String oldName = oldPowerup.getNameColored();
+				String oldName = oldPowerup.nameColored();
 				Powerup newPowerup = oldPowerup.upgrade();
-				String newName = newPowerup.getNameColored();
+				String newName = newPowerup.nameColored();
 				String descr = newPowerup.getUpgradeDescription();
 				bot.sendChannelFormat("%s's %s mutated into %s! %s", owner, oldName, newName, descr);
 				bot.getPowerups().put(owner, newPowerup);

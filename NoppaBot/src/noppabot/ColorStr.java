@@ -15,6 +15,10 @@ public class ColorStr {
 		return colorStr + str + Colors.NORMAL;
 	}
 	
+	public static String custom(int value, String colorStr) {
+		return colorStr + String.valueOf(value) + Colors.NORMAL;
+	}
+	
 	public static String nick(String nick) {
 		return custom(nick, Colors.TEAL);
 	}

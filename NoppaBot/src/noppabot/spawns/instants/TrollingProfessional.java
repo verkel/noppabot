@@ -15,7 +15,7 @@ import noppabot.spawns.*;
 public class TrollingProfessional extends Instant {
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -36,8 +36,8 @@ public class TrollingProfessional extends Instant {
 		bomb.initialize(bot);
 		SpawnTask task = bot.scheduleSpawn(spawnTime, bomb);
 		
-		bot.sendChannelFormat("%s grabs the trolling professional! %s and the trolling trofessional " +
-			"briefly discuss about something.", owner, owner);
+		bot.sendChannelFormat("%s grabs the %s! %s and the trolling trofessional " +
+			"briefly discuss about something.", owner, nameColored(), owner);
 		
 		bot.sendMessageFormat(owner, "Hi! I set us up the %s on %s. I suggest you don't take it.",
 			ColorStr.basicPowerup(Bomb.BOMB_NAME), task.toStringColored());
@@ -45,12 +45,12 @@ public class TrollingProfessional extends Instant {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Trolling Professional";
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.5f;
 	}
 	
@@ -77,16 +77,16 @@ public class TrollingProfessional extends Instant {
 		};
 		
 		public static String[] powerupTypos = {
-			"Bag of Doge",
-			"Duke Bros.",
+			"Bag of Die",
+			"Dice Pros",
 			"Enchaented Die",
 			"Xxtreme Die",
 			"Fats Die",
 			"Groinhog Die",
 			"Humungus Die",
 			"Lucky Dye",
-			"Masterr Die",
-			"Polishd Dei",
+			"Master Dei",
+			"Polishd Die",
 			"Pirmal Die",
 			"Rolling Professioanal",
 			"Weigthed Die"
@@ -109,8 +109,8 @@ public class TrollingProfessional extends Instant {
 		@Override
 		public void onPickup() {
 			bot.sendChannelFormat("%s grabs the %s! On a closer inspection, you recognize " +
-				"it's actually a BOMB! This can't be good for the upcoming roll.", 
-				ownerColored, ColorStr.basicPowerup(BOMB_NAME), ColorStr.basicPowerup(name));
+				"it's actually a %s This can't be good for the upcoming roll.", 
+				ownerColored, ColorStr.basicPowerup(name), ColorStr.basicPowerup(BOMB_NAME));
 			name = BOMB_NAME;
 		}
 		
@@ -121,8 +121,8 @@ public class TrollingProfessional extends Instant {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			
+		public int onContestRoll() {
+			int roll = roll();
 			int damageRoll = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int totalDamage = damageRoll + dmgBonus;
 			int result = roll - totalDamage;
@@ -137,8 +137,13 @@ public class TrollingProfessional extends Instant {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return name;
+		}
+		
+		@Override
+		public int sides() {
+			return 100;
 		}
 	}
 }

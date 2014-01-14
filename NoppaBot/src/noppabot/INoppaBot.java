@@ -6,6 +6,7 @@ package noppabot;
 
 import java.util.*;
 
+import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 
@@ -31,9 +32,9 @@ public interface INoppaBot {
 
 	public void sendChannel(String msg);
 
-	public int getRollFor(String nick, int sides);
+	public int getRoll(String nick, int sides);
 	
-	public int peekRollFor(String nick);
+	public int peekRoll(String nick, int sides);
 	
 	public Map<String, Powerup> getPowerups();
 	
@@ -64,4 +65,8 @@ public interface INoppaBot {
 	String rollToString(int roll);
 
 	String rollToString(int roll, boolean colorRoll);
+	
+	public int doNormalRoll(String nick, int sides);
+
+	ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime);
 }

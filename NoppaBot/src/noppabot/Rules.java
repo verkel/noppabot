@@ -7,6 +7,8 @@ package noppabot;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.jibble.pircbot.Colors;
+
 
 public class Rules {
 	public abstract class WinCondition { // implements Comparator<Entry<String, Integer>> {
@@ -36,7 +38,7 @@ public class Rules {
 		}
 		
 		/**
-		 * Here we should explain non-standard rules
+		 * Here we should notify about non-standard win conditions
 		 */
 		public void onRollPeriodStart(INoppaBot bot) {
 		}
@@ -46,6 +48,8 @@ public class Rules {
 		 */
 		public void onContestRoll(INoppaBot bot, String nick, int roll) {
 		}
+		
+		public abstract String getExplanation();
 	}
 	
 	public final WinCondition HIGHEST_ROLL = new WinCondition() {
@@ -53,6 +57,11 @@ public class Rules {
 		@Override
 		public int assignScore(int roll) {
 			return roll;
+		}
+
+		@Override
+		public String getExplanation() {
+			return "The highest roll wins the contest!";
 		}
 	};
 	
@@ -65,6 +74,11 @@ public class Rules {
 		@Override
 		public int assignScore(int roll) {
 			return 100 - roll;
+		}
+
+		@Override
+		public String getExplanation() {
+			return "The lowest roll wins the contest!";
 		}
 	};
 	
@@ -86,6 +100,11 @@ public class Rules {
 			if (dist > 0) bot.sendChannelFormat("%s's roll is %d points off the target", nick, dist);
 			else bot.sendChannelFormat("%s's roll hit the target!", nick);
 		}
+		
+		@Override
+		public String getExplanation() {
+			return String.format("The roll closest to number %d wins the contest!", rollTarget);
+		}
 	};
 	
 	/**
@@ -103,19 +122,28 @@ public class Rules {
 	 */
 	public int rollTarget;
 	
+	/**
+	 * Items can be dropped to ground at any time
+	 */
+	public boolean canDropItems;
+	
 	public final boolean cappedRollsDefault = true;
 	public final WinCondition winConditionDefault = HIGHEST_ROLL;
 	public final int rollTargetDefault = -1;
+	public final boolean canDropItemsDefault = false;
 	
-	public Rules() {
-		reset();
+	private INoppaBot bot;
+
+	public Rules(INoppaBot bot) {
+		this.bot = bot;
+		doReset();
 	}
 	
-	public void onRollPeriodStart(INoppaBot bot) {
-		if (cappedRolls != cappedRollsDefault) {
+	public void onRollPeriodStart() {
+		if (isCappedRollsChanged()) {
 			bot.sendChannel("Remember, the rolls are not restricted to the 0-100 range now.");
 		}
-		if (winCondition != winConditionDefault) {
+		if (isWinConditionChanged()) {
 			winCondition.onRollPeriodStart(bot);
 		}
 	}
@@ -126,13 +154,50 @@ public class Rules {
 	 * @return if the rules changed
 	 */
 	public boolean reset() {
-		boolean changed =  (cappedRolls != cappedRollsDefault || winCondition != winConditionDefault 
-			|| rollTarget != rollTargetDefault);
-		
+		boolean changed = isChanged();
+		doReset();
+		if (changed) bot.onRulesChanged();
+		return changed;
+	}
+
+	private void doReset() {
 		cappedRolls = cappedRollsDefault;
 		winCondition = winConditionDefault;
 		rollTarget = rollTargetDefault;
-		
-		return changed;
+		canDropItems = canDropItemsDefault;
+	}
+	
+	private boolean isChanged() {
+		return isCappedRollsChanged() || 
+		isWinConditionChanged() ||
+		isRollTargetChanged() ||
+		isCanDropItemsChanged();
+	}
+	
+	private boolean isCappedRollsChanged() {
+		return cappedRolls != cappedRollsDefault;
+	}
+	
+	private boolean isWinConditionChanged() {
+		return winCondition != winConditionDefault;
+	}
+	
+	private boolean isRollTargetChanged() {
+		return rollTarget != rollTargetDefault;
+	}
+
+	private boolean isCanDropItemsChanged() {
+		return canDropItems != canDropItemsDefault;
+	}
+	
+	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are not limited to the 0-100 range.";
+	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + ColorStr.custom("drop", Colors.WHITE) + " command.";
+	
+	public String getExplanation() {
+		List<String> list = new ArrayList<String>();
+		list.add(winCondition.getExplanation());
+		if (isCanDropItemsChanged()) list.add(EXPLAIN_CAN_DROP_ITEMS);
+		if (isCappedRollsChanged()) list.add(EXPLAIN_UNCAPPED_ROLLS);
+		return StringUtils.join(list, " ");
 	}
 }

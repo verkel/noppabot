@@ -13,7 +13,7 @@ public class EnchantedDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("An %s appears!", getNameColored());
+		bot.sendChannelFormat("An %s appears!", nameColored());
 	}
 
 	@Override
@@ -24,11 +24,12 @@ public class EnchantedDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and feels a tingling sensation at the fingertips.", 
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		int result = roll + bonus;
 		String resultStr = resultStr(result);
 		result = clamp(result);
@@ -41,12 +42,17 @@ public class EnchantedDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Enchanted Die";
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public int sides() {
+		return 100;
+	}
+	
+	@Override
+	public float spawnChance() {
 		return 0.75f;
 	}
 	
@@ -69,7 +75,8 @@ public class EnchantedDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
+			int roll = roll();
 			int result = roll + bonus;
 			String resultStr = resultStr(result);
 			result = clamp(result);
@@ -81,7 +88,7 @@ public class EnchantedDie extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Potent Die";
 		}
 		

@@ -11,7 +11,7 @@ public class GroundhogDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -22,11 +22,11 @@ public class GroundhogDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and ensures that history will repeat itself.", 
-			owner, getNameColored());
+			owner, nameColored());
 	}
 	
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
 		Integer lastRoll = null;
 		RollRecords records = bot.loadRollRecords();
 		if (records != null) {
@@ -40,19 +40,23 @@ public class GroundhogDie extends BasicPowerup {
 		}
 		else {
 			bot.sendChannel("The groundhog die fails to repeat yesterday's events.");
-			return super.onContestRoll(roll); // Normal behaviour
+			return super.onContestRoll(); // Normal behaviour
 		}
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Groundhog Die";
 	}
 	
+	@Override
+	public int sides() {
+		return 100;
+	}
 	
 	@Override
-	public float getSpawnChance() {
-		return 0.75f;
+	public float spawnChance() {
+		return 0.33f;
 	}
 	
 	@Override
@@ -75,7 +79,7 @@ public class GroundhogDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
 			Integer lastRoll = null;
 			RollRecords records = bot.loadRollRecords();
 			if (records != null) {
@@ -95,12 +99,12 @@ public class GroundhogDie extends BasicPowerup {
 			else {
 				bot.sendChannel("The self-improving die fails to improve on yesterday's events.");
 				// Normal behaviour
-				return super.onContestRoll(roll);
+				return super.onContestRoll();
 			}
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Self-Improving Die";
 		}
 		

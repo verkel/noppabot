@@ -21,8 +21,13 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
-	public int onContestRoll(int roll) {
-		return base.onContestRoll(roll);
+	public int onContestRoll() {
+		return base.onContestRoll();
+	}
+	
+	@Override
+	public int onNormalRoll() {
+		return base.onNormalRoll();
 	}
 	
 	@Override
@@ -30,11 +35,13 @@ public abstract class EvolvedPowerup extends Powerup {
 		base.setOwner(owner);
 	}
 	
-	protected String owner() {
+	@Override
+	public String owner() {
 		return base.owner();
 	}
 	
-	protected String ownerColored() {
+	@Override
+	public String ownerColored() {
 		return base.ownerColored();
 	}
 	
@@ -47,7 +54,22 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
-	public String getNameColored() {
-		return ColorStr.evolvedPowerup(getName());
+	public String nameColored() {
+		return ColorStr.evolvedPowerup(name());
+	}
+	
+	@Override
+	public int sides() {
+		return base.sides();
+	}
+	
+	@Override
+	public int roll(int sides) {
+		return base.roll(sides);
+	}
+	
+	@Override
+	public INoppaBot bot() {
+		return base.bot();
 	}
 }

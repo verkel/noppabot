@@ -17,7 +17,7 @@ public class MasterDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("%s appears!", getNameColored());
+		bot.sendChannelFormat("%s appears!", nameColored());
 	}
 
 	@Override
@@ -31,18 +31,18 @@ public class MasterDie extends BasicPowerup {
 		bot.sendChannelFormat(
 			"%s wrestles for %s with the other contestants and barely comes on top. " +
 			"Surely the Master Die must be worth all the trouble!",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 		
 		bot.insertApprenticeDice();
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
-		return doContestRoll(getName(), sides);
+	public int onContestRoll() {
+		return doContestRoll(name(), sides);
 	}
 	
 	private int doContestRoll(String dieName, int sides) {
-		int result = bot.getRollFor(owner, sides);
+		int result = bot.getRoll(owner, sides);
 		String resultStr = resultStr(result);
 		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
@@ -67,12 +67,17 @@ public class MasterDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "The Master Die";
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public int sides() {
+		return sides;
+	}
+	
+	@Override
+	public float spawnChance() {
 		return 0.25f;
 	}
 	
@@ -96,13 +101,18 @@ public class MasterDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			return doContestRoll(getName(), sides);
+		public int onContestRoll() {
+			return doContestRoll(name(), sides);
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "The One Die";
+		}
+		
+		@Override
+		public int sides() {
+			return sides;
 		}
 		
 		@Override

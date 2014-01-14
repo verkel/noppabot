@@ -9,10 +9,12 @@ import noppabot.spawns.*;
 
 
 public class ExtremeDie extends BasicPowerup {
+	
+	private static final int sides = 100;
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("An %s appears!", getNameColored());
+		bot.sendChannelFormat("An %s appears!", nameColored());
 	}
 
 	@Override
@@ -24,15 +26,16 @@ public class ExtremeDie extends BasicPowerup {
 	public void onPickup() {
 		bot.sendChannelFormat(
 			"%s grabs the %s! You discuss about various subcultures popular with radical dice.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
-		return doContestRoll(getName(), 100, roll);
+	public int onContestRoll() {
+		return doContestRoll(name(), sides);
 	}
 
-	private int doContestRoll(String dieName, int sides, int roll) {
+	private int doContestRoll(String dieName, int sides) {
+		int roll = roll(sides);
 		if (roll == 100) {
 			bot.sendChannelFormat("%s rolls d%d with the extreme die! %s! That's the most extreme roll and the die is ecstatic!", 
 				ownerColored, sides, resultStr(roll)); 
@@ -53,8 +56,13 @@ public class ExtremeDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Extreme Die";
+	}
+	
+	@Override
+	public int sides() {
+		return sides;
 	}
 	
 	@Override
@@ -77,14 +85,18 @@ public class ExtremeDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			int newRoll = bot.getRollFor(owner, sides);
-			return doContestRoll(getName(), sides, newRoll);
+		public int onContestRoll() {
+			return doContestRoll(name(), sides);
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Daring Die";
+		}
+		
+		@Override
+		public int sides() {
+			return sides;
 		}
 		
 		@Override

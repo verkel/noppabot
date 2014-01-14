@@ -27,7 +27,7 @@ public abstract class Event implements ISpawnable {
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 1;
 	}
 	

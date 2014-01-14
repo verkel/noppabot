@@ -11,7 +11,7 @@ public class ApprenticeDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("An %s appears!", getNameColored());
+		bot.sendChannelFormat("An %s appears!", nameColored());
 	}
 
 	@Override
@@ -22,14 +22,14 @@ public class ApprenticeDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and it looks forward to learning from the Master Die.", 
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 	
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
 		bot.sendChannelFormat("%s rolls with the apprentice die, but it really just wanted " +
 			"to see the Master Die do it, first.", ownerColored);
-		return super.onContestRoll(roll); // Normal behaviour
+		return super.onContestRoll(); // Normal behaviour
 	}
 	
 	@Override
@@ -39,10 +39,14 @@ public class ApprenticeDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Apprentice Die";
 	}
 	
+	@Override
+	public int sides() {
+		return 100;
+	}
 	
 	@Override
 	public boolean isUpgradeable() {

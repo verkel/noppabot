@@ -13,7 +13,7 @@ public class RollingProfessional extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -24,11 +24,12 @@ public class RollingProfessional extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("The %s will assist %s in tonight's roll.", 
-			getNameColored(), ownerColored);
+			nameColored(), ownerColored);
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
+	public int onContestRoll() {
+		int roll = roll();
 		if (roll >= minRoll) {
 			sendDefaultContestRollMessage(roll);
 			bot.sendChannelFormat(
@@ -45,9 +46,14 @@ public class RollingProfessional extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Rolling Professional";
-	}	
+	}
+	
+	@Override
+	public int sides() {
+		return 100;
+	}
 	
 	@Override
 	public boolean isUpgradeable() {
@@ -69,7 +75,8 @@ public class RollingProfessional extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
+		public int onContestRoll() {
+			int roll = roll();
 			if (roll >= minRoll) {
 				sendDefaultContestRollMessage(roll);
 				bot.sendChannelFormat(
@@ -86,7 +93,7 @@ public class RollingProfessional extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Rolling Professor";
 		}
 		

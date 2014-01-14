@@ -12,7 +12,7 @@ public class DiceBros extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("The %s appear!", getNameColored());
+		bot.sendChannelFormat("The %s appear!", nameColored());
 	}
 
 	@Override
@@ -23,17 +23,23 @@ public class DiceBros extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s! They will show off their rolling skills tonight.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
-	public int onContestRoll(int marioRoll) {
-		int luigiRoll = bot.getRollFor(owner, 100);
+	public int onContestRoll() {
+		/*
+		 * Mario & Luigi actually don't consume your rolls. It would be hard to
+		 * make Super Mario & Luigi do so, and we should keep the same
+		 * behaviour with the normal guys.
+		 */
+		int marioRoll = bot.getRoll("Mario", 100);
+		int luigiRoll = bot.getRoll("Luigi", 100);
+		
 		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %d! Luigi Dice rolls %d!",
 			owner, marioRoll, luigiRoll);
-		return chooseBetterRoll(marioRoll, luigiRoll);
 		
-//		return 100 - Math.abs(marioRoll - luigiRoll);
+		return chooseBetterRoll(marioRoll, luigiRoll);
 	}
 
 	private int chooseBetterRoll(int marioRoll, int luigiRoll) {
@@ -56,10 +62,14 @@ public class DiceBros extends BasicPowerup {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Dice Bros.";
 	}
 
+	@Override
+	public int sides() {
+		return 100;
+	}
 	
 	@Override
 	public boolean isUpgradeable() {
@@ -72,7 +82,7 @@ public class DiceBros extends BasicPowerup {
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.5f;
 	}
 	
@@ -93,19 +103,26 @@ public class DiceBros extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int marioRoll) {
-			int luigiRoll = bot.getRollFor(owner, 100);
-
+		public int onContestRoll() {
 			bot.sendChannelFormat("The Super Dice bros. roll for %s.", owner);
-			marioRoll = marioItem.onContestRoll(marioRoll);
-			luigiRoll = luigiItem.onContestRoll(luigiRoll);
+			
+			int marioRoll = marioItem.onContestRoll();
+			int luigiRoll = luigiItem.onContestRoll();
 			
 			return chooseBetterRoll(marioRoll, luigiRoll);
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Super Dice Bros.";
+		}
+		
+		@Override
+		public int sides() {
+			//return marioItem.getSides();
+			
+			// Alas, we cannot make Super Mario consume your rolls.
+			return 100;
 		}
 		
 		@Override

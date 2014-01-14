@@ -20,13 +20,13 @@ public class VariableDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s. It's the d%d!", 
-			ownerColored, getNameColored(), sides);
+			ownerColored, nameColored(), sides);
 	}
 
 	@Override
@@ -35,13 +35,13 @@ public class VariableDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll(int roll) {
-		int result = doContestRoll(getName());
+	public int onContestRoll() {
+		int result = doContestRoll(name());
 		return result;
 	}
 
 	private int doContestRoll(String dieName) {
-		int result = bot.getRollFor(owner, sides);
+		int result = bot.getRoll(owner, sides);
 		String resultStr = resultStr(result);
 		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
@@ -50,8 +50,13 @@ public class VariableDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Variable Die";
+	}
+	
+	@Override
+	public int sides() {
+		return sides;
 	}
 	
 	@Override
@@ -77,13 +82,13 @@ public class VariableDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll(int roll) {
-			int result = doContestRoll(getName());
+		public int onContestRoll() {
+			int result = doContestRoll(name());
 			return result;
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Chaos Die";
 		}
 		

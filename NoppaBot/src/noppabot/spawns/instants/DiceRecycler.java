@@ -11,7 +11,7 @@ import noppabot.spawns.*;
 public class DiceRecycler extends Instant {
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -35,12 +35,12 @@ public class DiceRecycler extends Instant {
 		Powerup oldPowerup = bot.getPowerups().get(owner);
 		bot.getPowerups().remove(owner);
 		bot.sendChannelFormat("The recycler tosses %s's %s into a peculiar shredder machine. " +
-			"One moment later, something pops out:", ownerColored, oldPowerup.getNameColored());
+			"One moment later, something pops out:", ownerColored, oldPowerup.nameColored());
 		bot.scheduleRandomSpawn(null, Powerups.firstPowerup, null);
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Dice Recycler";
 	}
 }

@@ -15,7 +15,12 @@ public abstract class Instant extends BasicPowerup {
 	}
 	
 	@Override
-	public String getNameColored() {
-		return ColorStr.instant(getName());
+	public String nameColored() {
+		return ColorStr.instant(name());
+	}
+	
+	@Override
+	public int sides() {
+		return -1;
 	}
 }
