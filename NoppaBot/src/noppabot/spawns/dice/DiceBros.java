@@ -28,8 +28,13 @@ public class DiceBros extends BasicPowerup {
 
 	@Override
 	public int onContestRoll() {
-		int marioRoll = roll();
-		int luigiRoll = roll();
+		/*
+		 * Mario & Luigi actually don't consume your rolls. It would be hard to
+		 * make Super Mario & Luigi do so, and we should keep the same
+		 * behaviour with the normal guys.
+		 */
+		int marioRoll = bot.getRoll("Mario", 100);
+		int luigiRoll = bot.getRoll("Luigi", 100);
 		
 		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %d! Luigi Dice rolls %d!",
 			owner, marioRoll, luigiRoll);
@@ -114,7 +119,10 @@ public class DiceBros extends BasicPowerup {
 		
 		@Override
 		public int getSides() {
-			return marioItem.getSides();
+			//return marioItem.getSides();
+			
+			// Alas, we cannot make Super Mario consume your rolls.
+			return 100;
 		}
 		
 		@Override

@@ -110,7 +110,7 @@ public abstract class BasicPowerup extends Powerup {
 	
 	@Override
 	public int roll(int sides) {
-		return bot.doNormalRoll(owner, sides);
+		return bot.getRoll(owner, sides);
 	}
 	
 	public void sendDefaultContestRollMessage(int roll) {
