@@ -7,5 +7,5 @@ package noppabot.spawns;
 import noppabot.IColorStrConvertable;
 
 public interface ISpawnable extends IColorStrConvertable {
-	public float getSpawnChance();
+	public float spawnChance();
 }

@@ -13,7 +13,7 @@ public class FastDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class FastDie extends BasicPowerup {
 	public void onPickup() {
 		bot.sendChannelFormat(
 			"%s quickly grabs the %s! It asks you if you can throw it even faster when the time comes.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
@@ -44,17 +44,17 @@ public class FastDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Fast Die";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return 100;
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.50f;
 	}
 	
@@ -93,7 +93,7 @@ public class FastDie extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Faster Die";
 		}
 		

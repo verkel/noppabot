@@ -35,11 +35,13 @@ public abstract class EvolvedPowerup extends Powerup {
 		base.setOwner(owner);
 	}
 	
-	protected String owner() {
+	@Override
+	public String owner() {
 		return base.owner();
 	}
 	
-	protected String ownerColored() {
+	@Override
+	public String ownerColored() {
 		return base.ownerColored();
 	}
 	
@@ -52,13 +54,13 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
-	public String getNameColored() {
-		return ColorStr.evolvedPowerup(getName());
+	public String nameColored() {
+		return ColorStr.evolvedPowerup(name());
 	}
 	
 	@Override
-	public int getSides() {
-		return base.getSides();
+	public int sides() {
+		return base.sides();
 	}
 	
 	@Override
@@ -67,7 +69,7 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
-	public INoppaBot getBot() {
-		return base.getBot();
+	public INoppaBot bot() {
+		return base.bot();
 	}
 }

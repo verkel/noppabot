@@ -14,7 +14,7 @@ public class DicePirate extends Instant {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class DicePirate extends Instant {
 		if (bot.getPowerups().containsKey(nick)) { // Has item
 			Powerup powerup = bot.getPowerups().get(nick);
 			bot.sendChannelFormat("%s: you already have the %s! You wouldn't be able to carry any " +
-				"loot stolen by the pirate.", ownerColored, powerup.getNameColored());
+				"loot stolen by the pirate.", ownerColored, powerup.nameColored());
 			return false;
 		}
 		else return true;
@@ -37,7 +37,7 @@ public class DicePirate extends Instant {
 	public void onPickup() {
 		Map<String, Powerup> powerups = bot.getPowerups();
 		bot.sendChannelFormat("The %s will plunder dice and other shiny things for 100 gold dubloons! " +
-			"%s gladly pays him.", getNameColored(), ownerColored);
+			"%s gladly pays him.", nameColored(), ownerColored);
 		Random rnd = new Random();
 		Set<String> owners = new TreeSet<String>(powerups.keySet());
 		int size = owners.size();
@@ -55,7 +55,7 @@ public class DicePirate extends Instant {
 		}
 		
 		if (targetOwner == null) {
-			bot.sendChannelFormat("There was no loot in sight for the %s and he just runs off with your gold.", getNameColored());
+			bot.sendChannelFormat("There was no loot in sight for the %s and he just runs off with your gold.", nameColored());
 			powerups.remove(owner);
 		}
 		else {
@@ -63,17 +63,17 @@ public class DicePirate extends Instant {
 			powerups.put(owner, stolenPowerup);
 			stolenPowerup.setOwner(owner);
 			bot.sendChannelFormat("%s's %s was stolen by the pirate!", 
-				ColorStr.nick(targetOwner), stolenPowerup.getNameColored());
+				ColorStr.nick(targetOwner), stolenPowerup.nameColored());
 		}
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "DicePirate";
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.75f;
 	}
 }

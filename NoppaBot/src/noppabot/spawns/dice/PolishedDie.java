@@ -14,12 +14,12 @@ public class PolishedDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the %s.", ownerColored, getNameColored());
+		bot.sendChannelFormat("%s grabs the %s.", ownerColored, nameColored());
 	}
 
 	@Override
@@ -40,12 +40,12 @@ public class PolishedDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Polished Die";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return 100;
 	}
 	
@@ -81,7 +81,7 @@ public class PolishedDie extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return name;
 		}
 		

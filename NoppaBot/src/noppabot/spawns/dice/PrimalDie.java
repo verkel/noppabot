@@ -22,7 +22,7 @@ public class PrimalDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class PrimalDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and gains knowledge about prime numbers.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
@@ -57,12 +57,12 @@ public class PrimalDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Primal Die";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return 100;
 	}
 	
@@ -139,7 +139,7 @@ public class PrimalDie extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Tribal Die";
 		}
 		

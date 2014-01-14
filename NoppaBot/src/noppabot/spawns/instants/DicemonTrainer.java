@@ -11,7 +11,7 @@ public class DicemonTrainer extends Instant {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 	
 	@Override
@@ -40,9 +40,9 @@ public class DicemonTrainer extends Instant {
 	@Override
 	public void onPickup() {
 		Powerup oldPowerup = bot.getPowerups().get(owner);
-		String oldName = oldPowerup.getNameColored();
+		String oldName = oldPowerup.nameColored();
 		Powerup newPowerup = oldPowerup.upgrade();
-		String newName = newPowerup.getNameColored();
+		String newName = newPowerup.nameColored();
 		String descr = newPowerup.getUpgradeDescription();
 		bot.getPowerups().put(owner, newPowerup);
 		bot.sendChannelFormat("The trainer unlocks the hidden potential in your die!");
@@ -50,12 +50,12 @@ public class DicemonTrainer extends Instant {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return NAME;
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 2f;
 	}
 }

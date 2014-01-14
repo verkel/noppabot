@@ -16,7 +16,7 @@ public class Present extends Instant {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class Present extends Instant {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Present";
 	}
 }

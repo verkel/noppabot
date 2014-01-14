@@ -23,7 +23,7 @@ public class FourthWallBreaks extends Event {
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 1.0f;
 	}
 }

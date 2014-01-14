@@ -14,7 +14,7 @@ public class ExtremeDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("An %s appears!", getNameColored());
+		bot.sendChannelFormat("An %s appears!", nameColored());
 	}
 
 	@Override
@@ -26,12 +26,12 @@ public class ExtremeDie extends BasicPowerup {
 	public void onPickup() {
 		bot.sendChannelFormat(
 			"%s grabs the %s! You discuss about various subcultures popular with radical dice.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
 	public int onContestRoll() {
-		return doContestRoll(getName(), sides);
+		return doContestRoll(name(), sides);
 	}
 
 	private int doContestRoll(String dieName, int sides) {
@@ -56,12 +56,12 @@ public class ExtremeDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Extreme Die";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return sides;
 	}
 	
@@ -86,16 +86,16 @@ public class ExtremeDie extends BasicPowerup {
 		
 		@Override
 		public int onContestRoll() {
-			return doContestRoll(getName(), sides);
+			return doContestRoll(name(), sides);
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Daring Die";
 		}
 		
 		@Override
-		public int getSides() {
+		public int sides() {
 			return sides;
 		}
 		

@@ -30,13 +30,13 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 		// Compute sum of spawn chances
 		float sum = 0f;
 		for (S s : spawnables) {
-			sum += s.getSpawnChance();
+			sum += s.spawnChance();
 		}
 		
 		// Build the probability distribution
 		float chanceCeil = 0f;
 		for (S s : spawnables) {
-			chanceCeil += s.getSpawnChance() / sum;
+			chanceCeil += s.spawnChance() / sum;
 			chances.put(chanceCeil, s);
 		}
 	}

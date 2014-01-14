@@ -8,9 +8,9 @@ import noppabot.*;
 
 public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	
-	public abstract String getName();
+	public abstract String name();
 	
-	public abstract String getNameColored();
+	public abstract String nameColored();
 	
 	public abstract Powerup initialize(INoppaBot bot);
 	
@@ -23,6 +23,29 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	}
 
 	public abstract int onNormalRoll();
+	
+	public boolean canPickUp(String nick) {
+		INoppaBot bot = bot();
+		if (isCarried() && bot.getPowerups().containsKey(nick)) {
+			bot.sendChannelFormat("%s: you already have the %s.", nick, bot.getPowerups().get(nick));
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public void onExpire() {
+		// Generic expire message. 
+		// Evolved powerups can also expire if someone throws them to the ground.
+		bot().sendChannelFormat("... the %s expires.", name());
+	}
+	
+	public void onPickup() {
+		// Generic pickup message. 
+		// Evolved powerups can also be picked up if someone throws them to the ground.
+		bot().sendChannelFormat("%s grabs the %s.", ownerColored(), nameColored());
+	}
+
 
 	/**
 	 * Say the appropriate roll message and return the final roll
@@ -56,7 +79,7 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 1;
 	}
 	
@@ -66,16 +89,16 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	 * Diceteller will use this value to predict a roll of a suitable die, if
 	 * a powerup is equipped.
 	 */
-	public abstract int getSides();
+	public abstract int sides();
 
 	@Override
 	public String toString() {
-		return getName();
+		return name();
 	}
 	
 	@Override
 	public String toStringColored() {
-		return getNameColored();
+		return nameColored();
 	}
 	
 	public abstract int roll(int sides);
@@ -87,22 +110,15 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 		return roll(100);
 	}
 	
-	public abstract INoppaBot getBot();
+	public abstract INoppaBot bot();
+	
+	public abstract String owner();
+	
+	public abstract String ownerColored();
 
 	@Override
 	public boolean equals(Object obj) {
 		// This is useful for removing stuff from the spawning lists
 		return this.getClass().equals(obj.getClass());
 	}
-	
-//	@Override
-//	public int compareTo(Powerup p) {
-//		return cmp(getCost(), p.getCost());
-//	}
-//	
-//	private static int cmp(int c1, int c2) {
-//		return c1 > c2 ? 1 : c1 < c2 ? -1 : 0;
-//	}
-//	
-
 }

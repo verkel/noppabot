@@ -15,7 +15,7 @@ import noppabot.spawns.*;
 public class TrollingProfessional extends Instant {
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class TrollingProfessional extends Instant {
 		SpawnTask task = bot.scheduleSpawn(spawnTime, bomb);
 		
 		bot.sendChannelFormat("%s grabs the %s! %s and the trolling trofessional " +
-			"briefly discuss about something.", owner, getNameColored(), owner);
+			"briefly discuss about something.", owner, nameColored(), owner);
 		
 		bot.sendMessageFormat(owner, "Hi! I set us up the %s on %s. I suggest you don't take it.",
 			ColorStr.basicPowerup(Bomb.BOMB_NAME), task.toStringColored());
@@ -45,12 +45,12 @@ public class TrollingProfessional extends Instant {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Trolling Professional";
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.5f;
 	}
 	
@@ -137,12 +137,12 @@ public class TrollingProfessional extends Instant {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return name;
 		}
 		
 		@Override
-		public int getSides() {
+		public int sides() {
 			return 100;
 		}
 	}

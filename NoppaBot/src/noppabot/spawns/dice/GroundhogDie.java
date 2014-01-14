@@ -11,7 +11,7 @@ public class GroundhogDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class GroundhogDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and ensures that history will repeat itself.", 
-			owner, getNameColored());
+			owner, nameColored());
 	}
 	
 	@Override
@@ -45,17 +45,17 @@ public class GroundhogDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Groundhog Die";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return 100;
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.33f;
 	}
 	
@@ -104,7 +104,7 @@ public class GroundhogDie extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Self-Improving Die";
 		}
 		

@@ -54,13 +54,13 @@ public class BagOfDice extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs and opens the %s! It contains the following dice: %s", 
-			ownerColored, getNameColored(), bagToString());
+			ownerColored, nameColored(), bagToString());
 
 	}
 
@@ -91,12 +91,12 @@ public class BagOfDice extends BasicPowerup {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Bag of Dice";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return diceBag.get(diceBag.size()-1);
 	}
 	
@@ -134,7 +134,7 @@ public class BagOfDice extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Bag of " + manyMany + " Dice";
 		}
 		

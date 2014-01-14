@@ -32,7 +32,7 @@ public class HumongousDie extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s APPEARS!", getNameColored());
+		bot.sendChannelFormat("A %s APPEARS!", nameColored());
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class HumongousDie extends BasicPowerup {
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s GRABS THE %s", ownerColored.toUpperCase(), getNameColored());
+		bot.sendChannelFormat("%s GRABS THE %s", ownerColored.toUpperCase(), nameColored());
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class HumongousDie extends BasicPowerup {
 	
 	public static int doContestRoll(Powerup self, String nick) {
 		int roll = self.roll();
-		sendFigletText(self.getBot(), String.format("%s  rolls  %d !", nick, roll));
+		sendFigletText(self.bot(), String.format("%s  rolls  %d !", nick, roll));
 		return roll;
 	}
 	
@@ -69,17 +69,17 @@ public class HumongousDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "HUMONGOUS DIE";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return 100;
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.33f;
 	}
 	

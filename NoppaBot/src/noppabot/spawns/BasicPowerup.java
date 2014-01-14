@@ -23,11 +23,6 @@ public abstract class BasicPowerup extends Powerup {
 	}
 	
 	@Override
-	public INoppaBot getBot() {
-		return bot;
-	}
-
-	@Override
 	public final void setOwner(String owner) {
 		this.owner = owner;
 		this.ownerColored = colorOwner ? ColorStr.nick(owner) : owner;
@@ -39,8 +34,8 @@ public abstract class BasicPowerup extends Powerup {
 	}
 	
 	@Override
-	public String getNameColored() {
-		return ColorStr.basicPowerup(getName());
+	public String nameColored() {
+		return ColorStr.basicPowerup(name());
 	}
 	
 	public void doInitialize() {
@@ -51,15 +46,9 @@ public abstract class BasicPowerup extends Powerup {
 	 * it won't be called when a dice pirate generates a new item.
 	 */
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
-	public void onPickup() {
-	}
-
-	public void onExpire() {
-	}
-	
 	public void sendExpireMessageFormat(String msg, Object... args) {
 		bot.sendChannelFormat(ColorStr.expires(msg), args);
 	}
@@ -79,15 +68,6 @@ public abstract class BasicPowerup extends Powerup {
 		return bot.doNormalRoll(owner, 100);
 	}
 	
-	public boolean canPickUp(String nick) {
-		if (isCarried() && bot.getPowerups().containsKey(nick)) {
-			bot.sendChannelFormat("%s: you already have the %s.", nick, bot.getPowerups().get(nick));
-			return false;
-		}
-		
-		return true;
-	}
-	
 	public String resultStr(int roll) {
 		return bot.rollToString(roll, colorRoll);
 	}
@@ -96,14 +76,17 @@ public abstract class BasicPowerup extends Powerup {
 		return bot.clampRoll(roll);
 	}
 	
+	@Override
 	public INoppaBot bot() {
 		return bot;
 	}
 	
+	@Override
 	public String owner() {
 		return owner;
 	}
 	
+	@Override
 	public String ownerColored() {
 		return ownerColored;
 	}

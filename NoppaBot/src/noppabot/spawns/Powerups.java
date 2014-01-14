@@ -55,19 +55,18 @@ public class Powerups {
 		diceStormPowerupsList.removeAll(Arrays.asList(new DicePirate()));
 		
 		allEventsList.addAll(Arrays.asList(new DiceMutation(), new DiceStorm(), 
-			new FourthWallBreaks()/*, new RulesChange()*/));
-		// FIXME rules change reseting seems to 
+			new FourthWallBreaks(), new RulesChange()));
 		
 		allEventsMinusFourthWallList.addAll(allEventsList);
 		allEventsMinusFourthWallList.remove(new FourthWallBreaks());
 		
-		LastSpawn lastPowerup = new LastSpawn();
-		LastSpawn lastEvent = new LastSpawn();
+		LastSpawn<BasicPowerup> lastPowerup = new LastSpawn<BasicPowerup>();
+		LastSpawn<Event> lastEvent = new LastSpawn<Event>();
 		
 		allPowerups = new Spawner<BasicPowerup>(allPowerupsList, lastPowerup);
 		firstPowerup = new Spawner<BasicPowerup>(firstPowerupList, lastPowerup);
 		diceStormPowerups = new Spawner<BasicPowerup>(diceStormPowerupsList, lastPowerup);
-		diceBrosPowerups = new Spawner<BasicPowerup>(diceBrosPowerupsList, new LastSpawn());
+		diceBrosPowerups = new Spawner<BasicPowerup>(diceBrosPowerupsList, new LastSpawn<BasicPowerup>());
 		allEvents = new Spawner<Event>(allEventsList, lastEvent);
 		allEventsMinusFourthWall = new Spawner<Event>(allEventsMinusFourthWallList, lastEvent);
 	}

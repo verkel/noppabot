@@ -14,7 +14,7 @@ public class WeightedDie extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", getNameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class WeightedDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s. It weighs just the right amount!", 
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
@@ -42,12 +42,12 @@ public class WeightedDie extends BasicPowerup {
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		return "Weighted Die";
 	}
 	
 	@Override
-	public int getSides() {
+	public int sides() {
 		return 100;
 	}
 	

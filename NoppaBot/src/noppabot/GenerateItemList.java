@@ -7,6 +7,7 @@ package noppabot;
 import java.io.*;
 import java.util.*;
 
+import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
@@ -204,12 +205,12 @@ public class GenerateItemList {
 	class RegularDie extends BasicPowerup {
 
 		@Override
-		public String getName() {
+		public String name() {
 			return "Regular Die";
 		}
 
 		@Override
-		public int getSides() {
+		public int sides() {
 			return 100;
 		}
 	}
@@ -454,7 +455,7 @@ public class GenerateItemList {
 	private TestBot bot = new TestBot();
 	
 	class TestBot implements INoppaBot {
-		private Rules rules = new Rules();
+		private Rules rules = new Rules(this);
 		
 		@Override
 		public void sendChannelFormat(String msg, Object... args) {
@@ -590,6 +591,11 @@ public class GenerateItemList {
 		@Override
 		public int peekRoll(String nick, int sides) {
 			return 0;
+		}
+
+		@Override
+		public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
+			return null;
 		}
 	}
 	

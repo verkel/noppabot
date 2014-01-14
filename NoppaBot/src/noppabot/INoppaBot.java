@@ -6,6 +6,7 @@ package noppabot;
 
 import java.util.*;
 
+import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 
@@ -66,4 +67,6 @@ public interface INoppaBot {
 	String rollToString(int roll, boolean colorRoll);
 	
 	public int doNormalRoll(String nick, int sides);
+
+	ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime);
 }

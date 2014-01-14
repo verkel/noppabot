@@ -12,7 +12,7 @@ public class DiceBros extends BasicPowerup {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("The %s appear!", getNameColored());
+		bot.sendChannelFormat("The %s appear!", nameColored());
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class DiceBros extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s! They will show off their rolling skills tonight.",
-			ownerColored, getNameColored());
+			ownerColored, nameColored());
 	}
 
 	@Override
@@ -62,12 +62,12 @@ public class DiceBros extends BasicPowerup {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Dice Bros.";
 	}
 
 	@Override
-	public int getSides() {
+	public int sides() {
 		return 100;
 	}
 	
@@ -82,7 +82,7 @@ public class DiceBros extends BasicPowerup {
 	}
 	
 	@Override
-	public float getSpawnChance() {
+	public float spawnChance() {
 		return 0.5f;
 	}
 	
@@ -113,12 +113,12 @@ public class DiceBros extends BasicPowerup {
 		}
 		
 		@Override
-		public String getName() {
+		public String name() {
 			return "Super Dice Bros.";
 		}
 		
 		@Override
-		public int getSides() {
+		public int sides() {
 			//return marioItem.getSides();
 			
 			// Alas, we cannot make Super Mario consume your rolls.

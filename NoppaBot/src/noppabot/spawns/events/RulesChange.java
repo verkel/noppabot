@@ -20,7 +20,7 @@ public class RulesChange extends Event {
 
 	public static String doRandomRulesChange(INoppaBot bot) {
 		Rules rules = bot.getRules();
-		int rnd = Powerups.powerupRnd.nextInt(3);
+		int rnd = Powerups.powerupRnd.nextInt(4);
 		String explanation;
 		if (rnd == 0) {
 			explanation = changeToUncappedRolls(rules);
@@ -30,6 +30,9 @@ public class RulesChange extends Event {
 		}
 		else if (rnd == 2) {
 			explanation = changeToRollClosestToTargetWins(rules);
+		}
+		else if (rnd == 3) {
+			explanation = changeToCanDropItems(rules);
 		}
 		else {
 			throw new IllegalStateException();
@@ -43,17 +46,22 @@ public class RulesChange extends Event {
 		int rollTarget = Powerups.powerupRnd.nextInt(100) + 1;
 		rules.rollTarget = rollTarget;
 		rules.winCondition = rules.ROLL_CLOSEST_TO_TARGET;
-		return String.format("The roll closest to number %d now wins the contest!", rollTarget);
+		return rules.winCondition.getExplanation();
 	}
 
 	public static String changeToLowestRollWins(Rules rules) {
 		rules.winCondition = rules.LOWEST_ROLL;
-		return "The lowest roll now wins the contest!";
+		return rules.winCondition.getExplanation();
 	}
 
 	public static String changeToUncappedRolls(Rules rules) {
 		rules.cappedRolls = false;
-		return "The rolls are now not limited to the 0-100 range.";
+		return Rules.EXPLAIN_UNCAPPED_ROLLS;
+	}
+	
+	public static String changeToCanDropItems(Rules rules) {
+		rules.canDropItems = true;
+		return Rules.EXPLAIN_CAN_DROP_ITEMS;
 	}
 	
 	@Override
