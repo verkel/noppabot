@@ -307,7 +307,7 @@ public class GenerateItemList {
 		addEntry("Dice Pirate", "DicePirate.png", dicePirateDesc, null);
 		addEntry("Dice Recycler", "Placeholder.png", diceRecyclerDesc, null);
 		testDiceteller();
-		addEntry("Trolling Professional", "Locked.png", trollingProfessionalDesc, null);
+		addEntry("Trolling Professional", "Placeholder.png", trollingProfessionalDesc, null);
 	}
 	
 	private void listEvents(StringBuilder buf) {
@@ -630,7 +630,9 @@ public class GenerateItemList {
 	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d150, d160.";
 	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
 	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one to the ground, for anyone to grab.";
-	private static final String trollingProfessionalDesc = undiscovered;
+	private static final String trollingProfessionalDesc = "On pickup, creates a random item spawn which is actually a bomb. The person who picked " +
+			"the trolling professional is informed which item is rigged with the bomb. The bomb has the name of a regular item; " +
+			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll.";
 	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
 	
 	private static final String diceMutationDesc = "Some of the currently owned items mutate into more powerful dice. " +
