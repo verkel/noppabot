@@ -1275,6 +1275,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		for (SpawnTask task : spawnTasks) {
 			if (task.getPowerup() != null && commonRandom.nextFloat() < 0.15f) {
 				ApprenticeDie apprenticeDie = new ApprenticeDie();
+				apprenticeDie.initialize(this);
 				task.spawn = apprenticeDie;
 				task.expireTask.powerup = apprenticeDie;
 			}
