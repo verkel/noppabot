@@ -612,11 +612,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 
 	private void autorollFor(String nick) {
-		if (!hasFavor(nick)) return;
+		if (autorolls.contains(nick)) {
+			sendChannelFormat("%s: you've already requested me to autoroll for you.", ColorStr.nick(nick));
+			return;
+		}
+		else if (!hasFavor(nick)) return;
+		
 		favorsUsed.add(nick);
-		
 		sendChannelFormat("%s: ok, I will roll for you tonight.", ColorStr.nick(nick));
-		
 		autorolls.add(nick);
 	}
 
