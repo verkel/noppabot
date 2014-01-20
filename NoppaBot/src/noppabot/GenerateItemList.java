@@ -258,7 +258,7 @@ public class GenerateItemList {
 	
 	private void testEvolvedDice() {
 		testEvolvedPowerup("Very Polished Die", "Placeholder.png", veryPolishedDieDesc, new PolishedDie().upgrade(), bot);
-		testEvolvedPowerup("Crushing Die", "Locked.png", crushingDieDesc, new WeightedDie().upgrade(), bot);
+		testEvolvedPowerup("Crushing Die", "Placeholder.png", crushingDieDesc, new WeightedDie().upgrade(), bot);
 		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(), bot);
 		testEvolvedPowerup("Tribal Die", "Placeholder.png", tribalDieDesc, new PrimalDie().upgrade(), bot);
 		testEvolvedPowerup("Jackpot Die", "Placeholder.png", jackpotDieDesc, new LuckyDie().upgrade(), bot);
@@ -642,7 +642,7 @@ public class GenerateItemList {
 	private static final String rulesChangeDesc = "Randomly <a href='#rulechanges'>changes one rule</a> for the next rolling contest.";
 	
 	private static final String veryPolishedDieDesc = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
-	private static final String crushingDieDesc = undiscovered; // = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
+	private static final String crushingDieDesc = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
 	private static final String potentDieDesc = "Gives a +20 bonus.";
 	private static final String tribalDieDesc = "In addition to primal die's effect, you get +10 bonus for every prime rolled by an opponent.";
 	private static final String jackpotDieDesc = "Gives a +40 bonus if the roll contains any sevens";
