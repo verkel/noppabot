@@ -686,6 +686,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			for (String nick : powerups.keySet()) {
 				String powerupName = powerups.get(nick).nameColored();
 				if (!first) buf.append(", ");
+				if (!isRollPeriodStart) nick = Color.antiHilight(nick);
 				buf.append(String.format("%s (%s)", powerupName, nick));
 				first = false;
 			}
@@ -708,7 +709,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			String nick = entry.getKey();
 			int roll = entry.getValue();
 			if (!first) buf.append(", ");
-			buf.append(String.format("%s %s(%s)", colorRoll(roll), offTargetInfo(roll), nick));
+			buf.append(String.format("%s %s(%s)", colorRoll(roll), offTargetInfo(roll), Color.antiHilight(nick)));
 			first = false;
 		}
 		if (buf.length() > 0) sendChannel(buf.toString());

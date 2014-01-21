@@ -58,4 +58,8 @@ public class Color {
 	public static String hilight(String msg) {
 		return custom(msg, Colors.WHITE);
 	}
+	
+	public static String antiHilight(String nick) {
+		return nick.charAt(0) + Colors.BOLD + Colors.BOLD + nick.substring(1);
+	}
 }
