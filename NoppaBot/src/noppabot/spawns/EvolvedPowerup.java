@@ -26,11 +26,6 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
-	public int onNormalRoll() {
-		return base.onNormalRoll();
-	}
-	
-	@Override
 	public final void setOwner(String owner) {
 		base.setOwner(owner);
 	}

@@ -60,12 +60,7 @@ public abstract class BasicPowerup extends Powerup {
 	 */
 	@Override
 	public int onContestRoll() {
-		return bot.doNormalRoll(owner, 100);
-	}
-	
-	@Override
-	public int onNormalRoll() {
-		return bot.doNormalRoll(owner, 100);
+		return bot.doRoll(owner, 100);
 	}
 	
 	public String resultStr(int roll) {

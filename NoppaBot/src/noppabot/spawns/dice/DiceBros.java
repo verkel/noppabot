@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 import noppabot.spawns.*;
 
 
@@ -36,8 +36,8 @@ public class DiceBros extends BasicPowerup {
 		int marioRoll = bot.getRoll("Mario", 100);
 		int luigiRoll = bot.getRoll("Luigi", 100);
 		
-		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %d! Luigi Dice rolls %d!",
-			owner, marioRoll, luigiRoll);
+		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %s! Luigi Dice rolls %s!",
+			owner, ColorStr.hilight(marioRoll), ColorStr.hilight(luigiRoll));
 		
 		return chooseBetterRoll(marioRoll, luigiRoll);
 	}

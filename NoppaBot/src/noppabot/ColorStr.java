@@ -50,4 +50,12 @@ public class ColorStr {
 	public static String expires(String expireMsg) {
 		return custom(expireMsg, Colors.NORMAL);
 	}
+	
+	public static String hilight(int number) {
+		return hilight(String.valueOf(number));
+	}
+
+	public static String hilight(String msg) {
+		return custom(msg, Colors.WHITE);
+	}
 }

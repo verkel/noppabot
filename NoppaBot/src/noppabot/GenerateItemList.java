@@ -585,7 +585,7 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public int doNormalRoll(String nick, int sides) {
+		public int doRoll(String nick, int sides) {
 			return getRoll(nick, sides);
 		}
 

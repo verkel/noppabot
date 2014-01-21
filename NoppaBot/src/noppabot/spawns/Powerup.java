@@ -22,8 +22,6 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	public void onTiebreakPeriodStart() {
 	}
 
-	public abstract int onNormalRoll();
-	
 	public boolean canPickUp(String nick) {
 		INoppaBot bot = bot();
 		if (isCarried() && bot.getPowerups().containsKey(nick)) {
