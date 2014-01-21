@@ -72,7 +72,7 @@ public class TrollingProfessional extends Instant {
 			"Master Die",
 			"Polished Die",
 			"Primal Die",
-			"Rolling Professional",
+			"Trusty Die",
 			"Weighted Die"
 		};
 		
@@ -80,15 +80,15 @@ public class TrollingProfessional extends Instant {
 			"Bag of Die",
 			"Dice Pros",
 			"Enchaented Die",
-			"Xxtreme Die",
+			"Xtreme Die",
 			"Fats Die",
 			"Groinhog Die",
 			"Humungus Die",
 			"Lucky Dye",
 			"Master Dei",
 			"Polishd Die",
-			"Pirmal Die",
-			"Rolling Professioanal",
+			"Staedy Die",
+			"Rolling Professioanal", // I left this after rolling pro revamp... just because
 			"Weigthed Die"
 		};
 		

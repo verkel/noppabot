@@ -11,7 +11,6 @@ import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import noppabot.spawns.instants.RollingProfessional;
 
 public class GenerateItemList {
 
@@ -22,9 +21,9 @@ public class GenerateItemList {
 	
 	private List<TestResult> results = new ArrayList<TestResult>();
 	private Random rnd = new Random();
-//	private static final int iterations = 1000000; // test
+	private static final int iterations = 1000000; // test
 //	private static final int iterations = 10000000; // good accuracy
-	private static final int iterations = 100000000; // excellent accuracy
+//	private static final int iterations = 100000000; // excellent accuracy
 	
 	public Map<String, TestResult> resultsCache;
 	private Mode mode;
@@ -238,8 +237,6 @@ public class GenerateItemList {
 		}, bot, false, DiceType.BASIC);
 		
 		addEntry("Groundhog Die", "GroundhogDie.png", groundhogDieDesc, "Self-Improving Die");
-		testBasicPowerup("Rolling Professional", "RollingProfessional.png", rollingProfessionalDesc,
-			"Rolling Professor", new RollingProfessional(), bot);
 
 		addEntry("Apprentice Die", "ApprenticeDie.png", apprenticeDieDesc, "Master Die");
 		testBasicPowerup("Dice Bros.", "Placeholder.png", diceBrosDesc, "Super Dice Bros", new DiceBros(), bot);
@@ -255,11 +252,13 @@ public class GenerateItemList {
 		
 		// Figlet runs take time so we don't want to actually test the humongous die
 		testBasicPowerup("Humongous Die", "Placeholder.png", humongousDieDesc, "Humongous Crushing Die", new RegularDie(), bot);
+
+		testBasicPowerup("Steady Die", "Locked.png", steadyDieDesc, "Trusty Die", new SteadyDie(), bot);
 	}
 	
 	private void testEvolvedDice() {
 		testEvolvedPowerup("Very Polished Die", "Placeholder.png", veryPolishedDieDesc, new PolishedDie().upgrade(), bot);
-		testEvolvedPowerup("Crushing Die", "Placeholder.png", crushingDieDesc, new WeightedDie().upgrade(), bot);
+		testEvolvedPowerup("Crushing Die", "Placeholder.png", crushingDieDesc, new WeightedDie().initialize(bot).upgrade(), bot);
 		testEvolvedPowerup("Potent Die", "Placeholder.png", potentDieDesc, new EnchantedDie().upgrade(), bot);
 		testEvolvedPowerup("Tribal Die", "Placeholder.png", tribalDieDesc, new PrimalDie().upgrade(), bot);
 		testEvolvedPowerup("Jackpot Die", "Placeholder.png", jackpotDieDesc, new LuckyDie().upgrade(), bot);
@@ -278,8 +277,6 @@ public class GenerateItemList {
 		}, bot, false, DiceType.EVOLVED);
 		
 		addEntry("Self-Improving Die", "Placeholder.png", selfImprovingDieDesc, null);
-		testEvolvedPowerup("Rolling Professor", "Placeholder.png", rollingProfessorDesc,
-			new RollingProfessional().upgrade(), bot);
 
 		testPowerup("Super Dice Bros", "Locked.png", superDiceBrosDesc, null, new Builder() {
 			@Override
@@ -301,6 +298,8 @@ public class GenerateItemList {
 		
 		// Figlet runs take time so we don't want to actually test the humongous die
 		testEvolvedPowerup("Humongous Crushing Die", "Placeholder.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(), bot);
+	
+		testEvolvedPowerup("Trusty Die", "Locked.png", trustyDieDesc, new SteadyDie().upgrade(), bot);
 	}
 	
 	private void listInstants() {
@@ -308,6 +307,8 @@ public class GenerateItemList {
 		addEntry("Dice Pirate", "DicePirate.png", dicePirateDesc, null);
 		addEntry("Dice Recycler", "Placeholder.png", diceRecyclerDesc, null);
 		testDiceteller();
+		addEntry("Rolling Professional", "Locked.png", rollingProfessionalDesc, null);
+		addEntry("Rolling Professor", "Locked.png", rollingProfessorDesc, null);
 		addEntry("Trolling Professional", "Placeholder.png", trollingProfessionalDesc, null);
 	}
 	
@@ -553,7 +554,7 @@ public class GenerateItemList {
 
 		@Override
 		public int clampRoll(int roll) {
-			return 0;
+			return Math.max(0, Math.min(100, roll));
 		}
 
 		@Override
@@ -585,8 +586,7 @@ public class GenerateItemList {
 
 		@Override
 		public int doNormalRoll(String nick, int sides) {
-			// TODO Auto-generated method stub
-			return 0;
+			return getRoll(nick, sides);
 		}
 
 		@Override
@@ -616,8 +616,10 @@ public class GenerateItemList {
 		}
 	}
 	
+	private static final String undiscovered = "<span class='undiscovered'>Undiscovered!</span>";
+	
+	// Basic
 	private static final String regularDieDesc = "Regular die is the d100.";
-	private static final String dicePirateDesc = "Steals item from another contestant.";
 	private static final String luckyDieDesc = "Gives a +25 bonus if the roll contains any sevens.";
 	private static final String bagOfDiceDesc = "Contains 1 to 8 random dice ranging from d4 to d100." +
 		" Your roll result is the summed result from throwing all the dice.";
@@ -626,31 +628,17 @@ public class GenerateItemList {
 	private static final String fastDieDesc = "Gives a bonus of 20 if you roll during the first 10 seconds. After that, the bonus will decrease by 1 per second.";
 	private static final String groundhogDieDesc = "Repeats your yesterday's roll.";
 	private static final String weightedDieDesc = "Gives a +10 bonus.";
-	private static final String rollingProfessionalDesc = "Ensures your roll is at least 50.";
-	private static final String dicetellerDesc = "Tells what your next roll will be.";
 	private static final String enchantedDieDesc = "Gives a +15 bonus.";
 	private static final String extremeDieDesc = "Changes rolls 1..10 and 90..99 into 100.";
 	private static final String masterDieDesc = "Lets you roll the d150 (the result is capped into 100).";
 	private static final String apprenticeDieDesc = "After a master die is rolled, the apprentice " +
 		"die will roll the same result. If the apprentice die ends up in the tiebreaker round, it turns into a master die.";
-	
-	private static final String undiscovered = "<span class='undiscovered'>Undiscovered!</span>";
-	
 	private static final String diceBrosDesc = "Rolls two d100 dice and chooses higher roll as the result.";
 	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d150, d160.";
-	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
-	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one to the ground, for anyone to grab.";
-	private static final String trollingProfessionalDesc = "On pickup, creates a random item spawn which is actually a bomb. The person who picked " +
-			"the trolling professional is informed which item is rigged with the bomb. The bomb has the name of a regular item; " +
-			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll.";
 	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
+	private static final String steadyDieDesc = undiscovered; //"Lets you roll d70 + 30.";
 	
-	private static final String diceMutationDesc = "Some of the currently owned items mutate into more powerful dice. " +
-		"The number of mutated dice is random, and ranges from 1 to all owned dice.";
-	private static final String diceStormDesc = "Spawns from 3 to 5 new items at once.";
-	private static final String fourthWallBreaksDesc = "Reveals all of the events that are yet to happen today.";
-	private static final String rulesChangeDesc = "Randomly <a href='#rulechanges'>changes one rule</a> for the next rolling contest.";
-	
+	// Evolved
 	private static final String veryPolishedDieDesc = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
 	private static final String crushingDieDesc = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
 	private static final String potentDieDesc = "Gives a +20 bonus.";
@@ -664,5 +652,24 @@ public class GenerateItemList {
 	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
 	private static final String humongousCrushingDieDesc = "Deals d10 + 20 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
-	private static final String rollingProfessorDesc = "Ensures your roll is at least 70.";
+	private static final String trustyDieDesc = undiscovered; //"Lets you roll d50 + 50.";
+	
+	// Instant
+	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
+	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one to the ground, for anyone to grab.";
+	private static final String trollingProfessionalDesc = "On pickup, creates a random item spawn which is actually a bomb. The person who picked " +
+			"the trolling professional is informed which item is rigged with the bomb. The bomb has the name of a regular item; " +
+			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll.";
+	private static final String dicetellerDesc = "Tells what your next roll will be.";
+	private static final String dicePirateDesc = "Steals item from another contestant.";
+	
+	// Event
+	private static final String diceMutationDesc = "Some of the currently owned items mutate into more powerful dice. " +
+		"The number of mutated dice is random, and ranges from 1 to all owned dice.";
+	private static final String diceStormDesc = "Spawns from 3 to 5 new items at once.";
+	private static final String fourthWallBreaksDesc = "Reveals all of the events that are yet to happen today.";
+	private static final String rollingProfessionalDesc = undiscovered; // "Adds +5 to your next roll.";
+	private static final String rollingProfessorDesc = undiscovered; // "Adds +10 to your next roll.";
+	private static final String rulesChangeDesc = "Randomly <a href='#rulechanges'>changes one rule</a> for the next rolling contest.";
+
 }
