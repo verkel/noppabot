@@ -78,7 +78,7 @@ public class MasterDie extends BasicPowerup {
 	
 	@Override
 	public float spawnChance() {
-		return 0.25f;
+		return 0.20f;
 	}
 	
 	@Override
