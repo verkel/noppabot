@@ -25,7 +25,7 @@ public abstract class BasicPowerup extends Powerup {
 	@Override
 	public final void setOwner(String owner) {
 		this.owner = owner;
-		this.ownerColored = colorOwner ? ColorStr.nick(owner) : owner;
+		this.ownerColored = colorOwner ? Color.nick(owner) : owner;
 	}
 	
 	public final void setColors(boolean colorOwner, boolean colorRoll) {
@@ -35,7 +35,7 @@ public abstract class BasicPowerup extends Powerup {
 	
 	@Override
 	public String nameColored() {
-		return ColorStr.basicPowerup(name());
+		return Color.basicPowerup(name());
 	}
 	
 	public void onInitialize() {
@@ -50,7 +50,7 @@ public abstract class BasicPowerup extends Powerup {
 	}
 
 	public void sendExpireMessageFormat(String msg, Object... args) {
-		bot.sendChannelFormat(ColorStr.expires(msg), args);
+		bot.sendChannelFormat(Color.expires(msg), args);
 	}
 
 	/**

@@ -37,7 +37,7 @@ public class DiceBros extends BasicPowerup {
 		int luigiRoll = bot.getRoll("Luigi", 100);
 		
 		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %s! Luigi Dice rolls %s!",
-			owner, ColorStr.hilight(marioRoll), ColorStr.hilight(luigiRoll));
+			owner, Color.hilight(marioRoll), Color.hilight(luigiRoll));
 		
 		return chooseBetterRoll(marioRoll, luigiRoll);
 	}

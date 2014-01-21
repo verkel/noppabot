@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.ColorStr;
+import noppabot.Color;
 import noppabot.spawns.*;
 
 
@@ -25,7 +25,7 @@ public class DiceRecycler extends Instant {
 			return true;
 		}
 		else {
-			bot.sendChannelFormat("%s: The recycler says you have no items to recycle.", ColorStr.nick(nick));
+			bot.sendChannelFormat("%s: The recycler says you have no items to recycle.", Color.nick(nick));
 			return false;
 		}
 	}

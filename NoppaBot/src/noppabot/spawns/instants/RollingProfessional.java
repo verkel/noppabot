@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.ColorStr;
+import noppabot.Color;
 import noppabot.spawns.*;
 
 
@@ -39,7 +39,7 @@ public class RollingProfessional extends Instant {
 		}
 		else {
 			bot.sendChannelFormat("%s: the %s says he has no more to teach you.", 
-				ColorStr.nick(nick), nameColored());
+				Color.nick(nick), nameColored());
 			bot.peekRoll(nick, sides, true); // Make the roll known -- it is the maximum roll
 			return false;
 		}

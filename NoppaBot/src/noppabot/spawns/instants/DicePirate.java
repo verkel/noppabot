@@ -6,7 +6,7 @@ package noppabot.spawns.instants;
 
 import java.util.*;
 
-import noppabot.ColorStr;
+import noppabot.Color;
 import noppabot.spawns.*;
 
 
@@ -63,7 +63,7 @@ public class DicePirate extends Instant {
 			powerups.put(owner, stolenPowerup);
 			stolenPowerup.setOwner(owner);
 			bot.sendChannelFormat("%s's %s was stolen by the pirate!", 
-				ColorStr.nick(targetOwner), stolenPowerup.nameColored());
+				Color.nick(targetOwner), stolenPowerup.nameColored());
 		}
 	}
 

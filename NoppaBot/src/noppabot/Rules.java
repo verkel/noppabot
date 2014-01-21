@@ -191,7 +191,7 @@ public class Rules {
 	}
 	
 	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are not limited to the 0-100 range.";
-	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + ColorStr.custom("drop", Colors.WHITE) + " command.";
+	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + Color.custom("drop", Colors.WHITE) + " command.";
 	
 	public String getExplanation() {
 		List<String> list = new ArrayList<String>();

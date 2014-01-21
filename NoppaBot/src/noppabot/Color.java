@@ -6,9 +6,9 @@ package noppabot;
 
 import org.jibble.pircbot.Colors;
 
-public class ColorStr {
+public class Color {
 
-	private ColorStr() {
+	private Color() {
 	}
 
 	public static String custom(String str, String colorStr) {

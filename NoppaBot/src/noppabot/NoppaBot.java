@@ -598,13 +598,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void dropPowerup(String nick) {
 		Powerup powerup = powerups.get(nick);
 		if (powerup == null) {
-			sendChannelFormat("%s: you have nothing to drop.", ColorStr.nick(nick));
+			sendChannelFormat("%s: you have nothing to drop.", Color.nick(nick));
 		}
 		else if (!rules.canDropItems) {
-			sendChannelFormat("%s: dropping items is disallowed by current rules.", ColorStr.nick(nick));
+			sendChannelFormat("%s: dropping items is disallowed by current rules.", Color.nick(nick));
 		}
 		else {
-			sendChannelFormat("%s drops the %s on the ground.", ColorStr.nick(nick), 
+			sendChannelFormat("%s drops the %s on the ground.", Color.nick(nick), 
 				powerup.nameColored());
 			powerups.remove(nick);
 			availablePowerups.add(powerup);
@@ -617,13 +617,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private void autorollFor(String nick) {
 		if (autorolls.contains(nick)) {
-			sendChannelFormat("%s: you've already requested me to autoroll for you.", ColorStr.nick(nick));
+			sendChannelFormat("%s: you've already requested me to autoroll for you.", Color.nick(nick));
 			return;
 		}
 		else if (!hasFavor(nick)) return;
 		
 		favorsUsed.add(nick);
-		sendChannelFormat("%s: ok, I will roll for you tonight.", ColorStr.nick(nick));
+		sendChannelFormat("%s: ok, I will roll for you tonight.", Color.nick(nick));
 		autorolls.add(nick);
 	}
 
@@ -665,7 +665,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private boolean hasFavor(String nick) {
 		if (favorsUsed.contains(nick)) {
-			sendChannelFormat("%s: you have used your favor for today", ColorStr.nick(nick));
+			sendChannelFormat("%s: you have used your favor for today", Color.nick(nick));
 			return false;
 		}
 		
@@ -719,18 +719,18 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (rules.winCondition == rules.ROLL_CLOSEST_TO_TARGET) {
 			int rollTarget = rules.rollTarget;
 			int dist = Math.abs(rollTarget - roll);
-			return ColorStr.custom("[" + dist + " off] ", Colors.WHITE);
+			return Color.custom("[" + dist + " off] ", Colors.WHITE);
 		}
 		else return "";
 	}
 	
 	private void listAvailablePowerups(String nick) {
 		if (availablePowerups.isEmpty()) {
-			sendChannelFormat("%s: you see nothing of interest.", ColorStr.nick(nick));
+			sendChannelFormat("%s: you see nothing of interest.", Color.nick(nick));
 		}
 		else {
 			String items = StringUtils.joinColored(availablePowerups, ", ");
-			sendChannelFormat("%s: You see: %s.", ColorStr.nick(nick), items);
+			sendChannelFormat("%s: You see: %s.", Color.nick(nick), items);
 		}
 	}
 	
@@ -748,29 +748,29 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					public String toString(Map.Entry<Integer, Integer> pair) {
 						int sides = pair.getKey();
 						int roll = pair.getValue();
-						String sidesStr = (sides == dieSides) ? ColorStr.custom("d" + sides, Colors.WHITE) : ("d" + sides);
+						String sidesStr = (sides == dieSides) ? Color.custom("d" + sides, Colors.WHITE) : ("d" + sides);
 						return String.format("%s = %d", sidesStr, roll);
 					};
 				});
-				sendChannelFormat("%s's predicted rolls are: %s.", ColorStr.nick(nick), predictions);
+				sendChannelFormat("%s's predicted rolls are: %s.", Color.nick(nick), predictions);
 				return;
 			}
 		}
 		
-		sendChannelFormat("No rolls are predicted for %s.", ColorStr.nick(nick));
+		sendChannelFormat("No rolls are predicted for %s.", Color.nick(nick));
 	}
 	
 	
 	private void listRules(String nick) {
 		String explanation = rules.getExplanation();
-		sendChannelFormat("%s: %s", ColorStr.nick(nick), explanation);
+		sendChannelFormat("%s: %s", Color.nick(nick), explanation);
 	}
 
 	private void grabPowerup(String nick, String powerupName) {
 		Powerup powerup = findPowerup(powerupName);
 
 		if (availablePowerups.isEmpty()) {
-			sendChannelFormat("%s: nothing to grab.", ColorStr.nick(nick));
+			sendChannelFormat("%s: nothing to grab.", Color.nick(nick));
 		}
 		else if (powerup != null && !powerup.canPickUp(nick)) {
 			// canPickUp(*) will warn the user
@@ -786,11 +786,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			else if (powerupName == null) {
 				String items = StringUtils.joinColored(availablePowerups, ", ");
 				sendChannelFormat("%s: There are multiple items available: %s. Specify which one you want!", 
-					ColorStr.nick(nick), items);
+					Color.nick(nick), items);
 			}
 			// Unknown item
 			else {
-				sendChannelFormat("%s: There is no such item available.", ColorStr.nick(nick));
+				sendChannelFormat("%s: There is no such item available.", Color.nick(nick));
 			}
 		}
 	}
@@ -852,8 +852,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendDefaultContestRollMessage(nick, roll, true, rollWillParticipate(nick));
 		}
 		else {
-			sendChannelFormat("%s rolls %s!", ColorStr.nick(nick), 
-				ColorStr.custom(String.valueOf(roll), Colors.WHITE));
+			sendChannelFormat("%s rolls %s!", Color.nick(nick), 
+				Color.custom(String.valueOf(roll), Colors.WHITE));
 		}
 		return roll;
 	}
@@ -886,7 +886,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		String participatedMsg = participated(nick) ? 
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
 		String rollStr = rollToString(roll, colorRoll);
-		String nickColored = colorNick ? ColorStr.nick(nick) : nick;
+		String nickColored = colorNick ? Color.nick(nick) : nick;
 		return String.format("%s rolls %s! %s%s", nickColored, rollStr, grade(roll), participatedMsg);
 	}
 	
@@ -1073,7 +1073,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void endRollPeriod(List<String> winningRollers) {
 		String winner = winningRollers.get(0);
 		int roll = rolls.get(winner);
-		String msg = String.format(randomRollEndMsg(), ColorStr.nick(winner), colorRoll(roll));
+		String msg = String.format(randomRollEndMsg(), Color.nick(winner), colorRoll(roll));
 		sendChannel(msg);
 		
 		updateRecords(winner);
@@ -1297,8 +1297,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	public String colorRoll(int roll) {
-		if (rolls.isWinningRoll(roll)) return ColorStr.winningRoll(roll);
-		else return ColorStr.losingRoll(roll);
+		if (rolls.isWinningRoll(roll)) return Color.winningRoll(roll);
+		else return Color.losingRoll(roll);
 	}
 	
 	@Override
@@ -1323,7 +1323,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private String maybeColorRoll(int roll, boolean colorRoll) {
 		if (colorRoll) return colorRoll(roll); // Color it green/red
-		else return ColorStr.hilight(roll); // Color it hilighted white
+		else return Color.hilight(roll); // Color it hilighted white
 	}
 	
 	@Override

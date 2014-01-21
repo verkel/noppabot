@@ -50,7 +50,7 @@ public abstract class EvolvedPowerup extends Powerup {
 	
 	@Override
 	public String nameColored() {
-		return ColorStr.evolvedPowerup(name());
+		return Color.evolvedPowerup(name());
 	}
 	
 	@Override

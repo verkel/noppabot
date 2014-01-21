@@ -13,7 +13,7 @@ public abstract class Event implements ISpawnable {
 	public abstract String name();
 
 	public String nameColored() {
-		return ColorStr.event(name());
+		return Color.event(name());
 	}
 	
 	@Override
