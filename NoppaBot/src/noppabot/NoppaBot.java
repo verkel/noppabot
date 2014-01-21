@@ -98,13 +98,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Random commonRandom = new Random();
 	private Scheduler scheduler = new Scheduler();
 	private State state = State.NORMAL;
-//	private Map<String, Integer> rolls = new HashMap<String, Integer>();
 	private Rolls rolls;
 	private Set<String> tiebreakers = new TreeSet<String>();
-//	private List<String> powerupSpawnTaskIDs = new ArrayList<String>();
 	private NavigableSet<SpawnTask> spawnTasks = new TreeSet<SpawnTask>();
 	private Set<ExpireTask> expireTasks = new HashSet<ExpireTask>();
-	//private Powerup powerup = null;
 	private SortedMultiset<Powerup> availablePowerups = TreeMultiset.create(new SpawnableComparator());
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
@@ -348,10 +345,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		public Date time;
 		public String id;
 		public ExpireTask expireTask;
-		
-//		public SpawnTask(Date time, Spawner<Powerup> spawnPowerups, Spawner<Event> spawnEvents) {
-//			this(time, Powerups.getRandomPowerupOrEvent(NoppaBot.this, spawnPowerups, spawnEvents));
-//		}
 		
 		public SpawnTask(Date time, ISpawnable spawn) {
 			this.time = time;
