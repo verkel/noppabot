@@ -34,7 +34,7 @@ public interface INoppaBot {
 
 	public int getRoll(String nick, int sides);
 	
-	public int peekRoll(String nick, int sides);
+	public int peekRoll(String nick, int sides, boolean makeItKnown);
 	
 	public Map<String, Powerup> getPowerups();
 	
@@ -69,4 +69,8 @@ public interface INoppaBot {
 	public int doNormalRoll(String nick, int sides);
 
 	ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime);
+
+	int getPowerupSides(String nick);
+
+	void setNextRoll(String nick, int sides, int roll);
 }

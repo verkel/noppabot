@@ -42,11 +42,11 @@ public class Powerups {
 		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(), new DiceBros(),
 			new DicePirate(), new DiceRecycler(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), new FastDie(),
 			new GroundhogDie(), new HumongousDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
-			new RollingProfessional(), new TrollingProfessional(), new VariableDie(), new WeightedDie()));
+			new RollingProfessional(), new SteadyDie(), new TrollingProfessional(), new VariableDie(), new WeightedDie()));
 
 		diceBrosPowerupsList.addAll(Arrays.asList(new BagOfDice(), new EnchantedDie(),
 			new ExtremeDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
-			new RollingProfessional(), new WeightedDie()));
+			new SteadyDie(), new WeightedDie()));
 
 		firstPowerupList.addAll(allPowerupsList);
 		firstPowerupList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new DiceRecycler()));

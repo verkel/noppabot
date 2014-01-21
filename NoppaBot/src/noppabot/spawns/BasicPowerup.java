@@ -18,7 +18,7 @@ public abstract class BasicPowerup extends Powerup {
 	@Override
 	public final BasicPowerup initialize(INoppaBot bot) {
 		this.bot = bot;
-		doInitialize();
+		onInitialize();
 		return this;
 	}
 	
@@ -38,7 +38,7 @@ public abstract class BasicPowerup extends Powerup {
 		return ColorStr.basicPowerup(name());
 	}
 	
-	public void doInitialize() {
+	public void onInitialize() {
 	}
 	
 	/**

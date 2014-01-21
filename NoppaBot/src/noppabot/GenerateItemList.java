@@ -11,6 +11,7 @@ import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
+import noppabot.spawns.instants.RollingProfessional;
 
 public class GenerateItemList {
 
@@ -589,13 +590,22 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public int peekRoll(String nick, int sides) {
+		public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
+			return null;
+		}
+
+		@Override
+		public int peekRoll(String nick, int sides, boolean makeItKnown) {
 			return 0;
 		}
 
 		@Override
-		public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
-			return null;
+		public int getPowerupSides(String nick) {
+			return 0;
+		}
+
+		@Override
+		public void setNextRoll(String nick, int sides, int roll) {
 		}
 	}
 	

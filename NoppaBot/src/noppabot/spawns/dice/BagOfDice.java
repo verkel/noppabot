@@ -46,7 +46,7 @@ public class BagOfDice extends BasicPowerup {
 	}
 
 	@Override
-	public void doInitialize() {
+	public void onInitialize() {
 		int count = 1 + Powerups.powerupRnd.nextInt(8);
 		diceBag.addAll(grabSomeDice(count));
 		Collections.sort(diceBag);

@@ -14,7 +14,7 @@ public class VariableDie extends BasicPowerup {
 	private int sides;
 	
 	@Override
-	public void doInitialize() {
+	public void onInitialize() {
 		sides = 80 + 10 * Powerups.powerupRnd.nextInt(7);
 	}
 	

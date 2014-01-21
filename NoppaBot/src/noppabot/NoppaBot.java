@@ -10,7 +10,7 @@ import java.util.regex.*;
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.ApprenticeDie;
-import noppabot.spawns.events.*;
+import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
@@ -187,7 +187,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void debugStuff() {
-		for (int i = 0; i < 5; i++) new RulesChange().run(this);
+//		for (int i = 0; i < 5; i++) new RulesChange().run(this);
+		
+		for (int i = 0; i < 5; i++) availablePowerups.add(new RollingProfessional().initialize(this));
 		
 //		powerups.put("hassu", new WeightedDie().initialize(this).upgrade());
 //		powerups.put("hessu", new ApprenticeDie().initialize(this));
@@ -736,7 +738,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		PeekableRandom random = randoms.get(nick); // Don't create a new random if there isn't one
 		
 		if (random != null) {
-			Map<Integer, Integer> nextRolls = random.getNextRolls();
+			Map<Integer, Integer> nextRolls = random.getNextKnownRolls();
 			if (!nextRolls.isEmpty()) {
 				
 				String predictions = StringUtils.join(nextRolls.entrySet(), ", ", new StringConverter<Map.Entry<Integer, Integer>>() {
@@ -1198,9 +1200,18 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public int peekRoll(String nick, int sides) {
+	public int peekRoll(String nick, int sides, boolean makeItKnown) {
 		PeekableRandom random = getRandomFor(nick);
-		return random.peek(sides);
+		int roll = random.peek(sides);
+		if (makeItKnown) random.setKnown(sides, true); // Don't hide already known rolls
+		return roll;
+	}
+	
+	
+	@Override
+	public void setNextRoll(String nick, int sides, int roll) {
+		PeekableRandom random = getRandomFor(nick);
+		random.setNextRoll(sides, roll);
 	}
 	
 	public int countPowerups(Class<? extends Powerup> type) {
@@ -1212,22 +1223,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	public List<String> getWinningRollers() {
-//		int max = Integer.MIN_VALUE;
-//		List<String> highestRollers = new ArrayList<String>();
-//		for (String nick : rolls.participants()) {
-//			int roll = rolls.get(nick);
-//			int score = rules.winCondition.assignScore(roll);
-//			if (score > max) {
-//				max = score;
-//				highestRollers.clear();
-//				highestRollers.add(nick);
-//			}
-//			else if (score == max) {
-//				highestRollers.add(nick);
-//			}
-//		}
-//		
-//		return highestRollers;
 		return rolls.getWinningRollers();
 	}
 	
@@ -1331,6 +1326,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else return roll;
 	}
 	
+	@Override
+	public int getPowerupSides(String nick) {
+		Powerup powerup = powerups.get(nick);
+		if (powerup == null) return 100;
+		else return powerup.sides();
+	}
+
 	private boolean isOnChannel(String nick) {
 		org.jibble.pircbot.User[] users = getUsers(channel);
 		for (org.jibble.pircbot.User user : users) {
