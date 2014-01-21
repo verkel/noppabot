@@ -12,7 +12,7 @@ public class RulesChange extends Event {
 	@Override
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("In today's Roll News, you read that the DiceRuler has issued " +
-			"a temporary %s to spice things up:", getNameColored());
+			"a temporary %s to spice things up:", nameColored());
 		
 		String descr = doRandomRulesChange(bot);
 		bot.sendChannel(descr);
@@ -65,7 +65,7 @@ public class RulesChange extends Event {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Rules Change";
 	}
 }

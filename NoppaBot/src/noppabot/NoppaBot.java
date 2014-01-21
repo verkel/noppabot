@@ -16,6 +16,8 @@ import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.*;
 
+import com.google.common.collect.*;
+
 public class NoppaBot extends PircBot implements INoppaBot {
 
 	private final String botNick;
@@ -103,7 +105,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private NavigableSet<SpawnTask> spawnTasks = new TreeSet<SpawnTask>();
 	private Set<ExpireTask> expireTasks = new HashSet<ExpireTask>();
 	//private Powerup powerup = null;
-	private List<Powerup> availablePowerups = new ArrayList<Powerup>();
+	private SortedMultiset<Powerup> availablePowerups = TreeMultiset.create(new SpawnableComparator());
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
 	private Set<String> autorolls = new HashSet<String>();
@@ -795,7 +797,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private Powerup findPowerup(String name) {
 		if (name == null) {
-			if (availablePowerups.size() == 1) return availablePowerups.get(0);
+			if (availablePowerups.size() == 1) return availablePowerups.firstEntry().getElement();
 			else return null;
 		}
 		

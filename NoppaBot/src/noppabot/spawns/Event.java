@@ -10,20 +10,20 @@ import noppabot.*;
 public abstract class Event implements ISpawnable {
 	public abstract void run(INoppaBot bot);
 	
-	public abstract String getName();
+	public abstract String name();
 
-	public String getNameColored() {
-		return ColorStr.event(getName());
+	public String nameColored() {
+		return ColorStr.event(name());
 	}
 	
 	@Override
 	public String toStringColored() {
-		return getNameColored();
+		return nameColored();
 	}
 	
 	@Override
 	public String toString() {
-		return getName();
+		return name();
 	}
 	
 	@Override

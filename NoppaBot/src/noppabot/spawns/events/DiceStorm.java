@@ -10,7 +10,7 @@ import noppabot.spawns.*;
 public class DiceStorm extends Event {
 	@Override
 	public void run(INoppaBot bot) {
-		bot.sendChannelFormat("Suddenly, a %s breaks out! It's now raining dice!", getNameColored());
+		bot.sendChannelFormat("Suddenly, a %s breaks out! It's now raining dice!", nameColored());
 		
 		int count = 3 + Powerups.powerupRnd.nextInt(2);
 		for (int i = 0; i < count; i++) {
@@ -19,7 +19,7 @@ public class DiceStorm extends Event {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Dice Storm";
 	}
 }
