@@ -89,8 +89,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
 	
-	public static final Pattern dicePattern = Pattern.compile("(?:.*\\s)?!?d([0-9]+)(?:\\s.*)?");
-	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("(?:.*\\s)?!?d([0-9]+) ([^\\s]+)\\s*");
+	public static final Pattern dicePattern = Pattern.compile("^d([0-9]+)");
+	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("^d([0-9]+) ([^\\s]+)");
 	public static final Pattern commandAndArgument = Pattern.compile("^(\\w+)(?:\\s+(.+)?)?");
 	
 	private Rules rules;
