@@ -102,6 +102,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Set<String> tiebreakers = new TreeSet<String>();
 	private NavigableSet<SpawnTask> spawnTasks = new TreeSet<SpawnTask>();
 	private Set<ExpireTask> expireTasks = new HashSet<ExpireTask>();
+	private SettleTieTimeoutTask settleTieTimeoutTask;
 	private SortedMultiset<Powerup> availablePowerups = TreeMultiset.create(new SpawnableComparator());
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
@@ -989,6 +990,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void startSettleTie(List<String> winningRollers) {
+		// Deschedule previous settle tie timeout, if there is one
+		if (settleTieTimeoutTask != null) {
+			scheduler.deschedule(settleTieTimeoutTask.id);
+			settleTieTimeoutTask = null;
+		}
+		
 		lastTiebreakPeriodStartTime = Calendar.getInstance();
 		String tiebreakersStr = StringUtils.join(winningRollers, ", ");
 		int roll = rolls.get(winningRollers.get(0));
@@ -1005,7 +1012,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			if (powerup != null) powerup.onTiebreakPeriodStart();
 		}
 		
-		scheduleSettleTieTimeout();
+		settleTieTimeoutTask = scheduleSettleTieTimeout();
 		
 		state = State.SETTLE_TIE;
 
@@ -1017,12 +1024,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 
-	private void scheduleSettleTieTimeout() {
+	private SettleTieTimeoutTask scheduleSettleTieTimeout() {
 		SettleTieTimeoutTask timeoutTask = new SettleTieTimeoutTask();
 		Calendar time = (Calendar)lastTiebreakPeriodStartTime.clone();
 		time.add(Calendar.MINUTE, 10);
 		final String pattern = String.format("%d %d * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
 		timeoutTask.id = scheduler.schedule(pattern, timeoutTask);
+		return timeoutTask;
 	}
 	
 	private class SettleTieTimeoutTask extends Task {
