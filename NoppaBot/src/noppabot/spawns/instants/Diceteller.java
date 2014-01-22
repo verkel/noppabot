@@ -36,7 +36,7 @@ public class Diceteller extends Instant {
 	
 	@Override
 	public float spawnChance() {
-		return 1.5f;
+		return 1f;
 	}
 }
 
