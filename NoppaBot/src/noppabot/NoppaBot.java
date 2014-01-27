@@ -93,6 +93,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("^d([0-9]+) ([^\\s]+)");
 	public static final Pattern commandAndArgument = Pattern.compile("^(\\w+)(?:\\s+(.+)?)?");
 	
+	// Pircbot onMessage callback and scheduled tasks should synchronize on this lock
+	private Object lock = new Object();
+	
 	private Rules rules;
 	private Map<String, PeekableRandom> randoms = new HashMap<String, PeekableRandom>();
 	private Random commonRandom = new Random();
@@ -144,28 +147,36 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		scheduler.schedule(ROLL_PERIOD_ABOUT_TO_START, new Runnable() {
 			@Override
 			public void run() {
-				doTasksBeforeRollPeriodStart();
+				synchronized (lock) {
+					doTasksBeforeRollPeriodStart();
+				}
 			}
 		});
 		
 		scheduler.schedule(ROLL_PERIOD_START, new Runnable() {
 			@Override
 			public void run() {
-				startRollPeriod();
+				synchronized (lock) {
+					startRollPeriod();
+				}
 			}
 		});
 		
 		scheduler.schedule(AUTOROLL_TIME, new Runnable() {
 			@Override
 			public void run() {
-				autorollFor(autorolls);
+				synchronized (lock) {
+					autorollFor(autorolls);
+				}
 			}
 		});
 		
 		scheduler.schedule(ROLL_PERIOD_END, new Runnable() {
 			@Override
 			public void run() {
-				tryEndRollPeriod();
+				synchronized (lock) {
+					tryEndRollPeriod();
+				}
 			}
 		});
 		
@@ -239,43 +250,50 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		try {
 			BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
 			String input;
-			while ((input = r.readLine()) != null) {
-//				String[] tokens = input.split("\\s+");
-				
+			boolean quit = false;
+			while (!quit && (input = r.readLine()) != null) {
 				Matcher commandMatcher = commandAndArgument.matcher(input);
 				if (!commandMatcher.matches()) continue;
 				String cmd = commandMatcher.group(1);
 				String args = commandMatcher.group(2);
 				
-				if (cmd.equals("quit")) {
-					System.out.println("Quitting");
-					if (args != null) quit(args);
-					else quit("Goodbye!");
-					break;
-				}
-				else if (cmd.equals("help")) {
-					commandsHelp();
-				}
-				else if (cmd.equals("startperiod")) {
-					System.out.println("Starting roll period");
-					startRollPeriod();
-				}
-				else if (cmd.equals("endperiod")) {
-					System.out.println("Ending roll period");
-					tryEndRollPeriod();
-				}
-				else if (cmd.equals("freebie")) {
-					giveFreePowerup();
-				}
-				else {
-					System.out.println("Unknown command: " + cmd);
-					commandsHelp();
+				synchronized (lock) {
+					quit = handleConsoleCommand(cmd, args);
 				}
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private boolean handleConsoleCommand(String cmd, String args) {
+		if (cmd.equals("quit")) {
+			System.out.println("Quitting");
+			if (args != null) quit(args);
+			else quit("Goodbye!");
+			return true;
+		}
+		else if (cmd.equals("help")) {
+			commandsHelp();
+		}
+		else if (cmd.equals("startperiod")) {
+			System.out.println("Starting roll period");
+			startRollPeriod();
+		}
+		else if (cmd.equals("endperiod")) {
+			System.out.println("Ending roll period");
+			tryEndRollPeriod();
+		}
+		else if (cmd.equals("freebie")) {
+			giveFreePowerup();
+		}
+		else {
+			System.out.println("Unknown command: " + cmd);
+			commandsHelp();
+		}
+		
+		return false;
 	}
 	
 	private void commandsHelp() {
@@ -359,17 +377,19 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		@Override
 		public void execute(TaskExecutionContext context) {
-			spawnTasks.remove(this);
-			scheduler.deschedule(id);
-			
-			if (spawn instanceof BasicPowerup) {
-				BasicPowerup powerup = (BasicPowerup)spawn;
-				powerup.onSpawn();
-				availablePowerups.add(powerup);
-			}
-			else {
-				Event event = (Event)spawn;
-				event.run(NoppaBot.this);
+			synchronized (lock) {
+				spawnTasks.remove(this);
+				scheduler.deschedule(id);
+				
+				if (spawn instanceof BasicPowerup) {
+					BasicPowerup powerup = (BasicPowerup)spawn;
+					powerup.onSpawn();
+					availablePowerups.add(powerup);
+				}
+				else {
+					Event event = (Event)spawn;
+					event.run(NoppaBot.this);
+				}
 			}
 		}
 		
@@ -399,10 +419,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		@Override
 		public void execute(TaskExecutionContext context) {
-			expireTasks.remove(this);
-			scheduler.deschedule(id);
-			
-			expirePowerup(powerup);
+			synchronized (lock) {
+				expireTasks.remove(this);
+				scheduler.deschedule(id);
+				
+				expirePowerup(powerup);
+			}
 		}
 	}
 	
@@ -503,12 +525,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	@Override
 	protected void onMessage(String channel, String sender, String login, String hostname,
 		String message) {
-		
-		try { 
-			handleMessage(sender, message);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+
+		synchronized (lock) {
+			try {
+				handleMessage(sender, message);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -1038,12 +1062,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		@Override
 		public void execute(TaskExecutionContext arg0) throws RuntimeException {
-			if (state == State.SETTLE_TIE) {
-				sendChannel("I'm calling this now...");
-				tiebreakers.clear();
-				tryEndRollPeriod();
+			synchronized (lock) {
+				if (state == State.SETTLE_TIE) {
+					sendChannel("I'm calling this now...");
+					tiebreakers.clear();
+					tryEndRollPeriod();
+				}
+				scheduler.deschedule(id);
 			}
-			scheduler.deschedule(id);
 		}
 	}
 	
@@ -1065,10 +1091,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		@Override
 		public void execute(TaskExecutionContext arg0) throws RuntimeException {
-			if (state == State.SETTLE_TIE) {
-				autorollFor(autorolls);
+			synchronized (lock) {
+				if (state == State.SETTLE_TIE) {
+					autorollFor(autorolls);
+				}
+				scheduler.deschedule(id);
 			}
-			scheduler.deschedule(id);
 		}
 	}
 	
