@@ -68,4 +68,10 @@ public class RulesChange extends Event {
 	public String name() {
 		return "Rules Change";
 	}
+	
+	@Override
+	public float spawnChance() {
+		// Compensate that these stop spawning after 16:00
+		return 1.25f;
+	}
 }

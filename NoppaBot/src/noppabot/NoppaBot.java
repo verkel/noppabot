@@ -329,7 +329,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		int n = 0;
 		while (spawnTime.before(spawnEndTime)) {
 			if (n > 0) spawnPowerups = Powerups.allPowerups;
-			if (spawnTime.get(Calendar.HOUR_OF_DAY) >= 18) spawnEvents = Powerups.allEventsMinusFourthWall;
+			if (spawnTime.get(Calendar.HOUR_OF_DAY) >= 16) spawnEvents = Powerups.lateEvents;
 			ISpawnable spawn = scheduleRandomSpawn(spawnTime, spawnPowerups, spawnEvents).spawn;
 			// Only allow one 4th wall break per day
 			if (spawn instanceof FourthWallBreaks) spawnEvents = Powerups.allEventsMinusFourthWall;

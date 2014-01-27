@@ -22,6 +22,7 @@ public class Powerups {
 	public static final Spawner<BasicPowerup> diceBrosPowerups;
 	public static final Spawner<Event> allEvents;
 	public static final Spawner<Event> allEventsMinusFourthWall;
+	public static final Spawner<Event> lateEvents;
 	
 	static {
 		List<BasicPowerup> allPowerupsList = new ArrayList<BasicPowerup>();
@@ -30,6 +31,7 @@ public class Powerups {
 		List<BasicPowerup> diceBrosPowerupsList = new ArrayList<BasicPowerup>();
 		List<Event> allEventsList = new ArrayList<Event>();
 		List<Event> allEventsMinusFourthWallList = new ArrayList<Event>();
+		List<Event> lateEventsList = new ArrayList<Event>();
 		
 		/*
 		 * Instances are used here because some metadata is stored in instance
@@ -60,6 +62,9 @@ public class Powerups {
 		allEventsMinusFourthWallList.addAll(allEventsList);
 		allEventsMinusFourthWallList.remove(new FourthWallBreaks());
 		
+		lateEventsList.addAll(allEventsList);
+		lateEventsList.removeAll(Arrays.asList(new FourthWallBreaks(), new RulesChange()));
+		
 		LastSpawn<BasicPowerup> lastPowerup = new LastSpawn<BasicPowerup>();
 		LastSpawn<Event> lastEvent = new LastSpawn<Event>();
 		
@@ -69,6 +74,7 @@ public class Powerups {
 		diceBrosPowerups = new Spawner<BasicPowerup>(diceBrosPowerupsList, new LastSpawn<BasicPowerup>());
 		allEvents = new Spawner<Event>(allEventsList, lastEvent);
 		allEventsMinusFourthWall = new Spawner<Event>(allEventsMinusFourthWallList, lastEvent);
+		lateEvents = new Spawner<Event>(lateEventsList, lastEvent);
 	}
 
 	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups, Spawner<Event> spawnEvents) {
