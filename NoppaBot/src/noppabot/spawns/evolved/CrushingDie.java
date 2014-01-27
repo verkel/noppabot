@@ -11,9 +11,9 @@ import noppabot.spawns.dice.HumongousDie;
 
 // Upgrade
 public class CrushingDie extends EvolvedPowerup {
-	private static final int dmgSides = 30;
+	private static final int dmgSides = 25;
 	private static final int humongousDmgSides = 10;
-	private static final int humongousDmgBonus = 20;
+	private static final int humongousDmgBonus = 15;
 	
 	private boolean humongous;
 	private INoppaBot bot;

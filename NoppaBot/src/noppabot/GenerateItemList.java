@@ -640,7 +640,7 @@ public class GenerateItemList {
 	
 	// Evolved
 	private static final String veryPolishedDieDesc = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
-	private static final String crushingDieDesc = "Loses the roll bonus, but now deals d30 damage to others' rolls.";
+	private static final String crushingDieDesc = "Loses the roll bonus, but now deals d25 damage to others' rolls.";
 	private static final String potentDieDesc = "Gives a +20 bonus.";
 	private static final String tribalDieDesc = "In addition to primal die's effect, you get +10 bonus for every prime rolled by an opponent.";
 	private static final String jackpotDieDesc = "Gives a +40 bonus if the roll contains any sevens";
@@ -650,7 +650,7 @@ public class GenerateItemList {
 	private static final String selfImprovingDieDesc = "Repeats your yesterday's roll +10.";
 	private static final String superDiceBrosDesc = undiscovered; // = "The dice bros. get random powerups each.";
 	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
-	private static final String humongousCrushingDieDesc = "Deals d10 + 20 damage to others' rolls.";
+	private static final String humongousCrushingDieDesc = "Deals d10 + 15 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
 	private static final String trustyDieDesc = "Lets you roll d50 + 50.";
 	
