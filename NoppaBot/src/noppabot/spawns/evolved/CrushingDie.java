@@ -47,7 +47,7 @@ public class CrushingDie extends EvolvedPowerup {
 		String resultStr = resultStr(result);
 		result = clamp(result);
 		bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %d damage and drops down to %s.", 
-			owner, name(), ColorStr.nick(opponent), damage, resultStr);
+			owner, name(), Color.nick(opponent), damage, resultStr);
 		return result;
 	}
 	
@@ -58,7 +58,7 @@ public class CrushingDie extends EvolvedPowerup {
 		String resultStr = resultStr(result);
 		result = clamp(result);
 		bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %d + %d = %d damage and drops down to %s.", 
-			owner, name(), ColorStr.nick(opponent), damageRoll, humongousDmgBonus, totalDamage, resultStr);
+			owner, name(), Color.nick(opponent), damageRoll, humongousDmgBonus, totalDamage, resultStr);
 		return result;
 	}
 	

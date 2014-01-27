@@ -8,6 +8,8 @@ import java.util.*;
 
 import noppabot.spawns.*;
 
+import com.google.common.collect.*;
+
 public class BagOfDice extends BasicPowerup {
 	
 	private static final List<Integer> dice;
@@ -19,10 +21,10 @@ public class BagOfDice extends BasicPowerup {
 		dice.add(100);
 	}
 
-	private List<Integer> diceBag = new ArrayList<Integer>();
+	private SortedMultiset<Integer> diceBag = TreeMultiset.create();
 
-	private List<Integer> grabSomeDice(int count) {
-		List<Integer> grabbed = new ArrayList<Integer>();
+	private SortedMultiset<Integer> grabSomeDice(int count) {
+		SortedMultiset<Integer> grabbed = TreeMultiset.create();
 		for (int i = 0; i < count; i++) {
 			int die = dice.get(Powerups.powerupRnd.nextInt(dice.size()));
 			grabbed.add(die);
@@ -46,10 +48,9 @@ public class BagOfDice extends BasicPowerup {
 	}
 
 	@Override
-	public void doInitialize() {
+	public void onInitialize() {
 		int count = 1 + Powerups.powerupRnd.nextInt(8);
 		diceBag.addAll(grabSomeDice(count));
-		Collections.sort(diceBag);
 	}
 	
 	@Override
@@ -97,7 +98,7 @@ public class BagOfDice extends BasicPowerup {
 	
 	@Override
 	public int sides() {
-		return diceBag.get(diceBag.size()-1);
+		return diceBag.lastEntry().getElement();
 	}
 	
 	@Override
@@ -114,7 +115,7 @@ public class BagOfDice extends BasicPowerup {
 	public class BagOfManyDice extends EvolvedPowerup {
 		
 		private String manyMany = "Many";
-		private List<Integer> newDice;
+		private SortedMultiset<Integer> newDice;
 		
 		public BagOfManyDice() {
 			super(BagOfDice.this);
@@ -124,8 +125,6 @@ public class BagOfDice extends BasicPowerup {
 		private void putMoreDice() {
 			newDice = grabSomeDice(2);
 			diceBag.addAll(newDice);
-			Collections.sort(newDice);
-			Collections.sort(diceBag);
 		}
 		
 		@Override

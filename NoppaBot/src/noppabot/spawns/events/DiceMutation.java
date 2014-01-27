@@ -36,7 +36,7 @@ public class DiceMutation extends Event {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Dice Mutation";
 	}
 }

@@ -6,9 +6,9 @@ package noppabot;
 
 import org.jibble.pircbot.Colors;
 
-public class ColorStr {
+public class Color {
 
-	private ColorStr() {
+	private Color() {
 	}
 
 	public static String custom(String str, String colorStr) {
@@ -49,5 +49,17 @@ public class ColorStr {
 	
 	public static String expires(String expireMsg) {
 		return custom(expireMsg, Colors.NORMAL);
+	}
+	
+	public static String hilight(int number) {
+		return hilight(String.valueOf(number));
+	}
+
+	public static String hilight(String msg) {
+		return custom(msg, Colors.WHITE);
+	}
+	
+	public static String antiHilight(String nick) {
+		return nick.charAt(0) + Colors.BOLD + Colors.BOLD + nick.substring(1);
 	}
 }

@@ -40,7 +40,7 @@ public class TrollingProfessional extends Instant {
 			"briefly discuss about something.", owner, nameColored(), owner);
 		
 		bot.sendMessageFormat(owner, "Hi! I set us up the %s on %s. I suggest you don't take it.",
-			ColorStr.basicPowerup(Bomb.BOMB_NAME), task.toStringColored());
+			Color.basicPowerup(Bomb.BOMB_NAME), task.toStringColored());
 		bot.sendMessageFormat(owner, "Regards, The Trolling Professional");
 	}
 
@@ -72,7 +72,7 @@ public class TrollingProfessional extends Instant {
 			"Master Die",
 			"Polished Die",
 			"Primal Die",
-			"Rolling Professional",
+			"Trusty Die",
 			"Weighted Die"
 		};
 		
@@ -80,15 +80,15 @@ public class TrollingProfessional extends Instant {
 			"Bag of Die",
 			"Dice Pros",
 			"Enchaented Die",
-			"Xxtreme Die",
+			"Xtreme Die",
 			"Fats Die",
 			"Groinhog Die",
 			"Humungus Die",
 			"Lucky Dye",
 			"Master Dei",
 			"Polishd Die",
-			"Pirmal Die",
-			"Rolling Professioanal",
+			"Staedy Die",
+			"Rolling Professioanal", // I left this after rolling pro revamp... just because
 			"Weigthed Die"
 		};
 		
@@ -110,7 +110,7 @@ public class TrollingProfessional extends Instant {
 		public void onPickup() {
 			bot.sendChannelFormat("%s grabs the %s! On a closer inspection, you recognize " +
 				"it's actually a %s This can't be good for the upcoming roll.", 
-				ownerColored, ColorStr.basicPowerup(name), ColorStr.basicPowerup(BOMB_NAME));
+				ownerColored, Color.basicPowerup(name), Color.basicPowerup(BOMB_NAME));
 			name = BOMB_NAME;
 		}
 		

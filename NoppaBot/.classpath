@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="/Libraries/lib/jackson-databind-2.0.2.jar"/>
 	<classpathentry kind="lib" path="/Libraries/lib/jackson-annotations-2.0.2.jar"/>
 	<classpathentry kind="lib" path="/Libraries/lib/jfiglet-1.0-alpha1.jar"/>
+	<classpathentry kind="lib" path="/Libraries/lib/guava-16.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

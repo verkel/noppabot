@@ -4,7 +4,7 @@
  */
 package noppabot.spawns;
 
-import noppabot.ColorStr;
+import noppabot.Color;
 
 
 public abstract class Instant extends BasicPowerup {
@@ -16,7 +16,7 @@ public abstract class Instant extends BasicPowerup {
 	
 	@Override
 	public String nameColored() {
-		return ColorStr.instant(name());
+		return Color.instant(name());
 	}
 	
 	@Override

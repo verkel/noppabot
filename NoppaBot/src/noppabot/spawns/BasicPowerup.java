@@ -18,14 +18,14 @@ public abstract class BasicPowerup extends Powerup {
 	@Override
 	public final BasicPowerup initialize(INoppaBot bot) {
 		this.bot = bot;
-		doInitialize();
+		onInitialize();
 		return this;
 	}
 	
 	@Override
 	public final void setOwner(String owner) {
 		this.owner = owner;
-		this.ownerColored = colorOwner ? ColorStr.nick(owner) : owner;
+		this.ownerColored = colorOwner ? Color.nick(owner) : owner;
 	}
 	
 	public final void setColors(boolean colorOwner, boolean colorRoll) {
@@ -35,10 +35,10 @@ public abstract class BasicPowerup extends Powerup {
 	
 	@Override
 	public String nameColored() {
-		return ColorStr.basicPowerup(name());
+		return Color.basicPowerup(name());
 	}
 	
-	public void doInitialize() {
+	public void onInitialize() {
 	}
 	
 	/**
@@ -50,7 +50,7 @@ public abstract class BasicPowerup extends Powerup {
 	}
 
 	public void sendExpireMessageFormat(String msg, Object... args) {
-		bot.sendChannelFormat(ColorStr.expires(msg), args);
+		bot.sendChannelFormat(Color.expires(msg), args);
 	}
 
 	/**
@@ -60,12 +60,7 @@ public abstract class BasicPowerup extends Powerup {
 	 */
 	@Override
 	public int onContestRoll() {
-		return bot.doNormalRoll(owner, 100);
-	}
-	
-	@Override
-	public int onNormalRoll() {
-		return bot.doNormalRoll(owner, 100);
+		return bot.doRoll(owner, 100);
 	}
 	
 	public String resultStr(int roll) {

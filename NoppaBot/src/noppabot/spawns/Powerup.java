@@ -8,6 +8,7 @@ import noppabot.*;
 
 public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	
+	@Override
 	public abstract String name();
 	
 	public abstract String nameColored();
@@ -22,12 +23,11 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	public void onTiebreakPeriodStart() {
 	}
 
-	public abstract int onNormalRoll();
-	
 	public boolean canPickUp(String nick) {
 		INoppaBot bot = bot();
 		if (isCarried() && bot.getPowerups().containsKey(nick)) {
-			bot.sendChannelFormat("%s: you already have the %s.", nick, bot.getPowerups().get(nick));
+			Powerup powerup = bot.getPowerups().get(nick);
+			bot.sendChannelFormat("%s: you already have the %s.", Color.nick(nick), powerup.nameColored());
 			return false;
 		}
 		

@@ -18,7 +18,7 @@ public class FourthWallBreaks extends Event {
 	}
 	
 	@Override
-	public String getName() {
+	public String name() {
 		return "Fourth Wall Breaks";
 	}
 	

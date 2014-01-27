@@ -8,4 +8,5 @@ import noppabot.IColorStrConvertable;
 
 public interface ISpawnable extends IColorStrConvertable {
 	public float spawnChance();
+	public String name();
 }
