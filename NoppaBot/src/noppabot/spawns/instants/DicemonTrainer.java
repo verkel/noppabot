@@ -16,7 +16,14 @@ public class DicemonTrainer extends Instant {
 	
 	@Override
 	public void onExpire() {
-		bot.sendChannelFormat("... the Dicemon trainer used FLY! He flew away.");
+		// http://bulbapedia.bulbagarden.net/wiki/Field_move_(main_series)
+		// Bad Pokemon jokes continue:
+		int rnd = Powerups.powerupRnd.nextInt(5);
+		if (rnd == 0) bot.sendChannelFormat("... the Dicemon trainer used FLY! He flew away.");
+		else if (rnd == 1) bot.sendChannelFormat("... the Dicemon trainer used DIG! He dug his way out of here.");
+		else if (rnd == 2) bot.sendChannelFormat("... the Dicemon trainer used TELEPORT! He re-materialized in front of the nearest Dicemon center.");
+		else if (rnd == 3) bot.sendChannelFormat("... the Dicemon trainer used SURF! He took off to the seas.");
+		else if (rnd == 4) bot.sendChannelFormat("... the Dicemon trainer used FLASH! When your sight returns, he has disappeared.");
 	}
 	
 	@Override
