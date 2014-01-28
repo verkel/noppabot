@@ -308,7 +308,7 @@ public class GenerateItemList {
 		addEntry("Dice Recycler", "Placeholder.png", diceRecyclerDesc, null);
 		testDiceteller();
 		addEntry("Rolling Professional", "Placeholder.png", rollingProfessionalDesc, null);
-		addEntry("Rolling Professor", "Locked.png", rollingProfessorDesc, null);
+		addEntry("Rolling Professor", "Placeholder.png", rollingProfessorDesc, null);
 		addEntry("Trolling Professional", "Placeholder.png", trollingProfessionalDesc, null);
 	}
 	
@@ -669,7 +669,7 @@ public class GenerateItemList {
 	private static final String diceStormDesc = "Spawns from 3 to 5 new items at once.";
 	private static final String fourthWallBreaksDesc = "Reveals all of the events that are yet to happen today.";
 	private static final String rollingProfessionalDesc = "Adds +5 to your next roll.";
-	private static final String rollingProfessorDesc = undiscovered; // "Adds +10 to your next roll.";
+	private static final String rollingProfessorDesc = "Adds +10 to your next roll.";
 	private static final String rulesChangeDesc = "Randomly <a href='#rulechanges'>changes one rule</a> for the next rolling contest.";
 
 }
