@@ -607,6 +607,10 @@ public class GenerateItemList {
 		@Override
 		public void setNextRoll(String nick, int sides, int roll) {
 		}
+
+		@Override
+		public void clearFavorsUsed() {
+		}
 	}
 	
 	class LazyBot extends TestBot {

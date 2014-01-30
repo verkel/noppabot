@@ -57,13 +57,13 @@ public class Powerups {
 		diceStormPowerupsList.removeAll(Arrays.asList(new DicePirate()));
 		
 		allEventsList.addAll(Arrays.asList(new DiceMutation(), new DiceStorm(), 
-			new FourthWallBreaks(), new RulesChange()));
+			new FourthWallBreaks(), new FavorRefresh(), new RulesChange()));
 		
 		allEventsMinusFourthWallList.addAll(allEventsList);
 		allEventsMinusFourthWallList.remove(new FourthWallBreaks());
 		
 		lateEventsList.addAll(allEventsList);
-		lateEventsList.removeAll(Arrays.asList(new FourthWallBreaks(), new RulesChange()));
+		lateEventsList.removeAll(Arrays.asList(new FourthWallBreaks()));
 		
 		LastSpawn<BasicPowerup> lastPowerup = new LastSpawn<BasicPowerup>();
 		LastSpawn<Event> lastEvent = new LastSpawn<Event>();

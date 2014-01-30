@@ -39,4 +39,9 @@ public class DiceMutation extends Event {
 	public String name() {
 		return "Dice Mutation";
 	}
+	
+	@Override
+	public float spawnChance() {
+		return 0.75f;
+	}
 }

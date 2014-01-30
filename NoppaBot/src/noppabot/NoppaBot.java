@@ -1301,6 +1301,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		rolls.onRulesChanged();
 	}
 	
+	@Override
+	public void clearFavorsUsed() {
+		favorsUsed.clear();
+	}
+	
 	/**
 	 * Randomly overwrite some scheduled spawns with apprentice dice spawns
 	 */
