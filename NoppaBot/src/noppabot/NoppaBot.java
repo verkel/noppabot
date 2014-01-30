@@ -9,7 +9,7 @@ import java.util.regex.*;
 
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
-import noppabot.spawns.dice.ApprenticeDie;
+import noppabot.spawns.dice.*;
 import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
@@ -203,7 +203,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		for (int i = 0; i < 5; i++) availablePowerups.add(new RollingProfessional().initialize(this));
 		
 //		powerups.put("hassu", new WeightedDie().initialize(this).upgrade());
-//		powerups.put("hessu", new ApprenticeDie().initialize(this));
+		powerups.put("hessu", new ImitatorDie().initialize(this));
 //		powerups.put("kessu", new ApprenticeDie().initialize(this));
 //		powerups.put("frodo", new FastDie().initialize(this));
 //		powerups.put("bilbo", new MasterDie().initialize(this));
@@ -791,7 +791,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (availablePowerups.isEmpty()) {
 			sendChannelFormat("%s: nothing to grab.", Color.nick(nick));
 		}
-		else if (powerup != null && !powerup.canPickUp(nick)) {
+		else if (powerup != null && !powerup.canPickUp(nick, true)) {
 			// canPickUp(*) will warn the user
 		}
 		else {

@@ -27,19 +27,19 @@ public class DicemonTrainer extends Instant {
 	}
 	
 	@Override
-	public boolean canPickUp(String nick) {
+	public boolean canPickUp(String nick, boolean verbose) {
 		if (bot.getPowerups().containsKey(nick)) { // Has item
 			Powerup powerup = bot.getPowerups().get(nick);
 			if (powerup.isUpgradeable()) {
 				return true;
 			}
 			else {
-				bot.sendChannelFormat("%s: The trainer says your %s is not upgradeable.", nick, powerup);
+				if (verbose) bot.sendChannelFormat("%s: The trainer says your %s is not upgradeable.", nick, powerup);
 				return false;
 			}
 		}
 		else {
-			bot.sendChannelFormat("%s: The trainer says you have nothing to upgrade.", nick);
+			if (verbose) bot.sendChannelFormat("%s: The trainer says you have nothing to upgrade.", nick);
 			return false;
 		}
 	}

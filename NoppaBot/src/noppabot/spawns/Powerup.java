@@ -23,11 +23,11 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	public void onTiebreakPeriodStart() {
 	}
 
-	public boolean canPickUp(String nick) {
+	public boolean canPickUp(String nick, boolean verbose) {
 		INoppaBot bot = bot();
 		if (isCarried() && bot.getPowerups().containsKey(nick)) {
 			Powerup powerup = bot.getPowerups().get(nick);
-			bot.sendChannelFormat("%s: you already have the %s.", Color.nick(nick), powerup.nameColored());
+			if (verbose) bot.sendChannelFormat("%s: you already have the %s.", Color.nick(nick), powerup.nameColored());
 			return false;
 		}
 		

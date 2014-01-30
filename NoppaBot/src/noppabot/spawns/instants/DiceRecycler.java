@@ -20,12 +20,12 @@ public class DiceRecycler extends Instant {
 	}
 
 	@Override
-	public boolean canPickUp(String nick) {
+	public boolean canPickUp(String nick, boolean verbose) {
 		if (bot.getPowerups().containsKey(nick)) { // Has item
 			return true;
 		}
 		else {
-			bot.sendChannelFormat("%s: The recycler says you have no items to recycle.", Color.nick(nick));
+			if (verbose) bot.sendChannelFormat("%s: The recycler says you have no items to recycle.", Color.nick(nick));
 			return false;
 		}
 	}

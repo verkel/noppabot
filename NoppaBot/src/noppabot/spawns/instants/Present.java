@@ -25,7 +25,7 @@ public class Present extends Instant {
 	}
 
 	@Override
-	public boolean canPickUp(String nick) {
+	public boolean canPickUp(String nick, boolean verbose) {
 		return true;
 	}
 	
