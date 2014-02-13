@@ -236,7 +236,7 @@ public class GenerateItemList {
 			};
 		}, bot, false, DiceType.BASIC);
 		
-		addEntry("Groundhog Die", "GroundhogDie.png", groundhogDieDesc, "Self-Improving Die");
+		addEntry("Imitator Die", "GroundhogDie.png", imitatorDieDesc, "Groundhog Die");
 
 		addEntry("Apprentice Die", "ApprenticeDie.png", apprenticeDieDesc, "Master Die");
 		testBasicPowerup("Dice Bros.", "Placeholder.png", diceBrosDesc, "Super Dice Bros", new DiceBros(), bot);
@@ -276,7 +276,7 @@ public class GenerateItemList {
 			};
 		}, bot, false, DiceType.EVOLVED);
 		
-		addEntry("Self-Improving Die", "Placeholder.png", selfImprovingDieDesc, null);
+		addEntry("Groundhog Die", "Placeholder.png", groundhogDieDesc, null);
 
 		testPowerup("Super Dice Bros", "Locked.png", superDiceBrosDesc, null, new Builder() {
 			@Override
@@ -316,6 +316,7 @@ public class GenerateItemList {
 		appendEvent("Dice Mutation", "Event.png", diceMutationDesc, buf);
 		appendEvent("Dice Storm", "Event.png", diceStormDesc, buf);
 		appendEvent("Fourth Wall Breaks", "Event.png", fourthWallBreaksDesc, buf);
+		appendEvent("Favor Refresh", "Event.png", favorRefreshDesc, buf);
 		appendEvent("Rules Change", "Event.png", rulesChangeDesc, buf);
 	}
 	
@@ -630,10 +631,10 @@ public class GenerateItemList {
 	private static final String primalDieDesc = "Gives a +20 bonus if the <a href=\"http://www.prime-numbers.net/prime-numbers-1-100-chart.html\">roll is a prime</a>.";
 	private static final String polishedDieDesc = "Gives a +5 bonus.";
 	private static final String fastDieDesc = "Gives a bonus of 20 if you roll during the first 10 seconds. After that, the bonus will decrease by 1 per second.";
-	private static final String groundhogDieDesc = "Repeats your yesterday's roll.";
+	private static final String imitatorDieDesc = "Rolls your yesterday's roll - d10.";
 	private static final String weightedDieDesc = "Gives a +10 bonus.";
 	private static final String enchantedDieDesc = "Gives a +15 bonus.";
-	private static final String extremeDieDesc = "Changes rolls 1..10 and 90..99 into 100.";
+	private static final String extremeDieDesc = "Changes rolls 1..10 into (100 - roll), and gives d10 bonus to rolls 90..99.";
 	private static final String masterDieDesc = "Lets you roll the d150 (the result is capped into 100).";
 	private static final String apprenticeDieDesc = "After a master die is rolled, the apprentice " +
 		"die will roll the same result. If the apprentice die ends up in the tiebreaker round, it turns into a master die.";
@@ -649,9 +650,9 @@ public class GenerateItemList {
 	private static final String tribalDieDesc = "In addition to primal die's effect, you get +10 bonus for every prime rolled by an opponent.";
 	private static final String jackpotDieDesc = "Gives a +40 bonus if the roll contains any sevens";
 	private static final String theOneDieDesc = "Lets you roll the d200 (the result is capped into 100).";
-	private static final String daringDieDesc = "You roll the d30. Changes rolls 1..10 into 100.";
+	private static final String daringDieDesc = "You roll the d30. Changes rolls 1..10 into (100 - roll).";
 	private static final String bagOfManyDiceDesc = "Two additional dice are put into the dice bag. May be upgraded infinitely for more dice.";
-	private static final String selfImprovingDieDesc = "Repeats your yesterday's roll +10.";
+	private static final String groundhogDieDesc = "Repeats your yesterday's roll.";
 	private static final String superDiceBrosDesc = undiscovered; // = "The dice bros. get random powerups each.";
 	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
 	private static final String humongousCrushingDieDesc = "Deals d10 + 15 damage to others' rolls.";
@@ -666,14 +667,15 @@ public class GenerateItemList {
 			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll.";
 	private static final String dicetellerDesc = "Tells what your next roll will be.";
 	private static final String dicePirateDesc = "Steals item from another contestant.";
+	private static final String rollingProfessionalDesc = "Adds +5 to your next roll.";
+	private static final String rollingProfessorDesc = "Adds +10 to your next roll.";
 	
 	// Event
 	private static final String diceMutationDesc = "Some of the currently owned items mutate into more powerful dice. " +
 		"The number of mutated dice is random, and ranges from 1 to all owned dice.";
 	private static final String diceStormDesc = "Spawns from 3 to 5 new items at once.";
 	private static final String fourthWallBreaksDesc = "Reveals all of the events that are yet to happen today.";
-	private static final String rollingProfessionalDesc = "Adds +5 to your next roll.";
-	private static final String rollingProfessorDesc = "Adds +10 to your next roll.";
 	private static final String rulesChangeDesc = "Randomly <a href='#rulechanges'>changes one rule</a> for the next rolling contest.";
+	private static final String favorRefreshDesc = "Grants new favors for people who have used them.";
 
 }
