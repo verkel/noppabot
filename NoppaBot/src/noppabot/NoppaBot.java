@@ -9,14 +9,12 @@ import java.util.regex.*;
 
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
-import noppabot.spawns.dice.ApprenticeDie;
+import noppabot.spawns.dice.*;
 import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.*;
-
-import com.google.common.collect.*;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
@@ -106,7 +104,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private NavigableSet<SpawnTask> spawnTasks = new TreeSet<SpawnTask>();
 	private Set<ExpireTask> expireTasks = new HashSet<ExpireTask>();
 	private SettleTieTimeoutTask settleTieTimeoutTask;
-	private SortedMultiset<Powerup> availablePowerups = TreeMultiset.create(new SpawnableComparator());
+	private SortedSet<Powerup> availablePowerups = new TreeSet<Powerup>(new SpawnableComparator());
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
 	private Set<String> autorolls = new HashSet<String>();
@@ -231,6 +229,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
 //		availablePowerups.add(new Diceteller());
+		availablePowerups.add(new HumongousDie().initialize(this));
+		availablePowerups.add(new HumongousDie().initialize(this));
 		
 //		new FourthWallBreaks().run(this);
 		
@@ -816,7 +816,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private Powerup findPowerup(String name) {
 		if (name == null) {
-			if (availablePowerups.size() == 1) return availablePowerups.firstEntry().getElement();
+			if (availablePowerups.size() == 1) return availablePowerups.first();
 			else return null;
 		}
 		

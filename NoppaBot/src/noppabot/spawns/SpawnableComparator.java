@@ -15,10 +15,14 @@ public class SpawnableComparator implements Comparator<ISpawnable> {
 	public int compare(ISpawnable a, ISpawnable b) {
 		int aType = typeOrdinal(a);
 		int bType = typeOrdinal(b);
+		
 		int typeCmp = MathUtils.compare(aType, bType);
 		if (typeCmp != 0) return typeCmp;
 		
-		return a.name().compareTo(b.name());
+		int nameCmp = a.name().compareTo(b.name());
+		if (nameCmp != 0) return nameCmp;
+		
+		return a.hashCode() - b.hashCode();
 	}
 	
 	private int typeOrdinal(ISpawnable s) {
