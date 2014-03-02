@@ -27,7 +27,7 @@ public class DicePirate extends Instant {
 		if (bot.getPowerups().containsKey(nick)) { // Has item
 			Powerup powerup = bot.getPowerups().get(nick);
 			bot.sendChannelFormat("%s: you already have the %s! You wouldn't be able to carry any " +
-				"loot stolen by the pirate.", ownerColored, powerup.nameColored());
+				"loot stolen by the pirate.", Color.nick(nick), powerup.nameColored());
 			return false;
 		}
 		else return true;

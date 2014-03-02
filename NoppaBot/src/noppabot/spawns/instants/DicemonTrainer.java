@@ -4,6 +4,7 @@
  */
 package noppabot.spawns.instants;
 
+import noppabot.Color;
 import noppabot.spawns.*;
 
 public class DicemonTrainer extends Instant {
@@ -34,12 +35,12 @@ public class DicemonTrainer extends Instant {
 				return true;
 			}
 			else {
-				bot.sendChannelFormat("%s: The trainer says your %s is not upgradeable.", nick, powerup);
+				bot.sendChannelFormat("%s: The trainer says your %s is not upgradeable.", Color.nick(nick), powerup.nameColored());
 				return false;
 			}
 		}
 		else {
-			bot.sendChannelFormat("%s: The trainer says you have nothing to upgrade.", nick);
+			bot.sendChannelFormat("%s: The trainer says you have nothing to upgrade.", Color.nick(nick));
 			return false;
 		}
 	}
@@ -53,7 +54,7 @@ public class DicemonTrainer extends Instant {
 		String descr = newPowerup.getUpgradeDescription();
 		bot.getPowerups().put(owner, newPowerup);
 		bot.sendChannelFormat("The trainer unlocks the hidden potential in your die!");
-		bot.sendChannelFormat("%s's %s evolved into %s! %s", owner, oldName, newName, descr);
+		bot.sendChannelFormat("%s's %s evolved into %s! %s", ownerColored, oldName, newName, descr);
 	}
 
 	@Override

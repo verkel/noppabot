@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.Rules;
+import noppabot.*;
 import noppabot.spawns.*;
 import noppabot.spawns.events.RulesChange;
 
@@ -91,10 +91,10 @@ public class VariableDie extends BasicPowerup {
 		public String name() {
 			return "Chaos Die";
 		}
-		
+
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("It bends the rules to its liking: %s", ruleChangeDescr);
+			return String.format("It %s to its liking: %s", Color.event("bends the rules"), ruleChangeDescr);
 		}
 	}
 }
