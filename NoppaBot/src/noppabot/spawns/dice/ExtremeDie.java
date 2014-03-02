@@ -11,6 +11,7 @@ import noppabot.spawns.*;
 public class ExtremeDie extends BasicPowerup {
 	
 	private static final int sides = 100;
+	private static final int highRollBonusSides = 10;
 
 	@Override
 	public void onSpawn() {
@@ -37,22 +38,35 @@ public class ExtremeDie extends BasicPowerup {
 	private int doContestRoll(String dieName, int sides) {
 		int roll = roll(sides);
 		if (roll == 100) {
-			bot.sendChannelFormat("%s rolls d%d with the extreme die! %s! That's the most extreme roll and the die is ecstatic!", 
-				ownerColored, sides, resultStr(roll)); 
+			bot.sendChannelFormat("%s rolls d%d with the %s! %s! That's the most extreme roll and the die is ecstatic!", 
+				ownerColored, sides, dieName, resultStr(roll)); 
 			return roll;
 		}
 		else if (roll > 10 && roll < 90) {
-			bot.sendChannelFormat("%s rolls d%d with the extreme die! %s! This number is quite ordinary, says the die.", 
-				ownerColored, sides, resultStr(roll));
+			bot.sendChannelFormat("%s rolls d%d with the %s! %s! This number is quite ordinary, says the die.", 
+				ownerColored, sides, dieName, resultStr(roll));
 			return roll;
 		}
-		else {
-			bot.sendChannelFormat("%s rolls d%d with the extreme die! %d! This number is very extremal! says the die.", 
-				owner, sides, roll);
-			bot.sendChannelFormat("The extreme die rewards %s with the most extreme roll, %s!",
-				ownerColored, resultStr(100));
-			return 100;
+		else if (roll <= 10) {
+			int result = 100 - roll;
+			bot.sendChannelFormat("%s rolls d%d with the %s! %d! This number is very extremal! says the die.", 
+				owner, sides, dieName, roll);
+			bot.sendChannelFormat("The %s flips %s's roll to the other extreme, it's now 100 - %d = %s!",
+				dieName, ownerColored, roll, resultStr(result));
+			return result;
 		}
+		else if (roll >= 90) {
+			int bonus = roll(highRollBonusSides);
+			int result = roll + bonus;
+			String resultStr = resultStr(result);
+			result = clamp(result);
+			bot.sendChannelFormat("%s rolls d%d with the %s! %d! This number is very extremal! says the die.", 
+				owner, sides, dieName, roll);
+			bot.sendChannelFormat("The %s rewards %s with d%d bonus to the roll: %d + %d = %s!",
+				dieName, ownerColored, highRollBonusSides, roll, bonus, resultStr);
+			return result;
+		}
+		throw new IllegalStateException();
 	}
 
 	@Override

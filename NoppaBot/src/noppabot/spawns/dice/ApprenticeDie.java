@@ -35,7 +35,7 @@ public class ApprenticeDie extends BasicPowerup {
 	@Override
 	public void onTiebreakPeriodStart() {
 		bot.sendChannelFormat("%s's apprentice die has learned enough and evolves into a Master Die!", ownerColored);
-		bot.getPowerups().put(owner, new MasterDie());
+		bot.getPowerups().put(owner, new MasterDie().initialize(bot));
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class ApprenticeDie extends BasicPowerup {
 	
 	@Override
 	public int sides() {
-		return 100;
+		return 150;
 	}
 	
 	@Override
@@ -55,6 +55,6 @@ public class ApprenticeDie extends BasicPowerup {
 	
 	@Override
 	public Powerup upgrade() {
-		return new MasterDie();
+		return new MasterDie().initialize(bot);
 	}
 }

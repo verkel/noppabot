@@ -4,11 +4,16 @@
  */
 package noppabot.spawns.events;
 
+import java.util.Calendar;
+
 import noppabot.*;
 import noppabot.spawns.*;
 
 
 public class RulesChange extends Event {
+	private static final int NUM_RULES = 4;
+	private static final int NUM_WIN_CONDITIONS = 2;
+	
 	@Override
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("In today's Roll News, you read that the DiceRuler has issued " +
@@ -20,16 +25,16 @@ public class RulesChange extends Event {
 
 	public static String doRandomRulesChange(INoppaBot bot) {
 		Rules rules = bot.getRules();
-		int rnd = Powerups.powerupRnd.nextInt(4);
+		int rnd = getRnd();
 		String explanation;
 		if (rnd == 0) {
-			explanation = changeToUncappedRolls(rules);
-		}
-		else if (rnd == 1) {
 			explanation = changeToLowestRollWins(rules);
 		}
-		else if (rnd == 2) {
+		else if (rnd == 1) {
 			explanation = changeToRollClosestToTargetWins(rules);
+		}
+		else if (rnd == 2) {
+			explanation = changeToUncappedRolls(rules);
 		}
 		else if (rnd == 3) {
 			explanation = changeToCanDropItems(rules);
@@ -40,6 +45,17 @@ public class RulesChange extends Event {
 		
 		bot.onRulesChanged();
 		return explanation;
+	}
+	
+	private static int getRnd() {
+		Calendar cal = Calendar.getInstance();
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+		if (hour < 16) {
+			return Powerups.powerupRnd.nextInt(NUM_RULES);
+		}
+		else {
+			return NUM_WIN_CONDITIONS + Powerups.powerupRnd.nextInt(NUM_RULES - NUM_WIN_CONDITIONS);
+		}
 	}
 
 	public static String changeToRollClosestToTargetWins(Rules rules) {
@@ -71,7 +87,6 @@ public class RulesChange extends Event {
 	
 	@Override
 	public float spawnChance() {
-		// Compensate that these stop spawning after 16:00
-		return 1.5f;
+		return 1.0f;
 	}
 }
