@@ -46,9 +46,9 @@ public class Powerups {
 			new ImitatorDie(), new HumongousDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
 			new RollingProfessional(), new SteadyDie(), new TrollingProfessional(), new VariableDie(), new WeightedDie()));
 
-		diceBrosPowerupsList.addAll(Arrays.asList(new BagOfDice(), new EnchantedDie(),
+		diceBrosPowerupsList.addAll(Arrays.asList(new BagOfDice(), new EnchantedDie(), new FastDie(),
 			new ExtremeDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
-			new SteadyDie(), new WeightedDie()));
+			new SteadyDie(), new VariableDie(), new WeightedDie()));
 
 		firstPowerupList.addAll(allPowerupsList);
 		firstPowerupList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new DiceRecycler()));
