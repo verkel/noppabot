@@ -9,6 +9,7 @@ import java.util.*;
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
+import ca.ualberta.cs.poker.Hand;
 
 public interface INoppaBot {
 
@@ -16,6 +17,7 @@ public interface INoppaBot {
 	void clearFavorsUsed();
 	int doRoll(String nick, int sides);
 	String getDefaultContestRollMessage(String nick, int value, boolean colorNick, boolean colorRoll);
+	public Hand getPokerTableCards();
 	Map<String, Powerup> getPowerups();
 	int getPowerupSides(String nick);
 	List<String> getRandomPowerupOwners();

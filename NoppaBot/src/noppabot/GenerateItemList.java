@@ -11,6 +11,7 @@ import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
+import ca.ualberta.cs.poker.Hand;
 
 public class GenerateItemList {
 
@@ -611,6 +612,11 @@ public class GenerateItemList {
 
 		@Override
 		public void clearFavorsUsed() {
+		}
+
+		@Override
+		public Hand getPokerTableCards() {
+			return null;
 		}
 	}
 	

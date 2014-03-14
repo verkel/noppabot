@@ -10,11 +10,14 @@ import java.util.regex.*;
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
+import noppabot.spawns.dice.PokerCards.CheatersCards;
 import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.*;
+
+import ca.ualberta.cs.poker.*;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
@@ -109,10 +112,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Set<String> favorsUsed = new HashSet<String>();
 	private Set<String> autorolls = new HashSet<String>();
 	private Calendar lastTiebreakPeriodStartTime;
-	
 	private Calendar rollPeriodStartTime;
 	private Calendar rollPeriodEndTime;
 	private Calendar spawnEndTime;
+	private Hand pokerTableCards;
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -609,6 +612,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("train")) {
 					grabPowerup(sender, DicemonTrainer.NAME);
 				}
+				else if (cmd.equalsIgnoreCase("deal")) {
+					grabPowerup(sender, PokerDealer.NAME);
+				}
 			}
 		}
 	}
@@ -971,15 +977,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		clearPowerupTasks();
 
 		sendChannel(randomRollStartMsg());
-		
 		rules.onRollPeriodStart();
+		revealPokerTableCards();
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
 			powerup.onRollPeriodStart();
 		}
 	}
-	
+
 	private void autorollFor(Set<String> autorolls) {
 		
 		// Filter people who have rolled
@@ -1362,6 +1368,31 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else return Color.hilight(roll); // Color it hilighted white
 	}
 	
+	private void revealPokerTableCards() {
+		boolean cardsFound = false;
+		for (Powerup powerup : powerups.values()) {
+			if (powerup instanceof PokerCards || powerup instanceof CheatersCards) {
+				cardsFound = true;
+				break;
+			}
+		}
+		if (!cardsFound) return;
+		
+		createPokerTableCards();
+		
+		sendChannelFormat("I'll deal the table cards for poker players... %s", pokerTableCards.toString());
+	}
+
+	private void createPokerTableCards() {
+		Deck deck = new Deck(System.currentTimeMillis());
+		deck.shuffle();
+		pokerTableCards = new Hand();
+		for (int i = 0; i < 5; i++) {
+			Card card = deck.deal();
+			pokerTableCards.addCard(card);
+		}
+	}
+	
 	@Override
 	public int clampRoll(int roll) {
 		if (rules.cappedRolls) return Math.max(0, Math.min(100, roll));
@@ -1373,6 +1404,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		Powerup powerup = powerups.get(nick);
 		if (powerup == null) return 100;
 		else return powerup.sides();
+	}
+	
+	public Hand getPokerTableCards() {
+		return pokerTableCards;
 	}
 
 	private boolean isOnChannel(String nick) {
