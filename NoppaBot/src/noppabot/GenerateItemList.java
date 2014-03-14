@@ -278,7 +278,7 @@ public class GenerateItemList {
 		
 		addEntry("Groundhog Die", "Placeholder.png", groundhogDieDesc, null);
 
-		testPowerup("Super Dice Bros", "Locked.png", superDiceBrosDesc, null, new Builder() {
+		testPowerup("Super Dice Bros", "Placeholder.png", superDiceBrosDesc, null, new Builder() {
 			@Override
 			public Powerup createPowerup() {
 				DiceBros bros = new DiceBros();
@@ -653,7 +653,7 @@ public class GenerateItemList {
 	private static final String daringDieDesc = "You roll the d30. Changes rolls 1..10 into (100 - roll).";
 	private static final String bagOfManyDiceDesc = "Two additional dice are put into the dice bag. May be upgraded infinitely for more dice.";
 	private static final String groundhogDieDesc = "Repeats your yesterday's roll.";
-	private static final String superDiceBrosDesc = undiscovered; // = "The dice bros. get random powerups each.";
+	private static final String superDiceBrosDesc = "The dice bros. get random powerups each.";
 	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
 	private static final String humongousCrushingDieDesc = "Deals d10 + 15 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
