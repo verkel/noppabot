@@ -40,7 +40,7 @@ public class ImitatorDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and teaches how to roll %s to it.", 
-			owner, nameColored(), Color.hilight(lastRoll));
+			owner, nameColored(), Color.emphasize(lastRoll));
 	}
 	
 	@Override

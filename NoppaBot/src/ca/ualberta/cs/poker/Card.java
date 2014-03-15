@@ -228,7 +228,8 @@ public class Card {
    @Override
 	public String toString() {
 //      String s = new String();
-      String rankStr = getRankString(getRank());
+   	int rank = getRank();
+      String rankStr = getRankString(rank);
       String suitStr = null;
       int suit = getSuit();
       switch (suit) {
@@ -238,7 +239,9 @@ public class Card {
          case SPADES:   suitStr = "\u2660"; break;
       }
       // Use nbsp to keep card intact in one line
-      return Color.pokerCard(String.format("\u00a0%s%s\u00a0", rankStr, suitStr), suit);
+//      String formatStr = (rank == Card.TEN) ? "%s%s\u00a0" : "\u00a0%s%s\u00a0";
+      String formatStr = "\u00a0%s%s\u00a0";
+      return Color.pokerCard(String.format(formatStr, rankStr, suitStr), suit);
    }
    
    

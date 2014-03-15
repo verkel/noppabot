@@ -4,6 +4,8 @@
  */
 package noppabot;
 
+import it.sauronsoftware.cron4j.Scheduler;
+
 import java.io.*;
 import java.util.*;
 
@@ -11,7 +13,6 @@ import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import ca.ualberta.cs.poker.Hand;
 
 public class GenerateItemList {
 
@@ -615,7 +616,22 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public Hand getPokerTableCards() {
+		public Scheduler getScheduler() {
+			return null;
+		}
+
+		@Override
+		public Object getLock() {
+			return null;
+		}
+
+		@Override
+		public PokerTable getPokerTable() {
+			return null;
+		}
+
+		@Override
+		public State getState() {
 			return null;
 		}
 	}

@@ -4,19 +4,18 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.Color;
 import noppabot.spawns.*;
 import ca.ualberta.cs.poker.*;
 
 
-public class PokerCards extends BasicPowerup {
+public class PokerHand extends BasicPowerup {
 	
-	private static HandEvaluator evaluator = new HandEvaluator();
+//	private static HandEvaluator evaluator = new HandEvaluator();
 
-	private Deck deck;
 	private Hand hand;
 	
-	public PokerCards(Deck deck) {
-		this.deck = deck;
+	public PokerHand() {
 	}
 	
 	@Override
@@ -27,12 +26,12 @@ public class PokerCards extends BasicPowerup {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("Pair of %s appear!", nameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
 	public void onExpire() {
-		sendExpireMessageFormat("... the poker cards are dealt to a game of Solitaire.");
+		sendExpireMessageFormat("... the poker hand is re-used in a game of Solitaire.");
 	}
 
 //	@Override
@@ -43,7 +42,7 @@ public class PokerCards extends BasicPowerup {
 	@Override
 	public int onContestRoll() {
 		try {
-			Hand tableCards = bot.getPokerTableCards();
+			Hand tableCards = bot.getPokerTable().cards;
 			Hand combinedHand = new Hand(hand);
 			for (int i = 1; i <= tableCards.size(); i++) {
 				boolean added = combinedHand.addCard(tableCards.getCard(i));
@@ -63,7 +62,7 @@ public class PokerCards extends BasicPowerup {
 //			bot.sendChannelFormat("%s reveals the cards: %s. Combined with the table cards, %s has %s, %s!",
 //				owner, hand.toString(), owner, combinedHand.toString(), handDesc);
 			bot.sendChannelFormat("%s reveals the cards: %s. Combined with the table cards, %s has %s!",
-				owner, hand.toString(), owner, handDesc);
+				owner, hand.toString(), owner, Color.emphasize(handDesc));
 			bot.sendChannelFormat("%s's hand is worth %d + %d = %s points!", ownerColored, 
 				rankPoints, bonusPoints, resultStr);
 			
@@ -83,7 +82,7 @@ public class PokerCards extends BasicPowerup {
 	
 	@Override
 	public String name() {
-		return "Poker Cards";
+		return "Poker Hand";
 	}
 	
 	@Override
@@ -98,33 +97,65 @@ public class PokerCards extends BasicPowerup {
 	
 	@Override
 	public Powerup upgrade() {
-		return new PocketAces();
+		return new BetterHand();
 	}
 	
 	private void takeCards(int n) {
+		Deck deck = bot.getPokerTable().deck;
 		for (int i = 0; i < n && deck.cardsLeft() > 0; i++) {
-			hand.addCard(deck.dealCard());
+			hand.addCard(deck.deal());
 		}
 		hand.sort();
 	}
 	
-	public class PocketAces extends EvolvedPowerup {
-		public PocketAces() {
-			super(PokerCards.this);
-			int suit = Powerups.powerupRnd.nextInt(4);
-			hand = new Hand();
-			hand.addCard(new Card(Card.ACE, suit));
-			hand.addCard(new Card(Card.ACE, suit));
+	private void returnCards() {
+		Deck deck = bot.getPokerTable().deck;
+		for (int i = 1; i <= hand.size(); i++) {
+			Card card = hand.getCard(i);
+			deck.replaceCard(card);
+		}
+		deck.shuffle();
+		hand.makeEmpty();
+	}
+	
+	public class BetterHand extends EvolvedPowerup {
+		private int gen = 0;
+		
+		private String[] names = {
+			"Better Hand", "Much Improved Hand", "Third Hand's the Charm", "Sick Hand", "Hand of Long Ancestry", 
+			"Hand of Leftover Cards", "Hand of Pure Desperation", "The One Hand... not really"
+		};
+		
+		public BetterHand() {
+			super(PokerHand.this);
+			redraw();
+		}
+		
+		private void redraw() {
+			returnCards();
+			takeCards(2);
+		}
+		
+		@Override
+		public boolean isUpgradeable() {
+			return true;
+		}
+		
+		@Override
+		public Powerup upgrade() {
+			redraw();
+			gen++;
+			return this;
 		}
 		
 		@Override
 		public String name() {
-			return "Pocket Aces";
+			return names[gen % names.length];
 		}
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("todo", 777);
+			return String.format("While the trainer distracts the poker dealer, you swap your previous cards to: %s", hand);
 		}
 	}
 }

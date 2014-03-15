@@ -53,11 +53,11 @@ public class Color {
 		return custom(expireMsg, Colors.NORMAL);
 	}
 	
-	public static String hilight(int number) {
-		return hilight(String.valueOf(number));
+	public static String emphasize(int number) {
+		return emphasize(String.valueOf(number));
 	}
 
-	public static String hilight(String msg) {
+	public static String emphasize(String msg) {
 		return custom(msg, Colors.WHITE);
 	}
 	

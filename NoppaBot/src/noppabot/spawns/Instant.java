@@ -15,6 +15,11 @@ public abstract class Instant extends BasicPowerup {
 	}
 	
 	@Override
+	public boolean isDestroyedAfterPickup() {
+		return true;
+	}
+	
+	@Override
 	public String nameColored() {
 		return Color.instant(name());
 	}

@@ -6,10 +6,9 @@ package noppabot.spawns.instants;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.dice.PokerCards;
+import noppabot.spawns.dice.PokerHand;
 import ca.ualberta.cs.poker.Deck;
 
-// TODO "deal" command!
 public class PokerDealer extends Instant {
 
 	private static final int MAX_PLAYERS = 3;
@@ -31,8 +30,15 @@ public class PokerDealer extends Instant {
 		INoppaBot bot = bot();
 		if (bot.getPowerups().containsKey(nick)) {
 			Powerup powerup = bot.getPowerups().get(nick);
-			if (verbose) bot.sendChannelFormat("%s: you already have the %s; you don't have any room for cards.", 
-				Color.nick(nick), powerup.nameColored());
+			if (verbose) {
+				if (powerup instanceof PokerHand) {
+					bot.sendChannelFormat("%s: I've already dealt you a hand!", Color.nick(nick));
+				}
+				else {
+					bot.sendChannelFormat("%s: you already have the %s; you don't have any room for cards.", 
+						Color.nick(nick), powerup.nameColored());
+				}
+			}
 			return false;
 		}
 		
@@ -41,11 +47,23 @@ public class PokerDealer extends Instant {
 	
 	@Override
 	public void onSpawn() {
+		PokerTable table = bot.getPokerTable();
+		table.onDealerSpawned();
 		bot.sendChannelFormat("A %s appears!", nameColored());
-		String cardsLeftStr;
-		if (cardsLeft == 1) cardsLeftStr = "one seat";
-		else cardsLeftStr = cardsLeft + " seats";
-		bot.sendChannelFormat("\"There's %s left in the poker table\", says the dealer.", cardsLeftStr);
+		bot.sendChannelFormat("\"There's %s left in the poker table\", says the dealer.", seatsLeftStr());
+		bot.sendChannelFormat("\"Today the common cards are: %s. Anyone want to play?\"", table.cardsToString());
+	}
+
+	private String seatsLeftStr() {
+		String seatsLeftStr;
+		if (cardsLeft == 1) seatsLeftStr = "one seat";
+		else seatsLeftStr = cardsLeft + " seats";
+		return seatsLeftStr;
+	}
+	
+	@Override
+	public boolean isDestroyedAfterPickup() {
+		return cardsLeft == 0;
 	}
 
 	@Override
@@ -55,12 +73,22 @@ public class PokerDealer extends Instant {
 
 	@Override
 	public void onPickup() {
-		PokerCards cards = (PokerCards)new PokerCards(deck).initialize(bot);
+		PokerTable table = bot.getPokerTable();
+		table.onDealerSpawned();
+		PokerHand cards = (PokerHand)new PokerHand().initialize(bot);
 		bot.getPowerups().put(owner, cards);
 		cards.setOwner(owner);
-		bot.sendChannelFormat("%s is dealt a hand of %s!", ownerColored, cards.nameColored());
-//		bot.sendChannelFormat("The Poker Dealer deals hand of %s to %s!", cards.cardsToString(), ownerColored);
+//		bot.sendChannelFormat("%s is dealt a hand of %s!", ownerColored, cards.nameColored());
+		bot.sendChannelFormat("The %s deals hand of %s to %s!", nameColored(), cards.cardsToString(), ownerColored);
 		cardsLeft--;
+		
+		if (cardsLeft == 0) {
+			bot.sendChannel("The dealer leaves after filling up all the seats in the table.");
+		}
+		else {
+			bot.sendChannelFormat("\"There's still %s left in the poker table\", the dealer says.", 
+				seatsLeftStr());
+		}
 	}
 
 	@Override

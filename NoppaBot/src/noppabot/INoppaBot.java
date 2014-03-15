@@ -4,20 +4,22 @@
  */
 package noppabot;
 
+import it.sauronsoftware.cron4j.Scheduler;
+
 import java.util.*;
 
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
-import ca.ualberta.cs.poker.Hand;
 
 public interface INoppaBot {
 
+	public static enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
+	
 	int clampRoll(int roll);
 	void clearFavorsUsed();
 	int doRoll(String nick, int sides);
 	String getDefaultContestRollMessage(String nick, int value, boolean colorNick, boolean colorRoll);
-	public Hand getPokerTableCards();
 	Map<String, Powerup> getPowerups();
 	int getPowerupSides(String nick);
 	List<String> getRandomPowerupOwners();
@@ -46,4 +48,8 @@ public interface INoppaBot {
 	void sendMessage(String nick, String msg);
 	void sendMessageFormat(String nick, String msg, Object... args);
 	void setNextRoll(String nick, int sides, int roll);
+	Scheduler getScheduler();
+	Object getLock();
+	PokerTable getPokerTable();
+	State getState();
 }

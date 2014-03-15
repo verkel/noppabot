@@ -10,14 +10,12 @@ import java.util.regex.*;
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import noppabot.spawns.dice.PokerCards.PocketAces;
+import noppabot.spawns.dice.PokerHand.BetterHand;
 import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.*;
-
-import ca.ualberta.cs.poker.*;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
@@ -88,8 +86,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		};
 	}
 	
-	private enum State { NORMAL, ROLL_PERIOD, SETTLE_TIE };
-	
 	public static final Pattern dicePattern = Pattern.compile("^d([0-9]+)");
 	public static final Pattern dicePatternWithCustomRoller = Pattern.compile("^d([0-9]+) ([^\\s]+)");
 	public static final Pattern commandAndArgument = Pattern.compile("^(\\w+)(?:\\s+(.+)?)?");
@@ -115,7 +111,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Calendar rollPeriodStartTime;
 	private Calendar rollPeriodEndTime;
 	private Calendar spawnEndTime;
-	private Hand pokerTableCards;
+	private PokerTable pokerTable = new PokerTable(this);
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -201,12 +197,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void debugStuff() {
 //		for (int i = 0; i < 5; i++) new RulesChange().run(this);
 		
-		for (int i = 0; i < 5; i++) availablePowerups.add(new RollingProfessional().initialize(this));
+		for (int i = 0; i < 10; i++) availablePowerups.add(new DicemonTrainer().initialize(this));
 		
-		BasicPowerup cards = new PokerCards(new Deck(System.currentTimeMillis())).initialize(this);
-		cards.setOwner("Verkel");
-		powerups.put("Verkel", cards);
-		startRollPeriod();
+//		BasicPowerup cards = new PokerCards().initialize(this);
+//		cards.setOwner("Verkel");
+//		powerups.put("Verkel", cards);
 //		powerups.put("kessu", new ApprenticeDie().initialize(this));
 //		powerups.put("frodo", new FastDie().initialize(this));
 //		powerups.put("bilbo", new MasterDie().initialize(this));
@@ -240,6 +235,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		new FourthWallBreaks().run(this);
 		
 		spawnAllPowerups();
+		
+		scheduleSpawn(null, new PokerDealer().initialize(this));
+		
+//		grabPowerup("Verkel", PokerDealer.NAME);
 	}
 	
 	private void spawnAllPowerups() {
@@ -617,6 +616,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("deal")) {
 					grabPowerup(sender, PokerDealer.NAME);
 				}
+				else if (cmd.equalsIgnoreCase("reveal")) {
+					Powerup powerup = powerups.get(sender);
+					if (powerup != null && (powerup instanceof PokerHand || powerup instanceof BetterHand)) {
+						rollAndParticipate(sender, 100);
+					}
+					else {
+						sendChannelFormat("%s: you don't have a poker hand", Color.nick(sender));
+					}
+				}
 			}
 		}
 	}
@@ -806,8 +814,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			if (powerup != null) {
 				powerup.setOwner(nick);
 				powerup.onPickup();
-				if (powerup.isCarried()) powerups.put(nick, powerup);
-				availablePowerups.remove(powerup);
+				if (powerup.isCarried()) {
+					powerups.put(nick, powerup);
+					availablePowerups.remove(powerup);
+				}
+				else if (powerup.isDestroyedAfterPickup()) {
+					availablePowerups.remove(powerup);
+				}
 			}
 			// User didn't specify which item to grab
 			else if (powerupName == null) {
@@ -980,7 +993,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		sendChannel(randomRollStartMsg());
 		rules.onRollPeriodStart();
-		revealPokerTableCards();
+		pokerTable.tryRevealTableCards(true);
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
@@ -1121,6 +1134,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		powerups.clear();
 		favorsUsed.clear();
 		autorolls.clear();
+		pokerTable.clear();
 		schedulePowerupsOfTheDay();
 		
 		if (rules.reset()) {
@@ -1367,34 +1381,34 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private String maybeColorRoll(int roll, boolean colorRoll) {
 		if (colorRoll) return colorRoll(roll); // Color it green/red
-		else return Color.hilight(roll); // Color it hilighted white
+		else return Color.emphasize(roll); // Color it hilighted white
 	}
 	
-	private void revealPokerTableCards() {
-		boolean cardsFound = false;
-		for (Powerup powerup : powerups.values()) {
-			if (powerup instanceof PokerCards || powerup instanceof PocketAces) {
-				cardsFound = true;
-				break;
-			}
-		}
-		if (!cardsFound) return;
-		
-		createPokerTableCards();
-		
-		sendChannelFormat("I'll deal the table cards for poker players... %s", pokerTableCards.toString());
-	}
+//	private void revealPokerTableCards() {
+//		boolean cardsFound = false;
+//		for (Powerup powerup : powerups.values()) {
+//			if (powerup instanceof PokerCards || powerup instanceof PocketAces) {
+//				cardsFound = true;
+//				break;
+//			}
+//		}
+//		if (!cardsFound) return;
+//		
+//		createPokerTableCards();
+//		
+//		sendChannelFormat("I'll deal the table cards for poker players... %s", pokerTableCards.toString());
+//	}
 
-	private void createPokerTableCards() {
-		Deck deck = new Deck(System.currentTimeMillis());
-		deck.shuffle();
-		pokerTableCards = new Hand();
-		for (int i = 0; i < 5; i++) {
-			Card card = deck.deal();
-			pokerTableCards.addCard(card);
-		}
-		pokerTableCards.sort();
-	}
+//	private void createPokerTableCards() {
+//		Deck deck = new Deck(System.currentTimeMillis());
+//		deck.shuffle();
+//		pokerTableCards = new Hand();
+//		for (int i = 0; i < 5; i++) {
+//			Card card = deck.deal();
+//			pokerTableCards.addCard(card);
+//		}
+//		pokerTableCards.sort();
+//	}
 	
 	@Override
 	public int clampRoll(int roll) {
@@ -1409,8 +1423,24 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else return powerup.sides();
 	}
 	
-	public Hand getPokerTableCards() {
-		return pokerTableCards;
+	@Override
+	public Scheduler getScheduler() {
+		return scheduler;
+	}
+	
+	@Override
+	public Object getLock() {
+		return lock;
+	}
+	
+	@Override
+	public PokerTable getPokerTable() {
+		return pokerTable;
+	}
+	
+	@Override
+	public State getState() {
+		return state;
 	}
 
 	private boolean isOnChannel(String nick) {

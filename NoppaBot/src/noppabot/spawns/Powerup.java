@@ -70,6 +70,14 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 		return true;
 	}
 	
+	/**
+	 * If the powerup is not carried, this property dictates
+	 * whether it is destroyed after being picked up
+	 */
+	public boolean isDestroyedAfterPickup() {
+		return false;
+	}
+	
 	public boolean isUpgradeable() {
 		return false;
 	}
