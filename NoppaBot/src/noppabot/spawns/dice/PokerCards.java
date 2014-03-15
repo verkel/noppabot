@@ -42,35 +42,39 @@ public class PokerCards extends BasicPowerup {
 	
 	@Override
 	public int onContestRoll() {
-//		int roll = roll();
-//		int result = roll + bonus;
-//		String resultStr = resultStr(result);
-//		result = clamp(result);
-//		bot.sendChannelFormat(
-//			"The enchanted die grants %s either eternal fame and fortune, or a substantial roll bonus. %s chooses the latter.",
-//			owner, owner);
-//		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
-//			bot.grade(result));
-		
-//		Hand combinedHand = evaluator.getBest5CardHand(hand);
-		Hand tableCards = bot.getPokerTableCards();
-		Hand combinedHand = new Hand(hand);
-		for (int i = 0; i < tableCards.size(); i++) {
-			combinedHand.addCard(tableCards.getCard(i));
+		try {
+			Hand tableCards = bot.getPokerTableCards();
+			Hand combinedHand = new Hand(hand);
+			for (int i = 1; i <= tableCards.size(); i++) {
+				boolean added = combinedHand.addCard(tableCards.getCard(i));
+				if (!added) System.out.printf("card n. %d was not added\n", i);
+			}
+//			combinedHand = evaluator.getBest5CardHand(combinedHand);
+			combinedHand.sort();
+			int handRank = HandEvaluator.rankHand(combinedHand);
+			String handDesc = HandEvaluator.nameHand(handRank);
+			
+			int rankPoints = handRank / HandEvaluator.ID_GROUP_SIZE * 20;
+			int bonusPoints = HandEvaluator.getSecondaryGrade(handRank); // My hack...
+			int result = rankPoints + bonusPoints;
+			String resultStr = resultStr(result);
+			result = clamp(result);
+			
+//			bot.sendChannelFormat("%s reveals the cards: %s. Combined with the table cards, %s has %s, %s!",
+//				owner, hand.toString(), owner, combinedHand.toString(), handDesc);
+			bot.sendChannelFormat("%s reveals the cards: %s. Combined with the table cards, %s has %s!",
+				owner, hand.toString(), owner, handDesc);
+			bot.sendChannelFormat("%s's hand is worth %d + %d = %s points!", ownerColored, 
+				rankPoints, bonusPoints, resultStr);
+			
+			return result;
 		}
-		combinedHand = evaluator.getBest5CardHand(combinedHand);
-		int handRank = HandEvaluator.rankHand(hand);
-		String handDesc = HandEvaluator.nameHand(handRank);
-		
-		int result = handRank / HandEvaluator.ID_GROUP_SIZE * 15;
-		String resultStr = resultStr(result);
-		result = clamp(result);
-		
-		bot.sendChannelFormat("%s reveals the cards:%s. Combined with the table cards, %s has %s, %s! " +
-			"This hand is worth %s points.", ownerColored, hand.toString(), owner, 
-			combinedHand.toString(), handDesc, String.valueOf(handRank));//resultStr);
-		
-		return result;
+		catch (Exception e) {
+			e.printStackTrace();
+			bot.sendChannelFormat("%s: sorry, I couldn't calculate value of your hand. :( " +
+				"It was: %s. Let's roll normal d100 instead.", owner, hand);
+			return super.onContestRoll();
+		}
 	}
 	
 	public String cardsToString() {
@@ -94,28 +98,28 @@ public class PokerCards extends BasicPowerup {
 	
 	@Override
 	public Powerup upgrade() {
-		return new CheatersCards();
+		return new PocketAces();
 	}
 	
 	private void takeCards(int n) {
-		for (int i = 0; i < 2 && deck.cardsLeft() > 0; i++) {
+		for (int i = 0; i < n && deck.cardsLeft() > 0; i++) {
 			hand.addCard(deck.dealCard());
 		}
+		hand.sort();
 	}
 	
-	public class CheatersCards extends EvolvedPowerup {
-		public CheatersCards() {
+	public class PocketAces extends EvolvedPowerup {
+		public PocketAces() {
 			super(PokerCards.this);
-		}
-		
-		@Override
-		public int onContestRoll() {
-			return 0;
+			int suit = Powerups.powerupRnd.nextInt(4);
+			hand = new Hand();
+			hand.addCard(new Card(Card.ACE, suit));
+			hand.addCard(new Card(Card.ACE, suit));
 		}
 		
 		@Override
 		public String name() {
-			return "Cheater's Cards";
+			return "Pocket Aces";
 		}
 		
 		@Override

@@ -1,4 +1,6 @@
 package ca.ualberta.cs.poker;
+
+import noppabot.Color;
 /***************************************************************************
 Copyright (c) 2000:
       University of Alberta,
@@ -8,7 +10,6 @@ Copyright (c) 2000:
       See "Liscence.txt"
 ***************************************************************************/
 
-import java.lang.String;
 
 /**
 * Represents a playing card
@@ -224,28 +225,32 @@ public class Card {
     * Obtain a String representation of this Card
     * @return A string for this card
     */
-   public String toString() {
-      String s = new String();
-      s += getRankChar(getRank());
-      switch (getSuit()) {
-         case HEARTS:   s+='h'; break;
-         case DIAMONDS: s+='d'; break;
-         case CLUBS:    s+='c'; break;
-         case SPADES:   s+='s'; break;
+   @Override
+	public String toString() {
+//      String s = new String();
+      String rankStr = getRankString(getRank());
+      String suitStr = null;
+      int suit = getSuit();
+      switch (suit) {
+         case HEARTS:   suitStr = "\u2665"; break;
+         case DIAMONDS: suitStr = "\u2666"; break;
+         case CLUBS:    suitStr = "\u2663"; break;
+         case SPADES:   suitStr = "\u2660"; break;
       }
-      return s;
+      // Use nbsp to keep card intact in one line
+      return Color.pokerCard(String.format("\u00a0%s%s\u00a0", rankStr, suitStr), suit);
    }
    
    
-   public static char getRankChar(int r) {
-      char s;
+   public static String getRankString(int r) {
+      String s;
       switch (r) {
-          case ACE:   s='A'; break;
-          case KING:  s='K'; break;
-          case QUEEN: s='Q'; break;
-          case JACK:  s='J'; break;
-          case TEN:   s='T'; break;
-          default:    s = Character.forDigit(r+2,Character.MAX_RADIX); break;
+          case ACE:   s="A"; break;
+          case KING:  s="K"; break;
+          case QUEEN: s="Q"; break;
+          case JACK:  s="J"; break;
+          case TEN:   s="10"; break;
+          default:    s = String.valueOf(Character.forDigit(r+2, Character.MAX_RADIX)); break;
       }
       return s;
    }

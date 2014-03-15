@@ -143,7 +143,8 @@ public class Hand {
       while (flag) {
          flag = false;
          for (int i=1;i<cards[0];i++) {
-            if (cards[i] < cards[i+1]) {
+//            if (cards[i] < cards[i+1]) {
+         	if (Card.getRank(cards[i]) < Card.getRank(cards[i+1])) {
                flag = true;
                int t = cards[i];
                cards[i] = cards[i+1];
@@ -156,11 +157,14 @@ public class Hand {
    /**
     * Get a string representation of this Hand.
     */
-   public String toString() {
-      String s = new String();
-      for (int i=1;i<=cards[0];i++)
-         s += " " + getCard(i).toString();
-      return s;
+   @Override
+	public String toString() {
+      StringBuilder sb = new StringBuilder();
+      for (int i=1;i<=cards[0];i++) {
+         sb.append(getCard(i).toString());
+         if (i < cards[0]) sb.append(" "); 
+      }
+      return sb.toString();
    }
 
 

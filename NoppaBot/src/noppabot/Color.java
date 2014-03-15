@@ -62,4 +62,12 @@ public class Color {
 	public static String antiHilight(String nick) {
 		return nick.charAt(0) + Colors.BOLD + Colors.BOLD + nick.substring(1);
 	}
+	
+	private static final String BLACK_ON_WHITE = "\u000301,00";
+	private static final String RED_ON_WHITE = "\u000305,00";
+	
+	public static String pokerCard(String text, int suit) {
+		String color = (suit < 2) ? RED_ON_WHITE : BLACK_ON_WHITE;
+		return color + text + Colors.NORMAL;
+	}
 }

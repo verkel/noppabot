@@ -10,7 +10,7 @@ import java.util.regex.*;
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import noppabot.spawns.dice.PokerCards.CheatersCards;
+import noppabot.spawns.dice.PokerCards.PocketAces;
 import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
@@ -203,8 +203,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		for (int i = 0; i < 5; i++) availablePowerups.add(new RollingProfessional().initialize(this));
 		
-//		powerups.put("hassu", new WeightedDie().initialize(this).upgrade());
-		powerups.put("hessu", new ImitatorDie().initialize(this));
+		BasicPowerup cards = new PokerCards(new Deck(System.currentTimeMillis())).initialize(this);
+		cards.setOwner("Verkel");
+		powerups.put("Verkel", cards);
+		startRollPeriod();
 //		powerups.put("kessu", new ApprenticeDie().initialize(this));
 //		powerups.put("frodo", new FastDie().initialize(this));
 //		powerups.put("bilbo", new MasterDie().initialize(this));
@@ -1371,7 +1373,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void revealPokerTableCards() {
 		boolean cardsFound = false;
 		for (Powerup powerup : powerups.values()) {
-			if (powerup instanceof PokerCards || powerup instanceof CheatersCards) {
+			if (powerup instanceof PokerCards || powerup instanceof PocketAces) {
 				cardsFound = true;
 				break;
 			}
@@ -1391,6 +1393,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			Card card = deck.deal();
 			pokerTableCards.addCard(card);
 		}
+		pokerTableCards.sort();
 	}
 	
 	@Override

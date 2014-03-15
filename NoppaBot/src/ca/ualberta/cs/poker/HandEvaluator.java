@@ -957,7 +957,7 @@ public class HandEvaluator {
    public static final int FIVEKIND = 9;
    public static final int NUM_HANDS = 10;
 
-   private static final int NUM_RANKS = 13;
+   public static final int NUM_RANKS = 13;
 
    public static final int ID_GROUP_SIZE = (Card.NUM_RANKS * Card.NUM_RANKS
          * Card.NUM_RANKS * Card.NUM_RANKS * Card.NUM_RANKS);
@@ -1234,4 +1234,46 @@ public class HandEvaluator {
       return t;
    }
 
+   // Addition by Verkel:
+   
+   public static int getSecondaryGrade(int rank) {
+
+      int type = (int) (rank / ID_GROUP_SIZE);
+      int ident = (int) (rank % ID_GROUP_SIZE), ident2;
+
+      String t = new String();
+
+      switch (type) {
+      case HIGH:
+         ident /= NUM_RANKS * NUM_RANKS * NUM_RANKS * NUM_RANKS;
+         return ident;
+      case FLUSH:
+         ident /= NUM_RANKS * NUM_RANKS * NUM_RANKS * NUM_RANKS;
+         return ident;
+      case PAIR:
+         ident /= NUM_RANKS * NUM_RANKS * NUM_RANKS;
+         return ident;
+      case TWOPAIR:
+         ident2 = ident / (NUM_RANKS * NUM_RANKS);
+         ident = (ident % (NUM_RANKS * NUM_RANKS)) / NUM_RANKS;
+         return Math.max(ident2, ident);
+      case THREEKIND:
+      	ident /= (NUM_RANKS * NUM_RANKS);
+      	return ident;
+      case FULLHOUSE:
+      	return Math.max(ident / NUM_RANKS, ident % NUM_RANKS);
+      case FOURKIND:
+         return ident / NUM_RANKS;
+      case STRAIGHT:
+         return ident;
+      case STRAIGHTFLUSH:
+         return ident;
+      case FIVEKIND:
+         return ident;
+      default:
+         t = hand_name[type];
+      }
+
+      return 0;
+   }
 }
