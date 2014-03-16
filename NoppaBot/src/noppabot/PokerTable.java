@@ -36,13 +36,12 @@ public class PokerTable {
 	public void onDealerSpawned() {
 		if (gameStarted) return;
 
-		deck = new Deck(System.currentTimeMillis());
-		deck.shuffle();
+		createDeck();
 		
 		tryRevealTableCards(false);
 		gameStarted = true;
 	}
-	
+
 	public void tryRevealTableCards(boolean verbose) {
 		Calendar now = Calendar.getInstance();
 		int hours = now.get(Calendar.HOUR_OF_DAY);
@@ -53,7 +52,7 @@ public class PokerTable {
 		else if (!gameStarted) scheduleTurnReveal();
 		if (isRollPeriod) revealRiver(verbose);
 	}
-	
+
 	public void scheduleTurnReveal() {
 		bot.getScheduler().schedule(TURN_SCHEDULE_STR, new Runnable() {
 			@Override
@@ -116,6 +115,11 @@ public class PokerTable {
 			sb.append(" + ").append(river);
 		}
 		return sb.toString();
+	}
+	
+	public void createDeck() {
+		deck = new Deck(System.currentTimeMillis());
+		deck.shuffle();
 	}
 	
 	private void updateCards() {

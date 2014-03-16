@@ -256,6 +256,22 @@ public class GenerateItemList {
 		testBasicPowerup("Humongous Die", "Placeholder.png", humongousDieDesc, "Humongous Crushing Die", new RegularDie(), bot);
 
 		testBasicPowerup("Steady Die", "Placeholder.png", steadyDieDesc, "Trusty Die", new SteadyDie(), bot);
+		
+		testPowerup("Poker Hand", "Placeholder.png", pokerHandDesc, "Poker Hand", new Builder() {
+			@Override
+			public Powerup createPowerup() {
+				PokerTable table = bot.getPokerTable();
+				table.clear();
+				table.createDeck();
+				table.revealFlop();
+				table.revealTurn(false);
+				table.revealRiver(false);
+				
+				PokerHand hand = new PokerHand();
+				hand.initialize(bot);
+				return hand;
+			};
+		}, bot, false, DiceType.BASIC);
 	}
 	
 	private void testEvolvedDice() {
@@ -302,6 +318,22 @@ public class GenerateItemList {
 		testEvolvedPowerup("Humongous Crushing Die", "Placeholder.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(), bot);
 	
 		testEvolvedPowerup("Trusty Die", "Placeholder.png", trustyDieDesc, new SteadyDie().upgrade(), bot);
+		
+		testPowerup("Better Hand", "Placeholder.png", betterHandDesc, null, new Builder() {
+			@Override
+			public Powerup createPowerup() {
+				PokerTable table = bot.getPokerTable();
+				table.clear();
+				table.createDeck();
+				table.revealFlop();
+				table.revealTurn(false);
+				table.revealRiver(false);
+				
+				PokerHand hand = new PokerHand();
+				hand.initialize(bot);
+				return hand.upgrade();
+			};
+		}, bot, false, DiceType.EVOLVED);
 	}
 	
 	private void listInstants() {
@@ -309,6 +341,7 @@ public class GenerateItemList {
 		addEntry("Dice Pirate", "DicePirate.png", dicePirateDesc, null);
 		addEntry("Dice Recycler", "Placeholder.png", diceRecyclerDesc, null);
 		testDiceteller();
+		addEntry("Poker Dealer", "Placeholder.png", pokerDealerDesc, null);
 		addEntry("Rolling Professional", "Placeholder.png", rollingProfessionalDesc, null);
 		addEntry("Rolling Professor", "Placeholder.png", rollingProfessorDesc, null);
 		addEntry("Trolling Professional", "Placeholder.png", trollingProfessionalDesc, null);
@@ -625,9 +658,11 @@ public class GenerateItemList {
 			return null;
 		}
 
+		private PokerTable table = new PokerTable(this);
+		
 		@Override
 		public PokerTable getPokerTable() {
-			return null;
+			return table;
 		}
 
 		@Override
@@ -664,6 +699,7 @@ public class GenerateItemList {
 	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d150, d160.";
 	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
 	private static final String steadyDieDesc = "Lets you roll d70 + 30.";
+	private static final String pokerHandDesc = "Gives you points based on how good your cards are. See <a href=\"#pokerrules\">Poker Rules and Scoring</a>.";
 	
 	// Evolved
 	private static final String veryPolishedDieDesc = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
@@ -680,6 +716,7 @@ public class GenerateItemList {
 	private static final String humongousCrushingDieDesc = "Deals d10 + 15 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
 	private static final String trustyDieDesc = "Lets you roll d50 + 50.";
+	private static final String betterHandDesc = "The cards in your poker hand increase by one in rank, given such card is in the deck. Otherwise, you get card one higher of a different suit, or if all suits are taken too, you get card that is two higher, and so on. Aces will not be upgraded. Hands may be upgraded infinitely for even higher cards.";
 	
 	// Instant
 	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
@@ -689,6 +726,7 @@ public class GenerateItemList {
 			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll.";
 	private static final String dicetellerDesc = "Tells what your next roll will be.";
 	private static final String dicePirateDesc = "Steals item from another contestant.";
+	private static final String pokerDealerDesc = "Deals Poker Hands to 1-3 contestants. You may get new hands from subsequent dealers, even if you already have a hand, but the same dealer only gives you one hand. The dealer disappears when all the hands are dealt, or if the it expires before that.";
 	private static final String rollingProfessionalDesc = "Adds +5 to your next roll.";
 	private static final String rollingProfessorDesc = "Adds +10 to your next roll.";
 	

@@ -4,9 +4,12 @@
  */
 package noppabot.spawns.instants;
 
+import java.util.*;
+
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.dice.PokerHand;
+import noppabot.spawns.dice.*;
+import noppabot.spawns.dice.PokerHand.BetterHand;
 import ca.ualberta.cs.poker.Deck;
 
 public class PokerDealer extends Instant {
@@ -17,6 +20,7 @@ public class PokerDealer extends Instant {
 	
 	private Deck deck;
 	private int cardsLeft;
+	private Set<String> peopleDealtTo = new HashSet<String>();
 	
 	@Override
 	public void onInitialize() {
@@ -28,17 +32,20 @@ public class PokerDealer extends Instant {
 	@Override
 	public boolean canPickUp(String nick, boolean verbose) {
 		INoppaBot bot = bot();
+		
+		// Disallow picking up if player has any other item than cards
 		if (bot.getPowerups().containsKey(nick)) {
 			Powerup powerup = bot.getPowerups().get(nick);
-			if (verbose) {
-				if (powerup instanceof PokerHand) {
-					bot.sendChannelFormat("%s: I've already dealt you a hand!", Color.nick(nick));
-				}
-				else {
-					bot.sendChannelFormat("%s: you already have the %s; you don't have any room for cards.", 
-						Color.nick(nick), powerup.nameColored());
-				}
+			if (!(powerup instanceof PokerHand)) {
+				if (verbose) bot.sendChannelFormat("%s: you already have the %s; you don't have any room for cards.", 
+					Color.nick(nick), powerup.nameColored());
+				return false;
 			}
+		}
+		
+		// Disallow picking up if the dealer has dealt to this player
+		if (peopleDealtTo.contains(nick)) {
+			if (verbose) bot.sendChannelFormat("%s: I've already dealt you a hand!", Color.nick(nick));
 			return false;
 		}
 		
@@ -73,8 +80,10 @@ public class PokerDealer extends Instant {
 
 	@Override
 	public void onPickup() {
+		peopleDealtTo.add(owner);
 		PokerTable table = bot.getPokerTable();
 		table.onDealerSpawned();
+		trashPreviousCards();
 		PokerHand cards = (PokerHand)new PokerHand().initialize(bot);
 		bot.getPowerups().put(owner, cards);
 		cards.setOwner(owner);
@@ -88,6 +97,14 @@ public class PokerDealer extends Instant {
 		else {
 			bot.sendChannelFormat("\"There's still %s left in the poker table\", the dealer says.", 
 				seatsLeftStr());
+		}
+	}
+
+	private void trashPreviousCards() {
+		Powerup previousItem = bot.getPowerups().get(owner);
+		if (previousItem != null) {
+			if (previousItem instanceof PokerHand) ((PokerHand)previousItem).trash();
+			else if (previousItem instanceof BetterHand) ((BetterHand)previousItem).trash();
 		}
 	}
 

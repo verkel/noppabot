@@ -4,16 +4,31 @@
  */
 package noppabot.spawns.dice;
 
+import static ca.ualberta.cs.poker.HandEvaluator.*;
 import noppabot.Color;
 import noppabot.spawns.*;
 import ca.ualberta.cs.poker.*;
-
 
 public class PokerHand extends BasicPowerup {
 	
 //	private static HandEvaluator evaluator = new HandEvaluator();
 
 	private Hand hand;
+	
+	private static int[] handRankBonuses = new int[NUM_HANDS];
+	
+	static {
+		handRankBonuses[HIGH] = 0;
+		handRankBonuses[PAIR] = 50;
+		handRankBonuses[TWOPAIR] = 70;
+		handRankBonuses[THREEKIND] = 80;
+		handRankBonuses[STRAIGHT] = 90;
+		handRankBonuses[FLUSH] = 95;
+		handRankBonuses[FULLHOUSE] = 100;
+		handRankBonuses[FOURKIND] = 120;
+		handRankBonuses[STRAIGHTFLUSH] = 140;
+		handRankBonuses[FIVEKIND] = 200; // Not possible without Jokers
+	}
 	
 	public PokerHand() {
 	}
@@ -50,11 +65,12 @@ public class PokerHand extends BasicPowerup {
 			}
 //			combinedHand = evaluator.getBest5CardHand(combinedHand);
 			combinedHand.sort();
-			int handRank = HandEvaluator.rankHand(combinedHand);
-			String handDesc = HandEvaluator.nameHand(handRank);
+			int handRankMask = HandEvaluator.rankHand(combinedHand);
+			String handDesc = HandEvaluator.nameHand(handRankMask);
 			
-			int rankPoints = handRank / HandEvaluator.ID_GROUP_SIZE * 20;
-			int bonusPoints = HandEvaluator.getSecondaryGrade(handRank); // My hack...
+			int handRank = handRankMask / HandEvaluator.ID_GROUP_SIZE;
+			int rankPoints = handRankBonuses[handRank];
+			int bonusPoints = HandEvaluator.getSecondaryGrade(handRankMask); // My hack...
 			int result = rankPoints + bonusPoints;
 			String resultStr = resultStr(result);
 			result = clamp(result);
@@ -100,12 +116,11 @@ public class PokerHand extends BasicPowerup {
 		return new BetterHand();
 	}
 	
-	private void takeCards(int n) {
-		Deck deck = bot.getPokerTable().deck;
-		for (int i = 0; i < n && deck.cardsLeft() > 0; i++) {
-			hand.addCard(deck.deal());
-		}
-		hand.sort();
+	/**
+	 * Do this when the hand is replaced by another
+	 */
+	public void trash() {
+		returnCards();
 	}
 	
 	private void returnCards() {
@@ -118,22 +133,70 @@ public class PokerHand extends BasicPowerup {
 		hand.makeEmpty();
 	}
 	
+	private void takeCards(int n) {
+		Deck deck = bot.getPokerTable().deck;
+		for (int i = 0; i < n && deck.cardsLeft() > 0; i++) {
+			hand.addCard(deck.deal());
+		}
+		hand.sort();
+	}
+	
 	public class BetterHand extends EvolvedPowerup {
 		private int gen = 0;
 		
 		private String[] names = {
-			"Better Hand", "Much Improved Hand", "Third Hand's the Charm", "Sick Hand", "Hand of Long Ancestry", 
-			"Hand of Leftover Cards", "Hand of Pure Desperation", "The One Hand... not really"
+			"Better Hand", "Much Improved Hand", "Third Hand's the Charm", "Sick Hand", "Master Hand",
+			"The One Hand", "Hand of Long Ancestry", "Hand of Tireless Iteration"
 		};
 		
 		public BetterHand() {
 			super(PokerHand.this);
-			redraw();
+			takeHigherCards();
 		}
 		
-		private void redraw() {
+		public void trash() {
 			returnCards();
-			takeCards(2);
+		}
+		
+		private void takeHigherCards() {
+			Deck deck = bot.getPokerTable().deck;
+			Hand newHand = new Hand();
+			
+			// For both cards
+			for (int i = 1; i <= 2; i++) {
+				boolean tookHigherCard = false;
+				Card oldCard = hand.getCard(i);
+				int rank = oldCard.getRank();
+				
+				// Find first rank that has available card
+				while (!tookHigherCard && rank < Card.ACE) {
+					rank = Math.min(rank + 1, Card.ACE);
+					int prevSuit = oldCard.getSuit();
+					int suit = prevSuit;
+					
+					// Find first suit within that rank that has available card
+					do {
+						Card newCard = new Card(rank, suit);
+						boolean cardAvailable = deck.findCard(newCard) != -1;
+						
+						// Add the new card to newHand and swap cards to the deck
+						if (cardAvailable) {
+							deck.extractCard(newCard);
+							deck.replaceCard(oldCard);
+							newHand.addCard(newCard);
+							tookHigherCard = true;
+							break;
+						}
+						suit = (suit + 1) % 4;
+					} while (suit != prevSuit);
+				}
+				
+				// If we didn't take a higher card (one was not available or we had an ace),
+				// just leave the old card to the newHand
+				if (!tookHigherCard) newHand.addCard(oldCard);
+			}
+			
+			hand = newHand;
 		}
 		
 		@Override
@@ -143,7 +206,7 @@ public class PokerHand extends BasicPowerup {
 		
 		@Override
 		public Powerup upgrade() {
-			redraw();
+			takeHigherCards();
 			gen++;
 			return this;
 		}
@@ -155,7 +218,7 @@ public class PokerHand extends BasicPowerup {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("While the trainer distracts the poker dealer, you swap your previous cards to: %s", hand);
+			return String.format("Your cards increase in rank, you now have: %s", hand);
 		}
 	}
 }
