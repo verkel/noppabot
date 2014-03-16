@@ -257,7 +257,7 @@ public class GenerateItemList {
 
 		testBasicPowerup("Steady Die", "Placeholder.png", steadyDieDesc, "Trusty Die", new SteadyDie(), bot);
 		
-		testPowerup("Poker Hand", "Placeholder.png", pokerHandDesc, "Poker Hand", new Builder() {
+		testPowerup("Poker Hand", "Placeholder.png", pokerHandDesc, "Better Hand", new Builder() {
 			@Override
 			public Powerup createPowerup() {
 				PokerTable table = bot.getPokerTable();
