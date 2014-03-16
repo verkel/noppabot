@@ -17,6 +17,8 @@ import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.*;
 
+import ca.ualberta.cs.poker.Deck;
+
 public class NoppaBot extends PircBot implements INoppaBot {
 
 	private final String botNick;
@@ -192,6 +194,20 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			joinChannel(channel);
 			handleConsoleCommands();
 		}
+	}
+
+
+	@SuppressWarnings("unused")
+	private void debugListCards() {
+		int i = 0;
+		StringBuilder[] sb = new StringBuilder[4];
+		for (int j = 0; j < sb.length; j++) sb[j] = new StringBuilder();
+		Deck deck = new Deck();
+		while (deck.cardsLeft() > 0) {
+			sb[i / 13].append(deck.deal()).append(" ");
+			i++;
+		}
+		for (int j = 0; j < sb.length; j++) sendChannelFormat("Cards %d: %s", j, sb[j]);
 	}
 	
 	private void debugStuff() {
