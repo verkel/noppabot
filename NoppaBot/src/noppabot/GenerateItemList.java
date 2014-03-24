@@ -696,7 +696,7 @@ public class GenerateItemList {
 	private static final String apprenticeDieDesc = "After a master die is rolled, the apprentice " +
 		"die will roll the same result. If the apprentice die ends up in the tiebreaker round, it turns into a master die.";
 	private static final String diceBrosDesc = "Rolls two d100 dice and chooses higher roll as the result.";
-	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d150, d160.";
+	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d130, d140.";
 	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
 	private static final String steadyDieDesc = "Lets you roll d70 + 30.";
 	private static final String pokerHandDesc = "Gives you points based on how good your cards are. See <a href=\"#pokerrules\">Poker Rules and Scoring</a>.";
