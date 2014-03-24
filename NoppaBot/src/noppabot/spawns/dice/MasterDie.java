@@ -7,7 +7,8 @@ package noppabot.spawns.dice;
 import java.util.*;
 import java.util.Map.Entry;
 
-import noppabot.Color;
+import noppabot.*;
+import noppabot.INoppaBot.State;
 import noppabot.spawns.*;
 
 
@@ -47,7 +48,7 @@ public class MasterDie extends BasicPowerup {
 		result = clamp(result);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
 			ownerColored, sides, dieName, resultStr, bot.grade(result));
-		rollUnusedApprenticeDies(result);
+		if (bot.getState() == State.ROLL_PERIOD) rollUnusedApprenticeDies(result);
 		return result;
 	}
 	

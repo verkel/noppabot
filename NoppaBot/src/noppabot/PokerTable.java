@@ -54,14 +54,20 @@ public class PokerTable {
 	}
 
 	public void scheduleTurnReveal() {
-		bot.getScheduler().schedule(TURN_SCHEDULE_STR, new Runnable() {
-			@Override
-			public void run() {
-				synchronized (bot.getLock()) {
-					revealTurn(true);
-				}
+		TurnRevealTask task = new TurnRevealTask();
+		task.id = bot.getScheduler().schedule(TURN_SCHEDULE_STR, task);
+	}
+	
+	private class TurnRevealTask implements Runnable {
+		public String id;
+		
+		@Override
+		public void run() {
+			synchronized (bot.getLock()) {
+				revealTurn(true);
+				bot.getScheduler().deschedule(id);
 			}
-		});
+		}		
 	}
 	
 	public void clear() {

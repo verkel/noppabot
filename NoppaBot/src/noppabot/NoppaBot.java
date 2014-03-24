@@ -1009,7 +1009,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 		sendChannel(randomRollStartMsg());
 		rules.onRollPeriodStart();
-		pokerTable.tryRevealTableCards(true);
+		if (pokerTable.gameStarted) pokerTable.tryRevealTableCards(true);
 		
 		for (String nick : powerups.keySet()) {
 			Powerup powerup = powerups.get(nick);
