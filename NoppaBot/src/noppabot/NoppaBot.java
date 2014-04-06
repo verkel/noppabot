@@ -626,6 +626,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("rules")) {
 					listRules(sender);
 				}
+				else if (cmd.equalsIgnoreCase("hands")) {
+					pokerTable.listHands(false);
+				}
 				else if (cmd.equalsIgnoreCase("train")) {
 					grabPowerup(sender, DicemonTrainer.NAME);
 				}

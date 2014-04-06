@@ -17,16 +17,29 @@ public class PokerHand extends BasicPowerup {
 	
 	private static int[] handRankBonuses = new int[NUM_HANDS];
 	
+//	static {
+//		handRankBonuses[HIGH] = 0;
+//		handRankBonuses[PAIR] = 50;
+//		handRankBonuses[TWOPAIR] = 70;
+//		handRankBonuses[THREEKIND] = 80;
+//		handRankBonuses[STRAIGHT] = 90;
+//		handRankBonuses[FLUSH] = 95;
+//		handRankBonuses[FULLHOUSE] = 100;
+//		handRankBonuses[FOURKIND] = 120;
+//		handRankBonuses[STRAIGHTFLUSH] = 140;
+//		handRankBonuses[FIVEKIND] = 200; // Not possible without Jokers
+//	}
+	
 	static {
 		handRankBonuses[HIGH] = 0;
-		handRankBonuses[PAIR] = 50;
-		handRankBonuses[TWOPAIR] = 70;
-		handRankBonuses[THREEKIND] = 80;
-		handRankBonuses[STRAIGHT] = 90;
-		handRankBonuses[FLUSH] = 95;
-		handRankBonuses[FULLHOUSE] = 100;
-		handRankBonuses[FOURKIND] = 120;
-		handRankBonuses[STRAIGHTFLUSH] = 140;
+		handRankBonuses[PAIR] = 10;
+		handRankBonuses[TWOPAIR] = 20;
+		handRankBonuses[THREEKIND] = 30;
+		handRankBonuses[STRAIGHT] = 40;
+		handRankBonuses[FLUSH] = 50;
+		handRankBonuses[FULLHOUSE] = 60;
+		handRankBonuses[FOURKIND] = 100;
+		handRankBonuses[STRAIGHTFLUSH] = 200;
 		handRankBonuses[FIVEKIND] = 200; // Not possible without Jokers
 	}
 	
@@ -57,30 +70,28 @@ public class PokerHand extends BasicPowerup {
 	@Override
 	public int onContestRoll() {
 		try {
-			Hand tableCards = bot.getPokerTable().cards;
-			Hand combinedHand = new Hand(hand);
-			for (int i = 1; i <= tableCards.size(); i++) {
-				boolean added = combinedHand.addCard(tableCards.getCard(i));
-				if (!added) System.out.printf("card n. %d was not added\n", i);
-			}
-//			combinedHand = evaluator.getBest5CardHand(combinedHand);
-			combinedHand.sort();
-			int handRankMask = HandEvaluator.rankHand(combinedHand);
-			String handDesc = HandEvaluator.nameHand(handRankMask);
+			int roll = roll();
+			HandRank rank = new HandRank();
 			
-			int handRank = handRankMask / HandEvaluator.ID_GROUP_SIZE;
-			int rankPoints = handRankBonuses[handRank];
-			int bonusPoints = HandEvaluator.getSecondaryGrade(handRankMask); // My hack...
-			int result = rankPoints + bonusPoints;
+			int rankPoints;
+			if (rank.type == 0) {
+				rankPoints = Math.max(0, rank.highCardBonus - 8);
+			}
+			else {
+				rankPoints = handRankBonuses[rank.type];
+			}
+			int result = roll + rankPoints;
 			String resultStr = resultStr(result);
 			result = clamp(result);
 			
 //			bot.sendChannelFormat("%s reveals the cards: %s. Combined with the table cards, %s has %s, %s!",
 //				owner, hand.toString(), owner, combinedHand.toString(), handDesc);
-			bot.sendChannelFormat("%s reveals the cards: %s. Combined with the table cards, %s has %s!",
-				owner, hand.toString(), owner, Color.emphasize(handDesc));
-			bot.sendChannelFormat("%s's hand is worth %d + %d = %s points!", ownerColored, 
-				rankPoints, bonusPoints, resultStr);
+			bot.sendChannelFormat("%s reveals the cards: %s. %s has %s! This hand gives a +%d bonus to the roll.",
+				owner, hand.toString(), owner, Color.emphasize(rank.name), rankPoints);
+//			bot.sendChannelFormat("%s's hand is worth %d + %d = %s points!", ownerColored, 
+//				rankPoints, bonusPoints, resultStr);
+			
+			bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored(), roll, rankPoints, resultStr, bot.grade(result));
 			
 			return result;
 		}
@@ -92,8 +103,40 @@ public class PokerHand extends BasicPowerup {
 		}
 	}
 	
+	private class HandRank {
+		public HandRank() {
+			Hand tableCards = bot.getPokerTable().cards;
+			Hand combinedHand = new Hand(hand);
+			for (int i = 1; i <= tableCards.size(); i++) {
+				boolean added = combinedHand.addCard(tableCards.getCard(i));
+				if (!added) System.out.printf("card n. %d was not added\n", i);
+			}
+			combinedHand.sort();
+			int handRankMask = HandEvaluator.rankHand(combinedHand);
+			name = HandEvaluator.nameHand(handRankMask);
+			
+			type = handRankMask / HandEvaluator.ID_GROUP_SIZE;
+			highCardBonus = HandEvaluator.getSecondaryGrade(handRankMask);
+		}
+		
+		public String info(boolean listFormat, boolean now) {
+			String nowStr = now ? " now" : "";
+			if (listFormat) return String.format("%s%s has %s: %s!", Color.nick(Color.antiHilight(owner)),
+				nowStr, cardsToString(), Color.emphasize(name));
+			return String.format("%s%s has %s!", owner, nowStr, Color.emphasize(name));
+		}
+		
+		public String name;
+		public int type;
+		public int highCardBonus;
+	}
+	
 	public String cardsToString() {
 		return hand.toString();
+	}
+	
+	public String info(boolean listFormat, boolean now) {
+		return new HandRank().info(listFormat, now);
 	}
 	
 	@Override
@@ -216,9 +259,14 @@ public class PokerHand extends BasicPowerup {
 			return names[gen % names.length];
 		}
 		
+		public String info(boolean listFormat, boolean now) {
+			return PokerHand.this.info(listFormat, now);
+		}
+		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("Your cards increase in rank, you now have: %s", hand);
+//			return String.format("Your cards increase in rank, you now have: %s", hand);
+			return String.format("Your cards increase in rank. %s", info(true, true));
 		}
 	}
 }

@@ -699,7 +699,7 @@ public class GenerateItemList {
 	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d130, d140.";
 	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
 	private static final String steadyDieDesc = "Lets you roll d70 + 30.";
-	private static final String pokerHandDesc = "Gives you points based on how good your cards are. See <a href=\"#pokerrules\">Poker Rules and Scoring</a>.";
+	private static final String pokerHandDesc = "Gives a bonus to your roll based on how good your cards are. See <a href=\"#pokerrules\">Poker Rules and Scoring</a>.";
 	
 	// Evolved
 	private static final String veryPolishedDieDesc = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";

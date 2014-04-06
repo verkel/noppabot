@@ -6,7 +6,14 @@ package noppabot;
 
 import java.util.Calendar;
 
+import noppabot.StringUtils.StringConverter;
+import noppabot.spawns.Powerup;
+import noppabot.spawns.dice.*;
+import noppabot.spawns.dice.PokerHand.BetterHand;
 import ca.ualberta.cs.poker.*;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * Shared cards for playing poker on the side of throwing dice
@@ -96,6 +103,7 @@ public class PokerTable {
 		if (verbose) {
 			bot.sendChannelFormat("I'll reveal tonight's turn card!");
 			bot.sendChannelFormat("The poker table now contains: %s", cardsToString());
+			listHands(true);
 		}
 	}
 
@@ -106,6 +114,7 @@ public class PokerTable {
 		if (verbose) {
 			bot.sendChannelFormat("I'll reveal tonight's river card!");
 			bot.sendChannelFormat("The poker table now contains: %s", cardsToString());
+			listHands(true);
 		}
 	}
 	
@@ -126,6 +135,31 @@ public class PokerTable {
 	public void createDeck() {
 		deck = new Deck(System.currentTimeMillis());
 		deck.shuffle();
+	}
+	
+	public void listHands(final boolean onTurnOrRiver) {
+		Iterable<Powerup> hands = Iterables.filter(
+			bot.getPowerups().values(), new Predicate<Powerup>() {
+				
+			@Override
+			public boolean apply(Powerup p) {
+				return (p instanceof PokerHand || p instanceof BetterHand);
+			}
+		});
+		
+		String handsStr = StringUtils.join(hands, " ", new StringConverter<Powerup>() {
+			@Override
+			public String toString(Powerup p) {
+				if (p instanceof PokerHand) {
+					return ((PokerHand)p).info(true, onTurnOrRiver);
+				}
+				else {
+					return ((BetterHand)p).info(true, onTurnOrRiver);
+				}
+			};
+		});
+		
+		bot.sendChannelFormat(handsStr);
 	}
 	
 	private void updateCards() {
