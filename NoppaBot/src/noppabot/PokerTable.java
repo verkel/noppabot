@@ -159,7 +159,8 @@ public class PokerTable {
 			};
 		});
 		
-		bot.sendChannelFormat(handsStr);
+		if (handsStr.isEmpty()) bot.sendChannelFormat("Nobody has any poker hands.");
+		else bot.sendChannelFormat(handsStr);
 	}
 	
 	private void updateCards() {
