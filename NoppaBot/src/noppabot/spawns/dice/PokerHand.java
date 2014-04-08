@@ -103,40 +103,12 @@ public class PokerHand extends BasicPowerup {
 		}
 	}
 	
-	private class HandRank {
-		public HandRank() {
-			Hand tableCards = bot.getPokerTable().cards;
-			Hand combinedHand = new Hand(hand);
-			for (int i = 1; i <= tableCards.size(); i++) {
-				boolean added = combinedHand.addCard(tableCards.getCard(i));
-				if (!added) System.out.printf("card n. %d was not added\n", i);
-			}
-			combinedHand.sort();
-			int handRankMask = HandEvaluator.rankHand(combinedHand);
-			name = HandEvaluator.nameHand(handRankMask);
-			
-			type = handRankMask / HandEvaluator.ID_GROUP_SIZE;
-			highCardBonus = HandEvaluator.getSecondaryGrade(handRankMask);
-		}
-		
-		public String info(boolean listFormat, boolean now) {
-			String nowStr = now ? " now" : "";
-			if (listFormat) return String.format("%s%s has %s: %s!", Color.nick(Color.antiHilight(owner)),
-				nowStr, cardsToString(), Color.emphasize(name));
-			return String.format("%s%s has %s!", owner, nowStr, Color.emphasize(name));
-		}
-		
-		public String name;
-		public int type;
-		public int highCardBonus;
-	}
-	
 	public String cardsToString() {
 		return hand.toString();
 	}
 	
-	public String info(boolean listFormat, boolean now) {
-		return new HandRank().info(listFormat, now);
+	public HandRank getHandRank() {
+		return new HandRank();
 	}
 	
 	@Override
@@ -182,6 +154,60 @@ public class PokerHand extends BasicPowerup {
 			hand.addCard(deck.deal());
 		}
 		hand.sort();
+	}
+	
+	public class HandRank {
+		public HandRank() {
+			Hand tableCards = bot.getPokerTable().cards;
+			Hand combinedHand = new Hand(hand);
+			for (int i = 1; i <= tableCards.size(); i++) {
+				boolean added = combinedHand.addCard(tableCards.getCard(i));
+				if (!added) System.out.printf("card n. %d was not added\n", i);
+			}
+			combinedHand.sort();
+			int handRankMask = HandEvaluator.rankHand(combinedHand);
+			name = HandEvaluator.nameHand(handRankMask);
+			
+			type = handRankMask / HandEvaluator.ID_GROUP_SIZE;
+			highCardBonus = HandEvaluator.getSecondaryGrade(handRankMask);
+		}
+		
+		public String toString(boolean listFormat, boolean now) {
+			String nowStr = now ? " now" : "";
+			if (listFormat) return String.format("%s%s has %s: %s!", Color.nick(Color.antiHilight(owner)),
+				nowStr, cardsToString(), Color.emphasize(name));
+			return String.format("%s%s has %s!", owner, nowStr, Color.emphasize(name));
+		}
+		
+		public String name;
+		public int type;
+		public int highCardBonus;
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + highCardBonus;
+			result = prime * result + type;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) return true;
+			if (obj == null) return false;
+			if (getClass() != obj.getClass()) return false;
+			HandRank other = (HandRank)obj;
+			if (!getOuterType().equals(other.getOuterType())) return false;
+			if (highCardBonus != other.highCardBonus) return false;
+			if (type != other.type) return false;
+			return true;
+		}
+
+		private PokerHand getOuterType() {
+			return PokerHand.this;
+		}
 	}
 	
 	public class BetterHand extends EvolvedPowerup {
@@ -259,14 +285,14 @@ public class PokerHand extends BasicPowerup {
 			return names[gen % names.length];
 		}
 		
-		public String info(boolean listFormat, boolean now) {
-			return PokerHand.this.info(listFormat, now);
+		public HandRank getHandRank() {
+			return PokerHand.this.getHandRank();
 		}
 		
 		@Override
 		public String getUpgradeDescription() {
 //			return String.format("Your cards increase in rank, you now have: %s", hand);
-			return String.format("Your cards increase in rank. %s", info(true, true));
+			return String.format("Your cards increase in rank. %s", getHandRank().toString(true, true));
 		}
 	}
 }

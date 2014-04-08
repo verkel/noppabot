@@ -4,16 +4,13 @@
  */
 package noppabot;
 
-import java.util.Calendar;
+import java.util.*;
 
-import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.Powerup;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
+import noppabot.spawns.dice.PokerHand.HandRank;
 import ca.ualberta.cs.poker.*;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 /**
  * Shared cards for playing poker on the side of throwing dice
@@ -83,6 +80,7 @@ public class PokerTable {
 		turn = null;
 		river = null;
 		cards = null;
+		lastHandRanks.clear();
 	}
 	
 	public void revealFlop() {
@@ -137,32 +135,59 @@ public class PokerTable {
 		deck.shuffle();
 	}
 	
+	private Map<String, HandRank> lastHandRanks = new HashMap<String, HandRank>();
+	
 	public void listHands(final boolean onTurnOrRiver) {
-		Iterable<Powerup> hands = Iterables.filter(
-			bot.getPowerups().values(), new Predicate<Powerup>() {
-				
-			@Override
-			public boolean apply(Powerup p) {
-				return (p instanceof PokerHand || p instanceof BetterHand);
-			}
-		});
+//		Iterable<Powerup> hands = Iterables.filter(
+//			bot.getPowerups().values(), new Predicate<Powerup>() {
+//				
+//			@Override
+//			public boolean apply(Powerup p) {
+//				return (p instanceof PokerHand || p instanceof BetterHand);
+//			}
+//		});
+//		
+//		String handsStr = StringUtils.join(hands, " ", new StringConverter<Powerup>() {
+//			@Override
+//			public String toString(Powerup p) {
+//				if (p instanceof PokerHand) {
+//					return ((PokerHand)p).getHandRank(true, onTurnOrRiver);
+//				}
+//				else {
+//					return ((BetterHand)p).getHandRank(true, onTurnOrRiver);
+//				}
+//			};
+//		});
 		
-		String handsStr = StringUtils.join(hands, " ", new StringConverter<Powerup>() {
-			@Override
-			public String toString(Powerup p) {
-				if (p instanceof PokerHand) {
-					return ((PokerHand)p).info(true, onTurnOrRiver);
-				}
-				else {
-					return ((BetterHand)p).info(true, onTurnOrRiver);
-				}
-			};
-		});
+		boolean first = true;
+		StringBuilder sb = new StringBuilder();
+		for (Powerup p : bot.getPowerups().values()) {
+			if (!(p instanceof PokerHand || p instanceof BetterHand)) continue;
+			HandRank handRank = getHandRank(onTurnOrRiver, p);
+			if (onTurnOrRiver) {
+				boolean isSame = lastHandRanks.get(p.owner()).equals(handRank);
+				if (isSame) continue;
+				else lastHandRanks.put(p.owner(), handRank);
+			}
+			
+			if (!first) sb.append(", ");
+			sb.append(handRank.toString(true, onTurnOrRiver));
+		}
+		String handsStr = sb.toString();
 
 		if (handsStr.isEmpty()) handsStr = "Nobody has any hands.";
 		if (!onTurnOrRiver) handsStr = "Common cards are: " + cardsToString() + ". " + handsStr;
 		
 		bot.sendChannelFormat(handsStr);
+	}
+	
+	private HandRank getHandRank(final boolean onTurnOrRiver, Powerup p) {
+		if (p instanceof PokerHand) {
+			return ((PokerHand)p).getHandRank();
+		}
+		else {
+			return ((BetterHand)p).getHandRank();
+		}
 	}
 	
 	private void updateCards() {
