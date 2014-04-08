@@ -652,22 +652,27 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		Powerup powerup = powerups.get(nick);
 		if (state != State.NORMAL) {
 			sendChannelFormat("%s: you cannot drop items during the roll contest.", Color.nick(nick));
+			return;
 		}
 		else if (powerup == null) {
 			sendChannelFormat("%s: you have nothing to drop.", Color.nick(nick));
+			return;
 		}
-		else if (!rules.canDropItems) {
+		else if (favorsUsed.contains(nick) && !rules.canDropItems) {
 			sendChannelFormat("%s: dropping items is disallowed by current rules.", Color.nick(nick));
+			return;
 		}
-		else {
-			sendChannelFormat("%s drops the %s on the ground.", Color.nick(nick), 
-				powerup.nameColored());
-			powerups.remove(nick);
-			availablePowerups.add(powerup);
-			Calendar expireTime = Calendar.getInstance();
-			expireTime.add(Calendar.MINUTE, POWERUP_EXPIRE_MINUTES);
-			scheduleExpire(powerup, expireTime);
+		else if (!hasFavor(nick)) {
+			return;
 		}
+		
+		sendChannelFormat("%s drops the %s on the ground.", Color.nick(nick), 
+			powerup.nameColored());
+		powerups.remove(nick);
+		availablePowerups.add(powerup);
+		Calendar expireTime = Calendar.getInstance();
+		expireTime.add(Calendar.MINUTE, POWERUP_EXPIRE_MINUTES);
+		scheduleExpire(powerup, expireTime);
 	}
 
 
