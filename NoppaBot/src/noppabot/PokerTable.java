@@ -158,9 +158,11 @@ public class PokerTable {
 				}
 			};
 		});
+
+		if (handsStr.isEmpty()) handsStr = "Nobody has any hands.";
+		if (!onTurnOrRiver) handsStr = "Common cards are: " + cardsToString() + ". " + handsStr;
 		
-		if (handsStr.isEmpty()) bot.sendChannelFormat("Nobody has any poker hands.");
-		else bot.sendChannelFormat(handsStr);
+		bot.sendChannelFormat(handsStr);
 	}
 	
 	private void updateCards() {

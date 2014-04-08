@@ -532,7 +532,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private boolean isInRollPeriod() {
-		if (debug) return true;
+//		if (debug) return true;
 		
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -628,7 +628,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("rules")) {
 					listRules(sender);
 				}
-				else if (cmd.equalsIgnoreCase("hands")) {
+				else if (cmd.equalsIgnoreCase("cards") || cmd.equalsIgnoreCase("hands")) {
 					pokerTable.listHands(false);
 				}
 				else if (cmd.equalsIgnoreCase("train")) {
