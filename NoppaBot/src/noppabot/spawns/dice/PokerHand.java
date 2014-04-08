@@ -9,11 +9,15 @@ import noppabot.Color;
 import noppabot.spawns.*;
 import ca.ualberta.cs.poker.*;
 
+import com.google.common.base.Objects;
+
 public class PokerHand extends BasicPowerup {
 	
 //	private static HandEvaluator evaluator = new HandEvaluator();
 
 	private Hand hand;
+	private HandRank lastHandRank;
+	private boolean handRankChanged = true;
 	
 	private static int[] handRankBonuses = new int[NUM_HANDS];
 	
@@ -108,7 +112,14 @@ public class PokerHand extends BasicPowerup {
 	}
 	
 	public HandRank getHandRank() {
-		return new HandRank();
+		HandRank hr = new HandRank();
+		handRankChanged = !Objects.equal(lastHandRank, hr);
+		lastHandRank = hr;
+		return hr;
+	}
+	
+	public boolean isHandRankChanged() {
+		return handRankChanged;
 	}
 	
 	@Override
@@ -287,6 +298,10 @@ public class PokerHand extends BasicPowerup {
 		
 		public HandRank getHandRank() {
 			return PokerHand.this.getHandRank();
+		}
+		
+		public boolean isHandRankChanged() {
+			return PokerHand.this.isHandRankChanged();
 		}
 		
 		@Override

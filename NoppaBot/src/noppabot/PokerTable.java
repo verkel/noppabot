@@ -4,7 +4,7 @@
  */
 package noppabot;
 
-import java.util.*;
+import java.util.Calendar;
 
 import noppabot.spawns.Powerup;
 import noppabot.spawns.dice.*;
@@ -102,7 +102,6 @@ public class PokerTable {
 		turn = null;
 		river = null;
 		cards = null;
-		lastHandRanks.clear();
 	}
 	
 	public void revealFlop() {
@@ -157,19 +156,14 @@ public class PokerTable {
 		deck.shuffle();
 	}
 	
-	private Map<String, HandRank> lastHandRanks = new HashMap<String, HandRank>();
-	
 	public void listHands(final boolean onTurnOrRiver) {
 		boolean first = true;
 		StringBuilder sb = new StringBuilder();
 		for (Powerup p : bot.getPowerups().values()) {
 			if (!(p instanceof PokerHand || p instanceof BetterHand)) continue;
 			HandRank handRank = getHandRank(onTurnOrRiver, p);
-			if (onTurnOrRiver) {
-				boolean isSame = lastHandRanks.get(p.owner()).equals(handRank);
-				if (isSame) continue;
-				else lastHandRanks.put(p.owner(), handRank);
-			}
+			boolean changed = isHandRankChanged(p);
+			if (onTurnOrRiver && !changed) continue;
 			
 			if (!first) sb.append(", ");
 			sb.append(handRank.toString(true, onTurnOrRiver));
@@ -197,6 +191,15 @@ public class PokerTable {
 		}
 		else {
 			return ((BetterHand)p).getHandRank();
+		}
+	}
+	
+	private boolean isHandRankChanged(Powerup p) {
+		if (p instanceof PokerHand) {
+			return ((PokerHand)p).isHandRankChanged();
+		}
+		else {
+			return ((BetterHand)p).isHandRankChanged();
 		}
 	}
 	
