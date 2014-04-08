@@ -19,6 +19,8 @@ import org.jibble.pircbot.*;
 
 import ca.ualberta.cs.poker.Deck;
 
+import com.google.common.collect.Iterables;
+
 public class NoppaBot extends PircBot implements INoppaBot {
 
 	private final String botNick;
@@ -615,7 +617,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					listRolls();
 				}
 				else if (cmd.equalsIgnoreCase("peek")) {
-					peekNextSpawn(sender);
+					peekNextSpawns(sender);
 				}
 				else if (cmd.equalsIgnoreCase("autoroll")) {
 					autorollFor(sender);
@@ -689,39 +691,43 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 
-	private void peekNextSpawn(String nick) {
+	private void peekNextSpawns(String nick) {
 		if (!hasFavor(nick)) return;
 		favorsUsed.add(nick);
 		
-		String spawnInfo = null;
-		ISpawnable spawn = null;
-		boolean lastSpawn = spawnTasks.size() == 1;
-		if (!spawnTasks.isEmpty()) {
-			SpawnTask task = spawnTasks.first();
-			spawnInfo = task.toStringColored();
-			spawn = task.spawn;
-		}
+		final int peekCount = 3;
+		
+		Iterable<SpawnTask> nextThree = Iterables.limit(spawnTasks, peekCount);
+		String spawnInfo = StringUtils.join(nextThree, ", ", new StringConverter<SpawnTask>() {
+			@Override
+			public String toString(SpawnTask task) {
+				String str = task.toStringColored();
+				ISpawnable spawn = task.spawn;
+				if (spawn != null && spawn instanceof Bomb) {
+					str += " ... that item seems suspicious!";
+				}
+				return str;
+			}
+		});
+		boolean moreToCome = spawnTasks.size() > peekCount;
 		
 		StringBuilder buf = new StringBuilder();
-		if (spawnInfo != null) {
-			buf.append("Next up is: ");
-			buf.append(spawnInfo).append(". ");
-			if (lastSpawn) {
-				buf.append("That will be the last event for today.");
-			}
-			else {
-				buf.append("That won't be the last event, though!");
-			}
-		}
-		else {
+		if (spawnTasks.isEmpty()) {
 			buf.append("No further events will occur today!");
 		}
-		
-		sendChannel(buf.toString());
-		
-		if (spawn != null && spawn instanceof Bomb) {
-			sendChannel("That item seems suspicious somehow...");
+		else {
+			buf.append("Next up is: ");
+			buf.append(spawnInfo).append(". ");
+			if (moreToCome) {
+				buf.append("More events will still happen, though!");
+			}
+			else {
+				buf.append("Those will be the last events for today.");
+			}
 		}
+		
+		sendAction(channel, String.format("whispers to %s what happens next!", nick));
+		sendMessage(nick, buf.toString());
 	}
 
 	private boolean hasFavor(String nick) {
