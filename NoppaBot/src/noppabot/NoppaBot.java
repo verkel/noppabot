@@ -650,7 +650,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private void dropPowerup(String nick) {
 		Powerup powerup = powerups.get(nick);
-		if (powerup == null) {
+		if (state != State.NORMAL) {
+			sendChannelFormat("%s: you cannot drop items during the roll contest.", Color.nick(nick));
+		}
+		else if (powerup == null) {
 			sendChannelFormat("%s: you have nothing to drop.", Color.nick(nick));
 		}
 		else if (!rules.canDropItems) {
@@ -823,7 +826,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void grabPowerup(String nick, String powerupName) {
 		Powerup powerup = findPowerup(powerupName);
 
-		if (availablePowerups.isEmpty()) {
+		if (state != State.NORMAL) {
+			sendChannelFormat("%s: you cannot grab items during the roll contest.", Color.nick(nick));
+		}
+		else if (availablePowerups.isEmpty()) {
 			sendChannelFormat("%s: nothing to grab.", Color.nick(nick));
 		}
 		else if (powerup != null && !powerup.canPickUp(nick, true)) {
@@ -1148,6 +1154,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		updateRecords(winner);
 		
+		expireAllPowerups(); // Should have none on the ground now, but just to be safe
 		rolls.clear();
 		tiebreakers.clear();
 		powerups.clear();
