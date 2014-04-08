@@ -26,8 +26,10 @@ public class PokerTable {
 	public Hand cards; // All the cards
 	public boolean gameStarted = false;
 	
-	private static final int TURN_HOURS = 20;
+	private static final int TURN_HOURS = 18;
+	private static final int RIVER_HOURS = 22;
 	private static final String TURN_SCHEDULE_STR = String.format("0 %d * * *", TURN_HOURS);
+	private static final String RIVER_SCHEDULE_STR = String.format("0 %d * * *", RIVER_HOURS);
 	
 	private INoppaBot bot;
 	
@@ -52,9 +54,12 @@ public class PokerTable {
 		boolean isRollPeriod = bot.getState() == INoppaBot.State.ROLL_PERIOD;
 		
 		revealFlop();
+		
 		if (isRollPeriod || hours >= TURN_HOURS) revealTurn(verbose);
 		else if (!gameStarted) scheduleTurnReveal();
-		if (isRollPeriod) revealRiver(verbose);
+		
+		if (isRollPeriod || hours >= RIVER_HOURS) revealRiver(verbose);
+		else if (!gameStarted) scheduleRiverReveal();
 	}
 
 	public void scheduleTurnReveal() {
@@ -69,6 +74,23 @@ public class PokerTable {
 		public void run() {
 			synchronized (bot.getLock()) {
 				revealTurn(true);
+				bot.getScheduler().deschedule(id);
+			}
+		}		
+	}
+	
+	public void scheduleRiverReveal() {
+		RiverRevealTask task = new RiverRevealTask();
+		task.id = bot.getScheduler().schedule(RIVER_SCHEDULE_STR, task);
+	}
+	
+	private class RiverRevealTask implements Runnable {
+		public String id;
+		
+		@Override
+		public void run() {
+			synchronized (bot.getLock()) {
+				revealRiver(true);
 				bot.getScheduler().deschedule(id);
 			}
 		}		
@@ -138,27 +160,6 @@ public class PokerTable {
 	private Map<String, HandRank> lastHandRanks = new HashMap<String, HandRank>();
 	
 	public void listHands(final boolean onTurnOrRiver) {
-//		Iterable<Powerup> hands = Iterables.filter(
-//			bot.getPowerups().values(), new Predicate<Powerup>() {
-//				
-//			@Override
-//			public boolean apply(Powerup p) {
-//				return (p instanceof PokerHand || p instanceof BetterHand);
-//			}
-//		});
-//		
-//		String handsStr = StringUtils.join(hands, " ", new StringConverter<Powerup>() {
-//			@Override
-//			public String toString(Powerup p) {
-//				if (p instanceof PokerHand) {
-//					return ((PokerHand)p).getHandRank(true, onTurnOrRiver);
-//				}
-//				else {
-//					return ((BetterHand)p).getHandRank(true, onTurnOrRiver);
-//				}
-//			};
-//		});
-		
 		boolean first = true;
 		StringBuilder sb = new StringBuilder();
 		for (Powerup p : bot.getPowerups().values()) {
@@ -174,11 +175,20 @@ public class PokerTable {
 			sb.append(handRank.toString(true, onTurnOrRiver));
 		}
 		String handsStr = sb.toString();
+		boolean noHands = handsStr.isEmpty();
 
-		if (handsStr.isEmpty()) handsStr = "Nobody has any hands.";
+		if (noHands) handsStr = "Nobody has any hands.";
 		if (!onTurnOrRiver) handsStr = "Common cards are: " + cardsToString() + ". " + handsStr;
 		
-		bot.sendChannelFormat(handsStr);
+		if (onTurnOrRiver) {
+			if (!noHands) {
+				bot.sendChannel("Some of you got better hands!");
+				bot.sendChannelFormat(handsStr);
+			}
+		}
+		else {
+			bot.sendChannelFormat(handsStr);
+		}
 	}
 	
 	private HandRank getHandRank(final boolean onTurnOrRiver, Powerup p) {
