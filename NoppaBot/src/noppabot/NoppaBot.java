@@ -660,12 +660,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: you have nothing to drop.", Color.nick(nick));
 			return;
 		}
-		else if (favorsUsed.contains(nick) && !rules.canDropItems) {
-			sendChannelFormat("%s: dropping items is disallowed by current rules.", Color.nick(nick));
+		else if (!hasFavor(nick) && !rules.canDropItems) {
 			return;
 		}
-		else if (!hasFavor(nick)) {
-			return;
+		
+		if (!rules.canDropItems) {
+			favorsUsed.add(nick);
 		}
 		
 		sendChannelFormat("%s drops the %s on the ground.", Color.nick(nick), 
