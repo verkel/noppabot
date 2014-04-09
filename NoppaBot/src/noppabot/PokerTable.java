@@ -165,8 +165,9 @@ public class PokerTable {
 			boolean changed = isHandRankChanged(p);
 			if (onTurnOrRiver && !changed) continue;
 			
-			if (!first) sb.append(", ");
+			if (!first) sb.append(" ");
 			sb.append(handRank.toString(true, onTurnOrRiver));
+			first = false;
 		}
 		String handsStr = sb.toString();
 		boolean noHands = handsStr.isEmpty();
