@@ -53,6 +53,11 @@ public class VariableDie extends BasicPowerup {
 	public String name() {
 		return "Variable Die";
 	}
+
+	@Override
+	public String details() {
+		return "d" + sides;
+	}
 	
 	@Override
 	public int sides() {

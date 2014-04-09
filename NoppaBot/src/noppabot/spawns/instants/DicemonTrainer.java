@@ -35,7 +35,8 @@ public class DicemonTrainer extends Instant {
 				return true;
 			}
 			else {
-				if (verbose) bot.sendChannelFormat("%s: The trainer says your %s is not upgradeable.", Color.nick(nick), powerup.nameColored());
+				if (verbose) bot.sendChannelFormat("%s: The trainer says your %s is not upgradeable.", 
+					Color.nick(nick), powerup.nameWithDetailsColored());
 				return false;
 			}
 		}

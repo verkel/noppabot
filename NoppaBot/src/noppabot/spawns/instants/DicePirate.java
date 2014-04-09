@@ -27,7 +27,7 @@ public class DicePirate extends Instant {
 		if (bot.getPowerups().containsKey(nick)) { // Has item
 			Powerup powerup = bot.getPowerups().get(nick);
 			if (verbose) bot.sendChannelFormat("%s: you already have the %s! You wouldn't be able to carry any " +
-				"loot stolen by the pirate.", Color.nick(nick), powerup.nameColored());
+				"loot stolen by the pirate.", Color.nick(nick), powerup.nameWithDetailsColored());
 			return false;
 		}
 		// Maybe disallow picking if the pirate would not have anything to steal? This is debatable.

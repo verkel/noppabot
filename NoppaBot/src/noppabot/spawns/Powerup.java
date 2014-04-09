@@ -8,10 +8,28 @@ import noppabot.*;
 
 public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	
+	public boolean identified = false;
+	
 	@Override
 	public abstract String name();
 	
 	public abstract String nameColored();
+	
+	public String details() {
+		return "";
+	}
+	
+	public String nameWithDetails() {
+		String d = details();
+		if (identified && !d.isEmpty()) return name() + ": " + d;
+		else return name();
+	}
+	
+	public String nameWithDetailsColored() {
+		String d = details();
+		if (identified && !d.isEmpty()) return nameColored() + ": " + d;
+		else return nameColored();
+	}
 	
 	public abstract Powerup initialize(INoppaBot bot);
 	
@@ -27,7 +45,8 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 		INoppaBot bot = bot();
 		if (isCarried() && bot.getPowerups().containsKey(nick)) {
 			Powerup powerup = bot.getPowerups().get(nick);
-			if (verbose) bot.sendChannelFormat("%s: you already have the %s.", Color.nick(nick), powerup.nameColored());
+			if (verbose) bot.sendChannelFormat("%s: you already have the %s.", 
+				Color.nick(nick), powerup.nameWithDetailsColored());
 			return false;
 		}
 		
@@ -101,12 +120,12 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 
 	@Override
 	public String toString() {
-		return name();
+		return nameWithDetails();
 	}
 	
 	@Override
 	public String toStringColored() {
-		return nameColored();
+		return nameWithDetailsColored();
 	}
 	
 	public abstract int roll(int sides);

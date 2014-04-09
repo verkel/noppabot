@@ -97,6 +97,11 @@ public class BagOfDice extends BasicPowerup {
 	}
 	
 	@Override
+	public String details() {
+		return bagToString();
+	}
+	
+	@Override
 	public int sides() {
 		return diceBag.lastEntry().getElement();
 	}

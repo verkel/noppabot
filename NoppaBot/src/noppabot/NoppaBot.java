@@ -215,7 +215,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void debugStuff() {
 //		for (int i = 0; i < 5; i++) new RulesChange().run(this);
 		
-		for (int i = 0; i < 10; i++) availablePowerups.add(new DicemonTrainer().initialize(this));
+//		for (int i = 0; i < 10; i++) availablePowerups.add(new DicemonTrainer().initialize(this));
 		
 //		BasicPowerup cards = new PokerCards().initialize(this);
 //		cards.setOwner("Verkel");
@@ -669,7 +669,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		
 		sendChannelFormat("%s drops the %s on the ground.", Color.nick(nick), 
-			powerup.nameColored());
+			powerup.nameWithDetailsColored());
 		powerups.remove(nick);
 		availablePowerups.add(powerup);
 		Calendar expireTime = Calendar.getInstance();
@@ -751,7 +751,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			else buf.append("Items: ");
 			boolean first = true;
 			for (String nick : powerups.keySet()) {
-				String powerupName = powerups.get(nick).nameColored();
+				String powerupName = powerups.get(nick).nameWithDetailsColored();
 				if (!first) buf.append(", ");
 				if (!isRollPeriodStart) nick = Color.antiHilight(nick);
 				buf.append(String.format("%s (%s)", powerupName, nick));
@@ -878,7 +878,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		
 		for (Powerup powerup : availablePowerups) {
-			if (powerup.name().toLowerCase().contains(name.toLowerCase())) return powerup;
+			String nameWithDetails = powerup.nameWithDetails();
+			nameWithDetails = Colors.removeFormattingAndColors(nameWithDetails);
+			if (nameWithDetails.toLowerCase().contains(name.toLowerCase())) return powerup;
 		}
 		
 		return null;

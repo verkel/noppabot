@@ -47,10 +47,15 @@ public abstract class EvolvedPowerup extends Powerup {
 	public int clamp(int roll) {
 		return base.clamp(roll);
 	}
-	
+
 	@Override
 	public String nameColored() {
 		return Color.evolvedPowerup(name());
+	}
+	
+	@Override
+	public String details() {
+		return base.details();
 	}
 	
 	@Override

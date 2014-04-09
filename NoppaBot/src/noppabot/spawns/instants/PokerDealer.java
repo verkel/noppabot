@@ -38,7 +38,7 @@ public class PokerDealer extends Instant {
 			Powerup powerup = bot.getPowerups().get(nick);
 			if (!(powerup instanceof PokerHand)) {
 				if (verbose) bot.sendChannelFormat("%s: you already have the %s; you don't have any room for cards.", 
-					Color.nick(nick), powerup.nameColored());
+					Color.nick(nick), powerup.nameWithDetailsColored());
 				return false;
 			}
 		}

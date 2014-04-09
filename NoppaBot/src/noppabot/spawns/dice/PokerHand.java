@@ -66,10 +66,10 @@ public class PokerHand extends BasicPowerup {
 		sendExpireMessageFormat("... the poker hand is re-used in a game of Solitaire.");
 	}
 
-//	@Override
-//	public void onPickup() {
-//		bot.sendChannelFormat("%s grabs the cards. They are: %s", ownerColored, nameColored(), cardsToString());
-//	}
+	@Override
+	public void onPickup() {
+		bot.sendChannelFormat("%s grabs the %s. It contains: %s", ownerColored, nameColored(), cardsToString());
+	}
 	
 	@Override
 	public int onContestRoll() {
@@ -125,6 +125,11 @@ public class PokerHand extends BasicPowerup {
 	@Override
 	public String name() {
 		return "Poker Hand";
+	}
+	
+	@Override
+	public String details() {
+		return cardsToString();
 	}
 	
 	@Override
