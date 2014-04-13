@@ -26,7 +26,7 @@ public abstract class BasicPowerup extends Powerup {
 	public final void setOwner(String owner) {
 		this.owner = owner;
 		this.ownerColored = colorOwner ? Color.nick(owner) : owner;
-		identified = true;
+		setIdentified(true);
 	}
 	
 	public final void setColors(boolean colorOwner, boolean colorRoll) {

@@ -54,6 +54,16 @@ public abstract class EvolvedPowerup extends Powerup {
 	}
 	
 	@Override
+	public String nameWithDetails() {
+		return nameWithDetails(isIdentified(), name(), details());
+	}
+	
+	@Override
+	public String nameWithDetailsColored() {
+		return nameWithDetails(isIdentified(), nameColored(), details());
+	}
+	
+	@Override
 	public String details() {
 		return base.details();
 	}
@@ -61,6 +71,16 @@ public abstract class EvolvedPowerup extends Powerup {
 	@Override
 	public int sides() {
 		return base.sides();
+	}
+	
+	@Override
+	public boolean isIdentified() {
+		return base.isIdentified();
+	}
+	
+	@Override
+	public void setIdentified(boolean identified) {
+		base.setIdentified(identified);
 	}
 	
 	@Override

@@ -8,8 +8,16 @@ import noppabot.*;
 
 public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	
-	public boolean identified = false;
+	private boolean identified = false;
 	
+	public boolean isIdentified() {
+		return identified;
+	}
+	
+	public void setIdentified(boolean identified) {
+		this.identified = identified;
+	}
+
 	@Override
 	public abstract String name();
 	
@@ -19,16 +27,18 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 		return "";
 	}
 	
+	@Override
 	public String nameWithDetails() {
-		String d = details();
-		if (identified && !d.isEmpty()) return name() + ": " + d;
-		else return name();
+		return nameWithDetails(identified, name(), details());
 	}
 	
 	public String nameWithDetailsColored() {
-		String d = details();
-		if (identified && !d.isEmpty()) return nameColored() + ": " + d;
-		else return nameColored();
+		return nameWithDetails(identified, nameColored(), details());
+	}
+	
+	public static String nameWithDetails(boolean identified, String name, String details) {
+		if (identified && !details.isEmpty()) return name + ": " + details;
+		else return name;
 	}
 	
 	public abstract Powerup initialize(INoppaBot bot);
