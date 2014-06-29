@@ -1,7 +1,7 @@
 nick = test-idra^
 channel = #noppatest
 rollRecordsPath = rollrecords.json
-server = localhost
+server = irc.cs.hut.fi
 debug = true
 executeDebugStuff = true
 dryRun = false
