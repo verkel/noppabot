@@ -250,11 +250,18 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		availablePowerups.add(new HumongousDie().initialize(this));
 		availablePowerups.add(new HumongousDie().initialize(this));
 		
+		availablePowerups.add(new ApprenticeDie().initialize(this));
+		
 //		new FourthWallBreaks().run(this);
 		
 		spawnAllPowerups();
 		
-		scheduleSpawn(null, new PokerDealer().initialize(this));
+		rules.canDropItems = true;
+		onRulesChanged();
+		
+		setNextRoll("Verkel", 100, 13);
+		
+//		scheduleSpawn(null, new PokerDealer().initialize(this));
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 	}
@@ -532,7 +539,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private boolean isInRollPeriod() {
-//		if (debug) return true;
+		if (debug) return true;
 		
 		Calendar cal = Calendar.getInstance();
 		int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -837,7 +844,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void grabPowerup(String nick, String powerupName) {
 		Powerup powerup = findPowerup(powerupName);
 
-		if (state != State.NORMAL) {
+		// Allow grabbing items during roll period in debug mode
+		if (state != State.NORMAL && !debug) {
 			sendChannelFormat("%s: you cannot grab items during the roll contest.", Color.nick(nick));
 		}
 		else if (availablePowerups.isEmpty()) {
