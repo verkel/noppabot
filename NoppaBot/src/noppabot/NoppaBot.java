@@ -912,13 +912,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 			
 			// Activate power-ups which affect opponent rolls
-			roll = fireOpponentRolled(nick, roll);
+			roll = fireEarlyOpponentRolled(nick, roll);
 
 			// If win condition is non-standard, tell how this roll will be scored
 			rules.winCondition.onContestRoll(this, nick, roll);
 
 			// Participate the roll
 			participate(nick, roll);
+			
+			// Activate power-ups which trigger effects when opponent rolled,
+			// but don't modify opponent's roll
+			fireLateOpponentRolled(nick, roll);
 		}
 		else {
 			doRoll(nick, sides);
@@ -944,7 +948,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return roll;
 	}
 
-	private int fireOpponentRolled(String nick, int roll) {
+	private int fireEarlyOpponentRolled(String nick, int roll) {
 		// Early -- can modify the roll
 		for (String powerupOwner : powerups.keySet()) {
 			if (!powerupOwner.equals(nick)) {
@@ -952,6 +956,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				roll = powerup.onOpponentRoll(nick, roll);
 			}
 		}
+		return roll;
+	}
+
+	private void fireLateOpponentRolled(String nick, int roll) {
 		// Late -- the roll is now determined, do something else
 		for (String powerupOwner : powerups.keySet()) {
 			if (!powerupOwner.equals(nick)) {
@@ -959,8 +967,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				powerup.onOpponentRollLate(nick, roll);
 			}
 		}
-		return roll;
 	}
+
 
 	@Override
 	public void sendDefaultContestRollMessage(String nick, int roll, boolean colorNick, boolean colorRoll) {
