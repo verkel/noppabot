@@ -662,7 +662,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private void dropPowerup(String nick) {
 		Powerup powerup = powerups.get(nick);
-		if (state != State.NORMAL) {
+		if (state != State.NORMAL && !debug) {
 			sendChannelFormat("%s: you cannot drop items during the roll contest.", Color.nick(nick));
 			return;
 		}
