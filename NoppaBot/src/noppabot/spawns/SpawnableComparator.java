@@ -19,7 +19,7 @@ public class SpawnableComparator implements Comparator<ISpawnable> {
 		int typeCmp = MathUtils.compare(aType, bType);
 		if (typeCmp != 0) return typeCmp;
 		
-		int nameCmp = a.name().compareTo(b.name());
+		int nameCmp = a.nameWithDetails().compareTo(b.nameWithDetails());
 		if (nameCmp != 0) return nameCmp;
 		
 		return a.hashCode() - b.hashCode();
