@@ -53,16 +53,29 @@ public class Deck {
    /**
     * Shuffles the cards in the deck.
     */
+//   public synchronized void shuffle() {
+//      Card  tempCard;
+//      int   i,j;
+//      for (i=0; i<NUM_CARDS; i++) {
+//         j = i + randInt(NUM_CARDS-i);
+//         tempCard = gCards[j];
+//         gCards[j] = gCards[i];
+//         gCards[i] = tempCard;
+//      }
+//      position = 0;
+//   }
+   
+   // Fixed version that doesn't bring back drawn cards
    public synchronized void shuffle() {
       Card  tempCard;
       int   i,j;
-      for (i=0; i<NUM_CARDS; i++) {
+      for (i=position; i<NUM_CARDS; i++) {
          j = i + randInt(NUM_CARDS-i);
          tempCard = gCards[j];
          gCards[j] = gCards[i];
          gCards[i] = tempCard;
       }
-      position = 0;
+//      position = 0;
    }
    
    /**
@@ -188,7 +201,8 @@ public class Deck {
       return gCards[i];
    }
    
-   public String toString() {
+   @Override
+	public String toString() {
       StringBuffer s = new StringBuffer();
       s.append("* ");
       for (int i=0;i<position;i++)
