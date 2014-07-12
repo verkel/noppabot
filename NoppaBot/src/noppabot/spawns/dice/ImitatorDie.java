@@ -25,7 +25,7 @@ public class ImitatorDie extends BasicPowerup {
 	public boolean canPickUp(String nick, boolean verbose) {
 		if (super.canPickUp(nick, verbose)) {
 			Integer lastRoll = getYesterdaysRoll(nick);
-			if (lastRoll == null) {
+			if (lastRoll == null || lastRoll == 0) {
 				if (verbose) bot.sendChannelFormat("%s: cannot do that, you have no roll to imitate.", Color.nick(nick));
 				return false;
 			}
