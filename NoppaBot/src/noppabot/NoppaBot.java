@@ -253,17 +253,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		availablePowerups.add(new ApprenticeDie().initialize(this));
 		
-		availablePowerups.add(new BagOfDice().initialize(this));
-		availablePowerups.add(new BagOfDice().initialize(this));
+//		availablePowerups.add(new BagOfDice().initialize(this));
+//		availablePowerups.add(new BagOfDice().initialize(this));
 		
 //		new FourthWallBreaks().run(this);
 		
-//		spawnAllPowerups();
+		spawnAllPowerups();
 		
 		rules.canDropItems = true;
 		onRulesChanged();
 		
-		setNextRoll("Verkel", 100, 99);
+//		setNextRoll("Verkel", 100, 99);
 		
 //		scheduleSpawn(null, new PokerDealer().initialize(this));
 		

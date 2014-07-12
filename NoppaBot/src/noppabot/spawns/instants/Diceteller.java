@@ -48,7 +48,6 @@ public class Diceteller extends Instant {
 		bot.sendChannelFormat(
 			"The %s, glancing at %s's %s, whispers: \"%s\"",
 			nameColored(), ownerColored, getDieSidesStr(sides), hint.tell());
-		bot.sendChannelFormat("actual: %d", bot.peekRoll(owner, sides).value);
 	}
 	
 	private String getDieSidesStr(int sides) {

@@ -34,7 +34,7 @@ public class PeekableRandom {
 	public PeekedRoll peek(int sides) {
 		if (!peekedRolls.containsKey(sides)) {
 			int roll = doRoll(sides);
-			peekedRolls.put(sides, new PeekedRoll(roll));
+			peekedRolls.put(sides, new PeekedRoll(sides, roll));
 		}
 		
 		return peekedRolls.get(sides);
@@ -57,7 +57,7 @@ public class PeekableRandom {
 	}
 	
 	public void setNextRoll(int sides, int roll) {
-		peekedRolls.put(sides, new PeekedRoll(roll));
+		peekedRolls.put(sides, new PeekedRoll(sides, roll));
 	}
 	
 	private int doRoll(int sides) {

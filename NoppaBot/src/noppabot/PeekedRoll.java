@@ -14,14 +14,16 @@ import com.google.common.collect.*;
 
 public class PeekedRoll {
 
-	public int value;
+	public final int sides;
+	public final int value;
 	public ClassToInstanceMap<Hint> hints = MutableClassToInstanceMap.create();
 
 	private final List<Hint> allHints = Arrays.<Hint> asList(new LowValueHint(), new MedValueHint(),
 		new HighValueHint(), new ExactValueHint(), new PrimeHint(), new SevensHint(),
 		new ExtremalHint());
 
-	public PeekedRoll(int value) {
+	public PeekedRoll(int sides, int value) {
+		this.sides = sides;
 		this.value = value;
 	}
 	
@@ -146,7 +148,7 @@ public class PeekedRoll {
 
 		@Override
 		protected String hint() {
-			return valueStr(50);
+			return valueStr(sides / 2);
 		}
 
 		@Override
@@ -170,7 +172,7 @@ public class PeekedRoll {
 
 		@Override
 		protected String hint() {
-			return valueStr(20);
+			return valueStr(sides / 5);
 		}
 
 		@Override
@@ -198,7 +200,7 @@ public class PeekedRoll {
 
 		@Override
 		protected String hint() {
-			return valueStr(10);
+			return valueStr(sides / 10);
 		}
 
 		@Override
