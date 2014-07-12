@@ -6,61 +6,61 @@ package noppabot;
 
 import java.util.*;
 
+import noppabot.PeekedRoll.Hint;
+
 /**
  * Using this random you can peek what the next result is.
  */
 public class PeekableRandom {
-	// Map of sides to next roll
-	private Map<Integer, Integer> nextRolls = new TreeMap<Integer, Integer>();
-	// Set of sides of dice whose next roll is publicly known
-	private Set<Integer> knownDice = new HashSet<Integer>();
+	private Map<Integer, PeekedRoll> peekedRolls = new TreeMap<Integer, PeekedRoll>();
 	private Random random;
 	
 	public PeekableRandom() {
 		random = new Random();
 	}
 
-	public int nextRoll(int sides) {
+	public int roll(int sides) {
 		// Pop the peeked result for n if there is one
-		if (nextRolls.containsKey(sides)) {
-			setKnown(sides, false);
-			return nextRolls.remove(sides);
+		if (peekedRolls.containsKey(sides)) {
+			PeekedRoll pr = peekedRolls.remove(sides);
+			return pr.value;
 		}
 		// Else return a new number
 		else {
-			return roll(sides);
+			return doRoll(sides);
 		}
 	}
 	
-	public int peek(int sides) {
-		if (!nextRolls.containsKey(sides)) {
-			int roll = roll(sides);
-			nextRolls.put(sides, roll);
+	public PeekedRoll peek(int sides) {
+		if (!peekedRolls.containsKey(sides)) {
+			int roll = doRoll(sides);
+			peekedRolls.put(sides, new PeekedRoll(roll));
 		}
 		
-		return nextRolls.get(sides);
+		return peekedRolls.get(sides);
 	}
 	
-	public void setKnown(int sides, boolean known) {
-		if (known) knownDice.add(sides);
-		else knownDice.remove(sides);
+	public Hint spawnHint(int sides) {
+		PeekedRoll peekedRoll = peek(sides);
+		return peekedRoll.spawnHint();
+	}
+	
+	public boolean containsHints() {
+		for (PeekedRoll roll : peekedRolls.values()) {
+			if (!roll.hints.isEmpty()) return true;
+		}
+		return false;
+	}
+	
+	public Map<Integer, PeekedRoll> getPeekedRolls() {
+		return peekedRolls;
 	}
 	
 	public void setNextRoll(int sides, int roll) {
-		nextRolls.put(sides, roll);
+		peekedRolls.put(sides, new PeekedRoll(roll));
 	}
 	
-	public Map<Integer, Integer> getNextKnownRolls() {
-		Map<Integer, Integer> results = new TreeMap<Integer, Integer>();
-		for (Map.Entry<Integer, Integer> pair : nextRolls.entrySet()) {
-			if (knownDice.contains(pair.getKey())) {
-				results.put(pair.getKey(), pair.getValue());
-			}
-		}
-		return results;
-	}
-	
-	private int roll(int sides) {
+	private int doRoll(int sides) {
 		return random.nextInt(sides) + 1;
 	}
 }

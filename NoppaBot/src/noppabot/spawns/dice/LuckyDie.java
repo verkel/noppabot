@@ -31,7 +31,7 @@ public class LuckyDie extends BasicPowerup {
 	@Override
 	public int onContestRoll() {
 		int roll = roll();
-		if (String.valueOf(roll).contains("7")) {
+		if (containsSevens(roll)) {
 			int result = roll + bonus;
 			String resultStr = resultStr(result);
 			result = clamp(result);
@@ -45,6 +45,10 @@ public class LuckyDie extends BasicPowerup {
 				"%s rolls %s! The lucky die doesn't seem to like this number, though.", ownerColored, resultStr(roll));
 			return roll;
 		}
+	}
+
+	public static boolean containsSevens(int roll) {
+		return String.valueOf(roll).contains("7");
 	}
 
 	@Override
@@ -78,7 +82,7 @@ public class LuckyDie extends BasicPowerup {
 		@Override
 		public int onContestRoll() {
 			int roll = roll();
-			if (String.valueOf(roll).contains("7")) {
+			if (containsSevens(roll)) {
 				int result = roll + jackpotBonus;
 				String resultStr = resultStr(result);
 				result = clamp(result);

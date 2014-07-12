@@ -11,6 +11,7 @@ import java.util.*;
 
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
+import noppabot.PeekedRoll.Hint;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
 
@@ -631,11 +632,6 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public int peekRoll(String nick, int sides, boolean makeItKnown) {
-			return 0;
-		}
-
-		@Override
 		public int getPowerupSides(String nick) {
 			return 0;
 		}
@@ -667,6 +663,21 @@ public class GenerateItemList {
 
 		@Override
 		public State getState() {
+			return null;
+		}
+
+		@Override
+		public Hint spawnRollHint(String nick, int sides) {
+			return null;
+		}
+
+		@Override
+		public PeekableRandom getRandomFor(String nick) {
+			return null;
+		}
+
+		@Override
+		public PeekedRoll peekRoll(String nick, int sides) {
 			return null;
 		}
 	}

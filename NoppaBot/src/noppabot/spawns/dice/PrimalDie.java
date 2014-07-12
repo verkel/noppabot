@@ -11,7 +11,7 @@ import noppabot.spawns.*;
 
 public class PrimalDie extends BasicPowerup {
 
-	private static final Set<Integer> primes = new HashSet<Integer>();
+	public static final Set<Integer> primes = new HashSet<Integer>();
 	
 	public static final int bonus = 20;
 

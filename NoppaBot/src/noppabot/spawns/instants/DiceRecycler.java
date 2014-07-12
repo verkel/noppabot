@@ -9,6 +9,9 @@ import noppabot.spawns.*;
 
 
 public class DiceRecycler extends Instant {
+	
+	public static final String NAME = "Dice Recycler";
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
@@ -41,6 +44,6 @@ public class DiceRecycler extends Instant {
 
 	@Override
 	public String name() {
-		return "Dice Recycler";
+		return NAME;
 	}
 }

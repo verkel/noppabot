@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
+import noppabot.PeekedRoll.Hint;
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
@@ -215,7 +216,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void debugStuff() {
 //		for (int i = 0; i < 5; i++) new RulesChange().run(this);
 		
-//		for (int i = 0; i < 10; i++) availablePowerups.add(new DicemonTrainer().initialize(this));
+		for (int i = 0; i < 10; i++) availablePowerups.add(new Diceteller().initialize(this));
 		
 //		BasicPowerup cards = new PokerCards().initialize(this);
 //		cards.setOwner("Verkel");
@@ -259,7 +260,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		rules.canDropItems = true;
 		onRulesChanged();
 		
-		setNextRoll("Verkel", 100, 13);
+		setNextRoll("Verkel", 100, 99);
 		
 //		scheduleSpawn(null, new PokerDealer().initialize(this));
 		
@@ -607,7 +608,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				if (argsSplit.length == 0) rollAndParticipate(sender, 100);
 				else if (argsSplit.length == 1) rollAndParticipate(argsSplit[0], 100);
 			}
-			else if (cmd.equalsIgnoreCase("nextrolls")) {
+			else if (cmd.equalsIgnoreCase("tells") || cmd.equalsIgnoreCase("nextrolls") || cmd.equalsIgnoreCase("predictions")) {
 				if (argsSplit.length == 0) listNextRolls(sender);
 				else if (argsSplit.length == 1) listNextRolls(argsSplit[0]);
 			}
@@ -643,6 +644,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				}
 				else if (cmd.equalsIgnoreCase("deal")) {
 					grabPowerup(sender, PokerDealer.NAME);
+				}
+				else if (cmd.equalsIgnoreCase("dicetell") || cmd.equalsIgnoreCase("tell") || cmd.equalsIgnoreCase("predict")) {
+					grabPowerup(sender, Diceteller.NAME);
+				}
+				else if (cmd.equalsIgnoreCase("recycle") || cmd.equalsIgnoreCase("trash")) {
+					grabPowerup(sender, DiceRecycler.NAME);
 				}
 				else if (cmd.equalsIgnoreCase("reveal")) {
 					Powerup powerup = powerups.get(sender);
@@ -815,19 +822,16 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		PeekableRandom random = randoms.get(nick); // Don't create a new random if there isn't one
 		
 		if (random != null) {
-			Map<Integer, Integer> nextRolls = random.getNextKnownRolls();
-			if (!nextRolls.isEmpty()) {
+			if (random.containsHints()) {
+				Map<Integer, PeekedRoll> peekedRolls = random.getPeekedRolls();
 				
-				String predictions = StringUtils.join(nextRolls.entrySet(), ", ", new StringConverter<Map.Entry<Integer, Integer>>() {
-					@Override
-					public String toString(Map.Entry<Integer, Integer> pair) {
-						int sides = pair.getKey();
-						int roll = pair.getValue();
-						String sidesStr = (sides == dieSides) ? Color.custom("d" + sides, Colors.WHITE) : ("d" + sides);
-						return String.format("%s = %d", sidesStr, roll);
-					};
-				});
-				sendChannelFormat("%s's predicted rolls are: %s.", Color.nick(nick), predictions);
+				for (Map.Entry<Integer, PeekedRoll> entry : peekedRolls.entrySet()) {
+					int sides = entry.getKey();
+					PeekedRoll pr = entry.getValue();
+					String sidesStr = (sides == dieSides) ? Color.custom("d" + sides, Colors.WHITE) : ("d" + sides);
+					sendChannelFormat("%s's next %s roll: %s.", Color.nick(nick), sidesStr, pr.summarizeAll());
+				}
+				
 				return;
 			}
 		}
@@ -1301,7 +1305,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return rolls;
 	}
 	
-	private PeekableRandom getRandomFor(String nick) {
+	@Override
+	public PeekableRandom getRandomFor(String nick) {
 		if (!randoms.containsKey(nick)) randoms.put(nick, new PeekableRandom());
 		return randoms.get(nick);
 	}
@@ -1309,17 +1314,20 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	@Override
 	public int getRoll(String nick, int sides) {
 		PeekableRandom random = getRandomFor(nick);
-		return random.nextRoll(sides);
+		return random.roll(sides);
 	}
 	
 	@Override
-	public int peekRoll(String nick, int sides, boolean makeItKnown) {
+	public PeekedRoll peekRoll(String nick, int sides) {
 		PeekableRandom random = getRandomFor(nick);
-		int roll = random.peek(sides);
-		if (makeItKnown) random.setKnown(sides, true); // Don't hide already known rolls
-		return roll;
+		return random.peek(sides);
 	}
 	
+	@Override
+	public Hint spawnRollHint(String nick, int sides) {
+		PeekableRandom random = getRandomFor(nick);
+		return random.spawnHint(sides);
+	}
 	
 	@Override
 	public void setNextRoll(String nick, int sides, int roll) {

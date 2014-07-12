@@ -10,6 +10,7 @@ import java.util.*;
 
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
+import noppabot.PeekedRoll.Hint;
 import noppabot.spawns.*;
 
 public interface INoppaBot {
@@ -35,7 +36,7 @@ public interface INoppaBot {
 	void onRulesChanged();
 	void participate(String nick, int rollValue);
 	boolean participated(String nick);
-	int peekRoll(String nick, int sides, boolean makeItKnown);
+	PeekedRoll peekRoll(String nick, int sides);
 	String remainingSpawnsInfo();
 	String rollToString(int roll);
 	String rollToString(int roll, boolean colorRoll);
@@ -52,4 +53,6 @@ public interface INoppaBot {
 	Object getLock();
 	PokerTable getPokerTable();
 	State getState();
+	Hint spawnRollHint(String nick, int sides);
+	PeekableRandom getRandomFor(String nick);
 }

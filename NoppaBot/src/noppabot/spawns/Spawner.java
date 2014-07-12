@@ -6,13 +6,12 @@ package noppabot.spawns;
 
 import java.util.*;
 
-
-
 public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	private NavigableMap<Float, S> chances = new TreeMap<Float, S>();
 	private Random random = new Random();
 	private LastSpawn<S> lastSpawn;
-	
+	private boolean clone = true;
+
 	/**
 	 * Allow subsequent same spawns
 	 */
@@ -77,9 +76,18 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 			
 		};
 	}
+
+	public boolean isClone() {
+		return clone;
+	}
+
+	public void setClone(boolean clone) {
+		this.clone = clone;
+	}
 	
 	@SuppressWarnings("unchecked")
 	private S clone(S obj) {
+		if (!clone) return obj;
 		try {
 			obj = (S)obj.getClass().newInstance();
 			return obj;

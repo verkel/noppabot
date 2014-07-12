@@ -33,14 +33,13 @@ public class RollingProfessional extends Instant {
 	@Override
 	public boolean canPickUp(String nick, boolean verbose) {
 		int sides = bot.getPowerupSides(nick);
-		int nextRoll = bot.peekRoll(nick, sides, false);
+		int nextRoll = bot.peekRoll(nick, sides).value;
 		if (nextRoll < sides) {
 			return true;
 		}
 		else {
 			if (verbose) bot.sendChannelFormat("%s: the %s says he has no more to teach you.", 
 				Color.nick(nick), nameColored());
-			bot.peekRoll(nick, sides, true); // Make the roll known -- it is the maximum roll
 			return false;
 		}
 	}
@@ -48,7 +47,7 @@ public class RollingProfessional extends Instant {
 	@Override
 	public void onPickup() {
 		int sides = bot.getPowerupSides(owner);
-		int nextRoll = bot.peekRoll(owner, sides, false);
+		int nextRoll = bot.peekRoll(owner, sides).value;
 		int bonus = bonus();
 		nextRoll += bonus;
 		nextRoll = clamp(nextRoll);
