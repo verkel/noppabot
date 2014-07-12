@@ -248,14 +248,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		availablePowerups.add(new WeightedDie());
 //		availablePowerups.add(new BagOfDice());
 //		availablePowerups.add(new Diceteller());
-		availablePowerups.add(new HumongousDie().initialize(this));
-		availablePowerups.add(new HumongousDie().initialize(this));
+//		availablePowerups.add(new HumongousDie().initialize(this));
+//		availablePowerups.add(new HumongousDie().initialize(this));
 		
-		availablePowerups.add(new ApprenticeDie().initialize(this));
+//		availablePowerups.add(new ApprenticeDie().initialize(this));
+		
+		availablePowerups.add(new BagOfDice().initialize(this));
+		availablePowerups.add(new BagOfDice().initialize(this));
 		
 //		new FourthWallBreaks().run(this);
 		
-		spawnAllPowerups();
+//		spawnAllPowerups();
 		
 		rules.canDropItems = true;
 		onRulesChanged();
@@ -666,7 +669,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private void dropPowerup(String nick) {
 		Powerup powerup = powerups.get(nick);
-		if (state != State.NORMAL) {
+		if (state != State.NORMAL && !debug) {
 			sendChannelFormat("%s: you cannot drop items during the roll contest.", Color.nick(nick));
 			return;
 		}
