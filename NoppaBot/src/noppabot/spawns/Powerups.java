@@ -55,9 +55,9 @@ public class Powerups {
 			DiceMutation.info,
 			DiceStorm.info,
 			FavorRefresh.info,
-			FourthWallBreaks.info,
-			RulesChange.info
+			FourthWallBreaks.info
 		);
+		allEventInfos.addAll(RulesChange.allInfos);
 		
 		LastSpawn<BasicPowerup> lastPowerup = new LastSpawn<BasicPowerup>();
 		LastSpawn<Event> lastEvent = new LastSpawn<Event>();

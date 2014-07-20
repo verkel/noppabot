@@ -7,6 +7,8 @@ package noppabot;
 import java.util.*;
 import java.util.Map.Entry;
 
+import noppabot.spawns.*;
+
 import org.jibble.pircbot.Colors;
 
 
@@ -126,11 +128,15 @@ public class Rules {
 	 * Items can be dropped to ground at any time
 	 */
 	public boolean canDropItems;
+
+	public Optional<Spawner<BasicPowerup>> spawnOverride;
 	
+	// Defaults
 	public final boolean cappedRollsDefault = true;
 	public final WinCondition winConditionDefault = HIGHEST_ROLL;
 	public final int rollTargetDefault = -1;
 	public final boolean canDropItemsDefault = false;
+	public final Optional<Spawner<BasicPowerup>> spawnOverrideDefault = Optional.empty();
 	
 	private INoppaBot bot;
 
@@ -146,6 +152,15 @@ public class Rules {
 		if (isWinConditionChanged()) {
 			winCondition.onRollPeriodStart(bot);
 		}
+	}
+	
+	public ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
+		if (spawnOverride.isPresent()) return spawnOverride.get().spawn();
+		else return Powerups.getRandomPowerupOrEvent(bot, allowedPowerups, allowedEvents);
+	}
+	
+	public Spawner<BasicPowerup> getPowerupsSpawner(Spawner<BasicPowerup> proposed) {
+		return spawnOverride.orElse(proposed);
 	}
 	
 	/**
@@ -165,13 +180,15 @@ public class Rules {
 		winCondition = winConditionDefault;
 		rollTarget = rollTargetDefault;
 		canDropItems = canDropItemsDefault;
+		spawnOverride = spawnOverrideDefault;
 	}
 	
 	private boolean isChanged() {
 		return isCappedRollsChanged() || 
 		isWinConditionChanged() ||
 		isRollTargetChanged() ||
-		isCanDropItemsChanged();
+		isCanDropItemsChanged() ||
+		isSpawnOverrideChanged();
 	}
 	
 	private boolean isCappedRollsChanged() {
@@ -188,6 +205,10 @@ public class Rules {
 
 	private boolean isCanDropItemsChanged() {
 		return canDropItems != canDropItemsDefault;
+	}
+	
+	private boolean isSpawnOverrideChanged() {
+		return spawnOverride != spawnOverrideDefault;
 	}
 	
 	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are not limited to the 0-100 range.";

@@ -476,7 +476,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	@Override
 	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
-		ISpawnable spawn = Powerups.getRandomPowerupOrEvent(NoppaBot.this, allowedPowerups, allowedEvents);
+		ISpawnable spawn = rules.getRandomPowerupOrEvent(NoppaBot.this, allowedPowerups, allowedEvents);
 		return scheduleSpawn(spawnTime, spawn);
 	}
 	

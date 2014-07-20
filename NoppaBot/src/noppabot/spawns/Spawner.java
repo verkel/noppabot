@@ -41,6 +41,11 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 		return new Spawner<T>(stream, lastSpawn);
 	}
 	
+	@SafeVarargs
+	public static <T extends ISpawnable, I extends SpawnInfo<T>> Spawner<T> create(I... elems) {
+		return new Spawner<T>(() -> Arrays.stream(elems));
+	}
+	
 	/**
 	 * Allow subsequent same spawns
 	 */
