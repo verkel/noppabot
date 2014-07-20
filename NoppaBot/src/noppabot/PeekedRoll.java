@@ -8,6 +8,7 @@ import java.util.*;
 
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.dice.*;
 
 import com.google.common.collect.*;
@@ -44,8 +45,7 @@ public class PeekedRoll {
 	public Hint spawnHint() {
 		List<Hint> spawnableHints = spawnableHints();
 		if (spawnableHints.isEmpty()) return null;
-		Spawner<Hint> spawner = new Spawner<Hint>(spawnableHints);
-		spawner.setClone(false);
+		Spawner<Hint> spawner = new Spawner<Hint>(spawnableHints::stream);
 		Hint hint = spawner.spawn();
 		hint.removeObsoleteHints();
 		hints.put(hint.getClass(), hint);
@@ -72,7 +72,7 @@ public class PeekedRoll {
 		return hints.containsKey(c);
 	}
 	
-	public abstract class Hint implements ISpawnable {
+	public abstract class Hint implements SpawnInfo<Hint>, ISpawnable {
 
 		private String name;
 
@@ -86,8 +86,13 @@ public class PeekedRoll {
 		}
 
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 0;
+		}
+		
+		@Override
+		public Hint create() {
+			return this;
 		}
 
 		@Override
@@ -158,7 +163,7 @@ public class PeekedRoll {
 		}
 		
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 0.5f;
 		}
 	}
@@ -181,7 +186,7 @@ public class PeekedRoll {
 		}
 		
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 1f;
 		}
 		
@@ -204,7 +209,7 @@ public class PeekedRoll {
 		}
 
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 0.5f;
 		}
 		
@@ -233,7 +238,7 @@ public class PeekedRoll {
 		}
 		
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 0.5f;
 		}
 		
@@ -265,7 +270,7 @@ public class PeekedRoll {
 		}
 		
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 0.5f;
 		}
 
@@ -293,7 +298,7 @@ public class PeekedRoll {
 		}
 		
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 0.5f;
 		}
 	}
@@ -320,7 +325,7 @@ public class PeekedRoll {
 		}
 		
 		@Override
-		public float spawnChance() {
+		public double spawnChance() {
 			return 0.5f;
 		}
 	}

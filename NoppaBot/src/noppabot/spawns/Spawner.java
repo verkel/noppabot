@@ -32,6 +32,7 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 		public T create();
 	}
 
+	// Can this even be a constructor?
 	public static <T extends ISpawnable, I extends SpawnInfo<T>> Spawner<T> create(
 		List<I> spawnInfos, LastSpawn<T> lastSpawn, Predicate<I> filter) {
 

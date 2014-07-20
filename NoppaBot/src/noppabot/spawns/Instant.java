@@ -8,7 +8,7 @@ import noppabot.Color;
 
 
 public abstract class Instant extends BasicPowerup {
-	
+
 	public static abstract class InstantSpawnInfo extends BasicPowerupSpawnInfo {
 
 		@Override
@@ -20,8 +20,8 @@ public abstract class Instant extends BasicPowerup {
 		public boolean spawnInDiceBrosPowerups() {
 			return false;
 		}
-}
-	
+	}
+
 	@Override
 	public boolean isCarried() {
 		return false;
