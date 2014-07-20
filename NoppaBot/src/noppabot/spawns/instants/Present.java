@@ -4,15 +4,15 @@
  */
 package noppabot.spawns.instants;
 
-import java.util.Arrays;
-
 import noppabot.spawns.*;
 
 
 public class Present extends Instant {
 	
-	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
-		Arrays.<BasicPowerup>asList(new Present()));
+//	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
+//		Arrays.<BasicPowerup>asList(new Present()));
+	
+	public static final BasicPowerupSpawnInfo info = dontSpawnInfo;
 	
 	@Override
 	public void onSpawn() {

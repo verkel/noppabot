@@ -12,6 +12,15 @@ public class DiceRecycler extends Instant {
 	
 	public static final String NAME = "Dice Recycler";
 	
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new DiceRecycler();
+		}
+		
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());

@@ -20,6 +20,15 @@ public class PrimalDie extends BasicPowerup {
 			61, 67, 71, 73, 79, 83, 89, 97));
 	}
 	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new PrimalDie();
+		}
+		
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());

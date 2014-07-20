@@ -13,6 +13,19 @@ public class Diceteller extends Instant {
 	
 	public static final String NAME = "Diceteller";
 
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new Diceteller();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 1.0;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
@@ -57,11 +70,6 @@ public class Diceteller extends Instant {
 	@Override
 	public String name() {
 		return NAME;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 1f;
 	}
 }
 

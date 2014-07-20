@@ -8,6 +8,25 @@ import noppabot.INoppaBot;
 import noppabot.spawns.Event;
 
 public class FourthWallBreaks extends Event {
+	public static final EventSpawnInfo info = new EventSpawnInfo() {
+
+		@Override
+		public Event create() {
+			return new FourthWallBreaks();
+		}
+		
+		@Override
+		public double spawnChance() {
+			// Compensate that these stop spawning after 16:00
+			return 1.5;
+		}
+		
+		@Override
+		public boolean spawnInLateEvents() {
+			return false;
+		}
+	};
+	
 	@Override
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("Out of nowhere, a violent wind knocks down the DiceMaster's screen! " +
@@ -20,11 +39,5 @@ public class FourthWallBreaks extends Event {
 	@Override
 	public String name() {
 		return "Fourth Wall Breaks";
-	}
-	
-	@Override
-	public float spawnChance() {
-		// Compensate that these stop spawning after 16:00
-		return 1.5f;
 	}
 }

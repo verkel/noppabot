@@ -5,17 +5,45 @@
 package noppabot.spawns;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.Stream;
 
 public class Spawner<S extends ISpawnable> implements Iterable<S> {
-	private NavigableMap<Float, S> chances = new TreeMap<Float, S>();
+	private NavigableMap<Double, SpawnInfo<S>> chances = new TreeMap<Double, SpawnInfo<S>>();
 	private Random random = new Random();
 	private LastSpawn<S> lastSpawn;
-	private boolean clone = true;
+//	private boolean clone = true;
 
+	/**
+	 * Make a new spawner record
+	 */
+//	public static <T> SpawnInfo<T> spawn(Supplier<T> supplier, double spawnChance) {
+//		return new SpawnInfo<T>(supplier, spawnChance);
+//	}
+	
+	/**
+	 * Record of something the spawner can spawn
+	 */
+	public static interface SpawnInfo<T> {
+		public default double spawnChance() {
+			return 1.0;
+		}
+		
+		public T create();
+	}
+
+	public static <T extends ISpawnable, I extends SpawnInfo<T>> Spawner<T> create(
+		List<I> spawnInfos, LastSpawn<T> lastSpawn, Predicate<I> filter) {
+
+		// We necessarily iterate over the stream two times, so we have to recreate it
+		Supplier<Stream<? extends SpawnInfo<T>>> stream = () -> spawnInfos.stream().filter(filter);
+		return new Spawner<T>(stream, lastSpawn);
+	}
+	
 	/**
 	 * Allow subsequent same spawns
 	 */
-	public Spawner(Collection<S> spawnables) {
+	public Spawner(Supplier<Stream<? extends SpawnInfo<S>>> spawnables) {
 		this(spawnables, Spawner.<S>allowSameSpawns());
 	}
 
@@ -23,18 +51,16 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	 * Disallow subsequent same spawns. Share the lastSpawn object with spawners
 	 * you wish to combine the last spawn tracking with.
 	 */
-	public Spawner(Collection<S> spawnables, LastSpawn<S> lastSpawn) {
+	public Spawner(Supplier<Stream<? extends SpawnInfo<S>>> spawnables, LastSpawn<S> lastSpawn) {
 		this.lastSpawn = lastSpawn;
 		
 		// Compute sum of spawn chances
-		float sum = 0f;
-		for (S s : spawnables) {
-			sum += s.spawnChance();
-		}
+		double sum = spawnables.get().mapToDouble(s -> s.spawnChance()).sum();
 		
 		// Build the probability distribution
-		float chanceCeil = 0f;
-		for (S s : spawnables) {
+		double chanceCeil = 0f;
+		for (Iterator<? extends SpawnInfo<S>> it = spawnables.get().iterator(); it.hasNext();) {
+			SpawnInfo<S> s = it.next();
 			chanceCeil += s.spawnChance() / sum;
 			chances.put(chanceCeil, s);
 		}
@@ -42,23 +68,26 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	
 	public S spawn() {
 		// Prevent two same spawns in a row
-		float rnd, key;
-		S value;
+		double rnd, key;
+		SpawnInfo<S> spawnInfo;
 		do { 
 			rnd = random.nextFloat();
 			key = chances.higherKey(rnd);
-			value = chances.get(key);
+			spawnInfo = chances.get(key);
 		}
-		while (lastSpawn.isSame(value));
-		lastSpawn.setValue(value);
+		while (lastSpawn.isSame(spawnInfo));
+		lastSpawn.setValue(spawnInfo);
 		
-		return clone(value);
+		return spawnInfo.create(); //clone(value);
 	}
 	
+	/**
+	 * Iterating over this spawner will spawn every value registered to it
+	 */
 	@Override
 	public Iterator<S> iterator() {
 		return new Iterator<S>() {
-			private Iterator<S> it = chances.values().iterator();
+			private Iterator<SpawnInfo<S>> it = chances.values().iterator();
 
 			@Override
 			public boolean hasNext() {
@@ -67,7 +96,7 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 
 			@Override
 			public S next() {
-				return Spawner.this.clone(it.next());
+				return it.next().create();
 			}
 
 			@Override
@@ -77,48 +106,28 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 		};
 	}
 
-	public boolean isClone() {
-		return clone;
-	}
-
-	public void setClone(boolean clone) {
-		this.clone = clone;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private S clone(S obj) {
-		if (!clone) return obj;
-		try {
-			obj = (S)obj.getClass().newInstance();
-			return obj;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
 	// So that we may share the lastSpawn between multiple spawners
 	public static class LastSpawn<S> {
-		private S value = null;
+		private SpawnInfo<S> lastInfo = null;
 
-		public S getValue() {
-			return value;
+		public SpawnInfo<S> getValue() {
+			return lastInfo;
 		}
 		
-		public boolean isSame(S newValue) {
-			if (value == null) return false;
-			return newValue.equals(value);
+		public boolean isSame(SpawnInfo<S> newInfo) {
+			if (lastInfo == null) return false;
+			return newInfo.equals(lastInfo);
 		}
 
-		public void setValue(S value) {
-			this.value = value;
+		public void setValue(SpawnInfo<S> value) {
+			this.lastInfo = value;
 		}
 	}
 	
 	public static <S> LastSpawn<S> allowSameSpawns() {
 		return new LastSpawn<S>() {
 			@Override
-			public void setValue(S value) {
+			public void setValue(SpawnInfo<S> value) {
 			}
 		};
 	}

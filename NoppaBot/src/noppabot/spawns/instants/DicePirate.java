@@ -12,6 +12,24 @@ import noppabot.spawns.*;
 
 public class DicePirate extends Instant {
 
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new DicePirate();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.75;
+		}
+		
+		@Override
+		public boolean spawnInDiceStormPowerups() {
+			return false;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
@@ -93,10 +111,5 @@ public class DicePirate extends Instant {
 	@Override
 	public String name() {
 		return "DicePirate";
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.75f;
 	}
 }

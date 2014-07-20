@@ -13,6 +13,20 @@ import noppabot.spawns.*;
 
 
 public class TrollingProfessional extends Instant {
+	
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new TrollingProfessional();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.5;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
@@ -47,11 +61,6 @@ public class TrollingProfessional extends Instant {
 	@Override
 	public String name() {
 		return "Trolling Professional";
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.5f;
 	}
 	
 	public static class Bomb extends BasicPowerup {

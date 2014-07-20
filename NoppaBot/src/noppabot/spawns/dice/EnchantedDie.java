@@ -9,6 +9,19 @@ import noppabot.spawns.*;
 
 public class EnchantedDie extends BasicPowerup {
 
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new EnchantedDie();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.75;
+		}
+	};
+	
 	public static final int bonus = 15;
 
 	@Override
@@ -49,11 +62,6 @@ public class EnchantedDie extends BasicPowerup {
 	@Override
 	public int sides() {
 		return 100;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.75f;
 	}
 	
 	@Override

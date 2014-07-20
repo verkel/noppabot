@@ -11,6 +11,19 @@ public class FastDie extends BasicPowerup {
 
 	private static final int maxBonus = 20;
 	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new FastDie();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.50;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
@@ -51,11 +64,6 @@ public class FastDie extends BasicPowerup {
 	@Override
 	public int sides() {
 		return 100;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.50f;
 	}
 	
 	@Override

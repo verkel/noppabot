@@ -11,6 +11,24 @@ public class ImitatorDie extends BasicPowerup {
 
 	private Integer lastRoll = null;
 	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new ImitatorDie();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.33;
+		}
+		
+		@Override
+		public boolean spawnInDiceBrosPowerups() {
+			return false;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
@@ -91,11 +109,6 @@ public class ImitatorDie extends BasicPowerup {
 	@Override
 	public int sides() {
 		return 10;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.33f;
 	}
 	
 	@Override

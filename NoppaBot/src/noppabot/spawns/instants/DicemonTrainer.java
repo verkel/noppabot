@@ -10,6 +10,19 @@ import noppabot.spawns.*;
 public class DicemonTrainer extends Instant {
 	public static final String NAME = "Dicemon Trainer";
 	
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new DicemonTrainer();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 2.0;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
@@ -61,10 +74,5 @@ public class DicemonTrainer extends Instant {
 	@Override
 	public String name() {
 		return NAME;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 2f;
 	}
 }

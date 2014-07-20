@@ -14,6 +14,14 @@ public class RulesChange extends Event {
 	private static final int NUM_RULES = 4;
 	private static final int NUM_WIN_CONDITIONS = 2;
 	
+	public static final EventSpawnInfo info = new EventSpawnInfo() {
+
+		@Override
+		public Event create() {
+			return new RulesChange();
+		}
+	};
+	
 	@Override
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("In today's Roll News, you read that the DiceRuler has issued " +
@@ -83,10 +91,5 @@ public class RulesChange extends Event {
 	@Override
 	public String name() {
 		return "Rules Change";
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 1.0f;
 	}
 }

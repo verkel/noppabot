@@ -30,6 +30,19 @@ public class HumongousDie extends BasicPowerup {
 		}
 	}
 	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new HumongousDie();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.33;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s APPEARS!", nameColored());
@@ -76,11 +89,6 @@ public class HumongousDie extends BasicPowerup {
 	@Override
 	public int sides() {
 		return 100;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.33f;
 	}
 	
 	@Override

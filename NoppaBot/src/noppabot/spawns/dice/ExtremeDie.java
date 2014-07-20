@@ -6,13 +6,20 @@ package noppabot.spawns.dice;
 
 import noppabot.spawns.*;
 
-
-
 public class ExtremeDie extends BasicPowerup {
 	
 	private static final int sides = 100;
 	private static final int highRollBonusSides = 10;
 
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new ExtremeDie();
+		}
+		
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("An %s appears!", nameColored());

@@ -10,6 +10,24 @@ import noppabot.spawns.*;
 
 public class DiceBros extends BasicPowerup {
 
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new DiceBros();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.5;
+		}
+		
+		@Override
+		public boolean spawnInDiceBrosPowerups() {
+			return false;
+		}
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("The %s appear!", nameColored());
@@ -79,11 +97,6 @@ public class DiceBros extends BasicPowerup {
 	@Override
 	public Powerup upgrade() {
 		return new SuperDiceBros(bot);
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.5f;
 	}
 	
 	// Upgrade

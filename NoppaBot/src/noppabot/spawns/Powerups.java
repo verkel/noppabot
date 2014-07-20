@@ -7,6 +7,8 @@ package noppabot.spawns;
 import java.util.*;
 
 import noppabot.INoppaBot;
+import noppabot.spawns.BasicPowerup.BasicPowerupSpawnInfo;
+import noppabot.spawns.Event.EventSpawnInfo;
 import noppabot.spawns.Spawner.LastSpawn;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.events.*;
@@ -25,59 +27,50 @@ public class Powerups {
 	public static final Spawner<Event> lateEvents;
 	
 	static {
-		List<BasicPowerup> allPowerupsList = new ArrayList<BasicPowerup>();
-		List<BasicPowerup> firstPowerupList = new ArrayList<BasicPowerup>();
-		List<BasicPowerup> diceStormPowerupsList = new ArrayList<BasicPowerup>();
-		List<BasicPowerup> diceBrosPowerupsList = new ArrayList<BasicPowerup>();
-		List<Event> allEventsList = new ArrayList<Event>();
-		List<Event> allEventsMinusFourthWallList = new ArrayList<Event>();
-		List<Event> lateEventsList = new ArrayList<Event>();
+		List<BasicPowerupSpawnInfo> allPowerupInfos = Arrays.asList(
+			BagOfDice.info,
+			DicemonTrainer.info,
+			DiceBros.info,
+			DicePirate.info,
+			DiceRecycler.info,
+			Diceteller.info,
+			EnchantedDie.info,
+			ExtremeDie.info,
+			FastDie.info,
+			ImitatorDie.info,
+			HumongousDie.info,
+			LuckyDie.info,
+			MasterDie.info,
+			PokerDealer.info,
+			PolishedDie.info,
+			PrimalDie.info,
+			RollingProfessional.info,
+			SteadyDie.info,
+			TrollingProfessional.info,
+			VariableDie.info,
+			WeightedDie.info
+		);
 		
-		/*
-		 * Instances are used here because some metadata is stored in instance
-		 * getters. Namely the spawn chance. Because static methods cannot be
-		 * specified in interfaces, you'd need to have this data as annotations to
-		 * be accessible without instantiating...
-		 */
-		
-		// Apprentice die is not put here, but can be spawned regardless if there are master dies
-		allPowerupsList.addAll(Arrays.asList(new BagOfDice(), new DicemonTrainer(), new DiceBros(),
-			new DicePirate(), new DiceRecycler(), new Diceteller(), new EnchantedDie(), new ExtremeDie(), 
-			new FastDie(), new ImitatorDie(), new HumongousDie(), new LuckyDie(), new MasterDie(), 
-			new PokerDealer(), new PolishedDie(),  new PrimalDie(), new RollingProfessional(), 
-			new SteadyDie(), new TrollingProfessional(), new VariableDie(), new WeightedDie()));
-
-		diceBrosPowerupsList.addAll(Arrays.asList(new BagOfDice(), new EnchantedDie(), new FastDie(),
-			new ExtremeDie(), new LuckyDie(), new MasterDie(), new PolishedDie(), new PrimalDie(),
-			new SteadyDie(), new VariableDie(), new WeightedDie()));
-
-		firstPowerupList.addAll(allPowerupsList);
-		firstPowerupList.removeAll(Arrays.asList(new DicemonTrainer(), new DicePirate(), new DiceRecycler()));
-
-		diceStormPowerupsList.addAll(allPowerupsList);
-		diceStormPowerupsList.removeAll(Arrays.asList(new DicePirate()));
-		
-		allEventsList.addAll(Arrays.asList(new DiceMutation(), new DiceStorm(), 
-			new FourthWallBreaks(), new FavorRefresh(), new RulesChange()));
-		
-		allEventsMinusFourthWallList.addAll(allEventsList);
-		allEventsMinusFourthWallList.remove(new FourthWallBreaks());
-		
-		lateEventsList.addAll(allEventsList);
-		lateEventsList.removeAll(Arrays.asList(new FourthWallBreaks()));
+		List<EventSpawnInfo> allEventInfos = Arrays.asList(
+			DiceMutation.info,
+			DiceStorm.info,
+			FavorRefresh.info,
+			FourthWallBreaks.info,
+			RulesChange.info
+		);
 		
 		LastSpawn<BasicPowerup> lastPowerup = new LastSpawn<BasicPowerup>();
 		LastSpawn<Event> lastEvent = new LastSpawn<Event>();
 		
-		allPowerups = new Spawner<BasicPowerup>(allPowerupsList, lastPowerup);
-		firstPowerup = new Spawner<BasicPowerup>(firstPowerupList, lastPowerup);
-		diceStormPowerups = new Spawner<BasicPowerup>(diceStormPowerupsList, lastPowerup);
-		diceBrosPowerups = new Spawner<BasicPowerup>(diceBrosPowerupsList, new LastSpawn<BasicPowerup>());
-		allEvents = new Spawner<Event>(allEventsList, lastEvent);
-		allEventsMinusFourthWall = new Spawner<Event>(allEventsMinusFourthWallList, lastEvent);
-		lateEvents = new Spawner<Event>(lateEventsList, lastEvent);
+		allPowerups = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInAllPowerups());
+		firstPowerup = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInFirstPowerups());
+		diceStormPowerups = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInDiceStormPowerups());
+		diceBrosPowerups = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInDiceBrosPowerups());
+		allEvents = Spawner.create(allEventInfos, lastEvent, i -> i.spawnInAllEvents());
+		allEventsMinusFourthWall = Spawner.create(allEventInfos, lastEvent, i -> i != FourthWallBreaks.info);
+		lateEvents = Spawner.create(allEventInfos, lastEvent, i -> i.spawnInLateEvents());
 	}
-
+	
 	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups, Spawner<Event> spawnEvents) {
 		if (spawnEvents != null && powerupRnd.nextFloat() < 0.10f) {
 			return getRandomEvent(spawnEvents);

@@ -15,6 +15,15 @@ public class RollingProfessional extends Instant {
 
 	private boolean professor;
 	
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new RollingProfessional();
+		}
+		
+	};
+	
 	@Override
 	public void onInitialize() {
 		professor = (Powerups.powerupRnd.nextFloat() < 0.25f);

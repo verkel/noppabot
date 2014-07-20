@@ -11,6 +11,20 @@ import noppabot.spawns.*;
 
 
 public class DiceMutation extends Event {
+	
+	public static final EventSpawnInfo info = new EventSpawnInfo() {
+
+		@Override
+		public Event create() {
+			return new DiceMutation();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.75;
+		}
+	};
+	
 	@Override
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("Breaking news! The last batch of dice from the PRO Corp. seems to" +
@@ -38,10 +52,5 @@ public class DiceMutation extends Event {
 	@Override
 	public String name() {
 		return "Dice Mutation";
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.75f;
 	}
 }

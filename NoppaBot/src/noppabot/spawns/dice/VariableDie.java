@@ -13,6 +13,15 @@ public class VariableDie extends BasicPowerup {
 
 	private int sides;
 	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new VariableDie();
+		}
+		
+	};
+	
 	@Override
 	public void onInitialize() {
 		sides = 80 + 10 * Powerups.powerupRnd.nextInt(7);

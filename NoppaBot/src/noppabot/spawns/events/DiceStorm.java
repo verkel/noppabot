@@ -8,6 +8,16 @@ import noppabot.INoppaBot;
 import noppabot.spawns.*;
 
 public class DiceStorm extends Event {
+	
+	public static final EventSpawnInfo info = new EventSpawnInfo() {
+
+		@Override
+		public Event create() {
+			return new DiceStorm();
+		}
+		
+	};
+	
 	@Override
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("Suddenly, a %s breaks out! It's now raining dice!", nameColored());

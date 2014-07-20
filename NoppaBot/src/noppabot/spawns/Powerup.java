@@ -115,10 +115,10 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 		return null;
 	}
 	
-	@Override
-	public float spawnChance() {
-		return 1;
-	}
+//	@Override
+//	public float spawnChance() {
+//		return 1;
+//	}
 	
 	/**
 	 * Get the number of sides the die used in this powerup has. If the powerup

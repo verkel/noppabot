@@ -12,6 +12,16 @@ import com.google.common.collect.*;
 
 public class BagOfDice extends BasicPowerup {
 	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new BagOfDice();
+		}
+		
+	};
+
+	
 	private static final List<Integer> dice;
 	
 	static {

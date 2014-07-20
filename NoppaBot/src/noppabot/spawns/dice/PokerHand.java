@@ -21,18 +21,7 @@ public class PokerHand extends BasicPowerup {
 	
 	private static int[] handRankBonuses = new int[NUM_HANDS];
 	
-//	static {
-//		handRankBonuses[HIGH] = 0;
-//		handRankBonuses[PAIR] = 50;
-//		handRankBonuses[TWOPAIR] = 70;
-//		handRankBonuses[THREEKIND] = 80;
-//		handRankBonuses[STRAIGHT] = 90;
-//		handRankBonuses[FLUSH] = 95;
-//		handRankBonuses[FULLHOUSE] = 100;
-//		handRankBonuses[FOURKIND] = 120;
-//		handRankBonuses[STRAIGHTFLUSH] = 140;
-//		handRankBonuses[FIVEKIND] = 200; // Not possible without Jokers
-//	}
+	public static final BasicPowerupSpawnInfo info = dontSpawnInfo;
 	
 	static {
 		handRankBonuses[HIGH] = 0;

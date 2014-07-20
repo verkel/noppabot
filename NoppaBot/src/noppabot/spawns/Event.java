@@ -5,9 +5,22 @@
 package noppabot.spawns;
 
 import noppabot.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public abstract class Event implements ISpawnable {
+
+	public static abstract class EventSpawnInfo implements SpawnInfo<Event> {
+
+		public boolean spawnInAllEvents() {
+			return true;
+		}
+		
+		public boolean spawnInLateEvents() {
+			return true;
+		}
+	}
+	
 	public abstract void run(INoppaBot bot);
 	
 	public String nameColored() {
@@ -27,11 +40,6 @@ public abstract class Event implements ISpawnable {
 	@Override
 	public String toString() {
 		return name();
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 1;
 	}
 	
 	@Override

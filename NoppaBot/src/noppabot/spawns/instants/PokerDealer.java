@@ -21,6 +21,19 @@ public class PokerDealer extends Instant {
 	private Deck deck;
 	private int cardsLeft;
 	private Set<String> peopleDealtTo = new HashSet<String>();
+
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new PokerDealer();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 1.0;
+		}
+	};
 	
 	@Override
 	public void onInitialize() {
@@ -112,11 +125,6 @@ public class PokerDealer extends Instant {
 	@Override
 	public String name() {
 		return NAME;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 1f;
 	}
 }
 

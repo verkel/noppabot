@@ -5,6 +5,7 @@
 package noppabot.spawns;
 
 import noppabot.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public abstract class BasicPowerup extends Powerup {
@@ -14,6 +15,38 @@ public abstract class BasicPowerup extends Powerup {
 	protected boolean colorRoll = true;
 	protected String owner; // The owner
 	protected String ownerColored; // The owner, colored
+
+	protected static final BasicPowerupSpawnInfo dontSpawnInfo = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public boolean spawnInAllPowerups() {
+			return false;
+		}
+		
+		@Override
+		public BasicPowerup create() {
+			return null;
+		}
+	};
+	
+	public static abstract class BasicPowerupSpawnInfo implements SpawnInfo<BasicPowerup> {
+		
+		public boolean spawnInAllPowerups() {
+			return true;
+		}
+		
+		public boolean spawnInFirstPowerups() {
+			return true;
+		}
+		
+		public boolean spawnInDiceStormPowerups() {
+			return true;
+		}
+		
+		public boolean spawnInDiceBrosPowerups() {
+			return true;
+		}
+	}
 
 	@Override
 	public final BasicPowerup initialize(INoppaBot bot) {

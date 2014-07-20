@@ -11,6 +11,15 @@ public class SteadyDie extends BasicPowerup {
 	public static final int bonus = 30;
 	public static final int sides = 70;
 
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new SteadyDie();
+		}
+		
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());

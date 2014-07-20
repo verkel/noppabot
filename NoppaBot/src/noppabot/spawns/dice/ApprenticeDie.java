@@ -6,9 +6,17 @@ package noppabot.spawns.dice;
 
 import noppabot.spawns.*;
 
-
 public class ApprenticeDie extends BasicPowerup {
 
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new ApprenticeDie();
+		}
+		
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("An %s appears!", nameColored());

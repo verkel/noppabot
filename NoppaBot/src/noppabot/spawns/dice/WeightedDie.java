@@ -11,6 +11,15 @@ import noppabot.spawns.evolved.CrushingDie;
 public class WeightedDie extends BasicPowerup {
 
 	public static final int bonus = 10;
+	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new WeightedDie();
+		}
+		
+	};
 
 	@Override
 	public void onSpawn() {

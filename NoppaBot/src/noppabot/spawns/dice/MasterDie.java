@@ -11,10 +11,22 @@ import noppabot.*;
 import noppabot.INoppaBot.State;
 import noppabot.spawns.*;
 
-
 public class MasterDie extends BasicPowerup {
 
 	private static final int sides = 150;
+	
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new MasterDie();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.20f;
+		}
+	};
 	
 	@Override
 	public void onSpawn() {
@@ -75,11 +87,6 @@ public class MasterDie extends BasicPowerup {
 	@Override
 	public int sides() {
 		return sides;
-	}
-	
-	@Override
-	public float spawnChance() {
-		return 0.20f;
 	}
 	
 	@Override

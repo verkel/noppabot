@@ -6,12 +6,19 @@ package noppabot.spawns.dice;
 
 import noppabot.spawns.*;
 
-
-
 public class LuckyDie extends BasicPowerup {
 
 	public static final int bonus = 25;
 
+	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
+
+		@Override
+		public BasicPowerup create() {
+			return new LuckyDie();
+		}
+		
+	};
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
