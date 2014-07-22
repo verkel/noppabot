@@ -51,12 +51,12 @@ public class Powerups {
 			WeightedDie.info
 		);
 		
-		List<EventSpawnInfo> allEventInfos = Arrays.asList(
+		List<EventSpawnInfo> allEventInfos = new ArrayList<>(Arrays.asList(
 			DiceMutation.info,
 			DiceStorm.info,
 			FavorRefresh.info,
 			FourthWallBreaks.info
-		);
+		));
 		allEventInfos.addAll(RulesChange.allInfos);
 		
 		LastSpawn<BasicPowerup> lastPowerup = new LastSpawn<BasicPowerup>();

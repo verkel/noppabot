@@ -20,7 +20,10 @@ public abstract class RulesChange extends Event {
 		LowestRollWins.info,
 		RollClosestToTargetWins.info,
 		UncappedRolls.info,
-		CanDropItems.info
+		CanDropItems.info,
+		UnlimitedPowerMode.info,
+		ClairvoyantMode.info,
+		PeakOfEvolutionMode.info
 	);
 	
 	@SuppressWarnings("unchecked")
@@ -44,51 +47,13 @@ public abstract class RulesChange extends Event {
 		bot.sendChannelFormat("In today's Roll News, you read that the DiceRuler has issued " +
 			"a temporary %s to spice things up:", nameColored());
 		
-//		String explanation = doRandomRulesChange(bot);
 		String explanation = changeRules(bot.getRules());
 		bot.onRulesChanged();
 		bot.sendChannel(explanation);
 	}
 
-//	public static String doRandomRulesChange(INoppaBot bot) {
-//		Rules rules = bot.getRules();
-////		int rnd = getRnd();
-////		String explanation;
-////		if (rnd == 0) {
-////			explanation = changeToLowestRollWins(rules);
-////		}
-////		else if (rnd == 1) {
-////			explanation = changeToRollClosestToTargetWins(rules);
-////		}
-////		else if (rnd == 2) {
-////			explanation = changeToUncappedRolls(rules);
-////		}
-////		else if (rnd == 3) {
-////			explanation = changeToCanDropItems(rules);
-////		}
-////		else {
-////			throw new IllegalStateException();
-////		}
-//		
-//		String explanation = changeRules(rules);
-//		
-//		bot.onRulesChanged();
-//		return explanation;
-//	}
-	
 	public abstract String changeRules(Rules rules);
 	
-//	private static int getRnd() {
-//		Calendar cal = Calendar.getInstance();
-//		int hour = cal.get(Calendar.HOUR_OF_DAY);
-//		if (hour < 16) {
-//			return Powerups.powerupRnd.nextInt(NUM_RULES);
-//		}
-//		else {
-//			return NUM_WIN_CONDITIONS + Powerups.powerupRnd.nextInt(NUM_RULES - NUM_WIN_CONDITIONS);
-//		}
-//	}
-
 	@Override
 	public String name() {
 		return "Rules Change";
@@ -172,8 +137,13 @@ class CanDropItems extends RulesChange {
 }
 
 class UnlimitedPowerMode extends RulesChange {
+	private static final String desc = "Only items that can be infinitely upgraded are spawned.";
 	private static final Spawner<BasicPowerup> spawner = Spawner.create(
 		BagOfDice.info, PolishedDie.info, DicemonTrainer.info);
+	
+	static {
+		spawner.setDescription(desc);
+	}
 	
 	public static final EventSpawnInfo info = new RulesChangeInfo() {
 		@Override
@@ -183,8 +153,7 @@ class UnlimitedPowerMode extends RulesChange {
 	};
 
 	private static final String explanation = String.format(
-		"%s Only items that can be infinitely upgraded are spawned. Also the roll cap is removed.",
-		Color.emphasize("Unlimited power mode!"));
+		"%s %s Also the roll cap is removed.", desc, Color.emphasize("Unlimited power mode!"));
 
 	@Override
 	public String changeRules(Rules rules) {
@@ -195,8 +164,13 @@ class UnlimitedPowerMode extends RulesChange {
 }
 
 class ClairvoyantMode extends RulesChange {
+	private static final String desc = "Only dicetellers are spawned.";
 	private static final Spawner<BasicPowerup> spawner = Spawner.create(
 		Diceteller.info);
+	
+	static {
+		spawner.setDescription(desc);
+	}
 	
 	public static final EventSpawnInfo info = new RulesChangeInfo() {
 		@Override
@@ -205,9 +179,8 @@ class ClairvoyantMode extends RulesChange {
 		}
 	};
 
-	private static final String explanation = String.format(
-		"%s Only dicetellers are spawned.",
-		Color.emphasize("Clairvoyant mode!"));
+	private static final String explanation = String.format("%s %s",
+		Color.emphasize("Clairvoyant mode!"), desc);
 
 	@Override
 	public String changeRules(Rules rules) {
@@ -217,8 +190,13 @@ class ClairvoyantMode extends RulesChange {
 }
 
 class PeakOfEvolutionMode extends RulesChange {
+	private static final String desc = "Items spawn as upgraded.";
 	private static final Spawner<BasicPowerup> spawner = Spawner.create(
 		Diceteller.info);
+	
+	static {
+		spawner.setDescription(desc);
+	}
 	
 	public static final EventSpawnInfo info = new RulesChangeInfo() {
 		@Override
@@ -227,9 +205,8 @@ class PeakOfEvolutionMode extends RulesChange {
 		}
 	};
 
-	private static final String explanation = String.format(
-		"%s Only dicetellers are spawned.",
-		Color.emphasize("Clairvoyant mode!"));
+	private static final String explanation = String.format("%s %s",
+		Color.emphasize("Clairvoyant mode!"), desc);
 
 	@Override
 	public String changeRules(Rules rules) {

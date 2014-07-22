@@ -12,6 +12,7 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	private NavigableMap<Double, SpawnInfo<S>> chances = new TreeMap<Double, SpawnInfo<S>>();
 	private Random random = new Random();
 	private LastSpawn<S> lastSpawn;
+	private String description;
 //	private boolean clone = true;
 
 	/**
@@ -136,5 +137,13 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 			public void setValue(SpawnInfo<S> value) {
 			}
 		};
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

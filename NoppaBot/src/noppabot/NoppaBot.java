@@ -12,7 +12,7 @@ import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
-import noppabot.spawns.events.FourthWallBreaks;
+import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
@@ -268,6 +268,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		scheduleSpawn(null, new PokerDealer().initialize(this));
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
+		
+		RulesChange.allInfos.get(4).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {

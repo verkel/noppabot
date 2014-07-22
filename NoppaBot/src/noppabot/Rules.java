@@ -219,6 +219,7 @@ public class Rules {
 		list.add(winCondition.getExplanation());
 		if (isCanDropItemsChanged()) list.add(EXPLAIN_CAN_DROP_ITEMS);
 		if (isCappedRollsChanged()) list.add(EXPLAIN_UNCAPPED_ROLLS);
+		spawnOverride.ifPresent(so -> list.add(so.getDescription()));
 		return StringUtils.join(list, " ");
 	}
 }
