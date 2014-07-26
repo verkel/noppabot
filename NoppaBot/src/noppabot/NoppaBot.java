@@ -1048,6 +1048,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		listItems(true);
 	}
 	
+	private void onSpawnOverrideChanged() {
+		expireAllPowerups();
+		clearPowerupTasks();
+		schedulePowerupsOfTheDay();
+	}
+	
 	private void startRollPeriod() {
 		state = State.ROLL_PERIOD;
 		
