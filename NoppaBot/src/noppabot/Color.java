@@ -62,7 +62,7 @@ public class Color {
 	}
 	
 	public static String rulesMode(String name) {
-		return custom(name, Colors.PURPLE);
+		return custom(name, Colors.MAGENTA);
 	}
 	
 	public static String antiHilight(String nick) {

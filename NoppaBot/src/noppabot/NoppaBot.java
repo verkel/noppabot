@@ -283,7 +283,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
-		RulesChange.allInfos.get(6).create().run(this);
+		RulesChange.allInfos.get(7).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {
@@ -868,6 +868,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private void grabPowerup(String nick, String powerupName) {
 		Powerup powerup = findPowerup(powerupName);
+		
+		// FIXME revise the logic, it's not very clean
 
 		// Allow grabbing items during roll period in debug mode
 		if (state != State.NORMAL && !debug) {
@@ -876,20 +878,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else if (availablePowerups.isEmpty()) {
 			sendChannelFormat("%s: nothing to grab.", Color.nick(nick));
 		}
+		else if (powerup != null && canFuse(nick, powerup)) {
+			fuseDice(nick, powerup);
+		}
 		else if (powerup != null && !powerup.canPickUp(nick, true)) {
 			// canPickUp(*) will warn the user
 		}
 		else {
 			if (powerup != null) {
-				powerup.setOwner(nick);
-				powerup.onPickup();
-				if (powerup.isCarried()) {
-					powerups.put(nick, powerup);
-					availablePowerups.remove(powerup);
-				}
-				else if (powerup.isDestroyedAfterPickup()) {
-					availablePowerups.remove(powerup);
-				}
+				doGrabPowerup(nick, powerup);
 			}
 			// User didn't specify which item to grab
 			else if (powerupName == null) {
@@ -902,6 +899,35 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				sendChannelFormat("%s: There is no such item available.", Color.nick(nick));
 			}
 		}
+	}
+
+	private void doGrabPowerup(String nick, Powerup powerup) {
+		powerup.setOwner(nick);
+		powerup.onPickup();
+		if (powerup.isCarried()) {
+			powerups.put(nick, powerup);
+			availablePowerups.remove(powerup);
+		}
+		else if (powerup.isDestroyedAfterPickup()) {
+			availablePowerups.remove(powerup);
+		}
+	}
+	
+	private void fuseDice(String nick, Powerup powerup) {
+		DicemonTrainer.upgradeDie(this, nick, String.format(
+			"You grab the %s, and fuse it and your existing die into one.",
+			powerup.name()));
+	}
+
+
+	private boolean canFuse(String nick, Powerup grabbedPowerup) {
+		if(rules.diceFusion.get()) {
+			if (powerups.containsKey(nick)) {
+				Powerup powerup = powerups.get(nick);
+				return powerup.isUpgradeable() && powerup.equals(grabbedPowerup);
+			}
+		}
+		return false;
 	}
 	
 	private Powerup findPowerup(String name) {

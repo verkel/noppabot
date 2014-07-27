@@ -148,8 +148,13 @@ public class Rules {
 	 */
 	public Property<Boolean> upgradedSpawns = Property.of(false);
 	
-	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition, upgradedSpawns,
-		canDropItems, spawnOverride);
+	/**
+	 * Can upgrade dice by grabbing another one of the same type
+	 */
+	public Property<Boolean> diceFusion = Property.of(false);
+	
+	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition,
+		canDropItems, spawnOverride, upgradedSpawns, diceFusion);
 
 	private INoppaBot bot;
 
@@ -198,6 +203,7 @@ public class Rules {
 	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are not limited to the 0-100 range.";
 	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + Color.custom("drop", Colors.WHITE) + " command.";
 	public static final String EXPLAIN_UPGRADED_SPAWNS = "Items spawn as upgraded.";
+	public static final String EXPLAIN_DICE_FUSION = "You can upgrade dice by grabbing another die of the same type.";
 	
 	public String getExplanation() {
 		List<String> list = new ArrayList<String>();
@@ -206,6 +212,7 @@ public class Rules {
 		if (cappedRolls.isChanged()) list.add(EXPLAIN_UNCAPPED_ROLLS);
 		spawnOverride.ifPresent(so -> list.add(so.getDescription()));
 		if (upgradedSpawns.isChanged()) list.add(EXPLAIN_UPGRADED_SPAWNS);
+		if (diceFusion.isChanged()) list.add(EXPLAIN_DICE_FUSION);
 		return StringUtils.join(list, " ");
 	}
 }

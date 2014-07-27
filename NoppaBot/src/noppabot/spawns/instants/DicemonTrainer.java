@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.Color;
+import noppabot.*;
 import noppabot.spawns.*;
 
 public class DicemonTrainer extends Instant {
@@ -61,14 +61,18 @@ public class DicemonTrainer extends Instant {
 
 	@Override
 	public void onPickup() {
+		upgradeDie(bot, owner, "The trainer unlocks the hidden potential in your die!");
+	}
+
+	public static void upgradeDie(INoppaBot bot, String owner, String flavorMsg) {
 		Powerup oldPowerup = bot.getPowerups().get(owner);
 		String oldName = oldPowerup.nameColored();
 		Powerup newPowerup = oldPowerup.upgrade();
 		String newName = newPowerup.nameColored();
 		String descr = newPowerup.getUpgradeDescription();
 		bot.getPowerups().put(owner, newPowerup);
-		bot.sendChannelFormat("The trainer unlocks the hidden potential in your die!");
-		bot.sendChannelFormat("%s's %s evolved into %s! %s", ownerColored, oldName, newName, descr);
+		bot.sendChannelFormat(flavorMsg);
+		bot.sendChannelFormat("%s's %s evolved into %s! %s", Color.nick(owner), oldName, newName, descr);
 	}
 
 	@Override

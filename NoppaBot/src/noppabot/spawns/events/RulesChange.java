@@ -21,7 +21,8 @@ public abstract class RulesChange extends Event {
 		CanDropItems.info,
 		UnlimitedPowerMode.info,
 		ClairvoyantMode.info,
-		PeakOfEvolutionMode.info
+		PeakOfEvolutionMode.info,
+		DiceFusionMode.info
 	);
 	
 	@SuppressWarnings("unchecked")
@@ -223,5 +224,24 @@ class PeakOfEvolutionMode extends RulesChange {
 	@Override
 	public String explanation(Rules rules) {
 		return String.format("%s %s", Color.rulesMode("Peak of evolution mode!"), desc);
+	}
+}
+
+class DiceFusionMode extends RulesChange {
+	public static final EventSpawnInfo info = new RulesChangeInfo() {
+		@Override
+		public Event create() {
+			return new DiceFusionMode();
+		}
+	};
+	
+	@Override
+	public void changeRules(Rules rules) {
+		rules.diceFusion.set(true);
+	}
+
+	@Override
+	public String explanation(Rules rules) {
+		return String.format("%s %s", Color.rulesMode("Dice fusion mode!"), Rules.EXPLAIN_DICE_FUSION);
 	}
 }
