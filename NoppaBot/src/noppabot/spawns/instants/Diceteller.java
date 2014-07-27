@@ -6,7 +6,8 @@ package noppabot.spawns.instants;
 
 import noppabot.*;
 import noppabot.PeekedRoll.Hint;
-import noppabot.spawns.Instant;
+import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class Diceteller extends Instant {
@@ -25,6 +26,11 @@ public class Diceteller extends Instant {
 			return 1.0;
 		}
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {

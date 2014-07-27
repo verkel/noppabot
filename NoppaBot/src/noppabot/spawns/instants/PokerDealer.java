@@ -8,6 +8,7 @@ import java.util.*;
 
 import noppabot.*;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
 import ca.ualberta.cs.poker.Deck;
@@ -34,6 +35,11 @@ public class PokerDealer extends Instant {
 			return 1.0;
 		}
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onInitialize() {
@@ -68,7 +74,7 @@ public class PokerDealer extends Instant {
 	@Override
 	public void onSpawn() {
 		PokerTable table = bot.getPokerTable();
-		table.onDealerSpawned();
+		table.tryStartGame();
 		bot.sendChannelFormat("A %s appears!", nameColored());
 		bot.sendChannelFormat("\"There's %s left in the poker table\", says the dealer.", seatsLeftStr());
 		bot.sendChannelFormat("\"Today the common cards are: %s. Anyone want to play?\"", table.cardsToString());
@@ -95,7 +101,7 @@ public class PokerDealer extends Instant {
 	public void onPickup() {
 		peopleDealtTo.add(owner);
 		PokerTable table = bot.getPokerTable();
-		table.onDealerSpawned();
+		table.tryStartGame();
 		trashPreviousCards();
 		PokerHand cards = (PokerHand)new PokerHand().initialize(bot);
 		bot.getPowerups().put(owner, cards);

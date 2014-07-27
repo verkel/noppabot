@@ -5,6 +5,7 @@
 package noppabot.spawns.dice;
 
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.evolved.CrushingDie;
 
 
@@ -20,7 +21,12 @@ public class WeightedDie extends BasicPowerup {
 		}
 		
 	};
-
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
+	
 	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());

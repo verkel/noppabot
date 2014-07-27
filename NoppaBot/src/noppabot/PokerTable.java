@@ -39,7 +39,7 @@ public class PokerTable {
 		clear();
 	}
 	
-	public void onDealerSpawned() {
+	public void tryStartGame() {
 		if (gameStarted) return;
 
 		createDeck();

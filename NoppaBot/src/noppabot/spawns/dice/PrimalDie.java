@@ -8,6 +8,7 @@ import java.util.*;
 
 import noppabot.Rolls;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 public class PrimalDie extends BasicPowerup {
 
@@ -28,6 +29,11 @@ public class PrimalDie extends BasicPowerup {
 		}
 		
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {

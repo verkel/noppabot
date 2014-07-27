@@ -6,6 +6,7 @@ package noppabot.spawns.dice;
 
 import noppabot.*;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.events.RulesChange;
 
 
@@ -21,6 +22,11 @@ public class VariableDie extends BasicPowerup {
 		}
 		
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onInitialize() {

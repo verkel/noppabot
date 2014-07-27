@@ -6,6 +6,7 @@ package noppabot.spawns.dice;
 
 import noppabot.MathUtils;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 public class FastDie extends BasicPowerup {
 
@@ -23,6 +24,11 @@ public class FastDie extends BasicPowerup {
 			return 0.50;
 		}
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {

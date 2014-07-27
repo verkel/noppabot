@@ -232,12 +232,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		for (int i = 0; i < 10; i++) availablePowerups.add(new Diceteller().initialize(this));
 		
+//		scheduleSpawn(null, new PokerDealer().initialize(this));
+		
 //		BasicPowerup cards = new PokerCards().initialize(this);
 //		cards.setOwner("Verkel");
 //		powerups.put("Verkel", cards);
 		powerups.put("kessu", new ApprenticeDie().initialize(this));
 		powerups.put("frodo", new FastDie().initialize(this));
 		powerups.put("bilbo", new MasterDie().initialize(this));
+//		powerups.put("PokerPro", new PokerHand().initialize(this));
 //		Powerup p = new VariableDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
@@ -279,11 +282,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		setNextRoll("Verkel", 100, 99);
 		
-//		scheduleSpawn(null, new PokerDealer().initialize(this));
-		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
-		RulesChange.allInfos.get(7).create().run(this);
+		RulesChange.allInfos.get(8).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {
@@ -1112,13 +1113,18 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				new LastSpawn<BasicPowerup>());
 			
 			powerups.replaceAll((owner, oldPowerup) -> {
-				Powerup powerup = spawner.spawn();
-				powerup.initialize(this);
-				powerup.setOwner(owner);
-				if (oldPowerup instanceof EvolvedPowerup) powerup = powerup.upgrade();
-				sendChannelFormat("%s's %s was transformed into %s!", Color.nick(owner),
-					oldPowerup.nameWithDetailsColored(), powerup.nameWithDetailsColored());
-				return powerup;
+				if (oldPowerup instanceof BasicPowerup && spawner.canSpawn((BasicPowerup)oldPowerup)) {
+					return oldPowerup;
+				}
+				else {
+					Powerup powerup = spawner.spawn();
+					powerup.initialize(this);
+					powerup.setOwner(owner);
+					if (oldPowerup instanceof EvolvedPowerup) powerup = powerup.upgrade();
+					sendChannelFormat("%s's %s was transformed into %s!", Color.nick(owner),
+						oldPowerup.nameWithDetailsColored(), powerup.nameWithDetailsColored());
+					return powerup;
+				}
 			});
 		}
 		// Just destroy old items

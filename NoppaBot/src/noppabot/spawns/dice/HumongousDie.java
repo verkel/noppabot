@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 
 import noppabot.INoppaBot;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.evolved.CrushingDie;
 
 import org.gnu.jfiglet.FIGDriver;
@@ -42,6 +43,11 @@ public class HumongousDie extends BasicPowerup {
 			return 0.33;
 		}
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {

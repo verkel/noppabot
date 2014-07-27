@@ -128,4 +128,10 @@ public abstract class BasicPowerup extends Powerup {
 	public void sendDefaultContestRollMessage(int roll) {
 		bot.sendDefaultContestRollMessage(owner, roll, colorOwner, colorRoll);
 	}
+	
+	public abstract SpawnInfo<?> spawnInfo();
+	
+	public boolean isSpawnedBy(SpawnInfo<?> info) {
+		return info.equals(spawnInfo());
+	}
 }

@@ -5,6 +5,7 @@
 package noppabot.spawns.dice;
 
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 public class SteadyDie extends BasicPowerup {
 
@@ -19,6 +20,11 @@ public class SteadyDie extends BasicPowerup {
 		}
 		
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {

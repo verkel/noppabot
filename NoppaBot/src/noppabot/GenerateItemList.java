@@ -13,6 +13,7 @@ import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.PeekedRoll.Hint;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.dice.*;
 
 public class GenerateItemList {
@@ -215,6 +216,11 @@ public class GenerateItemList {
 		@Override
 		public int sides() {
 			return 100;
+		}
+
+		@Override
+		public SpawnInfo<?> spawnInfo() {
+			return null;
 		}
 	}
 

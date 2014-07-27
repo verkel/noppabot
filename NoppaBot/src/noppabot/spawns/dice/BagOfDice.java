@@ -7,6 +7,7 @@ package noppabot.spawns.dice;
 import java.util.*;
 
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 import com.google.common.collect.*;
 
@@ -21,6 +22,10 @@ public class BagOfDice extends BasicPowerup {
 		
 	};
 
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	private static final List<Integer> dice;
 	

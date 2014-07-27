@@ -82,7 +82,7 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 			key = chances.higherKey(rnd);
 			spawnInfo = chances.get(key);
 		}
-		while (lastSpawn.isSame(spawnInfo));
+		while (chances.size() > 1 && lastSpawn.isSame(spawnInfo));
 		lastSpawn.setValue(spawnInfo);
 		
 		return spawnInfo.create(); //clone(value);
@@ -90,6 +90,10 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	
 	public boolean canSpawn(Predicate<SpawnInfo> predicate) {
 		return chances.values().stream().anyMatch(predicate);
+	}
+	
+	public boolean canSpawn(BasicPowerup powerup) {
+		return canSpawn(info -> powerup.isSpawnedBy(info));
 	}
 	
 	/**

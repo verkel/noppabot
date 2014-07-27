@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import noppabot.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class TrollingProfessional extends Instant {
@@ -26,6 +27,11 @@ public class TrollingProfessional extends Instant {
 			return 0.5;
 		}
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {
@@ -68,6 +74,11 @@ public class TrollingProfessional extends Instant {
 		private static final int dmgBonus = 10;
 		
 		public static final String BOMB_NAME = "BOMB!";
+		
+		@Override
+		public SpawnInfo<?> spawnInfo() {
+			return BasicPowerup.dontSpawnInfo;
+		}
 		
 		public static String[] powerupNames = {
 			"Bag of Dice",

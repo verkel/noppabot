@@ -6,8 +6,12 @@ package noppabot;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import noppabot.spawns.*;
+import noppabot.spawns.dice.PokerHand;
+import noppabot.spawns.instants.*;
 
 import org.jibble.pircbot.Colors;
 
@@ -81,6 +85,23 @@ public class Rules {
 		@Override
 		public String getExplanation() {
 			return "The lowest roll wins the contest!";
+		}
+	};
+	
+	public final WinCondition POKER_HAND_VALUE = new WinCondition() {
+		@Override
+		public void onRollPeriodStart(INoppaBot bot) {
+			bot.sendChannel("Players, reveal your hands!");
+		}
+		
+		@Override
+		public int assignScore(int roll) {
+			return 100 - roll;
+		}
+
+		@Override
+		public String getExplanation() {
+			return "The best poker hand wins the contest!";
 		}
 	};
 	
@@ -191,7 +212,11 @@ public class Rules {
 		doReset();
 		return changed;
 	}
-
+	
+	public boolean isPokerNight() {
+		return spawnOverride.getValue() == POKER_NIGHT_SPAWNER;
+	}
+	
 	private void doReset() {
 		all.forEach(rule -> rule.reset());
 	}
@@ -204,6 +229,32 @@ public class Rules {
 	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + Color.custom("drop", Colors.WHITE) + " command.";
 	public static final String EXPLAIN_UPGRADED_SPAWNS = "Items spawn as upgraded.";
 	public static final String EXPLAIN_DICE_FUSION = "You can upgrade dice by grabbing another die of the same type.";
+	public static final String EXPLAIN_POKER_NIGHT_SPAWNER = "Only poker dealers and trainers are spawned.";
+	
+	/*
+	 * Hacky custom spawner to preserve existing poker hands, replace other items
+	 * with poker hands, but not actually spawn any poker hands. Dependant on
+	 * convertCarriedPowerupsToMatchSpawnOverride() implementation.
+	 */
+	public static final Spawner<BasicPowerup> POKER_NIGHT_SPAWNER = new Spawner<BasicPowerup>(
+		() -> Stream.of(PokerDealer.info, DicemonTrainer.info)) {
+
+		@Override
+		public boolean canSpawn(Predicate<SpawnInfo> predicate) {
+			boolean result = super.canSpawn(predicate);
+			result |= predicate.test(PokerHand.info);
+			return result;
+		}
+		
+		@Override
+		public Spawner<BasicPowerup> subSpawner(Predicate<SpawnInfo> predicate, LastSpawn<BasicPowerup> lastSpawn) {
+			return new Spawner<BasicPowerup>(() -> Stream.of(PokerHand.info), lastSpawn);
+		}
+	};
+
+	static {
+		POKER_NIGHT_SPAWNER.setDescription(EXPLAIN_POKER_NIGHT_SPAWNER);
+	}
 	
 	public String getExplanation() {
 		List<String> list = new ArrayList<String>();
@@ -215,4 +266,5 @@ public class Rules {
 		if (diceFusion.isChanged()) list.add(EXPLAIN_DICE_FUSION);
 		return StringUtils.join(list, " ");
 	}
+
 }

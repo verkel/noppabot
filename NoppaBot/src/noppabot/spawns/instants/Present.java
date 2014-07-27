@@ -5,6 +5,7 @@
 package noppabot.spawns.instants;
 
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class Present extends Instant {
@@ -13,6 +14,11 @@ public class Present extends Instant {
 //		Arrays.<BasicPowerup>asList(new Present()));
 	
 	public static final BasicPowerupSpawnInfo info = dontSpawnInfo;
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {

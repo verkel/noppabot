@@ -22,7 +22,8 @@ public abstract class RulesChange extends Event {
 		UnlimitedPowerMode.info,
 		ClairvoyantMode.info,
 		PeakOfEvolutionMode.info,
-		DiceFusionMode.info
+		DiceFusionMode.info,
+		PokerNightMode.info
 	);
 	
 	@SuppressWarnings("unchecked")
@@ -243,5 +244,24 @@ class DiceFusionMode extends RulesChange {
 	@Override
 	public String explanation(Rules rules) {
 		return String.format("%s %s", Color.rulesMode("Dice fusion mode!"), Rules.EXPLAIN_DICE_FUSION);
+	}
+}
+
+class PokerNightMode extends RulesChange {
+	public static final EventSpawnInfo info = new RulesChangeInfo() {
+		@Override
+		public Event create() {
+			return new PokerNightMode();
+		}
+	};
+	
+	@Override
+	public void changeRules(Rules rules) {
+		rules.spawnOverride.setValue(Rules.POKER_NIGHT_SPAWNER);
+	}
+
+	@Override
+	public String explanation(Rules rules) {
+		return String.format("%s %s", Color.rulesMode("Poker night mode!"), Rules.EXPLAIN_POKER_NIGHT_SPAWNER);
 	}
 }

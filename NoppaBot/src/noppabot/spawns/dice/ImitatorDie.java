@@ -6,6 +6,7 @@ package noppabot.spawns.dice;
 
 import noppabot.*;
 import noppabot.spawns.*;
+import noppabot.spawns.Spawner.SpawnInfo;
 
 public class ImitatorDie extends BasicPowerup {
 
@@ -28,6 +29,11 @@ public class ImitatorDie extends BasicPowerup {
 			return false;
 		}
 	};
+	
+	@Override
+	public SpawnInfo<?> spawnInfo() {
+		return info;
+	}
 	
 	@Override
 	public void onSpawn() {
