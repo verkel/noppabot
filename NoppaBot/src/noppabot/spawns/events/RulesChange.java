@@ -67,11 +67,6 @@ class LowestRollWins extends RulesChange {
 		public Event create() {
 			return new LowestRollWins();
 		}
-		
-		@Override
-		public boolean spawnInLateEvents() {
-			return false;
-		}
 	};
 	
 	@Override
@@ -91,11 +86,6 @@ class RollClosestToTargetWins extends RulesChange {
 		@Override
 		public Event create() {
 			return new RollClosestToTargetWins();
-		}
-		
-		@Override
-		public boolean spawnInLateEvents() {
-			return false;
 		}
 	};
 	
