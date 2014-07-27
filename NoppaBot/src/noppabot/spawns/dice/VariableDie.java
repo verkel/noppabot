@@ -91,7 +91,6 @@ public class VariableDie extends BasicPowerup {
 			Rules rules = bot.getRules();
 			RulesChange rc = RulesChange.spawner.spawn();
 			rc.changeRules(rules);
-			bot.onRulesChanged();
 		}
 		
 		@Override

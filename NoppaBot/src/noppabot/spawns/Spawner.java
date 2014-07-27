@@ -88,6 +88,20 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 		return spawnInfo.create(); //clone(value);
 	}
 	
+	public boolean canSpawn(Predicate<SpawnInfo> predicate) {
+		return chances.values().stream().anyMatch(predicate);
+	}
+	
+	/**
+	 * Create a spawner based on this spawner with spawn infos that do not
+	 * satisfy given predicate filtered out
+	 */
+	public Spawner<S> subSpawner(Predicate<SpawnInfo> predicate, LastSpawn<S> lastSpawn) {
+		Supplier<Stream<? extends SpawnInfo<S>>> stream = () -> chances.values().stream()
+			.filter(predicate);
+		return new Spawner<S>(stream, lastSpawn);
+	}
+	
 	/**
 	 * Iterating over this spawner will spawn every value registered to it
 	 */

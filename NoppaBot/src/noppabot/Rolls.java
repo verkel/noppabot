@@ -15,10 +15,10 @@ public class Rolls {
 	
 	public Rolls(INoppaBot bot) {
 		this.bot = bot;
-		onRulesChanged();
+		onWinConditionChanged();
 	}
 	
-	public void onRulesChanged() {
+	public void onWinConditionChanged() {
 		// Recreate the values set with different comparator
 		Comparator<Integer> cmp = getRollComparator();
 		NavigableSet<Integer> newValues = new TreeSet<Integer>(cmp);

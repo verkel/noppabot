@@ -581,10 +581,6 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public void onRulesChanged() {
-		}
-
-		@Override
 		public Rolls getRolls() {
 			return null;
 		}

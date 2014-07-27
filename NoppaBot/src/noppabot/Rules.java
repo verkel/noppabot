@@ -13,7 +13,7 @@ import org.jibble.pircbot.Colors;
 
 
 public class Rules {
-	public abstract class WinCondition { // implements Comparator<Entry<String, Integer>> {
+	public static abstract class WinCondition { // implements Comparator<Entry<String, Integer>> {
 		public abstract int assignScore(int roll);
 		
 		public final Comparator<Entry<String, Integer>> rollEntryComparator = 
@@ -84,7 +84,17 @@ public class Rules {
 		}
 	};
 	
-	public final WinCondition ROLL_CLOSEST_TO_TARGET = new WinCondition() {
+	public final RollClosestToTarget winConditionRollClosestToTarget(int rollTarget) {
+		return new RollClosestToTarget(rollTarget);
+	}
+	
+	public static class RollClosestToTarget extends WinCondition {
+		private int rollTarget;
+		
+		public RollClosestToTarget(int rollTarget) {
+			this.rollTarget = rollTarget;
+		}
+
 		@Override
 		public void onRollPeriodStart(INoppaBot bot) {
 			bot.sendChannelFormat("Tonight we are looking for the roll which is closest " +
@@ -93,12 +103,12 @@ public class Rules {
 		
 		@Override
 		public int assignScore(int roll) {
-			return 100 - Math.abs(rollTarget.getValue() - roll);
+			return 100 - Math.abs(rollTarget - roll);
 		}
 		
 		@Override
 		public void onContestRoll(INoppaBot bot, String nick, int roll) {
-			int dist = Math.abs(rollTarget.getValue() - roll);
+			int dist = Math.abs(rollTarget - roll);
 			if (dist > 0) bot.sendChannelFormat("%s's roll is %d points off the target", nick, dist);
 			else bot.sendChannelFormat("%s's roll hit the target!", nick);
 		}
@@ -106,6 +116,10 @@ public class Rules {
 		@Override
 		public String getExplanation() {
 			return String.format("The roll closest to number %d wins the contest!", rollTarget);
+		}
+
+		public int getRollTarget() {
+			return rollTarget;
 		}
 	};
 	
@@ -122,7 +136,7 @@ public class Rules {
 	/**
 	 * Roll closest to this number wins
 	 */
-	public final OptionalProperty<Integer> rollTarget = OptionalProperty.create();
+//	public final OptionalProperty<Integer> rollTarget = OptionalProperty.create();
 	
 	/**
 	 * Items can be dropped to ground at any time
@@ -134,7 +148,7 @@ public class Rules {
 	 */
 	public OptionalProperty<Spawner<BasicPowerup>> spawnOverride = OptionalProperty.create();
 
-	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition, rollTarget,
+	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition, //rollTarget,
 		canDropItems, spawnOverride);
 
 	private INoppaBot bot;
@@ -170,7 +184,6 @@ public class Rules {
 	public boolean reset() {
 		boolean changed = isChanged();
 		doReset();
-		if (changed) bot.onRulesChanged();
 		return changed;
 	}
 

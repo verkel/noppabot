@@ -4,7 +4,7 @@
  */
 package noppabot;
 
-import java.util.List;
+import java.util.*;
 
 import com.google.common.base.Objects;
 
@@ -12,7 +12,7 @@ public class Property<T> {
 
 	private T defaultValue;
 	private T value;
-	private List<PropertyChangeListener<T>> listeners;
+	private List<PropertyChangeListener<T>> listeners = Collections.emptyList();
 
 	public static <T> Property<T> of(T defaultValue) {
 		return new Property<T>(defaultValue);
@@ -40,7 +40,13 @@ public class Property<T> {
 		return defaultValue;
 	}
 
+	public void addListener(SimplePropertyChangeListener<T> listener) {
+		ensureListCreated();
+		listeners.add(listener);
+	}
+	
 	public void addListener(PropertyChangeListener<T> listener) {
+		ensureListCreated();
 		listeners.add(listener);
 	}
 
@@ -58,5 +64,9 @@ public class Property<T> {
 	
 	public void reset() {
 		set(defaultValue);
+	}
+	
+	private void ensureListCreated() {
+		if (listeners == Collections.EMPTY_LIST) listeners = new ArrayList<>();
 	}
 }

@@ -13,8 +13,6 @@ import noppabot.spawns.instants.*;
 
 
 public abstract class RulesChange extends Event {
-//	private static final int NUM_RULES = 4;
-//	private static final int NUM_WIN_CONDITIONS = 2;
 	
 	public static final List<EventSpawnInfo> allInfos = Arrays.asList(
 		LowestRollWins.info,
@@ -46,13 +44,13 @@ public abstract class RulesChange extends Event {
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("In today's Roll News, you read that the DiceRuler has issued " +
 			"a temporary %s to spice things up:", nameColored());
+		bot.sendChannel(explanation(bot.getRules()));
 		
-		String explanation = changeRules(bot.getRules());
-		bot.onRulesChanged();
-		bot.sendChannel(explanation);
+		changeRules(bot.getRules());
 	}
 
-	public abstract String changeRules(Rules rules);
+	public abstract void changeRules(Rules rules);
+	public abstract String explanation(Rules rules);
 	
 	@Override
 	public String name() {
@@ -75,9 +73,13 @@ class LowestRollWins extends RulesChange {
 	};
 	
 	@Override
-	public String changeRules(Rules rules) {
-		rules.winCondition.set(rules.LOWEST_ROLL);
+	public String explanation(Rules rules) {
 		return rules.winCondition.get().getExplanation();
+	}
+	
+	@Override
+	public void changeRules(Rules rules) {
+		rules.winCondition.set(rules.LOWEST_ROLL);
 	}
 }
 
@@ -96,10 +98,13 @@ class RollClosestToTargetWins extends RulesChange {
 	};
 	
 	@Override
-	public String changeRules(Rules rules) {
+	public void changeRules(Rules rules) {
 		int rollTarget = Powerups.powerupRnd.nextInt(100) + 1;
-		rules.rollTarget.setValue(rollTarget);
-		rules.winCondition.set(rules.ROLL_CLOSEST_TO_TARGET);
+		rules.winCondition.set(rules.winConditionRollClosestToTarget(rollTarget));
+	}
+
+	@Override
+	public String explanation(Rules rules) {
 		return rules.winCondition.get().getExplanation();
 	}
 }
@@ -114,8 +119,12 @@ class UncappedRolls extends RulesChange {
 	};
 	
 	@Override
-	public String changeRules(Rules rules) {
+	public void changeRules(Rules rules) {
 		rules.cappedRolls.set(false);
+	}
+
+	@Override
+	public String explanation(Rules rules) {
 		return Rules.EXPLAIN_UNCAPPED_ROLLS;
 	}
 }
@@ -130,8 +139,12 @@ class CanDropItems extends RulesChange {
 	};
 	
 	@Override
-	public String changeRules(Rules rules) {
+	public void changeRules(Rules rules) {
 		rules.canDropItems.set(true);
+	}
+
+	@Override
+	public String explanation(Rules rules) {
 		return Rules.EXPLAIN_CAN_DROP_ITEMS;
 	}
 }
@@ -152,14 +165,16 @@ class UnlimitedPowerMode extends RulesChange {
 		}
 	};
 
-	private static final String explanation = String.format(
-		"%s %s Also the roll cap is removed.", desc, Color.emphasize("Unlimited power mode!"));
-
 	@Override
-	public String changeRules(Rules rules) {
+	public void changeRules(Rules rules) {
 		rules.spawnOverride.setValue(spawner);
 		rules.cappedRolls.set(false);
-		return explanation;
+	}
+
+	@Override
+	public String explanation(Rules rules) {
+		return String.format("%s %s Also the roll cap is removed.",
+			Color.rulesMode("Unlimited power mode!"), desc);
 	}
 }
 
@@ -180,12 +195,16 @@ class ClairvoyantMode extends RulesChange {
 	};
 
 	private static final String explanation = String.format("%s %s",
-		Color.emphasize("Clairvoyant mode!"), desc);
+		Color.rulesMode("Clairvoyant mode!"), desc);
 
 	@Override
-	public String changeRules(Rules rules) {
+	public void changeRules(Rules rules) {
 		rules.spawnOverride.setValue(spawner);
-		return explanation;
+	}
+
+	@Override
+	public String explanation(Rules rules) {
+		return String.format("%s %s", Color.rulesMode("Clairvoyant mode!"), desc);
 	}
 }
 
@@ -205,12 +224,13 @@ class PeakOfEvolutionMode extends RulesChange {
 		}
 	};
 
-	private static final String explanation = String.format("%s %s",
-		Color.emphasize("Clairvoyant mode!"), desc);
+	@Override
+	public void changeRules(Rules rules) {
+		rules.spawnOverride.setValue(spawner);
+	}
 
 	@Override
-	public String changeRules(Rules rules) {
-		rules.spawnOverride.setValue(spawner);
-		return explanation;
+	public String explanation(Rules rules) {
+		return String.format("%s %s", Color.rulesMode("Peak of evolution mode!"), desc);
 	}
 }

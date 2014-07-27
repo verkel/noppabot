@@ -61,6 +61,10 @@ public class Color {
 		return custom(msg, Colors.WHITE);
 	}
 	
+	public static String rulesMode(String name) {
+		return custom(name, Colors.PURPLE);
+	}
+	
 	public static String antiHilight(String nick) {
 		return nick.charAt(0) + Colors.BOLD + Colors.BOLD + nick.substring(1);
 	}

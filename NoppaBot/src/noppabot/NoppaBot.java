@@ -5,11 +5,17 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.regex.*;
 
 import noppabot.PeekedRoll.Hint;
+import noppabot.Rules.RollClosestToTarget;
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
+import noppabot.spawns.BasicPowerup.BasicPowerupSpawnInfo;
+import noppabot.spawns.Instant.InstantSpawnInfo;
+import noppabot.spawns.Spawner.LastSpawn;
+import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
 import noppabot.spawns.events.*;
@@ -140,6 +146,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		setName(botNick);
 		
 		rules = new Rules(this);
+		rules.winCondition.addListener(wc -> rolls.onWinConditionChanged());
+		rules.spawnOverride.addListener(this::onSpawnOverrideChanged);
+		
 		rolls = new Rolls(this);
 		
 		initMessages();
@@ -216,14 +225,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void debugStuff() {
 //		for (int i = 0; i < 5; i++) new RulesChange().run(this);
 		
-		for (int i = 0; i < 10; i++) availablePowerups.add(new Diceteller().initialize(this));
+//		for (int i = 0; i < 10; i++) availablePowerups.add(new Diceteller().initialize(this));
 		
 //		BasicPowerup cards = new PokerCards().initialize(this);
 //		cards.setOwner("Verkel");
 //		powerups.put("Verkel", cards);
-//		powerups.put("kessu", new ApprenticeDie().initialize(this));
-//		powerups.put("frodo", new FastDie().initialize(this));
-//		powerups.put("bilbo", new MasterDie().initialize(this));
+		powerups.put("kessu", new ApprenticeDie().initialize(this));
+		powerups.put("frodo", new FastDie().initialize(this));
+		powerups.put("bilbo", new MasterDie().initialize(this));
 //		Powerup p = new VariableDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
 //		powerup = new DicePirate();
@@ -242,12 +251,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		onRulesChanged();
 		
 //		availablePowerups.add(p);
-//		availablePowerups.add(new TrollingProfessional());
-//		availablePowerups.add(new BagOfDice());
-//		availablePowerups.add(new DicemonTrainer());
-//		availablePowerups.add(new WeightedDie());
-//		availablePowerups.add(new BagOfDice());
-//		availablePowerups.add(new Diceteller());
+		availablePowerups.add(new TrollingProfessional().initialize(this));
+		availablePowerups.add(new BagOfDice().initialize(this));
+		availablePowerups.add(new DicemonTrainer().initialize(this));
+		availablePowerups.add(new WeightedDie().initialize(this));
+		availablePowerups.add(new BagOfDice().initialize(this));
+//		availablePowerups.add(new Diceteller().initialize(this));
 //		availablePowerups.add(new HumongousDie().initialize(this));
 //		availablePowerups.add(new HumongousDie().initialize(this));
 		
@@ -258,10 +267,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		new FourthWallBreaks().run(this);
 		
-		spawnAllPowerups();
+//		spawnAllPowerups();
 		
 		rules.canDropItems.set(true);
-		onRulesChanged();
+//		onRulesChanged();
 		
 //		setNextRoll("Verkel", 100, 99);
 		
@@ -804,8 +813,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private String offTargetInfo(int roll) {
-		if (rules.winCondition.get() == rules.ROLL_CLOSEST_TO_TARGET) {
-			int rollTarget = rules.rollTarget.getValue();
+		if (rules.winCondition.get() instanceof RollClosestToTarget) {
+			RollClosestToTarget winCond = (RollClosestToTarget)rules.winCondition.get();
+			int rollTarget = winCond.getRollTarget();
 			int dist = Math.abs(rollTarget - roll);
 			return Color.custom("[" + dist + " off] ", Colors.WHITE);
 		}
@@ -1049,10 +1059,44 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		listItems(true);
 	}
 	
-	private void onSpawnOverrideChanged() {
-		expireAllPowerups();
-		clearPowerupTasks();
-		schedulePowerupsOfTheDay();
+	private void onSpawnOverrideChanged(Optional<Spawner<BasicPowerup>> oldValue,
+		Optional<Spawner<BasicPowerup>> newValue, Optional<Spawner<BasicPowerup>> defaultValue) {
+		
+		if (newValue.isPresent()) {
+			expireAllPowerups();
+			convertCarriedPowerupsToMatchSpawnOverride();
+			clearPowerupTasks();
+			schedulePowerupsOfTheDay();
+		}
+	}
+	
+	private void convertCarriedPowerupsToMatchSpawnOverride() {
+		Spawner<BasicPowerup> spawnOverride = rules.spawnOverride.getValue();
+		Predicate<SpawnInfo> itemPredicate = info -> 
+			info instanceof BasicPowerupSpawnInfo && !(info instanceof InstantSpawnInfo);
+		boolean canSpawnItems = spawnOverride.canSpawn(itemPredicate);
+
+		// Replace everyone's item with new ones from the spawn override
+		if (canSpawnItems) {
+			Spawner<BasicPowerup> spawner = spawnOverride.subSpawner(itemPredicate,
+				new LastSpawn<BasicPowerup>());
+			
+			powerups.replaceAll((owner, oldPowerup) -> {
+				Powerup powerup = spawner.spawn();
+				powerup.initialize(this);
+				powerup.setOwner(owner);
+				if (oldPowerup instanceof EvolvedPowerup) powerup = powerup.upgrade();
+				sendChannelFormat("%s's %s was transformed into %s!", Color.nick(owner),
+					oldPowerup.nameWithDetailsColored(), powerup.nameWithDetailsColored());
+				return powerup;
+			});
+		}
+		// Just destroy old items
+		else {
+			powerups.forEach((owner, powerup) -> sendChannelFormat(
+				"%'s %s was destroyed by the rules lawyer.", owner, powerup.nameWithDetailsColored()));
+			powerups.clear();
+		}
 	}
 	
 	private void startRollPeriod() {
@@ -1206,11 +1250,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		favorsUsed.clear();
 		autorolls.clear();
 		pokerTable.clear();
-		schedulePowerupsOfTheDay();
 		
 		if (rules.reset()) {
 			sendChannel("The non-standard rules return to normal.");
 		}
+		
+		schedulePowerupsOfTheDay();
 		
 		state = State.NORMAL;
 	}
@@ -1393,10 +1438,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return rules;
 	}
 	
-	@Override
-	public void onRulesChanged() {
-		rolls.onRulesChanged();
-	}
+//	@Override
+//	public void onRulesChanged() {
+//		rolls.onRulesChanged();
+//	}
 	
 	@Override
 	public void clearFavorsUsed() {

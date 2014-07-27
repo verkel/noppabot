@@ -33,7 +33,6 @@ public interface INoppaBot {
 	String grade(int value);
 	void insertApprenticeDice();
 	RollRecords loadRollRecords();
-	void onRulesChanged();
 	void participate(String nick, int rollValue);
 	boolean participated(String nick);
 	PeekedRoll peekRoll(String nick, int sides);
