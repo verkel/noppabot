@@ -1129,10 +1129,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		// Just destroy old items
 		else {
-			powerups.forEach((owner, powerup) -> sendChannelFormat(
-				"%s's %s was destroyed by the rules lawyer.", owner, powerup.nameWithDetailsColored()));
-			powerups.clear();
+			rulesLawyerDestroyPowerups();
 		}
+	}
+
+
+	private void rulesLawyerDestroyPowerups() {
+		powerups.forEach((owner, powerup) -> sendChannelFormat(
+			"%s's %s was destroyed by the rules lawyer.", owner, powerup.nameWithDetailsColored()));
+		powerups.clear();
 	}
 	
 	private void startRollPeriod() {
@@ -1191,9 +1196,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			settleTieTimeoutTask = null;
 		}
 		
-		// Rerolling won't help with cards
-		if (rules.isPokerNight()) rules.reset();
-		
 		lastTiebreakPeriodStartTime = Calendar.getInstance();
 		String tiebreakersStr = StringUtils.join(winningRollers, ", ");
 		int roll = rolls.get(winningRollers.get(0));
@@ -1202,6 +1204,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			roll, tiebreakersStr);
 		sendChannel(msg);
 		tiebreakers.addAll(winningRollers);
+		
+		// Rerolling won't help with cards
+		if (rules.isPokerNight()) {
+			rules.reset();
+			rulesLawyerDestroyPowerups();
+		}
 		
 		rolls.clear();
 		
