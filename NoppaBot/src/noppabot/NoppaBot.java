@@ -1191,6 +1191,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			settleTieTimeoutTask = null;
 		}
 		
+		// Rerolling won't help with cards
+		if (rules.isPokerNight()) rules.reset();
+		
 		lastTiebreakPeriodStartTime = Calendar.getInstance();
 		String tiebreakersStr = StringUtils.join(winningRollers, ", ");
 		int roll = rolls.get(winningRollers.get(0));
