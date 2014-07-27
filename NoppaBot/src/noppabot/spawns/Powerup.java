@@ -112,7 +112,7 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	}
 	
 	public Powerup upgrade() {
-		return null;
+		return this;
 	}
 	
 //	@Override

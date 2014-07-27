@@ -147,7 +147,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		rules = new Rules(this);
 		rules.winCondition.addListener(wc -> rolls.onWinConditionChanged());
-		rules.spawnOverride.addListener(this::onSpawnOverrideChanged);
+		rules.spawnOverride.addListener(spawnOverride -> {
+			if (spawnOverride.isPresent()) onSpawnerOverridden();
+		});
+		rules.upgradedSpawns.addListener(upgradedSpawns -> {
+			if (upgradedSpawns) onSpawnerOverridden();
+		});
 		
 		rolls = new Rolls(this);
 		
@@ -278,7 +283,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
-		RulesChange.allInfos.get(5).create().run(this);
+		RulesChange.allInfos.get(6).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {
@@ -352,7 +357,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void giveFreePowerup() {
 		sendChannel("Spawning item manually");
-		scheduleRandomSpawn(null, Powerups.allPowerups, null);
+		scheduleRandomSpawn(null, rules.getPowerupsSpawner(Powerups.allPowerups), null);
 	}
 
 	private void schedulePowerupsOfTheDay() {
@@ -1059,18 +1064,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		listItems(true);
 	}
 	
-	private void onSpawnOverrideChanged(Optional<Spawner<BasicPowerup>> oldValue,
-		Optional<Spawner<BasicPowerup>> newValue, Optional<Spawner<BasicPowerup>> defaultValue) {
-		
-		if (newValue.isPresent()) {
-			expireAllPowerups();
-			convertCarriedPowerupsToMatchSpawnOverride();
-			clearPowerupTasks();
-			schedulePowerupsOfTheDay();
-		}
+	private void onSpawnerOverridden() {
+		if (debug) System.out.println("Spawner was overridden");
+		expireAllPowerups();
+		convertCarriedPowerupsToMatchSpawnOverride();
+		clearPowerupTasks();
+		schedulePowerupsOfTheDay();
 	}
 	
 	private void convertCarriedPowerupsToMatchSpawnOverride() {
+		if (!rules.spawnOverride.isPresent()) return;
+		
 		Spawner<BasicPowerup> spawnOverride = rules.spawnOverride.getValue();
 		Predicate<SpawnInfo> itemPredicate = info -> 
 			info instanceof BasicPowerupSpawnInfo && !(info instanceof InstantSpawnInfo);

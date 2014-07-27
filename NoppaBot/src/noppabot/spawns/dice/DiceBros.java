@@ -107,10 +107,10 @@ public class DiceBros extends BasicPowerup {
 
 		public SuperDiceBros(INoppaBot bot) {
 			super(DiceBros.this);
-			marioItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
+			marioItem = Powerups.getRandomBasicPowerup(bot, Powerups.diceBrosPowerups);
 			marioItem.setColors(false, false);
 			marioItem.setOwner("Mario");
-			luigiItem = Powerups.getRandomPowerup(bot, Powerups.diceBrosPowerups);
+			luigiItem = Powerups.getRandomBasicPowerup(bot, Powerups.diceBrosPowerups);
 			luigiItem.setColors(false, false);
 			luigiItem.setOwner("Luigi");
 		}

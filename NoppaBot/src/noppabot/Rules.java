@@ -134,11 +134,6 @@ public class Rules {
 	public final Property<WinCondition> winCondition = Property.of(HIGHEST_ROLL);
 	
 	/**
-	 * Roll closest to this number wins
-	 */
-//	public final OptionalProperty<Integer> rollTarget = OptionalProperty.create();
-	
-	/**
 	 * Items can be dropped to ground at any time
 	 */
 	public final Property<Boolean> canDropItems = Property.of(false);
@@ -148,7 +143,12 @@ public class Rules {
 	 */
 	public OptionalProperty<Spawner<BasicPowerup>> spawnOverride = OptionalProperty.create();
 
-	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition, //rollTarget,
+	/**
+	 * Whether items spawn as upgraded
+	 */
+	public Property<Boolean> upgradedSpawns = Property.of(false);
+	
+	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition, upgradedSpawns,
 		canDropItems, spawnOverride);
 
 	private INoppaBot bot;
@@ -197,6 +197,7 @@ public class Rules {
 	
 	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are not limited to the 0-100 range.";
 	public static final String EXPLAIN_CAN_DROP_ITEMS = "You can drop carried items with the " + Color.custom("drop", Colors.WHITE) + " command.";
+	public static final String EXPLAIN_UPGRADED_SPAWNS = "Items spawn as upgraded.";
 	
 	public String getExplanation() {
 		List<String> list = new ArrayList<String>();
@@ -204,6 +205,7 @@ public class Rules {
 		if (canDropItems.isChanged()) list.add(EXPLAIN_CAN_DROP_ITEMS);
 		if (cappedRolls.isChanged()) list.add(EXPLAIN_UNCAPPED_ROLLS);
 		spawnOverride.ifPresent(so -> list.add(so.getDescription()));
+		if (upgradedSpawns.isChanged()) list.add(EXPLAIN_UPGRADED_SPAWNS);
 		return StringUtils.join(list, " ");
 	}
 }

@@ -80,7 +80,13 @@ public class Powerups {
 		}
 	}
 	
-	public static BasicPowerup getRandomPowerup(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups) {
+	public static Powerup getRandomPowerup(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups) {
+		Powerup powerup = getRandomBasicPowerup(bot, spawnPowerups);
+		if (bot.getRules().upgradedSpawns.get()) powerup = powerup.upgrade();
+		return powerup;
+	}
+	
+	public static BasicPowerup getRandomBasicPowerup(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups) {
 		BasicPowerup powerup = spawnPowerups.spawn();
 		powerup.initialize(bot);
 		return powerup;

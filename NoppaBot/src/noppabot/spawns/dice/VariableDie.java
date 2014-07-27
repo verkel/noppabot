@@ -80,6 +80,9 @@ public class VariableDie extends BasicPowerup {
 	
 	@Override
 	public Powerup upgrade() {
+		// Don't allow chaos die to be upgraded automatically by the
+		// "items spawn as upgraded" rules change
+		if (owner == null) return this;
 		return new ChaosDie();
 	}
 	

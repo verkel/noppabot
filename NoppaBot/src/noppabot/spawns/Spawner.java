@@ -160,4 +160,8 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public Collection<SpawnInfo<S>> getSpawnInfos() {
+		return chances.values();
+	}
 }

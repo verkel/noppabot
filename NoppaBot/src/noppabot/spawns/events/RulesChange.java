@@ -151,11 +151,11 @@ class CanDropItems extends RulesChange {
 
 class UnlimitedPowerMode extends RulesChange {
 	private static final String desc = "Only items that can be infinitely upgraded are spawned.";
-	private static final Spawner<BasicPowerup> spawner = Spawner.create(
+	private static final Spawner<BasicPowerup> itemSpawner = Spawner.create(
 		BagOfDice.info, PolishedDie.info, DicemonTrainer.info);
 	
 	static {
-		spawner.setDescription(desc);
+		itemSpawner.setDescription(desc);
 	}
 	
 	public static final EventSpawnInfo info = new RulesChangeInfo() {
@@ -167,7 +167,7 @@ class UnlimitedPowerMode extends RulesChange {
 
 	@Override
 	public void changeRules(Rules rules) {
-		rules.spawnOverride.setValue(spawner);
+		rules.spawnOverride.setValue(itemSpawner);
 		rules.cappedRolls.set(false);
 	}
 
@@ -180,11 +180,11 @@ class UnlimitedPowerMode extends RulesChange {
 
 class ClairvoyantMode extends RulesChange {
 	private static final String desc = "Only dicetellers are spawned.";
-	private static final Spawner<BasicPowerup> spawner = Spawner.create(
+	private static final Spawner<BasicPowerup> itemSpawner = Spawner.create(
 		Diceteller.info);
 	
 	static {
-		spawner.setDescription(desc);
+		itemSpawner.setDescription(desc);
 	}
 	
 	public static final EventSpawnInfo info = new RulesChangeInfo() {
@@ -194,12 +194,9 @@ class ClairvoyantMode extends RulesChange {
 		}
 	};
 
-	private static final String explanation = String.format("%s %s",
-		Color.rulesMode("Clairvoyant mode!"), desc);
-
 	@Override
 	public void changeRules(Rules rules) {
-		rules.spawnOverride.setValue(spawner);
+		rules.spawnOverride.setValue(itemSpawner);
 	}
 
 	@Override
@@ -210,23 +207,17 @@ class ClairvoyantMode extends RulesChange {
 
 class PeakOfEvolutionMode extends RulesChange {
 	private static final String desc = "Items spawn as upgraded.";
-	private static final Spawner<BasicPowerup> spawner = Spawner.create(
-		Diceteller.info);
-	
-	static {
-		spawner.setDescription(desc);
-	}
 	
 	public static final EventSpawnInfo info = new RulesChangeInfo() {
 		@Override
 		public Event create() {
-			return new ClairvoyantMode();
+			return new PeakOfEvolutionMode();
 		}
 	};
-
+	
 	@Override
 	public void changeRules(Rules rules) {
-		rules.spawnOverride.setValue(spawner);
+		rules.upgradedSpawns.set(true);
 	}
 
 	@Override
