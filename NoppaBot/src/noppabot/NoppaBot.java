@@ -278,7 +278,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
-		RulesChange.allInfos.get(4).create().run(this);
+		RulesChange.allInfos.get(5).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {
@@ -1094,7 +1094,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		// Just destroy old items
 		else {
 			powerups.forEach((owner, powerup) -> sendChannelFormat(
-				"%'s %s was destroyed by the rules lawyer.", owner, powerup.nameWithDetailsColored()));
+				"%s's %s was destroyed by the rules lawyer.", owner, powerup.nameWithDetailsColored()));
 			powerups.clear();
 		}
 	}
