@@ -260,7 +260,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		spawnAllPowerups();
 		
-		rules.canDropItems = true;
+		rules.canDropItems.set(true);
 		onRulesChanged();
 		
 //		setNextRoll("Verkel", 100, 99);
@@ -670,6 +670,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void dropPowerup(String nick) {
+		boolean canDropItems = rules.canDropItems.get();
 		Powerup powerup = powerups.get(nick);
 		if (state != State.NORMAL && !debug) {
 			sendChannelFormat("%s: you cannot drop items during the roll contest.", Color.nick(nick));
@@ -679,11 +680,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: you have nothing to drop.", Color.nick(nick));
 			return;
 		}
-		else if (!rules.canDropItems && !hasFavor(nick)) {
+		else if (!canDropItems && !hasFavor(nick)) {
 			return;
 		}
 		
-		if (!rules.canDropItems) {
+		if (!canDropItems) {
 			favorsUsed.add(nick);
 		}
 		
@@ -803,8 +804,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private String offTargetInfo(int roll) {
-		if (rules.winCondition == rules.ROLL_CLOSEST_TO_TARGET) {
-			int rollTarget = rules.rollTarget;
+		if (rules.winCondition.get() == rules.ROLL_CLOSEST_TO_TARGET) {
+			int rollTarget = rules.rollTarget.getValue();
 			int dist = Math.abs(rollTarget - roll);
 			return Color.custom("[" + dist + " off] ", Colors.WHITE);
 		}
@@ -924,7 +925,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			roll = fireEarlyOpponentRolled(nick, roll);
 
 			// If win condition is non-standard, tell how this roll will be scored
-			rules.winCondition.onContestRoll(this, nick, roll);
+			rules.winCondition.get().onContestRoll(this, nick, roll);
 
 			// Participate the roll
 			participate(nick, roll);
@@ -995,7 +996,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	public String grade(int roll) {
-		int score = rules.winCondition.assignScore(roll);
+		int score = rules.winCondition.get().assignScore(roll);
 		if (score >= 100) return "You showed us....the ULTIMATE roll!";
 		else if (score >= 95) return "You are a super roller!";
 		else if (score >= 90) return "Amazing!";
@@ -1444,7 +1445,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			return maybeColorRoll(roll, colorRoll);
 		}
 		else {
-			if (rules.cappedRolls) {
+			if (rules.cappedRolls.get()) {
 				return String.format("%d (= %s)", roll, maybeColorRoll(clampRoll(roll), colorRoll));
 			}
 			else {
@@ -1486,7 +1487,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	public int clampRoll(int roll) {
-		if (rules.cappedRolls) return Math.max(0, Math.min(100, roll));
+		if (rules.cappedRolls.get()) return Math.max(0, Math.min(100, roll));
 		else return roll;
 	}
 	

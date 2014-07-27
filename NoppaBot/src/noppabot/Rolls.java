@@ -76,13 +76,13 @@ public class Rolls {
 	
 	public List<Entry<String, Integer>> orderedList() {
 		List<Entry<String, Integer>> rollsList = new ArrayList<Entry<String, Integer>>();
-		Comparator<Entry<String, Integer>> comp = bot.getRules().winCondition.rollEntryComparator;
+		Comparator<Entry<String, Integer>> comp = bot.getRules().winCondition.get().rollEntryComparator;
 		rollsList.addAll(forParticipant.entrySet());
 		Collections.sort(rollsList, comp);
 		return rollsList;
 	}
 	
 	private Comparator<Integer> getRollComparator() {
-		return bot.getRules().winCondition.rollComparator;
+		return bot.getRules().winCondition.get().rollComparator;
 	}
 }

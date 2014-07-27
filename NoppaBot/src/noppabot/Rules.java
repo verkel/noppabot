@@ -93,12 +93,12 @@ public class Rules {
 		
 		@Override
 		public int assignScore(int roll) {
-			return 100 - Math.abs(rollTarget - roll);
+			return 100 - Math.abs(rollTarget.getValue() - roll);
 		}
 		
 		@Override
 		public void onContestRoll(INoppaBot bot, String nick, int roll) {
-			int dist = Math.abs(rollTarget - roll);
+			int dist = Math.abs(rollTarget.getValue() - roll);
 			if (dist > 0) bot.sendChannelFormat("%s's roll is %d points off the target", nick, dist);
 			else bot.sendChannelFormat("%s's roll hit the target!", nick);
 		}
@@ -112,32 +112,31 @@ public class Rules {
 	/**
 	 * Rolls have a 0..100 point cap
 	 */
-	public boolean cappedRolls;
+	public final Property<Boolean> cappedRolls = Property.of(true);
 	
 	/**
 	 * How is the winner determined
 	 */
-	public WinCondition winCondition;
+	public final Property<WinCondition> winCondition = Property.of(HIGHEST_ROLL);
 	
 	/**
 	 * Roll closest to this number wins
 	 */
-	public int rollTarget;
+	public final OptionalProperty<Integer> rollTarget = OptionalProperty.create();
 	
 	/**
 	 * Items can be dropped to ground at any time
 	 */
-	public boolean canDropItems;
+	public final Property<Boolean> canDropItems = Property.of(false);
 
-	public Optional<Spawner<BasicPowerup>> spawnOverride;
-	
-	// Defaults
-	public final boolean cappedRollsDefault = true;
-	public final WinCondition winConditionDefault = HIGHEST_ROLL;
-	public final int rollTargetDefault = -1;
-	public final boolean canDropItemsDefault = false;
-	public final Optional<Spawner<BasicPowerup>> spawnOverrideDefault = Optional.empty();
-	
+	/**
+	 * Item spawner to be used instead of the regular spawner
+	 */
+	public OptionalProperty<Spawner<BasicPowerup>> spawnOverride = OptionalProperty.create();
+
+	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition, rollTarget,
+		canDropItems, spawnOverride);
+
 	private INoppaBot bot;
 
 	public Rules(INoppaBot bot) {
@@ -146,16 +145,16 @@ public class Rules {
 	}
 	
 	public void onRollPeriodStart() {
-		if (isCappedRollsChanged()) {
+		if (cappedRolls.isChanged()) {
 			bot.sendChannel("Remember, the rolls are not restricted to the 0-100 range now.");
 		}
-		if (isWinConditionChanged()) {
-			winCondition.onRollPeriodStart(bot);
+		if (winCondition.isChanged()) {
+			winCondition.get().onRollPeriodStart(bot);
 		}
 	}
 	
 	public ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
-		if (spawnOverride.isPresent()) return spawnOverride.get().spawn();
+		if (spawnOverride.isPresent()) return spawnOverride.getValue().spawn();
 		else return Powerups.getRandomPowerupOrEvent(bot, allowedPowerups, allowedEvents);
 	}
 	
@@ -176,39 +175,11 @@ public class Rules {
 	}
 
 	private void doReset() {
-		cappedRolls = cappedRollsDefault;
-		winCondition = winConditionDefault;
-		rollTarget = rollTargetDefault;
-		canDropItems = canDropItemsDefault;
-		spawnOverride = spawnOverrideDefault;
+		all.forEach(rule -> rule.reset());
 	}
 	
 	private boolean isChanged() {
-		return isCappedRollsChanged() || 
-		isWinConditionChanged() ||
-		isRollTargetChanged() ||
-		isCanDropItemsChanged() ||
-		isSpawnOverrideChanged();
-	}
-	
-	private boolean isCappedRollsChanged() {
-		return cappedRolls != cappedRollsDefault;
-	}
-	
-	private boolean isWinConditionChanged() {
-		return winCondition != winConditionDefault;
-	}
-	
-	private boolean isRollTargetChanged() {
-		return rollTarget != rollTargetDefault;
-	}
-
-	private boolean isCanDropItemsChanged() {
-		return canDropItems != canDropItemsDefault;
-	}
-	
-	private boolean isSpawnOverrideChanged() {
-		return spawnOverride != spawnOverrideDefault;
+		return all.stream().anyMatch(rule -> rule.isChanged());
 	}
 	
 	public static final String EXPLAIN_UNCAPPED_ROLLS = "The rolls are not limited to the 0-100 range.";
@@ -216,9 +187,9 @@ public class Rules {
 	
 	public String getExplanation() {
 		List<String> list = new ArrayList<String>();
-		list.add(winCondition.getExplanation());
-		if (isCanDropItemsChanged()) list.add(EXPLAIN_CAN_DROP_ITEMS);
-		if (isCappedRollsChanged()) list.add(EXPLAIN_UNCAPPED_ROLLS);
+		list.add(winCondition.get().getExplanation());
+		if (canDropItems.isChanged()) list.add(EXPLAIN_CAN_DROP_ITEMS);
+		if (cappedRolls.isChanged()) list.add(EXPLAIN_UNCAPPED_ROLLS);
 		spawnOverride.ifPresent(so -> list.add(so.getDescription()));
 		return StringUtils.join(list, " ");
 	}

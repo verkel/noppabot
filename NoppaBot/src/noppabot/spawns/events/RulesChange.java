@@ -76,8 +76,8 @@ class LowestRollWins extends RulesChange {
 	
 	@Override
 	public String changeRules(Rules rules) {
-		rules.winCondition = rules.LOWEST_ROLL;
-		return rules.winCondition.getExplanation();
+		rules.winCondition.set(rules.LOWEST_ROLL);
+		return rules.winCondition.get().getExplanation();
 	}
 }
 
@@ -98,9 +98,9 @@ class RollClosestToTargetWins extends RulesChange {
 	@Override
 	public String changeRules(Rules rules) {
 		int rollTarget = Powerups.powerupRnd.nextInt(100) + 1;
-		rules.rollTarget = rollTarget;
-		rules.winCondition = rules.ROLL_CLOSEST_TO_TARGET;
-		return rules.winCondition.getExplanation();
+		rules.rollTarget.setValue(rollTarget);
+		rules.winCondition.set(rules.ROLL_CLOSEST_TO_TARGET);
+		return rules.winCondition.get().getExplanation();
 	}
 }
 
@@ -115,7 +115,7 @@ class UncappedRolls extends RulesChange {
 	
 	@Override
 	public String changeRules(Rules rules) {
-		rules.cappedRolls = false;
+		rules.cappedRolls.set(false);
 		return Rules.EXPLAIN_UNCAPPED_ROLLS;
 	}
 }
@@ -131,7 +131,7 @@ class CanDropItems extends RulesChange {
 	
 	@Override
 	public String changeRules(Rules rules) {
-		rules.canDropItems = true;
+		rules.canDropItems.set(true);
 		return Rules.EXPLAIN_CAN_DROP_ITEMS;
 	}
 }
@@ -157,8 +157,8 @@ class UnlimitedPowerMode extends RulesChange {
 
 	@Override
 	public String changeRules(Rules rules) {
-		rules.spawnOverride = Optional.of(spawner);
-		rules.cappedRolls = false;
+		rules.spawnOverride.setValue(spawner);
+		rules.cappedRolls.set(false);
 		return explanation;
 	}
 }
@@ -184,7 +184,7 @@ class ClairvoyantMode extends RulesChange {
 
 	@Override
 	public String changeRules(Rules rules) {
-		rules.spawnOverride = Optional.of(spawner);
+		rules.spawnOverride.setValue(spawner);
 		return explanation;
 	}
 }
@@ -210,7 +210,7 @@ class PeakOfEvolutionMode extends RulesChange {
 
 	@Override
 	public String changeRules(Rules rules) {
-		rules.spawnOverride = Optional.of(spawner);
+		rules.spawnOverride.setValue(spawner);
 		return explanation;
 	}
 }
