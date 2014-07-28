@@ -6,6 +6,7 @@ package noppabot;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 
 public class Rolls {
@@ -75,11 +76,14 @@ public class Rolls {
 	}
 	
 	public List<Entry<String, Roll>> orderedList() {
-		List<Entry<String, Roll>> rollsList = new ArrayList<Entry<String, Roll>>();
+//		List<Entry<String, Roll>> rollsList = new ArrayList<Entry<String, Roll>>();
 		Comparator<Entry<String, Roll>> comp = bot.getRules().winCondition.get().rollEntryComparator;
-		rollsList.addAll(forParticipant.entrySet());
-		Collections.sort(rollsList, comp);
-		return rollsList;
+//		rollsList.addAll(forParticipant.entrySet());
+		
+//		Collections.sort(rollsList, comp);
+//		return rollsList;
+		
+		return forParticipant.entrySet().stream().sorted(comp).collect(Collectors.toList());
 	}
 	
 	private Comparator<Roll> getRollComparator() {

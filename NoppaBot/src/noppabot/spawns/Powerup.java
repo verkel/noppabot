@@ -153,9 +153,9 @@ public abstract class Powerup<R extends Roll> implements ISpawnable, IColorStrCo
 	
 	public abstract String ownerColored();
 
-	@Override
-	public boolean equals(Object obj) {
-		// This is useful for removing stuff from the spawning lists
-		return this.getClass().equals(obj.getClass());
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		// This is useful for removing stuff from the spawning lists
+//		return this.getClass().equals(obj.getClass());
+//	}
 }

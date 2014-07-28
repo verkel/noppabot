@@ -1200,7 +1200,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		String tiebreakersStr = StringUtils.join(winningRollers, ", ");
 		Roll roll = rolls.get(winningRollers.get(0));
 		String msg = String.format(
-			"The roll %d was tied between %s. Roll again within 10 minutes to settle the score!", 
+			"The roll %s was tied between %s. Roll again within 10 minutes to settle the score!", 
 			roll, tiebreakersStr);
 		sendChannel(msg);
 		tiebreakers.addAll(winningRollers);

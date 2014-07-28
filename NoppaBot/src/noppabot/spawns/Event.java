@@ -42,9 +42,9 @@ public abstract class Event implements ISpawnable {
 		return name();
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
-		// This is useful for removing stuff from the spawning lists
-		return this.getClass().equals(obj.getClass());
-	}
+//	@Override
+//	public boolean equals(Object obj) {
+//		// This is useful for removing stuff from the spawning lists
+//		return this.getClass().equals(obj.getClass());
+//	}
 }

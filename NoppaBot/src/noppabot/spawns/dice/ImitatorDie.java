@@ -103,7 +103,7 @@ public class ImitatorDie extends BasicDie {
 		if (records != null) {
 			lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
 		}
-		return new DiceRoll(lastRoll);
+		return lastRoll == null ? null : new DiceRoll(lastRoll);
 	}
 
 	@Override
@@ -163,7 +163,7 @@ public class ImitatorDie extends BasicDie {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("It will now roll the exact same number you rolled yesterday.", bonus);
+			return String.format("It will now roll the exact same number you rolled yesterday.");
 		}
 	}
 }

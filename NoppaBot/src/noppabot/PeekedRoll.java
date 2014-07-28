@@ -266,7 +266,7 @@ public class PeekedRoll {
 
 		@Override
 		protected boolean applies() {
-			return PrimalDie.primes.contains(value);
+			return PrimalDie.primes.contains(value.intValue());
 		}
 		
 		@Override

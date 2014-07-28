@@ -105,7 +105,7 @@ public class EnchantedDie extends BasicDie {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("It is now enchanted with the most potent magics, granting it +20 total roll bonus!", bonus);
+			return String.format("It is now enchanted with the most potent magics, granting it +%s total roll bonus!", bonus);
 		}
 	}
 }

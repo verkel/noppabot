@@ -130,7 +130,7 @@ public class PrimalDie extends BasicDie {
 		public void onOpponentRollLate(String opponent, Roll roll) {
 			Rolls rolls = bot.getRolls();
 			
-			if (primes.contains(roll)) {
+			if (primes.contains(roll.intValue())) {
 				if (bot.participated(owner)) {
 					DiceRoll totalRoll = ((DiceRoll)rolls.get(owner)).add(otherPrimesBonus);
 					rolls.put(owner, totalRoll);

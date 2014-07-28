@@ -86,8 +86,10 @@ public class GenerateItemList {
 			arg = args[0];
 		}
 		
-		if (arg.equals("cache")) mode = Mode.COMPUTE_AND_CACHE;
-		else if (arg.equals("load")) mode = Mode.LOAD_CACHED;
+		if (arg != null) {
+			if (arg.equals("cache")) mode = Mode.COMPUTE_AND_CACHE;
+			else if (arg.equals("load")) mode = Mode.LOAD_CACHED;
+		}
 		
 		new GenerateItemList().run(mode);
 	}

@@ -97,6 +97,7 @@ public class VariableDie extends BasicDie {
 			super(VariableDie.this);
 			Rules rules = bot.getRules();
 			RulesChange rc = RulesChange.spawner.spawn();
+			ruleChangeDescr = rc.explanation(rules);
 			rc.changeRules(rules);
 		}
 		
