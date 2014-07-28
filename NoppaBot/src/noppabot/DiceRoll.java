@@ -65,6 +65,10 @@ public class DiceRoll implements Roll {
 		return new DiceRoll(value - roll.intValue());
 	}
 	
+	public DiceRoll mul(int factor) {
+		return new DiceRoll(value * factor);
+	}
+	
 	public DiceRoll clamp() {
 		return new DiceRoll(Roll.clampValue(value));
 	}

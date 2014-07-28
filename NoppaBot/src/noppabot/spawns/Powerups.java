@@ -46,6 +46,7 @@ public class Powerups {
 			PrimalDie.info,
 			RollingProfessional.info,
 			SteadyDie.info,
+//			UniformDie.info,
 			TrollingProfessional.info,
 			VariableDie.info,
 			WeightedDie.info
