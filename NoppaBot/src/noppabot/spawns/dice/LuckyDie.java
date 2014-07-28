@@ -48,7 +48,7 @@ public class LuckyDie extends BasicDie {
 		if (containsSevens(roll)) {
 			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat(
-				"%s rolls %d! The lucky die likes sevens in numbers, so it tinkers with your roll, making it %d + %d = %s. Lucky!",
+				"%s rolls %s! The lucky die likes sevens in numbers, so it tinkers with your roll, making it %s + %s = %s. Lucky!",
 				ownerColored, roll, roll, bonus, resultStr(result));
 			return result;
 		}
@@ -97,13 +97,13 @@ public class LuckyDie extends BasicDie {
 			if (containsSevens(roll)) {
 				DiceRoll result = roll.add(jackpotBonus);
 				bot.sendChannelFormat(
-					"%s rolls %d! You win the JACKPOT! Your final roll is %d + %d = %s.",
+					"%s rolls %s! You win the JACKPOT! Your final roll is %s + %s = %s.",
 					ownerColored, roll, roll, jackpotBonus, resultStr(result));
 				return result;
 			}
 			else {
 				bot.sendChannelFormat(
-					"%s rolls %d! No jackpot for you.", ownerColored, roll);
+					"%s rolls %s! No jackpot for you.", ownerColored, roll);
 				return roll;
 			}
 		}
@@ -115,7 +115,7 @@ public class LuckyDie extends BasicDie {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("If your roll contains the digit 7, you now get the jackpot bonus of +%d!", jackpotBonus);
+			return String.format("If your roll contains the digit 7, you now get the jackpot bonus of +%s!", jackpotBonus);
 		}
 	}
 }

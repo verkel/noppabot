@@ -103,7 +103,7 @@ public class SteadyDie extends BasicDie {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("You are guaranteed a higher roll: you now roll d%d + %d!.", sides, bonus);
+			return String.format("You are guaranteed a higher roll: you now roll d%s + %s!.", sides, bonus);
 		}
 	}
 }

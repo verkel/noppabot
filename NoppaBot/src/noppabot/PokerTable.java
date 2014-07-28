@@ -28,8 +28,8 @@ public class PokerTable {
 	
 	private static final int TURN_HOURS = 18;
 	private static final int RIVER_HOURS = 22;
-	private static final String TURN_SCHEDULE_STR = String.format("0 %d * * *", TURN_HOURS);
-	private static final String RIVER_SCHEDULE_STR = String.format("0 %d * * *", RIVER_HOURS);
+	private static final String TURN_SCHEDULE_STR = String.format("0 %s * * *", TURN_HOURS);
+	private static final String RIVER_SCHEDULE_STR = String.format("0 %s * * *", RIVER_HOURS);
 	
 	private INoppaBot bot;
 	

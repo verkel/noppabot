@@ -62,7 +62,7 @@ public class MasterDie extends BasicDie {
 	
 	private DiceRoll doContestRoll(String dieName, int sides) {
 		DiceRoll result = bot.getRoll(owner, sides);
-		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
+		bot.sendChannelFormat("%s rolls d%s with %s... %s! %s", 
 			ownerColored, sides, dieName, resultStr(result), bot.grade(result));
 		if (bot.getState() == State.ROLL_PERIOD) rollUnusedApprenticeDies(result);
 		return result;
@@ -129,7 +129,7 @@ public class MasterDie extends BasicDie {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("Bearing %d sides, this truly is the die to rule them all.", 200);
+			return String.format("Bearing %s sides, this truly is the die to rule them all.", 200);
 		}
 	}
 }

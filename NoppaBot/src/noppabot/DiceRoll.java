@@ -85,7 +85,7 @@ public class DiceRoll implements Roll {
 		}
 		else {
 			if (bot.getRules().cappedRolls.get()) {
-				return String.format("%d (= %s)", value, Roll.maybeColorRoll(this.clamp(), color, bot));
+				return String.format("%s (= %s)", value, Roll.maybeColorRoll(this.clamp(), color, bot));
 			}
 			else {
 				return Roll.maybeColorRoll(this, color, bot);

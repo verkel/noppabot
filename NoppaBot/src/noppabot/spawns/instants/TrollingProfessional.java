@@ -148,7 +148,7 @@ public class TrollingProfessional extends Instant {
 			DiceRoll result = roll.sub(totalDamage);
 			
 			sendDefaultContestRollMessage(roll);
-			bot.sendChannelFormat("The bomb on %s explodes, causing %d + %d = %d damage to the roll! "
+			bot.sendChannelFormat("The bomb on %s explodes, causing %s + %s = %s damage to the roll! "
 				+ "%s's roll drops down to %s.", owner, damageRoll, dmgBonus, totalDamage,
 				ownerColored, resultStr(result));
 

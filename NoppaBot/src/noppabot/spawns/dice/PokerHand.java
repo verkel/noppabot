@@ -124,7 +124,7 @@ public class PokerHand extends BasicPowerup<Roll> {
 		}
 		DiceRoll result = roll.add(rankPoints);
 		
-		bot.sendChannelFormat("%s reveals the cards: %s. %s has %s! This hand gives a +%d bonus to the roll.",
+		bot.sendChannelFormat("%s reveals the cards: %s. %s has %s! This hand gives a +%s bonus to the roll.",
 			owner, hand.toString(), owner, Color.emphasize(rank.name), rankPoints);
 		
 		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored(), roll, rankPoints, resultStr(result), bot.grade(result));
@@ -206,7 +206,7 @@ public class PokerHand extends BasicPowerup<Roll> {
 			Hand combinedHand = new Hand(hand);
 			for (int i = 1; i <= tableCards.size(); i++) {
 				boolean added = combinedHand.addCard(tableCards.getCard(i));
-				if (!added) System.out.printf("card n. %d was not added\n", i);
+				if (!added) System.out.printf("card n. %s was not added\n", i);
 			}
 			combinedHand.sort();
 			rank = HandEvaluator.rankHand(combinedHand);

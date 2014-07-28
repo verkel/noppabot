@@ -40,7 +40,7 @@ public class VariableDie extends BasicDie {
 
 	@Override
 	public void onPickup() {
-		bot.sendChannelFormat("%s grabs the %s. It's the d%d!", 
+		bot.sendChannelFormat("%s grabs the %s. It's the d%s!", 
 			ownerColored, nameColored(), sides);
 	}
 
@@ -57,7 +57,7 @@ public class VariableDie extends BasicDie {
 
 	private DiceRoll doContestRoll(String dieName) {
 		DiceRoll result = bot.getRoll(owner, sides);
-		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
+		bot.sendChannelFormat("%s rolls d%s with %s... %s! %s", 
 			ownerColored, sides, dieName, resultStr(result), bot.grade(result));
 		return result;
 	}

@@ -46,7 +46,7 @@ public class PolishedDie extends BasicDie {
 		DiceRoll roll = roll();
 		DiceRoll result = roll.add(bonus);
 		bot.sendChannelFormat("The polished die adds a nice bonus to %s's roll.", owner);
-		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus,
+		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus,
 			resultStr(result), bot.grade(result));
 		return result;
 	}
@@ -85,7 +85,7 @@ public class PolishedDie extends BasicDie {
 			DiceRoll roll = roll();
 			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat("The %s adds a sweet bonus to %s's roll.", name.toLowerCase(), owner);
-			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr(result),
+			bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus, resultStr(result),
 				bot.grade(result));
 			return result;
 		}
@@ -109,7 +109,7 @@ public class PolishedDie extends BasicDie {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("It now has +10 further bonus, for a total of +%d!", bonus);
+			return String.format("It now has +10 further bonus, for a total of +%s!", bonus);
 		}
 	}
 }

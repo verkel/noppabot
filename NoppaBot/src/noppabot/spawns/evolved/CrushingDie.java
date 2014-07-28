@@ -44,7 +44,7 @@ public class CrushingDie extends EvolvedDie {
 	private DiceRoll doStandardCrush(INoppaBot bot, String owner, String opponent, DiceRoll roll) {
 		int damage = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 		DiceRoll result = roll.sub(damage).clamp();
-		bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %d damage and drops down to %s.", 
+		bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %s damage and drops down to %s.", 
 			owner, name(), Color.nick(opponent), damage, resultStr(result));
 		return result;
 	}
@@ -53,7 +53,7 @@ public class CrushingDie extends EvolvedDie {
 		int damageRoll = Powerups.powerupRnd.nextInt(humongousDmgSides) + 1;
 		int totalDamage = damageRoll + humongousDmgBonus;
 		DiceRoll result = roll.sub(totalDamage).clamp();
-		bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %d + %d = %d damage and drops down to %s.", 
+		bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %s + %s = %s damage and drops down to %s.", 
 			owner, name(), Color.nick(opponent), damageRoll, humongousDmgBonus, totalDamage, resultStr(result));
 		return result;
 	}
@@ -65,9 +65,9 @@ public class CrushingDie extends EvolvedDie {
 	
 	@Override
 	public String getUpgradeDescription() {
-		if (humongous) return String.format("It now deals d%d + %d " +
+		if (humongous) return String.format("It now deals d%s + %s " +
 			"crushing damage to others' rolls!", humongousDmgSides, humongousDmgBonus);
-		else return String.format("It loses its bonus, but now deals d%d " +
+		else return String.format("It loses its bonus, but now deals d%s " +
 			"crushing damage to others' rolls!", dmgSides);
 	}
 }

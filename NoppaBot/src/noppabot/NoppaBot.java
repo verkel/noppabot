@@ -224,7 +224,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sb[i / 13].append(deck.deal()).append(" ");
 			i++;
 		}
-		for (int j = 0; j < sb.length; j++) sendChannelFormat("Cards %d: %s", j, sb[j]);
+		for (int j = 0; j < sb.length; j++) sendChannelFormat("Cards %s: %s", j, sb[j]);
 	}
 	
 	private void debugStuff() {
@@ -506,7 +506,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn) {
 		boolean immediateSpawn = (spawnTime == null);
 		if (immediateSpawn) spawnTime = Calendar.getInstance();
-		final String pattern = String.format("%d %d * * *", 
+		final String pattern = String.format("%s %s * * *", 
 			spawnTime.get(Calendar.MINUTE), spawnTime.get(Calendar.HOUR_OF_DAY));
 
 		SpawnTask spawnTask = new SpawnTask(spawnTime.getTime(), spawn);
@@ -538,7 +538,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	@Override
 	public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
-		final String expirePattern = String.format("%d %d * * *",
+		final String expirePattern = String.format("%s %s * * *",
 			expireTime.get(Calendar.MINUTE), expireTime.get(Calendar.HOUR_OF_DAY));
 		
 		ExpireTask expireTask = new ExpireTask(powerup);
@@ -1234,7 +1234,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		SettleTieTimeoutTask timeoutTask = new SettleTieTimeoutTask();
 		Calendar time = (Calendar)lastTiebreakPeriodStartTime.clone();
 		time.add(Calendar.MINUTE, 10);
-		final String pattern = String.format("%d %d * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
+		final String pattern = String.format("%s %s * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
 		timeoutTask.id = scheduler.schedule(pattern, timeoutTask);
 		return timeoutTask;
 	}
@@ -1259,7 +1259,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		SettleTieAutorollsTask autorollTask = new SettleTieAutorollsTask(autorolls);
 		Calendar time = (Calendar)lastTiebreakPeriodStartTime.clone();
 		time.add(Calendar.MINUTE, 5);
-		final String pattern = String.format("%d %d * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
+		final String pattern = String.format("%s %s * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
 		autorollTask.id = scheduler.schedule(pattern, autorollTask);
 	}
 	
@@ -1520,68 +1520,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			return owners.subList(0, owners.size() - removeCount);
 		}
 	}
-	
-//	public String colorRoll(int roll) {
-//		if (rolls.isWinningRoll(roll)) return Color.winningRoll(roll);
-//		else return Color.losingRoll(roll);
-//	}
-//	
-//	@Override
-//	public String rollToString(int roll) {
-//		return rollToString(roll, true);
-//	}
-//	
-//	@Override
-//	public String rollToString(int roll, boolean colorRoll) {
-//		if (roll <= 100 && roll >= 0) {
-//			return maybeColorRoll(roll, colorRoll);
-//		}
-//		else {
-//			if (rules.cappedRolls.get()) {
-//				return String.format("%d (= %s)", roll, maybeColorRoll(clampRoll(roll), colorRoll));
-//			}
-//			else {
-//				return maybeColorRoll(roll, colorRoll);
-//			}
-//		}
-//	}
-//	
-//	private String maybeColorRoll(int roll, boolean colorRoll) {
-//		if (colorRoll) return colorRoll(roll); // Color it green/red
-//		else return Color.emphasize(roll); // Color it hilighted white
-//	}
-	
-//	private void revealPokerTableCards() {
-//		boolean cardsFound = false;
-//		for (Powerup powerup : powerups.values()) {
-//			if (powerup instanceof PokerCards || powerup instanceof PocketAces) {
-//				cardsFound = true;
-//				break;
-//			}
-//		}
-//		if (!cardsFound) return;
-//		
-//		createPokerTableCards();
-//		
-//		sendChannelFormat("I'll deal the table cards for poker players... %s", pokerTableCards.toString());
-//	}
-
-//	private void createPokerTableCards() {
-//		Deck deck = new Deck(System.currentTimeMillis());
-//		deck.shuffle();
-//		pokerTableCards = new Hand();
-//		for (int i = 0; i < 5; i++) {
-//			Card card = deck.deal();
-//			pokerTableCards.addCard(card);
-//		}
-//		pokerTableCards.sort();
-//	}
-	
-//	@Override
-//	public int clampRoll(int roll) {
-//		if (rules.cappedRolls.get()) return Math.max(0, Math.min(100, roll));
-//		else return roll;
-//	}
 	
 	@Override
 	public int getPowerupSides(String nick) {

@@ -98,7 +98,7 @@ public class Rules {
 		@Override
 		public void onRollPeriodStart(INoppaBot bot) {
 			bot.sendChannelFormat("Tonight we are looking for the roll which is closest " +
-				"to number %d!", rollTarget);
+				"to number %s!", rollTarget);
 		}
 		
 		@Override
@@ -109,13 +109,13 @@ public class Rules {
 		@Override
 		public void onContestRoll(INoppaBot bot, String nick, Roll roll) {
 			int dist = Math.abs(rollTarget - roll.intValue());
-			if (dist > 0) bot.sendChannelFormat("%s's roll is %d points off the target", nick, dist);
+			if (dist > 0) bot.sendChannelFormat("%s's roll is %s points off the target", nick, dist);
 			else bot.sendChannelFormat("%s's roll hit the target!", nick);
 		}
 		
 		@Override
 		public String getExplanation() {
-			return String.format("The roll closest to number %d wins the contest!", rollTarget);
+			return String.format("The roll closest to number %s wins the contest!", rollTarget);
 		}
 
 		public int getRollTarget() {

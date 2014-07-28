@@ -69,12 +69,12 @@ public class RollingProfessional extends Instant {
 		
 		if (professor) {
 			bot.sendChannelFormat("%s participates in the %s's applied dicetology lecture. " +
-				"%s's next roll of d%d is improved by +%d!", 
+				"%s's next roll of d%s is improved by +%s!", 
 				owner, nameColored(),  ownerColored, sides, bonus);
 		}
 		else {
 			bot.sendChannelFormat("The %s demonstrates some rolling tricks to %s. " +
-				"%s's next roll of d%d is improved by +%d!", 
+				"%s's next roll of d%s is improved by +%s!", 
 				nameColored(), owner, ownerColored, sides, bonus);
 		}
 	}

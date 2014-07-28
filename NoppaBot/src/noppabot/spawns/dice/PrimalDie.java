@@ -57,7 +57,7 @@ public class PrimalDie extends BasicDie {
 		if (primes.contains(roll.intValue())) {
 			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat(
-				"%s rolls %d, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %d + %d = %s.",
+				"%s rolls %s, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %s + %s = %s.",
 				ownerColored, roll, roll, bonus, resultStr(result));
 			return result;
 		}
@@ -106,8 +106,8 @@ public class PrimalDie extends BasicDie {
 			if (primes.contains(roll.intValue())) {
 				result = roll.add(bonus);
 				bot.sendChannelFormat(
-					"%s rolls %d, which is a prime! The tribe of primal dies grants you an offering of" +
-					" bonus points. The modified roll is %d + %d = %s.",
+					"%s rolls %s, which is a prime! The tribe of primal dies grants you an offering of" +
+					" bonus points. The modified roll is %s + %s = %s.",
 					ownerColored, roll, roll, bonus, resultStr(result));
 			}
 			else {
@@ -119,7 +119,7 @@ public class PrimalDie extends BasicDie {
 			
 			if (otherPrimesTotalBonus > 0) {
 				result = result.add(otherPrimesTotalBonus);
-				bot.sendChannelFormat("The tribal gifts of %d points are added to %s's roll, " +
+				bot.sendChannelFormat("The tribal gifts of %s points are added to %s's roll, " +
 					"increasing it to %s", otherPrimesTotalBonus, ownerColored, resultStr(result));
 			}
 			
@@ -134,14 +134,14 @@ public class PrimalDie extends BasicDie {
 				if (bot.participated(owner)) {
 					DiceRoll totalRoll = ((DiceRoll)rolls.get(owner)).add(otherPrimesBonus);
 					rolls.put(owner, totalRoll);
-					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
-						"%s gets an offering of %d points from the tribe! %s's roll is now %s.",
+					bot.sendChannelFormat("%s's roll %s is a prime, and excitement in the primal dice tribe grows. " +
+						"%s gets an offering of %s points from the tribe! %s's roll is now %s.",
 						opponent, roll, owner, otherPrimesBonus, ownerColored, resultStr(totalRoll));
 				}
 				else {
 					otherPrimesTotalBonus += otherPrimesBonus;
-					bot.sendChannelFormat("%s's roll %d is a prime, and excitement in the primal dice tribe grows. " +
-						"%s gets an offering of %d points from the tribe!",
+					bot.sendChannelFormat("%s's roll %s is a prime, and excitement in the primal dice tribe grows. " +
+						"%s gets an offering of %s points from the tribe!",
 						opponent, roll, ownerColored, otherPrimesBonus);
 				}
 			}
@@ -155,7 +155,7 @@ public class PrimalDie extends BasicDie {
 		@Override
 		public String getUpgradeDescription() {
 			return String.format("The whole tribe of primal dies now support you, and will grant" +
-				" %d bonus for every prime rolled by an opponent.", otherPrimesBonus);
+				" %s bonus for every prime rolled by an opponent.", otherPrimesBonus);
 		}
 	}
 }
