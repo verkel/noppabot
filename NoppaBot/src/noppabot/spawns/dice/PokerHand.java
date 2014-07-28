@@ -77,6 +77,7 @@ public class PokerHand extends BasicPowerup<Roll> {
 
 	@Override
 	public void onExpire() {
+		returnCards();
 		sendExpireMessageFormat("... the poker hand is re-used in a game of Solitaire.");
 	}
 
