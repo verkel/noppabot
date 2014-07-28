@@ -12,7 +12,7 @@ import noppabot.INoppaBot.State;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class MasterDie extends BasicPowerup {
+public class MasterDie extends BasicDie {
 
 	private static final int sides = 150;
 	
@@ -56,21 +56,19 @@ public class MasterDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
+	public DiceRoll onContestRoll() {
 		return doContestRoll(name(), sides);
 	}
 	
-	private int doContestRoll(String dieName, int sides) {
-		int result = bot.getRoll(owner, sides);
-		String resultStr = resultStr(result);
-		result = clamp(result);
+	private DiceRoll doContestRoll(String dieName, int sides) {
+		DiceRoll result = bot.getRoll(owner, sides);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
-			ownerColored, sides, dieName, resultStr, bot.grade(result));
+			ownerColored, sides, dieName, resultStr(result), bot.grade(result));
 		if (bot.getState() == State.ROLL_PERIOD) rollUnusedApprenticeDies(result);
 		return result;
 	}
 	
-	private void rollUnusedApprenticeDies(int roll) {
+	private void rollUnusedApprenticeDies(DiceRoll roll) {
 		Map<String, Powerup> powerups = bot.getPowerups();
 		for (Entry<String, Powerup> entry : powerups.entrySet()) {
 			String owner = entry.getKey();
@@ -106,7 +104,7 @@ public class MasterDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class TheOneDie extends EvolvedPowerup {
+	public class TheOneDie extends EvolvedDie {
 		
 		private static final int sides = 200;
 		
@@ -115,7 +113,7 @@ public class MasterDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
+		public DiceRoll onContestRoll() {
 			return doContestRoll(name(), sides);
 		}
 		

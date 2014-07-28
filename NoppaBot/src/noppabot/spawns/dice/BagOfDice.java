@@ -6,12 +6,13 @@ package noppabot.spawns.dice;
 
 import java.util.*;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
 import com.google.common.collect.*;
 
-public class BagOfDice extends BasicPowerup {
+public class BagOfDice extends BasicDie {
 	
 	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
 
@@ -86,23 +87,21 @@ public class BagOfDice extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
+	public DiceRoll onContestRoll() {
 		StringBuilder buf = new StringBuilder();
 		boolean first = true;
-		int result = 0;
+		DiceRoll result = DiceRoll.ZERO;
 		for (int die : diceBag) {
-			int subroll = bot.getRoll(owner, die);
-			result += subroll;
+			DiceRoll subroll = bot.getRoll(owner, die);
+			result = result.add(subroll);
 			if (!first) buf.append(" + ");
 			buf.append(subroll);
 			first = false;
 		}
 		String sumStr = buf.toString();
-		String resultStr = resultStr(result);
-		result = clamp(result);
 
-		bot.sendChannelFormat("%s rolls with the dice (%s). %s = %s", ownerColored, bagToString(), sumStr, resultStr);
-//		System.out.println(result);
+		bot.sendChannelFormat("%s rolls with the dice (%s). %s = %s", ownerColored, bagToString(),
+			sumStr, resultStr(result));
 		return result;
 	}
 	
@@ -132,7 +131,7 @@ public class BagOfDice extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class BagOfManyDice extends EvolvedPowerup {
+	public class BagOfManyDice extends EvolvedDie {
 		
 		private String manyMany = "Many";
 		private SortedMultiset<Integer> newDice;
@@ -148,7 +147,7 @@ public class BagOfDice extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
+		public DiceRoll onContestRoll() {
 			return BagOfDice.this.onContestRoll();
 		}
 		

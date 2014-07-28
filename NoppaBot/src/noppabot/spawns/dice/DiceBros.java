@@ -9,7 +9,7 @@ import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
 
-public class DiceBros extends BasicPowerup {
+public class DiceBros extends BasicDie {
 
 	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
 
@@ -51,14 +51,14 @@ public class DiceBros extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
+	public DiceRoll onContestRoll() {
 		/*
 		 * Mario & Luigi actually don't consume your rolls. It would be hard to
 		 * make Super Mario & Luigi do so, and we should keep the same
 		 * behaviour with the normal guys.
 		 */
-		int marioRoll = bot.getRoll("Mario", 100);
-		int luigiRoll = bot.getRoll("Luigi", 100);
+		DiceRoll marioRoll = bot.getRoll("Mario", 100);
+		DiceRoll luigiRoll = bot.getRoll("Luigi", 100);
 		
 		bot.sendChannelFormat("The Dice bros. roll for %s. Mario Dice rolls %s! Luigi Dice rolls %s!",
 			owner, Color.emphasize(marioRoll), Color.emphasize(luigiRoll));
@@ -66,22 +66,23 @@ public class DiceBros extends BasicPowerup {
 		return chooseBetterRoll(marioRoll, luigiRoll);
 	}
 
-	private int chooseBetterRoll(int marioRoll, int luigiRoll) {
-		if (marioRoll > luigiRoll) {
+	private DiceRoll chooseBetterRoll(DiceRoll marioRoll, DiceRoll luigiRoll) {
+		if (marioRoll.intValue() > luigiRoll.intValue()) {
 			bot.sendChannelFormat("The bros. choose Mario's roll, %s, as %s's result. %s", 
 				resultStr(marioRoll), ownerColored, bot.grade(marioRoll));
 			return marioRoll;
 		}
-		else if (luigiRoll > marioRoll) {
+		else if (luigiRoll.intValue() > marioRoll.intValue()) {
 			bot.sendChannelFormat("The bros. choose Luigi's roll, %s, as %s's result. %s", 
 				resultStr(luigiRoll), ownerColored, bot.grade(luigiRoll));
 			return luigiRoll;
 		}
 		else {
+			DiceRoll hundred = new DiceRoll(100);
 			bot.sendChannelFormat("The bros. rolled the same number! The bro code dictates " +
 				"this is a cause for celebration, and that %s's roll result should be %s!", 
-				ownerColored, resultStr(100)); 
-			return 100;
+				ownerColored, resultStr(hundred)); 
+			return hundred;
 		}
 	}
 	
@@ -106,27 +107,27 @@ public class DiceBros extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class SuperDiceBros extends EvolvedPowerup {
+	public class SuperDiceBros extends EvolvedDie {
 		
-		private BasicPowerup marioItem;
-		private BasicPowerup luigiItem;
+		private BasicDie marioItem;
+		private BasicDie luigiItem;
 
 		public SuperDiceBros(INoppaBot bot) {
 			super(DiceBros.this);
-			marioItem = Powerups.getRandomBasicPowerup(bot, Powerups.diceBrosPowerups);
+			marioItem = (BasicDie)Powerups.getRandomBasicPowerup(bot, Powerups.diceBrosPowerups);
 			marioItem.setColors(false, false);
 			marioItem.setOwner("Mario");
-			luigiItem = Powerups.getRandomBasicPowerup(bot, Powerups.diceBrosPowerups);
+			luigiItem = (BasicDie)Powerups.getRandomBasicPowerup(bot, Powerups.diceBrosPowerups);
 			luigiItem.setColors(false, false);
 			luigiItem.setOwner("Luigi");
 		}
 		
 		@Override
-		public int onContestRoll() {
+		public DiceRoll onContestRoll() {
 			bot.sendChannelFormat("The Super Dice bros. roll for %s.", owner);
 			
-			int marioRoll = marioItem.onContestRoll();
-			int luigiRoll = luigiItem.onContestRoll();
+			DiceRoll marioRoll = marioItem.onContestRoll();
+			DiceRoll luigiRoll = luigiItem.onContestRoll();
 			
 			return chooseBetterRoll(marioRoll, luigiRoll);
 		}

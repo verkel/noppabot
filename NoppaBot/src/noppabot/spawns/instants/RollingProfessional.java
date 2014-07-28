@@ -4,7 +4,7 @@
  */
 package noppabot.spawns.instants;
 
-import noppabot.Color;
+import noppabot.*;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
@@ -48,8 +48,8 @@ public class RollingProfessional extends Instant {
 	@Override
 	public boolean canPickUp(String nick, boolean verbose) {
 		int sides = bot.getPowerupSides(nick);
-		int nextRoll = bot.peekRoll(nick, sides).value;
-		if (nextRoll < sides) {
+		DiceRoll nextRoll = bot.peekRoll(nick, sides).value;
+		if (nextRoll.intValue() < sides) {
 			return true;
 		}
 		else {
@@ -62,10 +62,9 @@ public class RollingProfessional extends Instant {
 	@Override
 	public void onPickup() {
 		int sides = bot.getPowerupSides(owner);
-		int nextRoll = bot.peekRoll(owner, sides).value;
+		DiceRoll nextRoll = bot.peekRoll(owner, sides).value;
 		int bonus = bonus();
-		nextRoll += bonus;
-		nextRoll = clamp(nextRoll);
+		nextRoll = nextRoll.add(bonus).clamp();
 		bot.setNextRoll(owner, sides, nextRoll);
 		
 		if (professor) {

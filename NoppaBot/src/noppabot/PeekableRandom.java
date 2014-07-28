@@ -19,7 +19,7 @@ public class PeekableRandom {
 		random = new Random();
 	}
 
-	public int roll(int sides) {
+	public DiceRoll roll(int sides) {
 		// Pop the peeked result for n if there is one
 		if (peekedRolls.containsKey(sides)) {
 			PeekedRoll pr = peekedRolls.remove(sides);
@@ -33,7 +33,7 @@ public class PeekableRandom {
 	
 	public PeekedRoll peek(int sides) {
 		if (!peekedRolls.containsKey(sides)) {
-			int roll = doRoll(sides);
+			DiceRoll roll = doRoll(sides);
 			peekedRolls.put(sides, new PeekedRoll(sides, roll));
 		}
 		
@@ -56,11 +56,15 @@ public class PeekableRandom {
 		return peekedRolls;
 	}
 	
-	public void setNextRoll(int sides, int roll) {
+	public void setNextRoll(int sides, DiceRoll roll) {
 		peekedRolls.put(sides, new PeekedRoll(sides, roll));
 	}
 	
-	private int doRoll(int sides) {
+	private DiceRoll doRoll(int sides) {
+		return new DiceRoll(doIntRoll(sides));
+	}
+	
+	private int doIntRoll(int sides) {
 		return random.nextInt(sides) + 1;
 	}
 }

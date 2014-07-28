@@ -4,11 +4,12 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
 
-public class EnchantedDie extends BasicPowerup {
+public class EnchantedDie extends BasicDie {
 
 	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
 
@@ -47,16 +48,14 @@ public class EnchantedDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
-		int roll = roll();
-		int result = roll + bonus;
-		String resultStr = resultStr(result);
-		result = clamp(result);
+	public DiceRoll onContestRoll() {
+		DiceRoll roll = roll();
+		DiceRoll result = roll.add(bonus);
 		bot.sendChannelFormat(
 			"The enchanted die grants %s either eternal fame and fortune, or a substantial roll bonus. %s chooses the latter.",
 			owner, owner);
-		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
-			bot.grade(result));
+		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus,
+			resultStr(result), bot.grade(result));
 		return result;
 	}
 
@@ -81,7 +80,7 @@ public class EnchantedDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class PotentDie extends EvolvedPowerup {
+	public class PotentDie extends EvolvedDie {
 		private static final int bonus = EnchantedDie.bonus + 5;
 		
 		public PotentDie() {
@@ -89,14 +88,12 @@ public class EnchantedDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
-			int roll = roll();
-			int result = roll + bonus;
-			String resultStr = resultStr(result);
-			result = clamp(result);
+		public DiceRoll onContestRoll() {
+			DiceRoll roll = roll();
+			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat("The potent die grants the utmost magical advantage for %s's roll!",
 				owner);
-			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", owner, roll, bonus, resultStr,
+			bot.sendChannelFormat("%s rolls %s + %s = %s! %s", owner, roll, bonus, resultStr(result),
 				bot.grade(result));
 			return result;
 		}

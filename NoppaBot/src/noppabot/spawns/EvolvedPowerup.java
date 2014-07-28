@@ -7,7 +7,7 @@ package noppabot.spawns;
 import noppabot.*;
 
 
-public abstract class EvolvedPowerup extends Powerup {
+public abstract class EvolvedPowerup<R extends Roll> extends Powerup<R> {
 	protected BasicPowerup base;
 	
 	public EvolvedPowerup(BasicPowerup base) {
@@ -18,11 +18,6 @@ public abstract class EvolvedPowerup extends Powerup {
 	public final EvolvedPowerup initialize(INoppaBot bot) {
 		base.initialize(bot);
 		return this;
-	}
-	
-	@Override
-	public int onContestRoll() {
-		return base.onContestRoll();
 	}
 	
 	@Override
@@ -40,14 +35,10 @@ public abstract class EvolvedPowerup extends Powerup {
 		return base.ownerColored();
 	}
 	
-	public String resultStr(int roll) {
+	public String resultStr(Roll roll) {
 		return base.resultStr(roll);
 	}
 	
-	public int clamp(int roll) {
-		return base.clamp(roll);
-	}
-
 	@Override
 	public String nameColored() {
 		return Color.evolvedPowerup(name());
@@ -81,11 +72,6 @@ public abstract class EvolvedPowerup extends Powerup {
 	@Override
 	public void setIdentified(boolean identified) {
 		base.setIdentified(identified);
-	}
-	
-	@Override
-	public int roll(int sides) {
-		return base.roll(sides);
 	}
 	
 	@Override

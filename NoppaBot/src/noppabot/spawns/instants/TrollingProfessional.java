@@ -69,7 +69,7 @@ public class TrollingProfessional extends Instant {
 		return "Trolling Professional";
 	}
 	
-	public static class Bomb extends BasicPowerup {
+	public static class Bomb extends BasicDie {
 		private static final int dmgSides = 10;
 		private static final int dmgBonus = 10;
 		
@@ -141,18 +141,17 @@ public class TrollingProfessional extends Instant {
 		}
 		
 		@Override
-		public int onContestRoll() {
-			int roll = roll();
+		public DiceRoll onContestRoll() {
+			DiceRoll roll = roll();
 			int damageRoll = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 			int totalDamage = damageRoll + dmgBonus;
-			int result = roll - totalDamage;
-			String resultStr = resultStr(result);
-			result = clamp(result);
+			DiceRoll result = roll.sub(totalDamage);
 			
 			sendDefaultContestRollMessage(roll);
-			bot.sendChannelFormat("The bomb on %s explodes, causing %d + %d = %d damage to the roll! " +
-				"%s's roll drops down to %s.", owner, damageRoll, dmgBonus, totalDamage, ownerColored, resultStr);
-			
+			bot.sendChannelFormat("The bomb on %s explodes, causing %d + %d = %d damage to the roll! "
+				+ "%s's roll drops down to %s.", owner, damageRoll, dmgBonus, totalDamage,
+				ownerColored, resultStr(result));
+
 			return result;
 		}
 		

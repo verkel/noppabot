@@ -4,10 +4,11 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class ExtremeDie extends BasicPowerup {
+public class ExtremeDie extends BasicDie {
 	
 	private static final int sides = 100;
 	private static final int highRollBonusSides = 10;
@@ -44,39 +45,37 @@ public class ExtremeDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
+	public DiceRoll onContestRoll() {
 		return doContestRoll(name(), sides);
 	}
 
-	private int doContestRoll(String dieName, int sides) {
-		int roll = roll(sides);
-		if (roll == 100) {
-			bot.sendChannelFormat("%s rolls d%d with the %s! %s! That's the most extreme roll and the die is ecstatic!", 
+	private DiceRoll doContestRoll(String dieName, int sides) {
+		DiceRoll roll = roll(sides);
+		if (roll.intValue() == 100) {
+			bot.sendChannelFormat("%s rolls d%s with the %s! %s! That's the most extreme roll and the die is ecstatic!", 
 				ownerColored, sides, dieName, resultStr(roll)); 
 			return roll;
 		}
-		else if (roll > 10 && roll < 90) {
-			bot.sendChannelFormat("%s rolls d%d with the %s! %s! This number is quite ordinary, says the die.", 
+		else if (roll.intValue() > 10 && roll.intValue() < 90) {
+			bot.sendChannelFormat("%s rolls d%s with the %s! %s! This number is quite ordinary, says the die.", 
 				ownerColored, sides, dieName, resultStr(roll));
 			return roll;
 		}
-		else if (roll <= 10) {
-			int result = 100 - roll;
-			bot.sendChannelFormat("%s rolls d%d with the %s! %d! This number is very extremal! says the die.", 
+		else if (roll.intValue() <= 10) {
+			DiceRoll result = new DiceRoll(100).sub(roll);
+			bot.sendChannelFormat("%s rolls d%s with the %s! %s! This number is very extremal! says the die.", 
 				owner, sides, dieName, roll);
-			bot.sendChannelFormat("The %s flips %s's roll to the other extreme, it's now 100 - %d = %s!",
+			bot.sendChannelFormat("The %s flips %s's roll to the other extreme, it's now 100 - %s = %s!",
 				dieName, ownerColored, roll, resultStr(result));
 			return result;
 		}
-		else if (roll >= 90) {
-			int bonus = roll(highRollBonusSides);
-			int result = roll + bonus;
-			String resultStr = resultStr(result);
-			result = clamp(result);
-			bot.sendChannelFormat("%s rolls d%d with the %s! %d! This number is very extremal! says the die.", 
+		else if (roll.intValue() >= 90) {
+			DiceRoll bonus = roll(highRollBonusSides);
+			DiceRoll result = roll.add(bonus);
+			bot.sendChannelFormat("%s rolls d%s with the %s! %s! This number is very extremal! says the die.", 
 				owner, sides, dieName, roll);
-			bot.sendChannelFormat("The %s rewards %s with d%d bonus to the roll: %d + %d = %s!",
-				dieName, ownerColored, highRollBonusSides, roll, bonus, resultStr);
+			bot.sendChannelFormat("The %s rewards %s with d%s bonus to the roll: %s + %s = %s!",
+				dieName, ownerColored, highRollBonusSides, roll, bonus, resultStr(result));
 			return result;
 		}
 		throw new IllegalStateException();
@@ -103,7 +102,7 @@ public class ExtremeDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class DaringDie extends EvolvedPowerup {
+	public class DaringDie extends EvolvedDie {
 		
 		private static final int sides = 30;
 		
@@ -112,7 +111,7 @@ public class ExtremeDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
+		public DiceRoll onContestRoll() {
 			return doContestRoll(name(), sides);
 		}
 		
@@ -128,7 +127,7 @@ public class ExtremeDie extends BasicPowerup {
 		
 		@Override
 		public String getUpgradeDescription() {
-			return String.format("Instead of d100, you now roll d%d.", sides);
+			return String.format("Instead of d100, you now roll d%s.", sides);
 		}
 	}
 }

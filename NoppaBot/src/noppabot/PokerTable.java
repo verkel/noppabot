@@ -166,7 +166,7 @@ public class PokerTable {
 			if (onTurnOrRiver && !changed) continue;
 			
 			if (!first) sb.append(" ");
-			sb.append(handRank.toString(true, onTurnOrRiver));
+			sb.append(handRank.toString(p.owner(), true, onTurnOrRiver));
 			first = false;
 		}
 		String handsStr = sb.toString();

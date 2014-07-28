@@ -8,9 +8,9 @@ import noppabot.*;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class ImitatorDie extends BasicPowerup {
+public class ImitatorDie extends BasicDie {
 
-	private Integer lastRoll = null;
+	private DiceRoll lastRoll = null;
 	
 	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
 
@@ -48,8 +48,8 @@ public class ImitatorDie extends BasicPowerup {
 	@Override
 	public boolean canPickUp(String nick, boolean verbose) {
 		if (super.canPickUp(nick, verbose)) {
-			Integer lastRoll = getYesterdaysRoll(nick);
-			if (lastRoll == null || lastRoll == 0) {
+			DiceRoll lastRoll = getYesterdaysRoll(nick);
+			if (lastRoll == null || lastRoll.equals(DiceRoll.ZERO)) {
 				if (verbose) bot.sendChannelFormat("%s: cannot do that, you have no roll to imitate.", Color.nick(nick));
 				return false;
 			}
@@ -64,23 +64,21 @@ public class ImitatorDie extends BasicPowerup {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and teaches how to roll %s to it.", 
-			owner, nameColored(), Color.emphasize(lastRoll));
+			owner, nameColored(), Color.emphasize(lastRoll.intValue()));
 	}
 	
 	@Override
-	public int onContestRoll() {
+	public DiceRoll onContestRoll() {
 		// Owner might've changed, re-retrieve the roll
 		lastRoll = getYesterdaysRoll(owner);
 		
-		if (lastRoll != null && lastRoll > 0) {
-			int penalty = roll(10);
+		if (lastRoll != null && lastRoll.intValue() > 0) {
+			DiceRoll penalty = roll(10);
 			String mimicGrade = getMimicGrade(penalty);
-			int result = lastRoll - penalty;
-			String resultStr = resultStr(result);
-			result = clamp(result);
+			DiceRoll result = lastRoll.sub(penalty);
 			bot.sendChannelFormat("%s's %s mimics the yesterday's roll%s", owner, name(), mimicGrade);
-			bot.sendChannelFormat("%s rolls %d - %d = %s! %s", 
-				ownerColored, lastRoll, penalty, resultStr, bot.grade(result));
+			bot.sendChannelFormat("%s rolls %s - %s = %s! %s", 
+				ownerColored, lastRoll, penalty, resultStr(result), bot.grade(result));
 			return result;
 		}
 		else {
@@ -89,22 +87,23 @@ public class ImitatorDie extends BasicPowerup {
 		}
 	}
 	
-	private String getMimicGrade(int penalty) {
-		if (penalty == 1) return " very skillfully!";
-		if (penalty <= 3) return " with great confidence.";
-		if (penalty <= 5) return " with good results.";
-		if (penalty <= 7) return ", but makes some mistakes.";
-		if (penalty <= 9) return ", albeit with great difficulty.";
+	private String getMimicGrade(DiceRoll penalty) {
+		int p = penalty.intValue();
+		if (p == 1) return " very skillfully!";
+		if (p <= 3) return " with great confidence.";
+		if (p <= 5) return " with good results.";
+		if (p <= 7) return ", but makes some mistakes.";
+		if (p <= 9) return ", albeit with great difficulty.";
 		return ", but you barely recognize it as the same roll.";
 	}
 
-	private Integer getYesterdaysRoll(String nick) {
+	private DiceRoll getYesterdaysRoll(String nick) {
 		Integer lastRoll = null;
 		RollRecords records = bot.loadRollRecords();
 		if (records != null) {
 			lastRoll = records.getOrAddUser(nick).lastRolls.peekFirst();
 		}
-		return lastRoll;
+		return new DiceRoll(lastRoll);
 	}
 
 	@Override
@@ -128,7 +127,7 @@ public class ImitatorDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class GroundhogDie extends EvolvedPowerup {
+	public class GroundhogDie extends EvolvedDie {
 		
 		private static final int bonus = 10;
 		
@@ -137,14 +136,13 @@ public class ImitatorDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
+		public DiceRoll onContestRoll() {
 			lastRoll = getYesterdaysRoll(owner);
 			
-			if (lastRoll != null && lastRoll > 0) {
-				int result = lastRoll;
+			if (lastRoll != null && lastRoll.intValue() > 0) {
+				DiceRoll result = lastRoll;
 				bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.", owner);
 				sendDefaultContestRollMessage(result);
-				result = clamp(result);
 				return result;
 			}
 			else {

@@ -8,7 +8,7 @@ import noppabot.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
 
-public abstract class BasicPowerup extends Powerup {
+public abstract class BasicPowerup<R extends Roll> extends Powerup<R> {
 	
 	protected INoppaBot bot;
 	protected boolean colorOwner = true;
@@ -87,22 +87,8 @@ public abstract class BasicPowerup extends Powerup {
 		bot.sendChannelFormat(Color.expires(msg), args);
 	}
 
-	/**
-	 * Say the appropriate roll message and return the modified roll
-	 * 
-	 * @return a modified roll
-	 */
-	@Override
-	public int onContestRoll() {
-		return bot.doRoll(owner, 100);
-	}
-	
-	public String resultStr(int roll) {
-		return bot.rollToString(roll, colorRoll);
-	}
-	
-	public int clamp(int roll) {
-		return bot.clampRoll(roll);
+	public String resultStr(Roll result) {
+		return result.toString(colorRoll, bot);
 	}
 	
 	@Override
@@ -120,12 +106,7 @@ public abstract class BasicPowerup extends Powerup {
 		return ownerColored;
 	}
 	
-	@Override
-	public int roll(int sides) {
-		return bot.getRoll(owner, sides);
-	}
-	
-	public void sendDefaultContestRollMessage(int roll) {
+	public void sendDefaultContestRollMessage(DiceRoll roll) {
 		bot.sendDefaultContestRollMessage(owner, roll, colorOwner, colorRoll);
 	}
 	

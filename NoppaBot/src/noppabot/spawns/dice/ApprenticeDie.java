@@ -4,10 +4,11 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class ApprenticeDie extends BasicPowerup {
+public class ApprenticeDie extends BasicDie {
 
 	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
 
@@ -40,7 +41,7 @@ public class ApprenticeDie extends BasicPowerup {
 	}
 	
 	@Override
-	public int onContestRoll() {
+	public DiceRoll onContestRoll() {
 		bot.sendChannelFormat("%s rolls with the apprentice die, but it really just wanted " +
 			"to see the Master Die do it, first.", ownerColored);
 		return super.onContestRoll(); // Normal behaviour

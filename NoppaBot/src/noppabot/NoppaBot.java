@@ -802,27 +802,27 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			return;
 		}
 
-		List<Entry<String, Integer>> rollsList = rolls.orderedList();
+		List<Entry<String, Roll>> rollsList = rolls.orderedList();
 		
 		StringBuilder buf = new StringBuilder();
 		buf.append("Rolls: ");
 		boolean first = true;
-		for (Entry<String, Integer> entry : rollsList) {
+		for (Entry<String, Roll> entry : rollsList) {
 			String nick = entry.getKey();
-			int roll = entry.getValue();
+			Roll roll = entry.getValue();
 			if (!first) buf.append(", ");
-			buf.append(String.format("%s %s(%s)", colorRoll(roll), offTargetInfo(roll), Color.antiHilight(nick)));
+			buf.append(String.format("%s %s(%s)", roll.toString(true, this), offTargetInfo(roll), Color.antiHilight(nick)));
 			first = false;
 		}
 		if (buf.length() > 0) sendChannel(buf.toString());
 		else sendChannel("Nobody has rolled yet.");
 	}
 	
-	private String offTargetInfo(int roll) {
+	private String offTargetInfo(Roll roll) {
 		if (rules.winCondition.get() instanceof RollClosestToTarget) {
 			RollClosestToTarget winCond = (RollClosestToTarget)rules.winCondition.get();
 			int rollTarget = winCond.getRollTarget();
-			int dist = Math.abs(rollTarget - roll);
+			int dist = Math.abs(rollTarget - roll.intValue());
 			return Color.custom("[" + dist + " off] ", Colors.WHITE);
 		}
 		else return "";
@@ -952,7 +952,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (sides == 100 && rollWillParticipate) {
 			
 			// Generate a roll
-			int roll;
+			Roll roll;
 			if (powerups.containsKey(nick)) {
 				// ... with the carried power-up
 				Powerup powerup = powerups.get(nick);
@@ -988,8 +988,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public int doRoll(String nick, int sides) {
-		int roll = getRoll(nick, sides);
+	public DiceRoll doRoll(String nick, int sides) {
+		DiceRoll roll = getRoll(nick, sides);
 		if (sides == 100) {
 			sendDefaultContestRollMessage(nick, roll, true, rollWillParticipate(nick));
 		}
@@ -1000,22 +1000,22 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return roll;
 	}
 
-	private int fireEarlyOpponentRolled(String nick, int roll) {
+	private Roll fireEarlyOpponentRolled(String nick, Roll roll) {
 		// Early -- can modify the roll
 		for (String powerupOwner : powerups.keySet()) {
 			if (!powerupOwner.equals(nick)) {
-				Powerup powerup = powerups.get(powerupOwner);
+				Powerup<?> powerup = powerups.get(powerupOwner);
 				roll = powerup.onOpponentRoll(nick, roll);
 			}
 		}
 		return roll;
 	}
 
-	private void fireLateOpponentRolled(String nick, int roll) {
+	private void fireLateOpponentRolled(String nick, Roll roll) {
 		// Late -- the roll is now determined, do something else
 		for (String powerupOwner : powerups.keySet()) {
 			if (!powerupOwner.equals(nick)) {
-				Powerup powerup = powerups.get(powerupOwner);
+				Powerup<?> powerup = powerups.get(powerupOwner);
 				powerup.onOpponentRollLate(nick, roll);
 			}
 		}
@@ -1023,21 +1023,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 
 	@Override
-	public void sendDefaultContestRollMessage(String nick, int roll, boolean colorNick, boolean colorRoll) {
+	public void sendDefaultContestRollMessage(String nick, DiceRoll roll, boolean colorNick, boolean colorRoll) {
 		sendChannel(getDefaultContestRollMessage(nick, roll, colorNick, colorRoll));
 	}
 
 	@Override
-	public String getDefaultContestRollMessage(String nick, int roll, boolean colorNick, boolean colorRoll) {
+	public String getDefaultContestRollMessage(String nick, DiceRoll roll, boolean colorNick, boolean colorRoll) {
 		String participatedMsg = participated(nick) ? 
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
-		String rollStr = rollToString(roll, colorRoll);
+		String rollStr = roll.toString(colorRoll, this);
 		String nickColored = colorNick ? Color.nick(nick) : nick;
 		return String.format("%s rolls %s! %s%s", nickColored, rollStr, grade(roll), participatedMsg);
 	}
 	
 	@Override
-	public String grade(int roll) {
+	public String grade(Roll roll) {
 		int score = rules.winCondition.get().assignScore(roll);
 		if (score >= 100) return "You showed us....the ULTIMATE roll!";
 		else if (score >= 95) return "You are a super roller!";
@@ -1056,7 +1056,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public void participate(String nick, int rollValue) {
+	public void participate(String nick, Roll rollValue) {
 		if (state == State.ROLL_PERIOD && !rolls.participated(nick)) {
 			rolls.put(nick, rollValue);
 			if (isOvertime()) tryEndRollPeriod();
@@ -1079,7 +1079,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return rolls.participated(nick);
 	}
 	
-	private int participatingRoll(String nick) {
+	private Roll participatingRoll(String nick) {
 		return rolls.get(nick);
 	}
 	
@@ -1198,7 +1198,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		lastTiebreakPeriodStartTime = Calendar.getInstance();
 		String tiebreakersStr = StringUtils.join(winningRollers, ", ");
-		int roll = rolls.get(winningRollers.get(0));
+		Roll roll = rolls.get(winningRollers.get(0));
 		String msg = String.format(
 			"The roll %d was tied between %s. Roll again within 10 minutes to settle the score!", 
 			roll, tiebreakersStr);
@@ -1284,8 +1284,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void endRollPeriod(List<String> winningRollers) {
 		String winner = winningRollers.get(0);
-		int roll = rolls.get(winner);
-		String msg = String.format(randomRollEndMsg(), Color.nick(winner), colorRoll(roll));
+		Roll roll = rolls.get(winner);
+		String msg = String.format(randomRollEndMsg(), Color.nick(winner), roll.toString(true, this));
 		sendChannel(msg);
 		
 		updateRecords(winner);
@@ -1323,8 +1323,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		// Add the today's roll for everyone
 		for (User user : rec.users) {
 			if (rolls.participated(user.nick)) {
-				int roll = rolls.get(user.nick);
-				user.addRoll(roll);
+				Roll roll = rolls.get(user.nick);
+				user.addRoll(roll.intValue()); // At this point we switch to the int world
 				user.participation++;
 			}
 			else {
@@ -1416,7 +1416,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public int getRoll(String nick, int sides) {
+	public DiceRoll getRoll(String nick, int sides) {
 		PeekableRandom random = getRandomFor(nick);
 		return random.roll(sides);
 	}
@@ -1434,7 +1434,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public void setNextRoll(String nick, int sides, int roll) {
+	public void setNextRoll(String nick, int sides, DiceRoll roll) {
 		PeekableRandom random = getRandomFor(nick);
 		random.setNextRoll(sides, roll);
 	}
@@ -1521,35 +1521,35 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	public String colorRoll(int roll) {
-		if (rolls.isWinningRoll(roll)) return Color.winningRoll(roll);
-		else return Color.losingRoll(roll);
-	}
-	
-	@Override
-	public String rollToString(int roll) {
-		return rollToString(roll, true);
-	}
-	
-	@Override
-	public String rollToString(int roll, boolean colorRoll) {
-		if (roll <= 100 && roll >= 0) {
-			return maybeColorRoll(roll, colorRoll);
-		}
-		else {
-			if (rules.cappedRolls.get()) {
-				return String.format("%d (= %s)", roll, maybeColorRoll(clampRoll(roll), colorRoll));
-			}
-			else {
-				return maybeColorRoll(roll, colorRoll);
-			}
-		}
-	}
-	
-	private String maybeColorRoll(int roll, boolean colorRoll) {
-		if (colorRoll) return colorRoll(roll); // Color it green/red
-		else return Color.emphasize(roll); // Color it hilighted white
-	}
+//	public String colorRoll(int roll) {
+//		if (rolls.isWinningRoll(roll)) return Color.winningRoll(roll);
+//		else return Color.losingRoll(roll);
+//	}
+//	
+//	@Override
+//	public String rollToString(int roll) {
+//		return rollToString(roll, true);
+//	}
+//	
+//	@Override
+//	public String rollToString(int roll, boolean colorRoll) {
+//		if (roll <= 100 && roll >= 0) {
+//			return maybeColorRoll(roll, colorRoll);
+//		}
+//		else {
+//			if (rules.cappedRolls.get()) {
+//				return String.format("%d (= %s)", roll, maybeColorRoll(clampRoll(roll), colorRoll));
+//			}
+//			else {
+//				return maybeColorRoll(roll, colorRoll);
+//			}
+//		}
+//	}
+//	
+//	private String maybeColorRoll(int roll, boolean colorRoll) {
+//		if (colorRoll) return colorRoll(roll); // Color it green/red
+//		else return Color.emphasize(roll); // Color it hilighted white
+//	}
 	
 //	private void revealPokerTableCards() {
 //		boolean cardsFound = false;
@@ -1577,11 +1577,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		pokerTableCards.sort();
 //	}
 	
-	@Override
-	public int clampRoll(int roll) {
-		if (rules.cappedRolls.get()) return Math.max(0, Math.min(100, roll));
-		else return roll;
-	}
+//	@Override
+//	public int clampRoll(int roll) {
+//		if (rules.cappedRolls.get()) return Math.max(0, Math.min(100, roll));
+//		else return roll;
+//	}
 	
 	@Override
 	public int getPowerupSides(String nick) {

@@ -4,7 +4,7 @@
  */
 package noppabot.spawns;
 
-import noppabot.Color;
+import noppabot.*;
 
 
 public abstract class Instant extends BasicPowerup {
@@ -40,5 +40,10 @@ public abstract class Instant extends BasicPowerup {
 	@Override
 	public int sides() {
 		return -1;
+	}
+	
+	@Override
+	public Roll onContestRoll() {
+		return null;
 	}
 }

@@ -10,7 +10,7 @@ import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.events.RulesChange;
 
 
-public class VariableDie extends BasicPowerup {
+public class VariableDie extends BasicDie {
 
 	private int sides;
 	
@@ -50,17 +50,15 @@ public class VariableDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
-		int result = doContestRoll(name());
+	public DiceRoll onContestRoll() {
+		DiceRoll result = doContestRoll(name());
 		return result;
 	}
 
-	private int doContestRoll(String dieName) {
-		int result = bot.getRoll(owner, sides);
-		String resultStr = resultStr(result);
-		result = clamp(result);
+	private DiceRoll doContestRoll(String dieName) {
+		DiceRoll result = bot.getRoll(owner, sides);
 		bot.sendChannelFormat("%s rolls d%d with %s... %s! %s", 
-			ownerColored, sides, dieName, resultStr, bot.grade(result));
+			ownerColored, sides, dieName, resultStr(result), bot.grade(result));
 		return result;
 	}
 
@@ -92,7 +90,7 @@ public class VariableDie extends BasicPowerup {
 		return new ChaosDie();
 	}
 	
-	public class ChaosDie extends EvolvedPowerup {
+	public class ChaosDie extends EvolvedDie {
 		private String ruleChangeDescr;
 		
 		public ChaosDie() {
@@ -103,8 +101,8 @@ public class VariableDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
-			int result = doContestRoll(name());
+		public DiceRoll onContestRoll() {
+			DiceRoll result = doContestRoll(name());
 			return result;
 		}
 		

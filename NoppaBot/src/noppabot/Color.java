@@ -25,12 +25,12 @@ public class Color {
 		return custom(nick, Colors.TEAL);
 	}
 	
-	public static String winningRoll(int roll) {
-		return custom(String.valueOf(roll), Colors.GREEN);
+	public static String winningRoll(Roll roll) {
+		return custom(roll.toString(), Colors.GREEN);
 	}
 	
-	public static String losingRoll(int roll) {
-		return custom(String.valueOf(roll), Colors.RED);
+	public static String losingRoll(Roll roll) {
+		return custom(roll.toString(), Colors.RED);
 	}
 	
 	public static String basicPowerup(String powerup) {
@@ -59,6 +59,10 @@ public class Color {
 
 	public static String emphasize(String msg) {
 		return custom(msg, Colors.WHITE);
+	}
+	
+	public static String emphasize(Roll roll) {
+		return emphasize(String.valueOf(roll.intValue()));
 	}
 	
 	public static String rulesMode(String name) {

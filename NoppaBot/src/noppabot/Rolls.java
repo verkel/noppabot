@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 
 public class Rolls {
 	private INoppaBot bot;
-	private Map<String, Integer> forParticipant = new HashMap<String, Integer>();
-	private NavigableSet<Integer> values;
+	private Map<String, Roll> forParticipant = new HashMap<String, Roll>();
+	private NavigableSet<Roll> values;
 	
 	public Rolls(INoppaBot bot) {
 		this.bot = bot;
@@ -20,8 +20,8 @@ public class Rolls {
 	
 	public void onWinConditionChanged() {
 		// Recreate the values set with different comparator
-		Comparator<Integer> cmp = getRollComparator();
-		NavigableSet<Integer> newValues = new TreeSet<Integer>(cmp);
+		Comparator<Roll> cmp = getRollComparator();
+		NavigableSet<Roll> newValues = new TreeSet<Roll>(cmp);
 		if (values != null) newValues.addAll(values);
 		values = newValues;
 	}
@@ -38,12 +38,12 @@ public class Rolls {
 		return forParticipant.containsKey(nick);
 	}
 	
-	public void put(String nick, int roll) {
+	public void put(String nick, Roll roll) {
 		forParticipant.put(nick, roll);
 		values.add(roll);
 	}
 	
-	public int get(String nick) {
+	public Roll get(String nick) {
 		return forParticipant.get(nick);
 	}
 	
@@ -52,10 +52,10 @@ public class Rolls {
 		values.clear();
 	}
 	
-	public boolean isWinningRoll(int roll) {
+	public boolean isWinningRoll(Roll roll) {
 		if (values.isEmpty()) return true;
 		else {
-			int topRoll = values.first();
+			Roll topRoll = values.first();
 			// The equivalent rolls listed first are currently winning
 			return getRollComparator().compare(roll, topRoll) <= 0;
 		}
@@ -64,25 +64,25 @@ public class Rolls {
 	public List<String> getWinningRollers() {
 		if (values.isEmpty()) return Collections.emptyList();
 		else {
-			int topRoll = values.first();
+			Roll topRoll = values.first();
 			List<String> winningRollers = new ArrayList<String>();
 			for (String nick : participants()) {
-				int roll = get(nick);
+				Roll roll = get(nick);
 				if (roll == topRoll) winningRollers.add(nick);
 			}
 			return winningRollers;
 		}
 	}
 	
-	public List<Entry<String, Integer>> orderedList() {
-		List<Entry<String, Integer>> rollsList = new ArrayList<Entry<String, Integer>>();
-		Comparator<Entry<String, Integer>> comp = bot.getRules().winCondition.get().rollEntryComparator;
+	public List<Entry<String, Roll>> orderedList() {
+		List<Entry<String, Roll>> rollsList = new ArrayList<Entry<String, Roll>>();
+		Comparator<Entry<String, Roll>> comp = bot.getRules().winCondition.get().rollEntryComparator;
 		rollsList.addAll(forParticipant.entrySet());
 		Collections.sort(rollsList, comp);
 		return rollsList;
 	}
 	
-	private Comparator<Integer> getRollComparator() {
+	private Comparator<Roll> getRollComparator() {
 		return bot.getRules().winCondition.get().rollComparator;
 	}
 }

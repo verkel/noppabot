@@ -222,6 +222,11 @@ public class GenerateItemList {
 		public SpawnInfo<?> spawnInfo() {
 			return null;
 		}
+
+		@Override
+		public Roll onContestRoll() {
+			return null;
+		}
 	}
 
 	private void testBasicDice() {
@@ -422,7 +427,7 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = powerup.onContestRoll();
+			int roll = powerup.onContestRoll().intValue();
 			if (printRolls) System.out.println(roll);
 			sum += roll;
 		}
@@ -433,7 +438,7 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = powerup.onContestRoll();
+			int roll = powerup.onContestRoll().intValue();
 			double diff = roll - ev;
 			sum += diff*diff;
 		}
@@ -453,8 +458,8 @@ public class GenerateItemList {
 			// EV
 			double sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRoll(TESTER_NAME, 100);
-				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100);
+				int roll = bot.getRoll(TESTER_NAME, 100).intValue();
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100).intValue();
 				sum += roll;
 			}
 			ev = sum / iterations;
@@ -463,8 +468,8 @@ public class GenerateItemList {
 			// SD
 			sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRoll(TESTER_NAME, 100);
-				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100);
+				int roll = bot.getRoll(TESTER_NAME, 100).intValue();
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100).intValue();
 				double diff = roll - ev;
 				sum += diff*diff;
 			}
@@ -511,22 +516,18 @@ public class GenerateItemList {
 		}
 		
 		@Override
-		public void participate(String nick, int rollValue) {
-		}
-		
-		@Override
 		public RollRecords loadRollRecords() {
 			return null;
 		}
 		
 		@Override
-		public String grade(int value) {
+		public String grade(Roll value) {
 			return null;
 		}
 		
 		@Override
-		public int getRoll(String nick, int sides) {
-			return rnd.nextInt(sides)+1;
+		public DiceRoll getRoll(String nick, int sides) {
+			return new DiceRoll(rnd.nextInt(sides)+1);
 		}
 		
 		@Override
@@ -592,39 +593,13 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public int clampRoll(int roll) {
-			return Math.max(0, Math.min(100, roll));
-		}
-
-		@Override
-		public String rollToString(int roll) {
-			return null;
-		}
-
-		@Override
 		public SpawnTask scheduleRandomSpawn(Calendar spawnTime,
 			Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
 			return null;
 		}
 
 		@Override
-		public String rollToString(int roll, boolean colorRoll) {
-			return null;
-		}
-
-		@Override
-		public void sendDefaultContestRollMessage(String nick, int value, boolean colorNick,
-			boolean colorRoll) {
-		}
-
-		@Override
-		public String getDefaultContestRollMessage(String nick, int value, boolean colorNick,
-			boolean colorRoll) {
-			return null;
-		}
-
-		@Override
-		public int doRoll(String nick, int sides) {
+		public DiceRoll doRoll(String nick, int sides) {
 			return getRoll(nick, sides);
 		}
 
@@ -639,7 +614,7 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public void setNextRoll(String nick, int sides, int roll) {
+		public void setNextRoll(String nick, int sides, DiceRoll roll) {
 		}
 
 		@Override
@@ -681,6 +656,21 @@ public class GenerateItemList {
 		@Override
 		public PeekedRoll peekRoll(String nick, int sides) {
 			return null;
+		}
+
+		@Override
+		public String getDefaultContestRollMessage(String nick, DiceRoll value, boolean colorNick,
+			boolean colorRoll) {
+			return null;
+		}
+
+		@Override
+		public void participate(String nick, Roll rollValue) {
+		}
+
+		@Override
+		public void sendDefaultContestRollMessage(String nick, DiceRoll roll, boolean colorNick,
+			boolean colorRoll) {
 		}
 	}
 	

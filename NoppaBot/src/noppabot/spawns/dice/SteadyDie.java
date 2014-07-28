@@ -4,10 +4,11 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class SteadyDie extends BasicPowerup {
+public class SteadyDie extends BasicDie {
 
 	public static final int bonus = 30;
 	public static final int sides = 70;
@@ -42,14 +43,12 @@ public class SteadyDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
-		int roll = roll(sides);
-		int result = roll + bonus;
-		String resultStr = resultStr(result);
-		result = clamp(result);
-		bot.sendChannelFormat("%s rolls d%d + %d with the steady die.", owner, sides, bonus);
-		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
-			bot.grade(result));
+	public DiceRoll onContestRoll() {
+		DiceRoll roll = roll(sides);
+		DiceRoll result = roll.add(bonus);
+		bot.sendChannelFormat("%s rolls d%s + %s with the steady die.", owner, sides, bonus);
+		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus,
+			resultStr(result), bot.grade(result));
 		return result;
 	}
 
@@ -74,7 +73,7 @@ public class SteadyDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class TrustyDie extends EvolvedPowerup {
+	public class TrustyDie extends EvolvedDie {
 		public static final int bonus = 50;
 		public static final int sides = 50;
 		
@@ -83,14 +82,12 @@ public class SteadyDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
-			int roll = roll(sides);
-			int result = roll + bonus;
-			String resultStr = resultStr(result);
-			result = clamp(result);
-			bot.sendChannelFormat("%s rolls d%d + %d with the trusty die.", owner, sides, bonus);
-			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
-				bot.grade(result));
+		public DiceRoll onContestRoll() {
+			DiceRoll roll = roll(sides);
+			DiceRoll result = roll.add(bonus);
+			bot.sendChannelFormat("%s rolls d%s + %s with the trusty die.", owner, sides, bonus);
+			bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus,
+				resultStr(result), bot.grade(result));
 			return result;
 		}
 		

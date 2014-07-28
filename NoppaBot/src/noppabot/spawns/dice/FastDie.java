@@ -4,11 +4,11 @@
  */
 package noppabot.spawns.dice;
 
-import noppabot.MathUtils;
+import noppabot.*;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class FastDie extends BasicPowerup {
+public class FastDie extends BasicDie {
 
 	private static final int maxBonus = 20;
 	
@@ -48,17 +48,17 @@ public class FastDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
-		int roll = roll();
+	public DiceRoll onContestRoll() {
+		DiceRoll roll = roll();
 		int seconds = bot.getSecondsAfterPeriodStart();
 		int penalty = MathUtils.clamp(seconds - 10, 0, maxBonus);
 		int bonus = maxBonus - penalty;
-		int result = roll + bonus;
-		String resultStr = resultStr(result);
-		result = clamp(result);
-		bot.sendChannelFormat("%s waited %d seconds before rolling. The fast die awards %d - %d = %d speed bonus!", 
+		DiceRoll result = roll.add(bonus);
+		bot.sendChannelFormat(
+			"%s waited %s seconds before rolling. The fast die awards %s - %s = %s speed bonus!",
 			owner, seconds, maxBonus, penalty, bonus);
-		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr, bot.grade(result));
+		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus,
+			resultStr(result), bot.grade(result));
 		return result;
 	}
 
@@ -83,7 +83,7 @@ public class FastDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class FasterDie extends EvolvedPowerup {
+	public class FasterDie extends EvolvedDie {
 		
 		private static final int maxBonus = 30;
 		
@@ -92,17 +92,17 @@ public class FastDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
-			int roll = roll();
+		public DiceRoll onContestRoll() {
+			DiceRoll roll = roll();
 			int seconds = bot.getSecondsAfterPeriodStart();
 			int penalty = MathUtils.clamp(seconds, 0, maxBonus);
 			int bonus = maxBonus - penalty;
-			int result = roll + bonus;
-			String resultStr = resultStr(result);
-			result = clamp(result);
-			bot.sendChannelFormat("%s waited %d seconds before rolling. The faster die awards %d - %d = %d speed bonus!", 
+			DiceRoll result = roll.add(bonus);
+			bot.sendChannelFormat(
+				"%s waited %s seconds before rolling. The faster die awards %s - %s = %s speed bonus!",
 				owner, seconds, maxBonus, penalty, bonus);
-			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr, bot.grade(result));
+			bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus,
+				resultStr(result), bot.grade(result));
 			return result;
 		}
 		

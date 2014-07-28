@@ -4,12 +4,13 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.evolved.CrushingDie;
 
 
-public class WeightedDie extends BasicPowerup {
+public class WeightedDie extends BasicDie {
 
 	public static final int bonus = 10;
 	
@@ -44,14 +45,12 @@ public class WeightedDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
-		int roll = roll();
-		int result = roll + bonus;
-		String resultStr = resultStr(result);
-		result = clamp(result);
+	public DiceRoll onContestRoll() {
+		DiceRoll roll = roll();
+		DiceRoll result = roll.add(bonus);
 		bot.sendChannelFormat(
 			"%s's weighted die is so fairly weighted, that the roll goes very smoothly!", owner);
-		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
+		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored, roll, bonus, resultStr(result),
 			bot.grade(result));
 		return result;
 	}

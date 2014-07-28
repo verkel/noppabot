@@ -4,10 +4,11 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class PolishedDie extends BasicPowerup {
+public class PolishedDie extends BasicDie {
 
 	public static final int bonus = 5;
 
@@ -41,14 +42,12 @@ public class PolishedDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
-		int roll = roll();
-		int result = roll + bonus;
-		String resultStr = resultStr(result);
-		result = clamp(result);
+	public DiceRoll onContestRoll() {
+		DiceRoll roll = roll();
+		DiceRoll result = roll.add(bonus);
 		bot.sendChannelFormat("The polished die adds a nice bonus to %s's roll.", owner);
-		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
-			bot.grade(result));
+		bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus,
+			resultStr(result), bot.grade(result));
 		return result;
 	}
 
@@ -73,7 +72,7 @@ public class PolishedDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class VeryPolishedDie extends EvolvedPowerup {
+	public class VeryPolishedDie extends EvolvedDie {
 		private String name = "Very Polished Die";
 		private int bonus = PolishedDie.bonus + 10;
 		
@@ -82,13 +81,11 @@ public class PolishedDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
-			int roll = roll();
-			int result = roll + bonus;
-			String resultStr = resultStr(result);
-			result = clamp(result);
+		public DiceRoll onContestRoll() {
+			DiceRoll roll = roll();
+			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat("The %s adds a sweet bonus to %s's roll.", name.toLowerCase(), owner);
-			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr,
+			bot.sendChannelFormat("%s rolls %d + %d = %s! %s", ownerColored, roll, bonus, resultStr(result),
 				bot.grade(result));
 			return result;
 		}

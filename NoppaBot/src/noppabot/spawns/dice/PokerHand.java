@@ -5,7 +5,7 @@
 package noppabot.spawns.dice;
 
 import static ca.ualberta.cs.poker.HandEvaluator.*;
-import noppabot.Color;
+import noppabot.*;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
@@ -15,7 +15,7 @@ import ca.ualberta.cs.poker.*;
 
 import com.google.common.base.Objects;
 
-public class PokerHand extends BasicPowerup {
+public class PokerHand extends BasicPowerup<Roll> {
 	
 //	private static HandEvaluator evaluator = new HandEvaluator();
 
@@ -86,7 +86,7 @@ public class PokerHand extends BasicPowerup {
 	}
 	
 	@Override
-	public int onContestRoll() {
+	public Roll onContestRoll() {
 		try {
 			if (bot.getRules().isPokerNight()) return onPokerNightContestRoll();
 			else return onRegularContestRoll();
@@ -95,25 +95,25 @@ public class PokerHand extends BasicPowerup {
 			e.printStackTrace();
 			bot.sendChannelFormat("%s: sorry, I couldn't calculate value of your hand. :( " +
 				"It was: %s. Let's roll normal d100 instead.", owner, hand);
-			return super.onContestRoll();
+			return bot.doRoll(owner, 100);
 		}
 	}
 
-	private int onPokerNightContestRoll() {
-		HandRank rank = new HandRank();
-		int result = rank.rank;
-		boolean winning = bot.getRolls().isWinningRoll(result);
+	private HandRank onPokerNightContestRoll() {
+		HandRank rank = new HandRank(bot.getPokerTable(), hand);
+//		int result = rank.rank;
+		boolean winning = bot.getRolls().isWinningRoll(rank);
 		String color = winning ? Colors.GREEN : Colors.RED;
 		
 		bot.sendChannelFormat("%s reveals the cards: %s. %s has %s!",
 			owner, hand.toString(), owner, Color.custom(rank.name, color));
 		
-		return result;
+		return rank;
 	}
 
-	private int onRegularContestRoll() {
-		int roll = roll();
-		HandRank rank = new HandRank();
+	private DiceRoll onRegularContestRoll() {
+		DiceRoll roll = bot.getRoll(owner, 100);
+		HandRank rank = new HandRank(bot.getPokerTable(), hand);
 		
 		int rankPoints;
 		if (rank.type == 0) {
@@ -122,14 +122,12 @@ public class PokerHand extends BasicPowerup {
 		else {
 			rankPoints = handRankBonuses[rank.type];
 		}
-		int result = roll + rankPoints;
-		String resultStr = resultStr(result);
-		result = clamp(result);
+		DiceRoll result = roll.add(rankPoints);
 		
 		bot.sendChannelFormat("%s reveals the cards: %s. %s has %s! This hand gives a +%d bonus to the roll.",
 			owner, hand.toString(), owner, Color.emphasize(rank.name), rankPoints);
 		
-		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored(), roll, rankPoints, resultStr, bot.grade(result));
+		bot.sendChannelFormat("%s rolls %s + %s = %s! %s", ownerColored(), roll, rankPoints, resultStr(result), bot.grade(result));
 		
 		return result;
 	}
@@ -139,7 +137,7 @@ public class PokerHand extends BasicPowerup {
 	}
 	
 	public HandRank getHandRank() {
-		HandRank hr = new HandRank();
+		HandRank hr = new HandRank(bot.getPokerTable(), hand);
 		handRankChanged = !Objects.equal(lastHandRank, hr);
 		lastHandRank = hr;
 		return hr;
@@ -199,9 +197,12 @@ public class PokerHand extends BasicPowerup {
 		hand.sort();
 	}
 	
-	public class HandRank {
-		public HandRank() {
-			Hand tableCards = bot.getPokerTable().cards;
+	public static class HandRank implements Roll {
+		private Hand hand;
+
+		public HandRank(PokerTable table, Hand hand) {
+			this.hand = hand;
+			Hand tableCards = table.cards;
 			Hand combinedHand = new Hand(hand);
 			for (int i = 1; i <= tableCards.size(); i++) {
 				boolean added = combinedHand.addCard(tableCards.getCard(i));
@@ -215,13 +216,6 @@ public class PokerHand extends BasicPowerup {
 			highCardBonus = HandEvaluator.getSecondaryGrade(rank);
 		}
 		
-		public String toString(boolean listFormat, boolean now) {
-			String nowStr = now ? " now" : "";
-			if (listFormat) return String.format("%s%s has %s: %s!", Color.nick(Color.antiHilight(owner)),
-				nowStr, cardsToString(), Color.emphasize(name));
-			return String.format("%s%s has %s!", owner, nowStr, Color.emphasize(name));
-		}
-		
 		public String name;
 		public int rank;
 		public int type;
@@ -231,7 +225,7 @@ public class PokerHand extends BasicPowerup {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
+//			result = prime * result + getOuterType().hashCode();
 			result = prime * result + highCardBonus;
 			result = prime * result + type;
 			return result;
@@ -243,15 +237,37 @@ public class PokerHand extends BasicPowerup {
 			if (obj == null) return false;
 			if (getClass() != obj.getClass()) return false;
 			HandRank other = (HandRank)obj;
-			if (!getOuterType().equals(other.getOuterType())) return false;
+//			if (!getOuterType().equals(other.getOuterType())) return false;
 			if (highCardBonus != other.highCardBonus) return false;
 			if (type != other.type) return false;
 			return true;
 		}
 
-		private PokerHand getOuterType() {
-			return PokerHand.this;
+		@Override
+		public int intValue() {
+			return rank;
 		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+		
+		@Override
+		public String toString(boolean color, INoppaBot bot) {
+			return Roll.maybeColorRoll(this, color, bot);
+		}
+		
+		public String toString(String owner, boolean listFormat, boolean now) {
+			String nowStr = now ? " now" : "";
+			if (listFormat) return String.format("%s%s has %s: %s!", Color.nick(Color.antiHilight(owner)),
+				nowStr, hand.toString(), Color.emphasize(name));
+			return String.format("%s%s has %s!", owner, nowStr, Color.emphasize(name));
+		}
+
+//		private PokerHand getOuterType() {
+//			return PokerHand.this;
+//		}
 	}
 	
 	public class BetterHand extends EvolvedPowerup {
@@ -265,6 +281,11 @@ public class PokerHand extends BasicPowerup {
 		public BetterHand() {
 			super(PokerHand.this);
 			takeHigherCards();
+		}
+		
+		@Override
+		public Roll onContestRoll() {
+			return base.onContestRoll();
 		}
 		
 		public void trash() {
@@ -340,7 +361,7 @@ public class PokerHand extends BasicPowerup {
 		@Override
 		public String getUpgradeDescription() {
 //			return String.format("Your cards increase in rank, you now have: %s", hand);
-			return String.format("Your cards increase in rank. %s", getHandRank().toString(true, true));
+			return String.format("Your cards increase in rank. %s", getHandRank().toString(owner, true, true));
 		}
 	}
 }

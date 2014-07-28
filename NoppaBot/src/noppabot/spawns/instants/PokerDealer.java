@@ -107,8 +107,8 @@ public class PokerDealer extends Instant {
 		bot.getPowerups().put(owner, cards);
 		cards.setOwner(owner);
 //		bot.sendChannelFormat("%s is dealt a hand of %s!", ownerColored, cards.nameColored());
-		bot.sendChannelFormat("The %s deals hand of %s to %s! %s", 
-			nameColored(), cards.cardsToString(), ownerColored, cards.getHandRank().toString(false, false));
+		bot.sendChannelFormat("The %s deals hand of %s to %s! %s", nameColored(),
+			cards.cardsToString(), ownerColored, cards.getHandRank().toString(owner, false, false));
 		cardsLeft--;
 		
 		if (cardsLeft == 0) {

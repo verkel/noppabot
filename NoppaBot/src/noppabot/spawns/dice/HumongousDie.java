@@ -6,7 +6,7 @@ package noppabot.spawns.dice;
 
 import java.io.UnsupportedEncodingException;
 
-import noppabot.INoppaBot;
+import noppabot.*;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.evolved.CrushingDie;
@@ -15,7 +15,7 @@ import org.gnu.jfiglet.FIGDriver;
 import org.gnu.jfiglet.core.*;
 
 
-public class HumongousDie extends BasicPowerup {
+public class HumongousDie extends BasicDie {
 	
 	private static FIGDriver figDriver;
 	private static FIGFont font;
@@ -65,13 +65,20 @@ public class HumongousDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
+	public DiceRoll onContestRoll() {
 		return doContestRoll(this, owner);
 	}
 	
-	public static int doContestRoll(Powerup self, String nick) {
-		int roll = self.roll();
+	public static DiceRoll doContestRoll(Powerup self, String nick) {
+		DiceRoll roll = roll(self);
 		sendFigletText(self.bot(), String.format("%s  rolls  %d !", nick, roll));
+		return roll;
+	}
+
+	private static DiceRoll roll(Powerup self) {
+		DiceRoll roll;
+		if (self instanceof BasicDie) roll = ((BasicDie)self).roll();
+		else roll = ((EvolvedDie)self).roll();
 		return roll;
 	}
 	

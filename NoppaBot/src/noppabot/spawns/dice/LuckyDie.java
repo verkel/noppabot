@@ -4,10 +4,11 @@
  */
 package noppabot.spawns.dice;
 
+import noppabot.DiceRoll;
 import noppabot.spawns.*;
 import noppabot.spawns.Spawner.SpawnInfo;
 
-public class LuckyDie extends BasicPowerup {
+public class LuckyDie extends BasicDie {
 
 	public static final int bonus = 25;
 
@@ -42,15 +43,13 @@ public class LuckyDie extends BasicPowerup {
 	}
 
 	@Override
-	public int onContestRoll() {
-		int roll = roll();
+	public DiceRoll onContestRoll() {
+		DiceRoll roll = roll();
 		if (containsSevens(roll)) {
-			int result = roll + bonus;
-			String resultStr = resultStr(result);
-			result = clamp(result);
+			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat(
 				"%s rolls %d! The lucky die likes sevens in numbers, so it tinkers with your roll, making it %d + %d = %s. Lucky!",
-				ownerColored, roll, roll, bonus, resultStr);
+				ownerColored, roll, roll, bonus, resultStr(result));
 			return result;
 		}
 		else {
@@ -60,7 +59,7 @@ public class LuckyDie extends BasicPowerup {
 		}
 	}
 
-	public static boolean containsSevens(int roll) {
+	public static boolean containsSevens(DiceRoll roll) {
 		return String.valueOf(roll).contains("7");
 	}
 
@@ -85,7 +84,7 @@ public class LuckyDie extends BasicPowerup {
 	}
 	
 	// Upgrade
-	public class JackpotDie extends EvolvedPowerup {
+	public class JackpotDie extends EvolvedDie {
 		private static final int jackpotBonus = 40;
 		
 		public JackpotDie() {
@@ -93,15 +92,13 @@ public class LuckyDie extends BasicPowerup {
 		}
 		
 		@Override
-		public int onContestRoll() {
-			int roll = roll();
+		public DiceRoll onContestRoll() {
+			DiceRoll roll = roll();
 			if (containsSevens(roll)) {
-				int result = roll + jackpotBonus;
-				String resultStr = resultStr(result);
-				result = clamp(result);
+				DiceRoll result = roll.add(jackpotBonus);
 				bot.sendChannelFormat(
 					"%s rolls %d! You win the JACKPOT! Your final roll is %d + %d = %s.",
-					ownerColored, roll, roll, jackpotBonus, resultStr);
+					ownerColored, roll, roll, jackpotBonus, resultStr(result));
 				return result;
 			}
 			else {

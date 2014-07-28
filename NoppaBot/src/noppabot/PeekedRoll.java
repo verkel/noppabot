@@ -16,14 +16,14 @@ import com.google.common.collect.*;
 public class PeekedRoll {
 
 	public final int sides;
-	public final int value;
+	public final DiceRoll value;
 	public ClassToInstanceMap<Hint> hints = MutableClassToInstanceMap.create();
 
 	private final List<Hint> allHints = Arrays.<Hint> asList(new LowValueHint(), new MedValueHint(),
 		new HighValueHint(), new ExactValueHint(), new PrimeHint(), new SevensHint(),
 		new ExtremalHint());
 
-	public PeekedRoll(int sides, int value) {
+	public PeekedRoll(int sides, DiceRoll value) {
 		this.sides = sides;
 		this.value = value;
 	}
@@ -229,7 +229,7 @@ public class PeekedRoll {
 
 		@Override
 		protected String hint() {
-			return Color.emphasize(value);
+			return Color.emphasize(value.intValue());
 		}
 
 		@Override
@@ -321,7 +321,7 @@ public class PeekedRoll {
 
 		@Override
 		protected boolean applies() {
-			return value <= 10 || value >= 90;
+			return value.test(i -> i <= 10 || i >= 90);
 		}
 		
 		@Override
@@ -331,10 +331,10 @@ public class PeekedRoll {
 	}
 	
 	private String valueStr(int incr) {
-		if (value < 1) return String.valueOf(value);
+		if (value.intValue() < 1) return String.valueOf(value);
 		
 		int lowBound = 1, highBound = incr;
-		while (highBound < value) {
+		while (highBound < value.intValue()) {
 			lowBound += incr;
 			highBound += incr;
 		}

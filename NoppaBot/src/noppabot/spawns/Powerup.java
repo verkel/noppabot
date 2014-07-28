@@ -6,7 +6,7 @@ package noppabot.spawns;
 
 import noppabot.*;
 
-public abstract class Powerup implements ISpawnable, IColorStrConvertable {
+public abstract class Powerup<R extends Roll> implements ISpawnable, IColorStrConvertable {
 	
 	private boolean identified = false;
 	
@@ -79,13 +79,13 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 	/**
 	 * Say the appropriate roll message and return the final roll
 	 */
-	public abstract int onContestRoll();
+	public abstract R onContestRoll();
 	
-	public int onOpponentRoll(String opponent, int roll) {
+	public Roll onOpponentRoll(String opponent, Roll roll) {
 		return roll;
 	}
 	
-	public void onOpponentRollLate(String opponent, int roll) {
+	public void onOpponentRollLate(String opponent, Roll roll) {
 	}
 	
 	public String getUpgradeDescription() {
@@ -138,14 +138,14 @@ public abstract class Powerup implements ISpawnable, IColorStrConvertable {
 		return nameWithDetailsColored();
 	}
 	
-	public abstract int roll(int sides);
-	
-	/**
-	 * Roll d100 and return the result
-	 */
-	public int roll() {
-		return roll(100);
-	}
+//	public abstract R roll(int sides);
+//	
+//	/**
+//	 * Roll d100 and return the result
+//	 */
+//	public R roll() {
+//		return roll(100);
+//	}
 	
 	public abstract INoppaBot bot();
 	
