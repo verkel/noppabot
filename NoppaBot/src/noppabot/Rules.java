@@ -10,7 +10,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import noppabot.spawns.*;
-import noppabot.spawns.dice.PokerHand;
+import noppabot.spawns.dice.*;
+import noppabot.spawns.dice.PokerHand.BetterHand;
 import noppabot.spawns.instants.*;
 
 import org.jibble.pircbot.Colors;
@@ -199,6 +200,19 @@ public class Rules {
 	
 	public boolean isPokerNight() {
 		return spawnOverride.getValue() == POKER_NIGHT_SPAWNER;
+	}
+	
+	public boolean isRollAllowed(String nick, boolean verbose) {
+		if (isPokerNight()) {
+			Powerup powerup = bot.getPowerups().get(nick);
+			boolean canParticipate = powerup instanceof PokerHand || powerup instanceof BetterHand;
+			if (!canParticipate && verbose) {
+				bot.sendChannelFormat("%s: you can only participate with poker hands tonight.",
+					Color.nick(nick));
+			}
+			return canParticipate; 
+		}
+		return true;
 	}
 	
 	private void doReset() {

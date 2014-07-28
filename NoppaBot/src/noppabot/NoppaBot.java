@@ -949,6 +949,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void rollAndParticipate(String nick, int sides) {
 		boolean rollWillParticipate = rollWillParticipate(nick);
 		
+		// Send error if the roll is not allowed
+		rules.isRollAllowed(nick, true);
+		
 		if (sides == 100 && rollWillParticipate) {
 			
 			// Generate a roll
@@ -982,9 +985,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private boolean rollWillParticipate(String nick) {
+		boolean allowed = rules.isRollAllowed(nick, false);
 		boolean participated = participated(nick);
 		boolean rollOrTiebreakPeriod = state == State.ROLL_PERIOD || state == State.SETTLE_TIE;
-		return !participated && rollOrTiebreakPeriod;
+		return allowed && !participated && rollOrTiebreakPeriod;
 	}
 	
 	@Override
@@ -1324,7 +1328,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		for (User user : rec.users) {
 			if (rolls.participated(user.nick)) {
 				Roll roll = rolls.get(user.nick);
-				user.addRoll(roll.intValue()); // At this point we switch to the int world
+				int intRoll = roll instanceof DiceRoll ? roll.intValue() : 0;
+				user.addRoll(intRoll); // At this point we switch to the int world
 				user.participation++;
 			}
 			else {
