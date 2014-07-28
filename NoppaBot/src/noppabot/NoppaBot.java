@@ -1552,6 +1552,36 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public State getState() {
 		return state;
 	}
+	
+	public class ReconnectTask extends Task {
+		public String id;
+		
+		@Override
+		public void execute(TaskExecutionContext context) {
+			synchronized (lock) {
+				try {
+					if (!isConnected()) {
+						System.out.println("Now reconnecting");
+						reconnect();
+						joinChannel(channel);
+						System.out.println("Successfully reconnected!");
+					}
+					else scheduler.deschedule(id);
+				}
+				catch (Exception e) {
+					System.out.println("Reconnect failed: " + e.getMessage());
+				}
+			}
+		}
+	}
+	
+	@Override
+	protected void onDisconnect() {
+		System.out.println("Disconnected from server. Trying to reconnect every 15 minute.");
+		ReconnectTask rt = new ReconnectTask();
+		final String id = scheduler.schedule("*/15 * * * *", rt);
+		rt.id = id;
+	}
 
 	private boolean isOnChannel(String nick) {
 		org.jibble.pircbot.User[] users = getUsers(channel);
