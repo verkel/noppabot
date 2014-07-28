@@ -10,6 +10,10 @@ import java.util.function.IntPredicate;
 public interface Roll {
 	int intValue();
 	
+	default int intValueClamped() {
+		return Roll.clampValue(intValue());
+	}
+	
 	default String toString(INoppaBot bot) {
 		return toString(true, bot);
 	}

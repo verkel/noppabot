@@ -208,7 +208,7 @@ public class GenerateItemList {
 		buf.append("</style>\n");
 	}
 	
-	class RegularDie extends BasicPowerup {
+	class RegularDie extends BasicDie {
 
 		@Override
 		public String name() {
@@ -222,11 +222,6 @@ public class GenerateItemList {
 
 		@Override
 		public SpawnInfo<?> spawnInfo() {
-			return null;
-		}
-
-		@Override
-		public Roll onContestRoll() {
 			return null;
 		}
 	}
@@ -280,6 +275,7 @@ public class GenerateItemList {
 				table.revealFlop();
 				table.revealTurn(false);
 				table.revealRiver(false);
+				table.gameStarted = true;
 				
 				PokerHand hand = new PokerHand();
 				hand.initialize(bot);
@@ -342,6 +338,7 @@ public class GenerateItemList {
 				table.revealFlop();
 				table.revealTurn(false);
 				table.revealRiver(false);
+				table.gameStarted = true;
 				
 				PokerHand hand = new PokerHand();
 				hand.initialize(bot);
@@ -429,7 +426,7 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = powerup.onContestRoll().intValue();
+			int roll = powerup.onContestRoll().intValueClamped();
 			if (printRolls) System.out.println(roll);
 			sum += roll;
 		}
@@ -440,7 +437,7 @@ public class GenerateItemList {
 		double sum = 0;
 		for (int i = 0; i < iterations; i++) {
 			Powerup powerup = builder.createPowerup();
-			int roll = powerup.onContestRoll().intValue();
+			int roll = powerup.onContestRoll().intValueClamped();
 			double diff = roll - ev;
 			sum += diff*diff;
 		}
@@ -460,8 +457,8 @@ public class GenerateItemList {
 			// EV
 			double sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRoll(TESTER_NAME, 100).intValue();
-				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100).intValue();
+				int roll = bot.getRoll(TESTER_NAME, 100).intValueClamped();
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100).intValueClamped();
 				sum += roll;
 			}
 			ev = sum / iterations;
@@ -470,8 +467,8 @@ public class GenerateItemList {
 			// SD
 			sum = 0;
 			for (int i = 0; i < iterations; i++) {
-				int roll = bot.getRoll(TESTER_NAME, 100).intValue();
-				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100).intValue();
+				int roll = bot.getRoll(TESTER_NAME, 100).intValueClamped();
+				if (roll < REGULAR_DICE_EV) roll = bot.getRoll(TESTER_NAME, 100).intValueClamped();
 				double diff = roll - ev;
 				sum += diff*diff;
 			}
@@ -508,6 +505,7 @@ public class GenerateItemList {
 	
 	class TestBot implements INoppaBot {
 		private Rules rules = new Rules(this);
+		private Rolls rolls = new Rolls(this);
 		
 		@Override
 		public void sendChannelFormat(String msg, Object... args) {
@@ -591,7 +589,7 @@ public class GenerateItemList {
 
 		@Override
 		public Rolls getRolls() {
-			return null;
+			return rolls;
 		}
 
 		@Override

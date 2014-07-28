@@ -40,10 +40,6 @@ public class DiceRoll implements Roll {
 		return value;
 	}
 	
-	public int intValueClamped() {
-		return Roll.clampValue(value);
-	}
-	
 	public int intValueRuled(INoppaBot bot) {
 		return intValue(bot.getRules().cappedRolls.get());
 	}

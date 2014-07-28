@@ -199,7 +199,7 @@ public class Rules {
 	}
 	
 	public boolean isPokerNight() {
-		return spawnOverride.getValue() == POKER_NIGHT_SPAWNER;
+		return spawnOverride.isPresent() && spawnOverride.getValue() == POKER_NIGHT_SPAWNER;
 	}
 	
 	public boolean isRollAllowed(String nick, boolean verbose) {
