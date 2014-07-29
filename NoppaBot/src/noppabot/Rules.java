@@ -179,8 +179,14 @@ public class Rules {
 	}
 	
 	public ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
-		if (spawnOverride.isPresent()) return spawnOverride.getValue().spawn();
+		if (spawnOverride.isPresent()) return getRandomOverridePowerup();
 		else return Powerups.getRandomPowerupOrEvent(bot, allowedPowerups, allowedEvents);
+	}
+
+	private BasicPowerup getRandomOverridePowerup() {
+		BasicPowerup powerup = spawnOverride.getValue().spawn();
+		powerup.initialize(bot);
+		return powerup;
 	}
 	
 	public Spawner<BasicPowerup> getPowerupsSpawner(Spawner<BasicPowerup> proposed) {
