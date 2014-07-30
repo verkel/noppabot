@@ -7,6 +7,7 @@ package noppabot.spawns.events;
 import java.util.*;
 
 import noppabot.*;
+import noppabot.Rules.WinCondition;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.instants.*;
@@ -71,7 +72,7 @@ class LowestRollWins extends RulesChange {
 	
 	@Override
 	public String explanation(Rules rules) {
-		return rules.winCondition.get().getExplanation();
+		return rules.LOWEST_ROLL.getExplanation();
 	}
 	
 	@Override
@@ -89,15 +90,23 @@ class RollClosestToTargetWins extends RulesChange {
 		}
 	};
 	
+	private WinCondition winCondition;
+	private WinCondition getWinCondition(Rules rules) {
+		if (winCondition == null) {
+			int rollTarget = Powerups.powerupRnd.nextInt(100) + 1;
+			winCondition = rules.winConditionRollClosestToTarget(rollTarget);
+		}
+		return winCondition;
+	}
+	
 	@Override
 	public void changeRules(Rules rules) {
-		int rollTarget = Powerups.powerupRnd.nextInt(100) + 1;
-		rules.winCondition.set(rules.winConditionRollClosestToTarget(rollTarget));
+		rules.winCondition.set(getWinCondition(rules));
 	}
 
 	@Override
 	public String explanation(Rules rules) {
-		return rules.winCondition.get().getExplanation();
+		return getWinCondition(rules).getExplanation();
 	}
 }
 
