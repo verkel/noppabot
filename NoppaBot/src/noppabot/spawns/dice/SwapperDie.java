@@ -84,13 +84,7 @@ public class SwapperDie extends BasicDie {
 		return new UniformDie();
 	}
 	
-	@Override
-	public String getUpgradeDescription() {
-		return String.format("Swapper die puts on its special uniform! Now your roll result will"
-			+ " depend on how close the digits of your original roll are.");
-	}
-	
-//	// Upgrade
+	// Upgrade
 	public class UniformDie extends EvolvedDie {
 		public UniformDie() {
 			super(SwapperDie.this);
@@ -126,6 +120,12 @@ public class SwapperDie extends BasicDie {
 		@Override
 		public String name() {
 			return "Uniform Die";
+		}
+		
+		@Override
+		public String getUpgradeDescription() {
+			return String.format("The swapper die puts on its special uniform! Now your roll result will"
+				+ " depend on how close the digits of your original roll are.");
 		}
 	}
 }
