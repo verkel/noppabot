@@ -34,6 +34,7 @@ public class Powerups {
 			DicePirate.info,
 			DiceRecycler.info,
 			Diceteller.info,
+			DivisibleDie.info,
 			EnchantedDie.info,
 			ExtremeDie.info,
 			FastDie.info,
