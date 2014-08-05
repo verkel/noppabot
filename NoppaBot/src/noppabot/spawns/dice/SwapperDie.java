@@ -84,6 +84,12 @@ public class SwapperDie extends BasicDie {
 		return new UniformDie();
 	}
 	
+	@Override
+	public String getUpgradeDescription() {
+		return String.format("Swapper die puts on its special uniform! Now your roll result will"
+			+ " depend on how close the digits of your original roll are.");
+	}
+	
 //	// Upgrade
 	public class UniformDie extends EvolvedDie {
 		public UniformDie() {
@@ -103,7 +109,7 @@ public class SwapperDie extends BasicDie {
 				DiceRoll result = new DiceRoll(multiplier * 10);
 				
 				bot.sendChannelFormat(
-					"%s rolls %s with the uniform die. You get %s roll multiplier from the closeness of your roll's digits.",
+					"%s rolls %s with the uniform die. You get the multiplier %s from the closeness of your roll's digits.",
 					owner, roll, multiplier);
 				bot.sendChannelFormat("%s's roll result is set to %s * %s = %s!", ownerColored, multiplier, 10,
 					resultStr(result));
@@ -121,26 +127,5 @@ public class SwapperDie extends BasicDie {
 		public String name() {
 			return "Uniform Die";
 		}
-		
-//		@Override
-//		public DiceRoll onContestRoll() {
-//			DiceRoll roll = roll();
-//			DiceRoll result = roll.add(bonus);
-//			bot.sendChannelFormat("The potent die grants the utmost magical advantage for %s's roll!",
-//				owner);
-//			bot.sendChannelFormat("%s rolls %s + %s = %s! %s", owner, roll, bonus, resultStr(result),
-//				bot.grade(result));
-//			return result;
-//		}
-//		
-//		@Override
-//		public String name() {
-//			return "Potent Die";
-//		}
-//		
-//		@Override
-//		public String getUpgradeDescription() {
-//			return String.format("It is now enchanted with the most potent magics, granting it +%s total roll bonus!", bonus);
-//		}
 	}
 }
