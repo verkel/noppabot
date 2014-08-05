@@ -27,7 +27,7 @@ public class SwapperDie extends BasicDie {
 
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("An %s appears!", nameColored());
+		bot.sendChannelFormat("A %s appears!", nameColored());
 	}
 
 	@Override
