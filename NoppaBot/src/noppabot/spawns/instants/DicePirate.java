@@ -8,7 +8,6 @@ import java.util.*;
 
 import noppabot.Color;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class DicePirate extends Instant {

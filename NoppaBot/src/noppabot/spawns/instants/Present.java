@@ -5,7 +5,6 @@
 package noppabot.spawns.instants;
 
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class Present extends Instant {

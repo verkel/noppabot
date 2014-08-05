@@ -8,7 +8,6 @@ import java.util.*;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
 import ca.ualberta.cs.poker.Deck;

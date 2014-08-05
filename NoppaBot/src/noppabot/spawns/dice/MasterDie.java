@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import noppabot.*;
 import noppabot.INoppaBot.State;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 public class MasterDie extends BasicDie {
 

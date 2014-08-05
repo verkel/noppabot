@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import noppabot.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class TrollingProfessional extends Instant {

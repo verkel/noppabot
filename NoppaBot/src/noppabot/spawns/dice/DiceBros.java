@@ -6,7 +6,6 @@ package noppabot.spawns.dice;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class DiceBros extends BasicDie {

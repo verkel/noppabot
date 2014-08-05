@@ -6,7 +6,6 @@ package noppabot.spawns.instants;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 public class DicemonTrainer extends Instant {
 	public static final String NAME = "Dicemon Trainer";

@@ -6,7 +6,6 @@ package noppabot.spawns.dice;
 
 import noppabot.DiceRoll;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 public class ApprenticeDie extends BasicDie {
 

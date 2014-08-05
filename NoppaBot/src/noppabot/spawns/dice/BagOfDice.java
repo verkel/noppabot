@@ -8,7 +8,6 @@ import java.util.*;
 
 import noppabot.DiceRoll;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 import com.google.common.collect.*;
 

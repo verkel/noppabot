@@ -6,7 +6,6 @@ package noppabot.spawns.instants;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public class RollingProfessional extends Instant {

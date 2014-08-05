@@ -15,7 +15,6 @@ import noppabot.spawns.*;
 import noppabot.spawns.BasicPowerup.BasicPowerupSpawnInfo;
 import noppabot.spawns.Instant.InstantSpawnInfo;
 import noppabot.spawns.Spawner.LastSpawn;
-import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
 import noppabot.spawns.events.FourthWallBreaks;

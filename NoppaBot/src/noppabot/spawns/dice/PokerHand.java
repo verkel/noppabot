@@ -7,7 +7,6 @@ package noppabot.spawns.dice;
 import static ca.ualberta.cs.poker.HandEvaluator.*;
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 import org.jibble.pircbot.Colors;
 

@@ -22,17 +22,6 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 //		return new SpawnInfo<T>(supplier, spawnChance);
 //	}
 	
-	/**
-	 * Record of something the spawner can spawn
-	 */
-	public static interface SpawnInfo<T> {
-		public default double spawnChance() {
-			return 1.0;
-		}
-		
-		public T create();
-	}
-
 	// Can this even be a constructor?
 	public static <T extends ISpawnable, I extends SpawnInfo<T>> Spawner<T> create(
 		List<I> spawnInfos, LastSpawn<T> lastSpawn, Predicate<I> filter) {

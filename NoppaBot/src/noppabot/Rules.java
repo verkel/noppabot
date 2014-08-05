@@ -241,7 +241,7 @@ public class Rules {
 	 * convertCarriedPowerupsToMatchSpawnOverride() implementation.
 	 */
 	public static final Spawner<BasicPowerup> POKER_NIGHT_SPAWNER = new Spawner<BasicPowerup>(
-		() -> Stream.of(PokerDealer.info, DicemonTrainer.info)) {
+		() -> Stream.of(PokerDealer.info, DicemonTrainer.info.withChance(1.0))) {
 
 		@Override
 		public boolean canSpawn(Predicate<SpawnInfo> predicate) {

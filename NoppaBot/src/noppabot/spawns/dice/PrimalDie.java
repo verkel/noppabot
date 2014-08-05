@@ -8,7 +8,6 @@ import java.util.*;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 public class PrimalDie extends BasicDie {
 

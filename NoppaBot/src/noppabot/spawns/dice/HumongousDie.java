@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 
 import noppabot.*;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.evolved.CrushingDie;
 
 import org.gnu.jfiglet.FIGDriver;

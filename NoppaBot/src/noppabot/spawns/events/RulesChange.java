@@ -153,7 +153,7 @@ class CanDropItems extends RulesChange {
 class UnlimitedPowerMode extends RulesChange {
 	private static final String desc = "Only items that can be infinitely upgraded are spawned.";
 	private static final Spawner<BasicPowerup> itemSpawner = Spawner.create(
-		BagOfDice.info, PolishedDie.info, DicemonTrainer.info);
+		BagOfDice.info, PolishedDie.info, DicemonTrainer.info.withChance(1.0));
 	
 	static {
 		itemSpawner.setDescription(desc);

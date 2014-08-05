@@ -8,7 +8,6 @@ import java.util.*;
 
 import noppabot.StringUtils.StringConverter;
 import noppabot.spawns.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 import noppabot.spawns.dice.*;
 
 import com.google.common.collect.*;

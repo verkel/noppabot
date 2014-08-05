@@ -5,7 +5,6 @@
 package noppabot.spawns;
 
 import noppabot.*;
-import noppabot.spawns.Spawner.SpawnInfo;
 
 
 public abstract class Event implements ISpawnable {
