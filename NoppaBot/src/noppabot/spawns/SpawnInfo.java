@@ -19,7 +19,7 @@ public interface SpawnInfo<T> {
 
 			@Override
 			public T create() {
-				return this.create();
+				return SpawnInfo.this.create();
 			}
 			
 			@Override
