@@ -916,9 +916,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void fuseDice(String nick, Powerup powerup) {
+		availablePowerups.remove(powerup);
 		DicemonTrainer.upgradeDie(this, nick, String.format(
 			"You grab the %s, and fuse it and your existing die into one.",
-			powerup.name()));
+			powerup.nameColored()));
 	}
 
 
