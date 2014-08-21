@@ -902,14 +902,16 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void doGrabPowerup(String nick, Powerup powerup) {
+		if (powerup.isCarried() || powerup.isDestroyedAfterPickup()) {
+			boolean removed = availablePowerups.remove(powerup);
+			if (!removed) System.err.println("Warning: could not remove powerup from the ground.");
+		}
+		
 		powerup.setOwner(nick);
 		powerup.onPickup();
+		
 		if (powerup.isCarried()) {
 			powerups.put(nick, powerup);
-			availablePowerups.remove(powerup);
-		}
-		else if (powerup.isDestroyedAfterPickup()) {
-			availablePowerups.remove(powerup);
 		}
 	}
 	
