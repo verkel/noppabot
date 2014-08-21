@@ -78,7 +78,7 @@ public class VariableDie extends BasicDie {
 	
 	@Override
 	public boolean isUpgradeable() {
-		return true;
+		return false;
 	}
 	
 	@Override
