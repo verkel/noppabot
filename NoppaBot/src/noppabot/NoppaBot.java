@@ -17,7 +17,7 @@ import noppabot.spawns.Instant.InstantSpawnInfo;
 import noppabot.spawns.Spawner.LastSpawn;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
-import noppabot.spawns.events.FourthWallBreaks;
+import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
@@ -274,7 +274,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		new FourthWallBreaks().run(this);
 		
-		spawnAllPowerups();
+//		spawnAllPowerups();
 		
 		rules.canDropItems.set(true);
 //		onRulesChanged();
@@ -283,7 +283,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
-//		RulesChange.allInfos.get(8).create().run(this);
+		RulesChange.allInfos.get(7).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {
@@ -926,7 +926,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if(rules.diceFusion.get()) {
 			if (powerups.containsKey(nick)) {
 				Powerup powerup = powerups.get(nick);
-				return powerup.isUpgradeable() && powerup.equals(grabbedPowerup);
+				return powerup.isUpgradeable() && powerup.getClass().equals(grabbedPowerup.getClass());
 			}
 		}
 		return false;
