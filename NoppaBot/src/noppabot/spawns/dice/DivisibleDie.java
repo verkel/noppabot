@@ -26,7 +26,8 @@ public class DivisibleDie extends BasicDie {
 	private final int divisor;
 	
 	public DivisibleDie() {
-		divisor = 1 + Powerups.powerupRnd.nextInt(10);
+		divisor = 2 + Powerups.powerupRnd.nextInt(9);
+		setIdentified(true);
 	}
 	
 	@Override
