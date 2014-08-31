@@ -19,7 +19,7 @@ public class GenerateItemList {
 
 	private static final double REGULAR_DICE_EV = 50.50d;
 	private static final String TESTER_NAME = "Tester";
-	public static final File outputPath = new File("index.html");
+	public static final File outputPath = new File("items.html");
 	public static final File cachePath = new File("results.cache");
 	
 	private List<TestResult> results = new ArrayList<TestResult>();
@@ -281,6 +281,9 @@ public class GenerateItemList {
 				return hand;
 			};
 		}, bot, false, DiceType.BASIC);
+		
+		testBasicPowerup("Swapper Die", "Placeholder.png", swapperDieDesc, "Uniform Die", new SwapperDie(), bot);
+		testBasicPowerup("Divisible Die", "Placeholder.png", divisibleDieDesc, "Modular Die", new DivisibleDie(), bot);
 	}
 	
 	private void testEvolvedDice() {
@@ -344,6 +347,9 @@ public class GenerateItemList {
 				return hand.upgrade();
 			};
 		}, bot, false, DiceType.EVOLVED);
+		
+		testEvolvedPowerup("Uniform Die", "Locked.png", undiscovered /*uniformDieDesc*/, new SwapperDie().upgrade(), bot);
+		testEvolvedPowerup("Modular Die", "Locked.png", undiscovered /*modularDieDesc*/, new DivisibleDie().upgrade(), bot);
 	}
 	
 	private void listInstants() {
@@ -702,6 +708,8 @@ public class GenerateItemList {
 	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
 	private static final String steadyDieDesc = "Lets you roll d70 + 30.";
 	private static final String pokerHandDesc = "Gives a bonus to your roll based on how good your cards are. See <a href=\"#pokerrules\">Poker Rules and Scoring</a>.";
+	private static final String swapperDieDesc = "Swaps the digits of your roll.";
+	private static final String divisibleDieDesc = "Spawns with a divisor from 2 to 10. If your roll is divisible with this divisor, you get bonus of 5*divisor to your roll (bonus from 10 to 50).";
 	
 	// Evolved
 	private static final String veryPolishedDieDesc = "It has +10 further bonus, for a total of +15. May be upgraded infinitely for additional +10 bonuses.";
@@ -719,13 +727,16 @@ public class GenerateItemList {
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
 	private static final String trustyDieDesc = "Lets you roll d50 + 50.";
 	private static final String betterHandDesc = "The cards in your poker hand increase by one in rank, given such card is in the deck. Otherwise, you get card one higher of a different suit, or if all suits are taken too, you get card that is two higher, and so on. Aces will not be upgraded. Hands may be upgraded infinitely for even higher cards.";
+	private static final String uniformDieDesc = "Based on how close to each other the digits of your roll are, sets your roll result to a new value. Your roll result will be 10 * (10 - digitDistance). For example, if the digits are the same, you roll 100. In the worst case, the distance of the digits is 9, and you will roll 10.";
+	private static final String modularDieDesc = "Will keep the same divisor that the Divisible Die had. From the division of your roll with the divisor, you now get bonus based on how large the remainder is. The bonus will be 5*remainder (ranging from 0 to 45)";
 	
 	// Instant
 	private static final String dicemonTrainerDesc = "Evolves your current die into a more powerful die.";
 	private static final String diceRecyclerDesc = "Trashes your current die and spawns a random new one to the ground, for anyone to grab.";
 	private static final String trollingProfessionalDesc = "On pickup, creates a random item spawn which is actually a bomb. The person who picked " +
 			"the trolling professional is informed which item is rigged with the bomb. The bomb has the name of a regular item; " +
-			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll.";
+			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll. " + 
+			"You can use the peek command to confirm whether the next three upcoming items are bombs or not.";
 	private static final String dicetellerDesc = "Tells what your next roll will be.";
 	private static final String dicePirateDesc = "Steals item from another contestant.";
 	private static final String pokerDealerDesc = "Deals Poker Hands to 1-3 contestants. You may get new hands from subsequent dealers, even if you already have a hand, but the same dealer only gives you one hand. The dealer disappears when all the hands are dealt, or if the it expires before that.";
