@@ -14,6 +14,8 @@ import noppabot.spawns.*;
 
 public class TrollingProfessional extends Instant {
 	
+	public static final String NAME = "Trolling Professional";
+	
 	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
 
 		@Override
@@ -65,7 +67,7 @@ public class TrollingProfessional extends Instant {
 
 	@Override
 	public String name() {
-		return "Trolling Professional";
+		return NAME;
 	}
 	
 	public static class Bomb extends BasicDie {

@@ -673,6 +673,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("steal") || cmd.equalsIgnoreCase("loot") || cmd.equalsIgnoreCase("plunder")) {
 					grabPowerup(sender, DicePirate.NAME);
 				}
+				else if (cmd.equalsIgnoreCase("troll")) {
+					grabPowerup(sender, TrollingProfessional.NAME);
+				}
 				else if (cmd.equalsIgnoreCase("reveal")) {
 					Powerup powerup = powerups.get(sender);
 					if (powerup != null && (powerup instanceof PokerHand || powerup instanceof BetterHand)) {
@@ -681,6 +684,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					else {
 						sendChannelFormat("%s: you don't have a poker hand", Color.nick(sender));
 					}
+				}
+				
+				// Joke commands
+				else if (cmd.equalsIgnoreCase("poke")) {
+					sendAction(channel, String.format("pokes %s back", sender));
+				}
+				else if (cmd.equalsIgnoreCase("autotroll")) {
+					sendChannelFormat("%s: ok, I will grab the next %s for you... no, not really. :P",
+						Color.nick(sender), Color.instant("Trolling Professional"));
 				}
 			}
 		}
