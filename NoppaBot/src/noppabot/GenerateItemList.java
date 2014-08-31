@@ -251,7 +251,7 @@ public class GenerateItemList {
 		addEntry("Apprentice Die", "ApprenticeDie.png", apprenticeDieDesc, "Master Die");
 		testBasicPowerup("Dice Bros.", "Placeholder.png", diceBrosDesc, "Super Dice Bros", new DiceBros(), bot);
 		
-		testPowerup("Variable Die", "Placeholder.png", variableDieDesc, "Chaos Die", new Builder() {
+		testPowerup("Variable Die", "Placeholder.png", variableDieDesc, "Variable Die", new Builder() {
 			@Override
 			public Powerup createPowerup() {
 				VariableDie die = new VariableDie();
@@ -317,14 +317,14 @@ public class GenerateItemList {
 			};
 		}, bot, false, DiceType.EVOLVED);
 		
-		testPowerup("Chaos Die", "Placeholder.png", chaosDieDesc, null, new Builder() {
-			@Override
-			public Powerup createPowerup() {
-				VariableDie die = new VariableDie();
-				die.initialize(bot);
-				return die.upgrade();
-			};
-		}, bot, false, DiceType.EVOLVED);
+//		testPowerup("Chaos Die", "Placeholder.png", chaosDieDesc, null, new Builder() {
+//			@Override
+//			public Powerup createPowerup() {
+//				VariableDie die = new VariableDie();
+//				die.initialize(bot);
+//				return die.upgrade();
+//			};
+//		}, bot, false, DiceType.EVOLVED);
 		
 		// Figlet runs take time so we don't want to actually test the humongous die
 		testEvolvedPowerup("Humongous Crushing Die", "Placeholder.png", humongousCrushingDieDesc, new RegularDie(), bot); //new HumongousDie().upgrade(), bot);
@@ -704,7 +704,7 @@ public class GenerateItemList {
 	private static final String apprenticeDieDesc = "After a master die is rolled, the apprentice " +
 		"die will roll the same result. If the apprentice die ends up in the tiebreaker round, it turns into a master die.";
 	private static final String diceBrosDesc = "Rolls two d100 dice and chooses higher roll as the result.";
-	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d130, d140.";
+	private static final String variableDieDesc = "Is randomly one of d80, d90, d100, ..., d130, d140. Upgrading it will reroll its sides.";
 	private static final String humongousDieDesc = "Your opponents are intimidated by the mere sight of it.";
 	private static final String steadyDieDesc = "Lets you roll d70 + 30.";
 	private static final String pokerHandDesc = "Gives a bonus to your roll based on how good your cards are. See <a href=\"#pokerrules\">Poker Rules and Scoring</a>.";
@@ -722,7 +722,7 @@ public class GenerateItemList {
 	private static final String bagOfManyDiceDesc = "Two additional dice are put into the dice bag. May be upgraded infinitely for more dice.";
 	private static final String groundhogDieDesc = "Repeats your yesterday's roll.";
 	private static final String superDiceBrosDesc = "The dice bros. get random powerups each.";
-	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
+//	private static final String chaosDieDesc = "Triggers a rules change. If the die is weaker than d100, the lowest roll will win tonight. If the die is stronger than d100, the roll cap of 0..100 is lifted. If the die is the d100, the roll closest to a random number will win tonight.";
 	private static final String humongousCrushingDieDesc = "Deals d10 + 15 damage to others' rolls.";
 	private static final String fasterDieDesc = "Gives you a 30 bonus if you roll immediately. The bonus decreases by 1 per second waited.";
 	private static final String trustyDieDesc = "Lets you roll d50 + 50.";
@@ -737,7 +737,7 @@ public class GenerateItemList {
 			"the trolling professional is informed which item is rigged with the bomb. The bomb has the name of a regular item; " +
 			"there is 50% chance this name contains a typo. If somebody picks up the bomb, it will cause d10 + 10 damage to the contest roll. " + 
 			"You can use the peek command to confirm whether the next three upcoming items are bombs or not.";
-	private static final String dicetellerDesc = "Tells what your next roll will be.";
+	private static final String dicetellerDesc = "Gives you hints of your next roll, for the currently equipped die (for example, normally a d100 roll is predicted, but for a Master Die, d150 roll is predicted). The given hint can either tell the range your roll is in, or reveal some other property of the roll. If you grab more dicetellers that predict the same roll, you will get a different hint. The range hints will increase in accuracy, and after the most accurate range hint \"I see your roll clearly!\", there is a chance for the roll to be revealed fully.";
 	private static final String dicePirateDesc = "Steals item from another contestant.";
 	private static final String pokerDealerDesc = "Deals Poker Hands to 1-3 contestants. You may get new hands from subsequent dealers, even if you already have a hand, but the same dealer only gives you one hand. The dealer disappears when all the hands are dealt, or if the it expires before that.";
 	private static final String rollingProfessionalDesc = "Adds +5 to your next roll.";
