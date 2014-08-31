@@ -12,6 +12,8 @@ import noppabot.spawns.*;
 
 public class DicePirate extends Instant {
 
+	public static final String NAME = "DicePirate";
+	
 	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
 
 		@Override
@@ -115,6 +117,6 @@ public class DicePirate extends Instant {
 
 	@Override
 	public String name() {
-		return "DicePirate";
+		return NAME;
 	}
 }

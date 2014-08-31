@@ -670,6 +670,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("recycle") || cmd.equalsIgnoreCase("trash")) {
 					grabPowerup(sender, DiceRecycler.NAME);
 				}
+				else if (cmd.equalsIgnoreCase("steal") || cmd.equalsIgnoreCase("loot") || cmd.equalsIgnoreCase("plunder")) {
+					grabPowerup(sender, DicePirate.NAME);
+				}
 				else if (cmd.equalsIgnoreCase("reveal")) {
 					Powerup powerup = powerups.get(sender);
 					if (powerup != null && (powerup instanceof PokerHand || powerup instanceof BetterHand)) {
