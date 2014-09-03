@@ -348,7 +348,7 @@ public class GenerateItemList {
 			};
 		}, bot, false, DiceType.EVOLVED);
 		
-		testEvolvedPowerup("Uniform Die", "Locked.png", undiscovered /*uniformDieDesc*/, new SwapperDie().upgrade(), bot);
+		testEvolvedPowerup("Uniform Die", "Placeholder.png", uniformDieDesc, new SwapperDie().upgrade(), bot);
 		testEvolvedPowerup("Modular Die", "Locked.png", undiscovered /*modularDieDesc*/, new DivisibleDie().upgrade(), bot);
 	}
 	
