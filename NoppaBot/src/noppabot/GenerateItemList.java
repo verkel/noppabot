@@ -109,13 +109,13 @@ public class GenerateItemList {
 		}
 		
 		StringBuilder buf = new StringBuilder();
-		buf.append("<html>\n");
-		buf.append("<head><title>Item list</title></head>\n");
-		buf.append("<body>\n");
+//		buf.append("<html>\n");
+//		buf.append("<head><title>Item list</title></head>\n");
+//		buf.append("<body>\n");
+//		
+//		appendCSS(buf);
 		
-		appendCSS(buf);
-		
-		buf.append("\n\n");
+//		buf.append("\n\n");
 		buf.append("<h2>Basic Dice</h2>\n");
 		buf.append("<p>Basic dice are items that boost your rolling powers. They spawn on " +
 			"the channel at random times, and you can take them with the \"grab\" command. " +
@@ -165,8 +165,8 @@ public class GenerateItemList {
 		listEvents(buf);
 		buf.append("</table>\n");
 		
-		buf.append("\n\n");
-		buf.append("</body>\n").append("</html>\n");
+//		buf.append("\n\n");
+//		buf.append("</body>\n").append("</html>\n");
 		
 		BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath));
 		writer.append(buf);
