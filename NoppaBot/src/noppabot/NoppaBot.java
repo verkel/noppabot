@@ -337,6 +337,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else if (cmd.equals("freebie")) {
 			giveFreePowerup();
 		}
+		else if (cmd.equals("autoroll")) {
+			if (args == null) System.out.println("Need nick as an argument");
+			else {
+				sendChannelFormat("Manually setting autoroll for %s", args);
+				autorollFor(args);
+			}
+		}
 		else {
 			System.out.println("Unknown command: " + cmd);
 			commandsHelp();
@@ -346,7 +353,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void commandsHelp() {
-		System.out.println("Commands: help, quit, startperiod, endperiod, freebie");
+		System.out.println("Commands: help, quit, startperiod, endperiod, freebie, autoroll");
 	}
 	
 	private void quit(String reason) {
