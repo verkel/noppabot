@@ -247,6 +247,12 @@ public class PokerHand extends BasicPowerup<Roll> {
 		public int intValue() {
 			return rank;
 		}
+		
+		@Override
+		public int intValueClamped() {
+			// Don't clamp
+			return rank;
+		}
 
 		@Override
 		public String toString() {

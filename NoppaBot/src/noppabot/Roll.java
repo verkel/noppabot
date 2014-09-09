@@ -14,6 +14,15 @@ public interface Roll {
 		return Roll.clampValue(intValue());
 	}
 	
+	default int intValue(boolean clamp) {
+		if (clamp) return intValueClamped();
+		else return intValue();
+	}
+	
+	default int intValueRuled(INoppaBot bot) {
+		return intValue(bot.getRules().cappedRolls.get());
+	}
+	
 	default String toString(INoppaBot bot) {
 		return toString(true, bot);
 	}

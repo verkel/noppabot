@@ -65,10 +65,10 @@ public class Rolls {
 	public List<String> getWinningRollers() {
 		if (values.isEmpty()) return Collections.emptyList();
 		else {
-			Roll topRoll = values.first();
+			int topRoll = values.first().intValueRuled(bot);
 			List<String> winningRollers = new ArrayList<String>();
 			for (String nick : participants()) {
-				Roll roll = get(nick);
+				int roll = get(nick).intValueRuled(bot);
 				if (roll == topRoll) winningRollers.add(nick);
 			}
 			return winningRollers;

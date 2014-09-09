@@ -63,7 +63,7 @@ public class Rules {
 		
 		@Override
 		public int assignScore(Roll roll) {
-			return roll.intValue();
+			return roll.intValueRuled(bot);
 		}
 
 		@Override
@@ -80,7 +80,7 @@ public class Rules {
 		
 		@Override
 		public int assignScore(Roll roll) {
-			return 100 - roll.intValue();
+			return 100 - roll.intValueRuled(bot);
 		}
 
 		@Override
@@ -89,7 +89,7 @@ public class Rules {
 		}
 	};
 	
-	public static class RollClosestToTarget extends WinCondition {
+	public class RollClosestToTarget extends WinCondition {
 		private int rollTarget;
 		
 		public RollClosestToTarget(int rollTarget) {
@@ -104,12 +104,12 @@ public class Rules {
 		
 		@Override
 		public int assignScore(Roll roll) {
-			return 100 - Math.abs(rollTarget - roll.intValue());
+			return 100 - Math.abs(rollTarget - roll.intValueRuled(bot));
 		}
 		
 		@Override
 		public void onContestRoll(INoppaBot bot, String nick, Roll roll) {
-			int dist = Math.abs(rollTarget - roll.intValue());
+			int dist = Math.abs(rollTarget - roll.intValueRuled(bot));
 			if (dist > 0) bot.sendChannelFormat("%s's roll is %s points off the target", nick, dist);
 			else bot.sendChannelFormat("%s's roll hit the target!", nick);
 		}
