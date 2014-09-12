@@ -54,7 +54,7 @@ public class PokerDealer extends Instant {
 		// Disallow picking up if player has any other item than cards
 		if (bot.getPowerups().containsKey(nick)) {
 			Powerup powerup = bot.getPowerups().get(nick);
-			if (!(powerup instanceof PokerHand)) {
+			if (!(powerup instanceof PokerHand || powerup instanceof BetterHand)) {
 				if (verbose) bot.sendChannelFormat("%s: you already have the %s; you don't have any room for cards.", 
 					Color.nick(nick), powerup.nameWithDetailsColored());
 				return false;
