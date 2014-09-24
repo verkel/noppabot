@@ -283,7 +283,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
-		RulesChange.allInfos.get(7).create().run(this);
+		RulesChange.allInfos.get(6).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {
@@ -344,6 +344,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				autorollFor(args);
 			}
 		}
+		else if (cmd.equals("hurry")) {
+			spawnNextScheduledPowerup();
+		}
 		else {
 			System.out.println("Unknown command: " + cmd);
 			commandsHelp();
@@ -351,7 +354,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		return false;
 	}
-	
+
 	private void commandsHelp() {
 		System.out.println("Commands: help, quit, startperiod, endperiod, freebie, autoroll");
 	}
@@ -365,6 +368,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void giveFreePowerup() {
 		sendChannel("Spawning item manually");
 		scheduleRandomSpawn(null, rules.getPowerupsSpawner(Powerups.allPowerups), null);
+	}
+	
+	private void spawnNextScheduledPowerup() {
+		SpawnTask spawnTask = spawnTasks.pollFirst();
+		if (spawnTask == null) {
+			System.out.println("No spawn tasks left");
+		}
+		else {
+			sendChannel("Manually hurrying the next powerup spawn:");
+			spawnTask.execute(null);
+		}
 	}
 
 	private void schedulePowerupsOfTheDay() {
