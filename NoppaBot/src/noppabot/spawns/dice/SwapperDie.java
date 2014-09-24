@@ -103,9 +103,9 @@ public class SwapperDie extends BasicDie {
 				DiceRoll result = new DiceRoll(multiplier * 10);
 				
 				bot.sendChannelFormat(
-					"%s rolls %s with the uniform die. You get the multiplier %s from the closeness of your roll's digits.",
-					owner, roll, multiplier);
-				bot.sendChannelFormat("%s's roll result is set to %s * %s = %s!", ownerColored, multiplier, 10,
+					"%s rolls %s with the uniform die. The distance of your roll's digits is %s.",
+					owner, roll, distance);
+				bot.sendChannelFormat("%s's roll result is set to (10 - %s) * %s = %s!", ownerColored, distance, 10,
 					resultStr(result));
 				return result;
 			}
