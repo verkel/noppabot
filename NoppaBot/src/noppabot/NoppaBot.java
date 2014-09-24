@@ -426,8 +426,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			this.spawn = spawn;
 		}
 		
-		public BasicPowerup getPowerup() {
-			if (spawn instanceof BasicPowerup) return (BasicPowerup)spawn;
+		public Powerup getPowerup() {
+			if (spawn instanceof BasicPowerup) return (Powerup)spawn;
 			else return null;
 		}
 
@@ -437,8 +437,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				spawnTasks.remove(this);
 				scheduler.deschedule(id);
 				
-				if (spawn instanceof BasicPowerup) {
-					BasicPowerup powerup = (BasicPowerup)spawn;
+				if (spawn instanceof Powerup) {
+					Powerup powerup = (Powerup)spawn;
 					powerup.onSpawn();
 					availablePowerups.add(powerup);
 				}
@@ -525,8 +525,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			spawnTasks.add(spawnTask);
 		}
 		
-		BasicPowerup powerup = spawnTask.getPowerup();
-		if (powerup != null) { // Is BasicPowerup or Instant
+		Powerup powerup = spawnTask.getPowerup();
+		if (powerup != null) { // Is BasicPowerup, EvolvedPowerup or Instant
 			Calendar expireTime = (Calendar)spawnTime.clone();
 			expireTime.add(Calendar.MINUTE, POWERUP_EXPIRE_MINUTES);
 			ExpireTask expireTask = scheduleExpire(powerup, expireTime);

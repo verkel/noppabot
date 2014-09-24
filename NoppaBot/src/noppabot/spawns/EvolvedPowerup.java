@@ -78,4 +78,9 @@ public abstract class EvolvedPowerup<R extends Roll> extends Powerup<R> {
 	public INoppaBot bot() {
 		return base.bot();
 	}
+	
+	@Override
+	public void onSpawn() {
+		bot().sendChannelFormat("A %s appears!", nameColored());
+	}
 }

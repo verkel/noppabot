@@ -78,6 +78,7 @@ public abstract class BasicPowerup<R extends Roll> extends Powerup<R> {
 	 * Say something when the item spawns. Don't initialize the item here, as
 	 * it won't be called when a dice pirate generates a new item.
 	 */
+	@Override
 	public void onSpawn() {
 		bot.sendChannelFormat("A %s appears!", nameColored());
 	}

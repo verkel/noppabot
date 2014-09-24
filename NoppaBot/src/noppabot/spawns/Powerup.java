@@ -41,6 +41,12 @@ public abstract class Powerup<R extends Roll> implements ISpawnable, IColorStrCo
 		else return name;
 	}
 	
+	/**
+	 * Say something when the item spawns. Don't initialize the item here, as
+	 * it won't be called when a dice pirate generates a new item.
+	 */
+	public abstract void onSpawn();
+	
 	public abstract Powerup initialize(INoppaBot bot);
 	
 	public abstract void setOwner(String owner);
