@@ -68,6 +68,11 @@ class LowestRollWins extends RulesChange {
 		public Event create() {
 			return new LowestRollWins();
 		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.25;
+		}
 	};
 	
 	@Override
@@ -87,6 +92,11 @@ class RollClosestToTargetWins extends RulesChange {
 		@Override
 		public Event create() {
 			return new RollClosestToTargetWins();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 0.25;
 		}
 	};
 	
