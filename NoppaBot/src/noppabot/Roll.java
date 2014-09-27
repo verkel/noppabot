@@ -11,7 +11,7 @@ public interface Roll {
 	int intValue();
 	
 	default int intValueClamped() {
-		return Roll.clampValue(intValue());
+		return Roll.clampValue(intValue(), 100);
 	}
 	
 	default int intValue(boolean clamp) {
@@ -38,8 +38,8 @@ public interface Roll {
 		else return Color.emphasize(String.valueOf(roll.intValue())); // Color it hilighted white
 	}
 	
-	public static int clampValue(int value) {
-		return Math.max(0, Math.min(100, value));
+	public static int clampValue(int value, int sides) {
+		return Math.max(0, Math.min(sides, value));
 	}
 	
 	public static String colorRoll(Roll roll, INoppaBot bot) {

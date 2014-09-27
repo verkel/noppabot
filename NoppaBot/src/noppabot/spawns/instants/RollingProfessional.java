@@ -63,7 +63,7 @@ public class RollingProfessional extends Instant {
 		int sides = bot.getPowerupSides(owner);
 		DiceRoll nextRoll = bot.peekRoll(owner, sides).value;
 		int bonus = bonus();
-		nextRoll = nextRoll.add(bonus).clamp();
+		nextRoll = nextRoll.add(bonus).clamp(sides);
 		bot.setNextRoll(owner, sides, nextRoll);
 		
 		if (professor) {

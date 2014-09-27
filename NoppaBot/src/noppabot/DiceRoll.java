@@ -61,7 +61,11 @@ public class DiceRoll implements Roll {
 	}
 	
 	public DiceRoll clamp() {
-		return new DiceRoll(Roll.clampValue(value));
+		return clamp(100);
+	}
+	
+	public DiceRoll clamp(int sides) {
+		return new DiceRoll(Roll.clampValue(value, sides));
 	}
 	
 	@Override
