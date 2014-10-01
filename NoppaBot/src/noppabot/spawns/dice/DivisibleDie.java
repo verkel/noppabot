@@ -32,7 +32,7 @@ public class DivisibleDie extends BasicDie {
 	
 	@Override
 	public void onSpawn() {
-		bot.sendChannelFormat("A %s appears!", nameColored());
+		bot.sendChannelFormat("A %s appears!", nameWithDetailsColored());
 	}
 
 	@Override
