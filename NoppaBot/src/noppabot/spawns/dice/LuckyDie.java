@@ -102,7 +102,7 @@ public class LuckyDie extends BasicDie {
 			}
 			else {
 				bot.sendChannelFormat(
-					"%s rolls %s! No jackpot for you.", ownerColored, roll);
+					"%s rolls %s! No jackpot for you.", ownerColored, resultStr(roll));
 				return roll;
 			}
 		}
