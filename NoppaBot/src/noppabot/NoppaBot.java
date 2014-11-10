@@ -1366,7 +1366,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		for (User user : rec.users) {
 			if (rolls.participated(user.nick)) {
 				Roll roll = rolls.get(user.nick);
-				int intRoll = roll instanceof DiceRoll ? roll.intValue() : 0;
+				int intRoll = roll instanceof DiceRoll ? roll.intValueRuled(this) : 0;
 				user.addRoll(intRoll); // At this point we switch to the int world
 				user.participation++;
 			}
