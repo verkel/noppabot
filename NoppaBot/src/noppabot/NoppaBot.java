@@ -1263,7 +1263,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		Roll roll = rolls.get(winningRollers.get(0));
 		String msg = String.format(
 			"The roll %s was tied between %s. Roll again within 10 minutes to settle the score!", 
-			roll, tiebreakersStr);
+			roll.intValueRuled(this) /* don't want to display 123 (= 100)*/, tiebreakersStr);
 		sendChannel(msg);
 		tiebreakers.addAll(winningRollers);
 		
