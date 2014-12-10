@@ -1,0 +1,5 @@
+nick = ADVERSARY
+channel = #noppatest
+server = localhost
+debug = true
+executeDebugStuff = true

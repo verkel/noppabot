@@ -31,7 +31,9 @@ public class GenerateItemList {
 	public Map<String, TestResult> resultsCache;
 	private Mode mode;
 	
-	private static class TestResult implements Comparable<TestResult>, Serializable {
+	public static class TestResult implements Comparable<TestResult>, Serializable {
+		public static final long serialVersionUID = 3215321679880826669L;
+		
 		public DiceType diceType;
 		public String name;
 		public String image;
@@ -395,7 +397,7 @@ public class GenerateItemList {
 		System.out.print('.');
 	}
 	
-	enum DiceType {
+	public static enum DiceType {
 		BASIC, EVOLVED
 	}
 	
@@ -676,6 +678,11 @@ public class GenerateItemList {
 		@Override
 		public void sendDefaultContestRollMessage(String nick, DiceRoll roll, boolean colorNick,
 			boolean colorRoll) {
+		}
+
+		@Override
+		public SortedSet<Powerup> getAvailablePowerups() {
+			return null;
 		}
 	}
 	

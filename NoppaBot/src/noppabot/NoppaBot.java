@@ -17,12 +17,13 @@ import noppabot.spawns.Instant.InstantSpawnInfo;
 import noppabot.spawns.Spawner.LastSpawn;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
-import noppabot.spawns.events.*;
+import noppabot.spawns.events.FourthWallBreaks;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.*;
 
+import adversary.Adversary;
 import ca.ualberta.cs.poker.Deck;
 
 import com.google.common.collect.Iterables;
@@ -36,6 +37,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private final boolean debug;
 	private final boolean executeDebugStuff;
 	private final boolean dryRun;
+	private final boolean runAdversary;
 	
 	private static final String ROLL_PERIOD_ABOUT_TO_START = "59 23 * * *";
 	private static final String ROLL_PERIOD_START = "0 0 * * *";
@@ -122,6 +124,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Calendar rollPeriodEndTime;
 	private Calendar spawnEndTime;
 	private PokerTable pokerTable = new PokerTable(this);
+	private List<INoppaEventListener> listeners = new ArrayList<>();
+	private Optional<Adversary> adversary = Optional.empty();
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -139,6 +143,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		debug = Boolean.parseBoolean(properties.getProperty("debug"));
 		executeDebugStuff = Boolean.parseBoolean(properties.getProperty("executeDebugStuff"));
 		dryRun = Boolean.parseBoolean(properties.getProperty("dryRun"));
+		runAdversary = Boolean.parseBoolean(properties.getProperty("adversary"));
 		
 		setVerbose(false); // Print stacktraces, but also useless server messages
 		setLogin(botNick);
@@ -154,6 +159,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		});
 		
 		rolls = new Rolls(this);
+		if (runAdversary) {
+			Adversary adv = new Adversary(this);
+			adversary = Optional.of(adv);
+			listeners.add(adv);
+		}
 		
 		initMessages();
 		
@@ -283,7 +293,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
-		RulesChange.allInfos.get(6).create().run(this);
+//		RulesChange.allInfos.get(6).create().run(this);
 	}
 	
 	private void spawnAllPowerups() {
@@ -347,6 +357,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else if (cmd.equals("hurry")) {
 			spawnNextScheduledPowerup();
 		}
+		else if (cmd.equals("adversary")) {
+			adversary.ifPresent(adv -> adv.handleConsoleCommand(args));
+		}
 		else {
 			System.out.println("Unknown command: " + cmd);
 			commandsHelp();
@@ -360,6 +373,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void quit(String reason) {
+		adversary.ifPresent(adv -> adv.quit("You haven't seen the last of me!"));
 		scheduler.stop();
 		quitServer(reason);
 		dispose();
@@ -455,6 +469,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 					Powerup powerup = (Powerup)spawn;
 					powerup.onSpawn();
 					availablePowerups.add(powerup);
+					listeners.forEach(l -> l.powerupSpawned(powerup));
 				}
 				else {
 					Event event = (Event)spawn;
@@ -526,8 +541,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn) {
 		boolean immediateSpawn = (spawnTime == null);
 		if (immediateSpawn) spawnTime = Calendar.getInstance();
-		final String pattern = String.format("%s %s * * *", 
-			spawnTime.get(Calendar.MINUTE), spawnTime.get(Calendar.HOUR_OF_DAY));
+		final String pattern = DateTimeUtils.toSchedulingPattern(spawnTime);
 
 		SpawnTask spawnTask = new SpawnTask(spawnTime.getTime(), spawn);
 		
@@ -558,8 +572,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	@Override
 	public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
-		final String expirePattern = String.format("%s %s * * *",
-			expireTime.get(Calendar.MINUTE), expireTime.get(Calendar.HOUR_OF_DAY));
+		final String expirePattern = DateTimeUtils.toSchedulingPattern(expireTime);
 		
 		ExpireTask expireTask = new ExpireTask(powerup);
 		expireTask.id = scheduler.schedule(expirePattern, expireTask);
@@ -969,6 +982,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return false;
 	}
 	
+	@Override
+	public SortedSet<Powerup> getAvailablePowerups() {
+		return availablePowerups;
+	}
+	
 	private Powerup findPowerup(String name) {
 		if (name == null) {
 			if (availablePowerups.size() == 1) return availablePowerups.first();
@@ -1196,6 +1214,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			Powerup powerup = powerups.get(nick);
 			powerup.onRollPeriodStart();
 		}
+		
+		listeners.forEach(l -> l.rollPeriodStarted());
 	}
 
 	private void autorollFor(Set<String> autorolls) {
@@ -1269,6 +1289,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		tiebreakerAutorolls.addAll(tiebreakers);
 		tiebreakerAutorolls.retainAll(autorolls);
 		scheduleSettleTieAutorolls(tiebreakerAutorolls);
+		
+		listeners.forEach(l -> l.settleTieStarted(tiebreakers));
 	}
 
 

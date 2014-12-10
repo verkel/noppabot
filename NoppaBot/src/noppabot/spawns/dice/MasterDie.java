@@ -13,6 +13,7 @@ import noppabot.spawns.*;
 
 public class MasterDie extends BasicDie {
 
+	public static final String NAME = "The Master Die";
 	private static final int sides = 150;
 	
 	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
@@ -84,7 +85,7 @@ public class MasterDie extends BasicDie {
 
 	@Override
 	public String name() {
-		return "The Master Die";
+		return NAME;
 	}
 	
 	@Override

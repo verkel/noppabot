@@ -54,4 +54,5 @@ public interface INoppaBot {
 	State getState();
 	Hint spawnRollHint(String nick, int sides);
 	PeekableRandom getRandomFor(String nick);
+	SortedSet<Powerup> getAvailablePowerups();
 }

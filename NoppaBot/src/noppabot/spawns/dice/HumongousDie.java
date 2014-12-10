@@ -16,6 +16,8 @@ import org.gnu.jfiglet.core.*;
 
 public class HumongousDie extends BasicDie {
 	
+	public static final String NAME = "HUMONGOUS DIE";
+	
 	private static FIGDriver figDriver;
 	private static FIGFont font;
 	
@@ -95,7 +97,7 @@ public class HumongousDie extends BasicDie {
 
 	@Override
 	public String name() {
-		return "HUMONGOUS DIE";
+		return NAME;
 	}
 	
 	@Override

@@ -9,6 +9,7 @@ import noppabot.spawns.*;
 
 public class FastDie extends BasicDie {
 
+	public static final String NAME = "Fast Die";
 	private static final int maxBonus = 20;
 	
 	public static final BasicPowerupSpawnInfo info = new BasicPowerupSpawnInfo() {
@@ -63,7 +64,7 @@ public class FastDie extends BasicDie {
 
 	@Override
 	public String name() {
-		return "Fast Die";
+		return NAME;
 	}
 	
 	@Override

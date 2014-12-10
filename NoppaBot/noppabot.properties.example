@@ -5,3 +5,4 @@ server = irc.cs.hut.fi
 debug = true
 executeDebugStuff = true
 dryRun = false
+adversary = false
