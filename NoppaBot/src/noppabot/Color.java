@@ -22,7 +22,7 @@ public class Color {
 	}
 	
 	public static String nick(String nick) {
-		if (nick.equals("ADVERSARY")) return custom(nick, Colors.RED);
+		if (nick.contains("ADVERSARY")) return custom(nick, Colors.RED);
 		else return custom(nick, Colors.TEAL);
 	}
 	
