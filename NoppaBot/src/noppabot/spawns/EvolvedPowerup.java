@@ -21,8 +21,9 @@ public abstract class EvolvedPowerup<R extends Roll> extends Powerup<R> {
 	}
 	
 	@Override
-	public final void setOwner(String owner) {
+	public final Powerup setOwner(String owner) {
 		base.setOwner(owner);
+		return this;
 	}
 	
 	@Override
