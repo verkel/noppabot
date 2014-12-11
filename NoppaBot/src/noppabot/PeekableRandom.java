@@ -60,11 +60,11 @@ public class PeekableRandom {
 		peekedRolls.put(sides, new PeekedRoll(sides, roll));
 	}
 	
-	private DiceRoll doRoll(int sides) {
+	protected DiceRoll doRoll(int sides) {
 		return new DiceRoll(doIntRoll(sides));
 	}
 	
-	private int doIntRoll(int sides) {
+	protected int doIntRoll(int sides) {
 		return random.nextInt(sides) + 1;
 	}
 }

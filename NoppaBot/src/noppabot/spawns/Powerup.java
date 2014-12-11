@@ -49,7 +49,7 @@ public abstract class Powerup<R extends Roll> implements ISpawnable, IColorStrCo
 	
 	public abstract Powerup initialize(INoppaBot bot);
 	
-	public abstract void setOwner(String owner);
+	public abstract Powerup setOwner(String owner);
 
 	public void onRollPeriodStart() {
 	}

@@ -23,7 +23,7 @@ import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
 import org.jibble.pircbot.*;
 
-import adversary.Adversary;
+import adversary.*;
 import ca.ualberta.cs.poker.Deck;
 
 import com.google.common.collect.Iterables;
@@ -249,6 +249,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		powerups.put("kessu", new ApprenticeDie().initialize(this));
 		powerups.put("frodo", new FastDie().initialize(this));
 		powerups.put("bilbo", new MasterDie().initialize(this));
+//		powerups.put("ADVERSARY", new WeightedDie().initialize(this).setOwner("ADVERSARY"));
 //		powerups.put("PokerPro", new PokerHand().initialize(this));
 //		Powerup p = new VariableDie(); p.initialize(this);
 //		powerups.put("Verkel", p);
@@ -634,7 +635,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				rollerNick = customRollerMatcher.group(2);
 				
 				if (isOnChannel(rollerNick)) {
-					sendChannelFormat("%s is on the channel, so you cannot roll for him/her", rollerNick);
+					sendCustomRollerOnChannelError(rollerNick);
 					return;
 				}
 			}
@@ -659,7 +660,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 			else if (cmd.equalsIgnoreCase("roll")) {
 				if (argsSplit.length == 0) rollAndParticipate(sender, 100);
-				else if (argsSplit.length == 1) rollAndParticipate(argsSplit[0], 100);
+				else if (argsSplit.length == 1) {
+					String rollerNick = argsSplit[0];
+					if (isOnChannel(rollerNick)) sendCustomRollerOnChannelError(rollerNick);
+					else rollAndParticipate(rollerNick, 100);
+				}
 			}
 			else if (cmd.equalsIgnoreCase("tells") || cmd.equalsIgnoreCase("nextrolls") || cmd.equalsIgnoreCase("predictions")) {
 				if (argsSplit.length == 0) listNextRolls(sender);
@@ -730,6 +735,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				}
 			}
 		}
+	}
+
+
+	private void sendCustomRollerOnChannelError(String rollerNick) {
+		sendChannelFormat("%s is on the channel, so you cannot roll for him/her", rollerNick);
 	}
 
 	private void dropPowerup(String nick) {
@@ -1476,7 +1486,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	public PeekableRandom getRandomFor(String nick) {
-		if (!randoms.containsKey(nick)) randoms.put(nick, new PeekableRandom());
+		if (!randoms.containsKey(nick)) {
+			if (adversary.isPresent() && adversary.get().getNick().equals(nick)) {
+				randoms.put(adversary.get().getNick(), new AdversaryRandom());
+			}
+			else {
+				randoms.put(nick, new PeekableRandom());
+			}
+		}
 		return randoms.get(nick);
 	}
 	

@@ -55,10 +55,11 @@ public abstract class BasicPowerup<R extends Roll> extends Powerup<R> {
 	}
 	
 	@Override
-	public final void setOwner(String owner) {
+	public final BasicPowerup setOwner(String owner) {
 		this.owner = owner;
 		this.ownerColored = colorOwner ? Color.nick(owner) : owner;
 		setIdentified(true);
+		return this;
 	}
 	
 	public final void setColors(boolean colorOwner, boolean colorRoll) {
