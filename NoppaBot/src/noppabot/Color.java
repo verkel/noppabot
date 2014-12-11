@@ -22,7 +22,8 @@ public class Color {
 	}
 	
 	public static String nick(String nick) {
-		return custom(nick, Colors.TEAL);
+		if (nick.equals("ADVERSARY")) return custom(nick, Colors.RED);
+		else return custom(nick, Colors.TEAL);
 	}
 	
 	public static String winningRoll(Roll roll) {
