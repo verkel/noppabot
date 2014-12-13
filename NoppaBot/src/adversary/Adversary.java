@@ -72,8 +72,11 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		
 		scheduler.start();
 		connect(server);
-		joinChannel(channel);
-		System.out.printf("Joined as %s to channel %s\n", botNick, channel);
+		
+		if (debug) { // Don't join the channel automatically, let's ensure NoppaBot makes it first
+			joinChannel(channel);
+			System.out.printf("Adversary: Joined as %s to channel %s\n", botNick, channel);
+		}
 	}
 	
 	private void loadCachedRankingList() {
@@ -87,6 +90,11 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		}
 	}
 
+	@Override
+	protected void onConnect() {
+		System.out.println("Adversary: Connected to the IRC server");
+	}
+	
 	private void debugStuff() {
 	}
 	
@@ -116,6 +124,9 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		else if (cmd.equals("say")) {
 			if (args == null) System.out.println("Need message as an argument");
 			else sendChannel(args);
+		}
+		else if (cmd.equals("join")) {
+			joinChannel(channel);
 		}
 		else if (cmd.equals("story")) {
 			sendChannel("You have made it through the dice roll purgatory.");
@@ -203,8 +214,12 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		}
 		
 		double ev = ranking.ev;
-		double interestRoll = rnd.nextDouble() * 200d;
-		if (canGrab() && interestRoll < ev) {
+		double interestRoll = rnd.nextDouble() * 100d;
+		double interestThreshold = 2 * ev - 50; // this is okay
+		boolean interesting = interestRoll < interestThreshold;
+		if (debug) System.out.printf("%s %s: interestRoll = %.2f, threshold = %.2f\n",
+			die, interesting ? "is interesting" : "is not interesting", interestRoll, interestThreshold);
+		if (canGrab() && interestRoll < interestThreshold) {
 //		if (canGrab()) {
 			scheduleGrab(die, ranking);
 //			grab(die, ranking);
