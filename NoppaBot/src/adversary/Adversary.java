@@ -204,8 +204,8 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		
 		double ev = ranking.ev;
 		double interestRoll = rnd.nextDouble() * 200d;
-//		if (canGrab() && interestRoll < ev) {
-		if (canGrab()) {
+		if (canGrab() && interestRoll < ev) {
+//		if (canGrab()) {
 			scheduleGrab(die, ranking);
 //			grab(die, ranking);
 		}
@@ -225,13 +225,13 @@ public class Adversary extends PircBot implements INoppaEventListener {
 
 	private Calendar randomGrabTime() {
 		Calendar time = Calendar.getInstance();
-		time.add(Calendar.MINUTE, 1);// + rnd.nextInt(60)); // XXX
+		time.add(Calendar.MINUTE, rnd.nextInt(60));
 		return time;
 	}
 	
 	private Calendar randomRollTime() {
 		Calendar time = Calendar.getInstance();
-		int minutes = 1; //+ rnd.nextInt(8); // XXX
+		int minutes = rnd.nextInt(8);
 		if (minutes == 5) minutes = 4; // avoid collision with autoroll
 		time.add(Calendar.MINUTE, minutes);
 		return time;
