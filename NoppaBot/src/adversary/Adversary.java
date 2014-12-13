@@ -354,6 +354,36 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		}
 	}
 	
+	@Override
+	protected void onDisconnect() {
+		System.out.println("Adversary: Disconnected from server. Trying to reconnect every 15 minute.");
+		ReconnectTask rt = new ReconnectTask();
+		final String id = scheduler.schedule("*/15 * * * *", rt);
+		rt.id = id;
+	}
+	
+	public class ReconnectTask extends Task {
+		public String id;
+		
+		@Override
+		public void execute(TaskExecutionContext context) {
+			synchronized (lock) {
+				try {
+					if (!isConnected()) {
+						System.out.println("Adversary: Now reconnecting");
+						reconnect();
+						joinChannel(channel);
+						System.out.println("Adversary: Successfully reconnected!");
+					}
+					else scheduler.deschedule(id);
+				}
+				catch (Exception e) {
+					System.out.println("Adversary: Reconnect failed: " + e.getMessage());
+				}
+			}
+		}
+	}
+	
 	private boolean canGrab() {
 		return !grabTask.isPresent() && !hasPowerup();
 	}
