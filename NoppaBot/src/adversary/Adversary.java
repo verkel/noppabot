@@ -48,7 +48,8 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	private Scheduler scheduler = new Scheduler();
 	private Map<String, TestResult> rankingList;
 	private Optional<PowerupTask> grabTask = Optional.empty();
-
+	private boolean quitting = false;
+	
 	private INoppaBot noppaBot;
 	
 	public Adversary(INoppaBot bot) throws Exception {
@@ -142,6 +143,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	}
 	
 	public void quit(String reason) {
+		quitting = true;
 		scheduler.stop();
 		quitServer(reason);
 		dispose();
@@ -371,10 +373,13 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	
 	@Override
 	protected void onDisconnect() {
-		System.out.println("Adversary: Disconnected from server. Trying to reconnect every 15 minute.");
-		ReconnectTask rt = new ReconnectTask();
-		final String id = scheduler.schedule("*/15 * * * *", rt);
-		rt.id = id;
+		if (quitting) dispose();
+		else {
+			System.out.println("Adversary: Disconnected from server. Trying to reconnect every 15 minute.");
+			ReconnectTask rt = new ReconnectTask();
+			final String id = scheduler.schedule("*/15 * * * *", rt);
+			rt.id = id;
+		}
 	}
 	
 	public class ReconnectTask extends Task {

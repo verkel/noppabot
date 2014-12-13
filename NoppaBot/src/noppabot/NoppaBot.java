@@ -126,6 +126,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private PokerTable pokerTable = new PokerTable(this);
 	private List<INoppaEventListener> listeners = new ArrayList<>();
 	private Optional<Adversary> adversary = Optional.empty();
+	private boolean quitting = false;
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -374,10 +375,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void quit(String reason) {
+		quitting = true;
 		adversary.ifPresent(adv -> adv.quit("You haven't seen the last of me!"));
 		scheduler.stop();
 		quitServer(reason);
-		dispose();
 	}
 	
 	private void giveFreePowerup() {
@@ -1659,10 +1660,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	protected void onDisconnect() {
-		System.out.println("Disconnected from server. Trying to reconnect every 15 minute.");
-		ReconnectTask rt = new ReconnectTask();
-		final String id = scheduler.schedule("*/15 * * * *", rt);
-		rt.id = id;
+		if (quitting) dispose();
+		else {
+			System.out.println("Disconnected from server. Trying to reconnect every 15 minute.");
+			ReconnectTask rt = new ReconnectTask();
+			final String id = scheduler.schedule("*/15 * * * *", rt);
+			rt.id = id;
+		}
 	}
 
 	private boolean isOnChannel(String nick) {
