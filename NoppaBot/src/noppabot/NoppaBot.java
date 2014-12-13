@@ -1653,6 +1653,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
+	protected void onConnect() {
+		System.out.println("Connected to the IRC server");
+	}
+	
+	@Override
 	protected void onDisconnect() {
 		System.out.println("Disconnected from server. Trying to reconnect every 15 minute.");
 		ReconnectTask rt = new ReconnectTask();
