@@ -216,11 +216,13 @@ public class Adversary extends PircBot implements INoppaEventListener {
 			}
 		}
 		
-		boolean interesting = isInteresting(die, ranking.ev);
-		if (canGrab() && interesting) {
-//		if (canGrab()) {
-			scheduleGrab(die, ranking);
-//			grab(die, ranking);
+		if (!isPlanningToGrab()) {
+			if (!hasPowerup()) {
+				if (isInteresting(die, ranking.ev)) scheduleGrab(die, ranking);
+			}
+			else {
+				// TODO drop & grab new
+			}
 		}
 	}
 
@@ -446,7 +448,11 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	}
 	
 	private boolean canGrab() {
-		return !grabTask.isPresent() && !hasPowerup();
+		return !isPlanningToGrab() && !hasPowerup();
+	}
+
+	private boolean isPlanningToGrab() {
+		return grabTask.isPresent();
 	}
 
 	private boolean hasPowerup() {
