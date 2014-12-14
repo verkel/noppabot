@@ -88,7 +88,7 @@ public class PokerDealer extends Instant {
 	
 	@Override
 	public boolean isDestroyedAfterPickup() {
-		return cardsLeft == 0;
+		return cardsLeft <= 1;
 	}
 
 	@Override
