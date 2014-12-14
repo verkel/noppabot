@@ -684,6 +684,11 @@ public class GenerateItemList {
 		public SortedSet<Powerup> getAvailablePowerups() {
 			return null;
 		}
+
+		@Override
+		public boolean hasFavor(String nick) {
+			return false;
+		}
 	}
 	
 	class LazyBot extends TestBot {

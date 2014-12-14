@@ -55,4 +55,5 @@ public interface INoppaBot {
 	Hint spawnRollHint(String nick, int sides);
 	PeekableRandom getRandomFor(String nick);
 	SortedSet<Powerup> getAvailablePowerups();
+	boolean hasFavor(String nick);
 }

@@ -220,8 +220,13 @@ public class Adversary extends PircBot implements INoppaEventListener {
 			if (!hasPowerup()) {
 				if (isInteresting(die, ranking.ev)) scheduleGrab(die, ranking);
 			}
-			else {
-				// TODO drop & grab new
+			else { // Maybe drop current die
+				Powerup current = noppaBot.getPowerups().get(botNick);
+				TestResult currentRanking = rankingList.get(current.name());
+				if (currentRanking != null && ranking.ev > currentRanking.ev && canDrop()) {
+					if (debug) System.out.printf("%s is better than what I have (%s)\n", die, current);
+					if (isInteresting(die, ranking.ev)) scheduleGrab(die, ranking);
+				}
 			}
 		}
 	}
@@ -315,11 +320,14 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	private List<String> grabCommands = Arrays.asList("grab", "get", "pick", "take");
 	
 	private void grab(Powerup<?> powerup, TestResult ranking) {
-		// Abort silently if the item is taken now
 		if (!isAvailable(powerup)) return;
+		
+		boolean drop = hasPowerup();
+		if (drop && !canDrop()) return;
 		
 		boolean preTaunt = rnd.nextBoolean();
 		if (preTaunt) dieGrabTaunt(dieGrabPreTaunts, powerup, ranking);
+		if (drop) sendChannel("drop");
 		doGrab(powerup);
 		if (!preTaunt) dieGrabTaunt(dieGrabPostTaunts, powerup, ranking);
 	}
@@ -458,4 +466,9 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	private boolean hasPowerup() {
 		return noppaBot.getPowerups().containsKey(botNick);
 	}
+	
+	private boolean canDrop() {
+		return noppaBot.hasFavor(botNick) || noppaBot.getRules().canDropItems.get();
+	}
+
 }

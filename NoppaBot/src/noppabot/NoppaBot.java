@@ -754,7 +754,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: you have nothing to drop.", Color.nick(nick));
 			return;
 		}
-		else if (!canDropItems && !hasFavor(nick)) {
+		else if (!canDropItems && !hasFavorVerbose(nick)) {
 			return;
 		}
 		
@@ -777,7 +777,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("%s: you've already requested me to autoroll for you.", Color.nick(nick));
 			return;
 		}
-		else if (!hasFavor(nick)) return;
+		else if (!hasFavorVerbose(nick)) return;
 		
 		favorsUsed.add(nick);
 		sendChannelFormat("%s: ok, I will roll for you tonight.", Color.nick(nick));
@@ -786,7 +786,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 
 	private void peekNextSpawns(String nick) {
-		if (!hasFavor(nick)) return;
+		if (!hasFavorVerbose(nick)) return;
 		favorsUsed.add(nick);
 		
 		final int peekCount = 3;
@@ -824,13 +824,18 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		sendMessage(nick, buf.toString());
 	}
 
-	private boolean hasFavor(String nick) {
-		if (favorsUsed.contains(nick)) {
+	private boolean hasFavorVerbose(String nick) {
+		if (hasFavor(nick)) {
 			sendChannelFormat("%s: you have used your favor for today", Color.nick(nick));
 			return false;
 		}
 		
 		return true;
+	}
+
+	@Override
+	public boolean hasFavor(String nick) {
+		return favorsUsed.contains(nick);
 	}
 	
 	private void listItems(boolean isRollPeriodStart) {
