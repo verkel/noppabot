@@ -17,7 +17,7 @@ public class RollRecords {
 	
 	public User getUser(String nick) {
 		for (User user : users) {
-			if (user.nick.equals(nick)) return user;
+			if (user.nick.equals(nick) || user.aliases.contains(nick)) return user;
 		}
 		return null;
 	}
