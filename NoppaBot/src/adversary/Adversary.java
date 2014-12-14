@@ -15,7 +15,7 @@ import noppabot.*;
 import noppabot.GenerateItemList.TestResult;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
-import noppabot.spawns.instants.DicePirate;
+import noppabot.spawns.instants.*;
 
 import org.jibble.pircbot.*;
 
@@ -160,8 +160,9 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	@Override
 	public void powerupSpawned(Powerup<?> powerup) {
 		if (powerup instanceof BasicDie) dieSpawned((BasicDie)powerup);
+		else if (powerup instanceof Instant) instantSpawned((Instant)powerup);
 	}
-	
+
 	@Override
 	public void rollPeriodStarted() {
 		// Schedule roll
@@ -215,26 +216,51 @@ public class Adversary extends PircBot implements INoppaEventListener {
 			}
 		}
 		
-		double ev = ranking.ev;
-		double interestRoll = rnd.nextDouble() * 100d;
-		double interestThreshold = 2 * ev - 50; // this is okay
-		boolean interesting = interestRoll < interestThreshold;
-		if (debug) System.out.printf("%s %s: interestRoll = %.2f, threshold = %.2f\n",
-			die, interesting ? "is interesting" : "is not interesting", interestRoll, interestThreshold);
-		if (canGrab() && interestRoll < interestThreshold) {
+		boolean interesting = isInteresting(die, ranking.ev);
+		if (canGrab() && interesting) {
 //		if (canGrab()) {
 			scheduleGrab(die, ranking);
 //			grab(die, ranking);
 		}
 	}
 
+	private boolean isInteresting(Powerup powerup, double ev) {
+		double interestRoll = rnd.nextDouble() * 100d;
+		double interestThreshold = 2 * ev - 50; // this is okay
+		boolean interesting = interestRoll < interestThreshold;
+		if (debug) System.out.printf("%s %s: interestRoll = %.2f, threshold = %.2f\n",
+			powerup, interesting ? "is interesting" : "is not interesting", interestRoll, interestThreshold);
+		return interesting;
+	}
+	
+	private void instantSpawned(Instant instant) {
+		if (instant instanceof DicemonTrainer) {
+			DicemonTrainer trainer = (DicemonTrainer)instant;
+			boolean interesting = isInteresting(trainer, 50); // coinflip
+			if (hasPowerup() && interesting) {
+				scheduleGrab(instant);
+			}
+		}
+	}
+
+	private void scheduleGrab(Instant instant) {
+		doScheduleGrab(instant, (ISpawnable spawn) -> {
+			grab((Instant)spawn);
+			this.grabTask = Optional.empty();
+		});
+	}
+	
 	private void scheduleGrab(BasicDie die, TestResult ranking) {
-		Calendar grabTime = randomGrabTime();
-		String pattern = DateTimeUtils.toSchedulingPattern(grabTime);
-		PowerupTask grabTask = new PowerupTask(grabTime.getTime(), die, spawn -> {
+		doScheduleGrab(die, spawn -> {
 			grab((Powerup)spawn, ranking);
 			this.grabTask = Optional.empty();
 		});
+	}
+	
+	private void doScheduleGrab(Powerup powerup, Consumer<ISpawnable> task) {
+		Calendar grabTime = randomGrabTime();
+		String pattern = DateTimeUtils.toSchedulingPattern(grabTime);
+		PowerupTask grabTask = new PowerupTask(grabTime.getTime(), powerup, task);
 		grabTask.id = scheduler.schedule(pattern, grabTask);
 		this.grabTask = Optional.of(grabTask);
 		if (debug) System.out.println("Scheduled grab: " + grabTask);
@@ -288,12 +314,27 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	
 	private void grab(Powerup<?> powerup, TestResult ranking) {
 		// Abort silently if the item is taken now
-		if (!noppaBot.getAvailablePowerups().contains(powerup)) return;
+		if (!isAvailable(powerup)) return;
 		
 		boolean preTaunt = rnd.nextBoolean();
 		if (preTaunt) dieGrabTaunt(dieGrabPreTaunts, powerup, ranking);
-		sendChannelFormat("%s %s", getRandom(grabCommands), powerup.name());
+		doGrab(powerup);
 		if (!preTaunt) dieGrabTaunt(dieGrabPostTaunts, powerup, ranking);
+	}
+	
+	private void grab(Instant instant) {
+		// Abort silently if the item is taken now
+		if (!isAvailable(instant)) return;
+		
+		doGrab(instant);
+	}
+
+	private boolean isAvailable(Powerup<?> powerup) {
+		return noppaBot.getAvailablePowerups().contains(powerup);
+	}
+
+	private void doGrab(Powerup<?> powerup) {
+		sendChannelFormat("%s %s", getRandom(grabCommands), powerup.name());
 	}
 
 	private void dieGrabTaunt(List<String> taunts, Powerup<?> powerup, TestResult ranking) {
