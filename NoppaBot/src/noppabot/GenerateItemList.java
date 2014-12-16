@@ -351,7 +351,7 @@ public class GenerateItemList {
 		}, bot, false, DiceType.EVOLVED);
 		
 		testEvolvedPowerup("Uniform Die", "Placeholder.png", uniformDieDesc, new SwapperDie().upgrade(), bot);
-		testEvolvedPowerup("Modular Die", "Locked.png", undiscovered /*modularDieDesc*/, new DivisibleDie().upgrade(), bot);
+		testEvolvedPowerup("Modular Die", "Placeholder.png", modularDieDesc, new DivisibleDie().upgrade(), bot);
 	}
 	
 	private void listInstants() {
