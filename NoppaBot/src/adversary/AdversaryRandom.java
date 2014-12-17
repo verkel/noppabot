@@ -11,7 +11,7 @@ public class AdversaryRandom extends PeekableRandom {
 	@Override
 	protected int doIntRoll(int sides) {
 		int val = super.doIntRoll(sides);
-		int modified = (int)Math.round(Math.sqrt(100 * val));
+		int modified = (int)Math.round(Math.sqrt(sides * val));
 //		System.out.printf("transform %d -> %d\n", val, modified);
 		return modified;
 	}
