@@ -1402,11 +1402,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		// Add the today's roll for everyone
 		for (User user : rec.users) {
-			if (rolls.participated(user.nick)) {
-				Roll roll = rolls.get(user.nick);
-				int intRoll = roll instanceof DiceRoll ? roll.intValueRuled(this) : 0;
-				user.addRoll(intRoll); // At this point we switch to the int world
-				user.participation++;
+			if (rolls.participated(user.nick) || userParticipatedWithAlias(user)) {
+				addRollAndIncrementParticipation(user);
 			}
 			else {
 				user.addRoll(0);
@@ -1433,6 +1430,21 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		finally {
 			close(writer);
 		}
+	}
+
+	private boolean userParticipatedWithAlias(User user) {
+		for (String alias : user.aliases) {
+			if (rolls.participated(alias)) return true;
+		}
+		return false;
+	}
+
+
+	private void addRollAndIncrementParticipation(User user) {
+		Roll roll = rolls.get(user.nick);
+		int intRoll = roll instanceof DiceRoll ? roll.intValueRuled(this) : 0;
+		user.addRoll(intRoll); // At this point we switch to the int world
+		user.participation++;
 	}
 
 
