@@ -282,7 +282,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	
 	private Calendar randomRollTime() {
 		Calendar time = Calendar.getInstance();
-		int minutes = rnd.nextInt(8);
+		int minutes = 1 + rnd.nextInt(8);
 		if (minutes == 5) minutes = 4; // avoid collision with autoroll
 		time.add(Calendar.MINUTE, minutes);
 		return time;
