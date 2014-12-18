@@ -233,10 +233,11 @@ public class Adversary extends PircBot implements INoppaEventListener {
 
 	private boolean isInteresting(Powerup powerup, double ev) {
 		double interestRoll = rnd.nextDouble() * 100d;
-		double interestThreshold = 2 * ev - 50; // this is okay
+		double hurryFactor = getHurryFactor();
+		double interestThreshold = (2 * ev - 50) * hurryFactor; // this is okay
 		boolean interesting = interestRoll < interestThreshold;
-		if (debug) System.out.printf("%s %s: interestRoll = %.2f, threshold = %.2f\n",
-			powerup, interesting ? "is interesting" : "is not interesting", interestRoll, interestThreshold);
+		if (debug) System.out.printf("%s %s: interestRoll = %.2f, threshold = %.2f, hurryFactor=%.2f\n",
+			powerup, interesting ? "is interesting" : "is not interesting", interestRoll, interestThreshold, hurryFactor);
 		return interesting;
 	}
 	
@@ -471,4 +472,13 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		return noppaBot.hasFavor(botNick) || noppaBot.getRules().canDropItems.get();
 	}
 
+	public double getHurryFactor() {
+		long periodStart = noppaBot.getRollPeriodStartTime().getTimeInMillis() / 1000;
+		long dayDuration = 86400;
+		long dayStart = periodStart - dayDuration;
+		long now = Calendar.getInstance().getTimeInMillis() / 1000;
+		long passed = now - dayStart;
+		double dayCompletion = (double)passed / (double)dayDuration;
+		return dayCompletion * 2d;
+	}
 }
