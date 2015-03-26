@@ -21,7 +21,7 @@ public class RandomDistribTester {
 		
 		for (int i = 0; i < stats.length; i++) {
 			float percentage = (float)stats[i] / (float)ITERATIONS * 100f;
-			System.out.printf("%.2f%% of %d:\t", percentage, i);
+			System.out.printf("%.4f%% of %d:\t", percentage, i);
 			for (int j = 0; j < percentage * 10; j++) System.out.print('=');
 			System.out.println();
 		}
