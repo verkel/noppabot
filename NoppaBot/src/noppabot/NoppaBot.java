@@ -1506,7 +1506,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public PeekableRandom getRandomFor(String nick) {
 		if (!randoms.containsKey(nick)) {
 			if (adversary.isPresent() && adversary.get().getNick().equals(nick)) {
-				randoms.put(adversary.get().getNick(), new AdversaryRandom());
+				randoms.put(adversary.get().getNick(), new WeightedRandom(0.5, true));
 			}
 			else {
 				randoms.put(nick, new PeekableRandom());
