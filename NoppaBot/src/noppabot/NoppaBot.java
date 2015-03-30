@@ -17,7 +17,7 @@ import noppabot.spawns.Instant.InstantSpawnInfo;
 import noppabot.spawns.Spawner.LastSpawn;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
-import noppabot.spawns.events.FourthWallBreaks;
+import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
 
@@ -296,6 +296,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 //		grabPowerup("Verkel", PokerDealer.NAME);
 		
 //		RulesChange.allInfos.get(6).create().run(this);
+		new RollPrediction().run(this);
 	}
 	
 	private void spawnAllPowerups() {
