@@ -16,6 +16,8 @@ import noppabot.spawns.instants.*;
 
 import org.jibble.pircbot.Colors;
 
+import adversary.WeightedRandom;
+
 
 public class Rules {
 	public static abstract class WinCondition {
@@ -159,8 +161,13 @@ public class Rules {
 	 */
 	public Property<Boolean> diceFusion = Property.of(false);
 	
+	/**
+	 * Bias used for WeightedRandoms
+	 */
+	public Property<WeightedRandom.Bias> bias = Property.of(WeightedRandom.NO_BIAS);
+	
 	private List<Property<?>> all = Arrays.asList(cappedRolls, winCondition,
-		canDropItems, spawnOverride, upgradedSpawns, diceFusion);
+		canDropItems, spawnOverride, upgradedSpawns, diceFusion, bias);
 
 	private INoppaBot bot;
 

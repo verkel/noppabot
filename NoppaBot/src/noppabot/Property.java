@@ -5,10 +5,11 @@
 package noppabot;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 import com.google.common.base.Objects;
 
-public class Property<T> {
+public class Property<T> implements Supplier<T> {
 
 	private T defaultValue;
 	private T value;
@@ -22,6 +23,7 @@ public class Property<T> {
 		this.defaultValue = defaultValue;
 	}
 
+	@Override
 	public T get() {
 		return value;
 	}

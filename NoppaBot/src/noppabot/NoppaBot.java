@@ -1510,7 +1510,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				randoms.put(adversary.get().getNick(), new WeightedRandom(0.5, true));
 			}
 			else {
-				randoms.put(nick, new PeekableRandom());
+				randoms.put(nick, new WeightedRandom(rules.bias));
 			}
 		}
 		return randoms.get(nick);

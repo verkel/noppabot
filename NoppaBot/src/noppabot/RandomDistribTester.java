@@ -1,6 +1,7 @@
 package noppabot;
 
-import adversary.WeightedRandom;
+import adversary.*;
+import adversary.WeightedRandom.Bias;
 
 public class RandomDistribTester {
 
