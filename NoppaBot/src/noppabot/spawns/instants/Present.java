@@ -12,7 +12,18 @@ public class Present extends Instant {
 //	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
 //		Arrays.<BasicPowerup>asList(new Present()));
 	
-	public static final BasicPowerupSpawnInfo info = dontSpawnInfo;
+	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+
+		@Override
+		public Instant create() {
+			return new Present();
+		}
+		
+		@Override
+		public double spawnChance() {
+			return 5.0;
+		}
+	};
 	
 	@Override
 	public SpawnInfo<?> spawnInfo() {
