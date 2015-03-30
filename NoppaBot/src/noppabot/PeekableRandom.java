@@ -13,7 +13,7 @@ import noppabot.PeekedRoll.Hint;
  */
 public class PeekableRandom {
 	private Map<Integer, PeekedRoll> peekedRolls = new TreeMap<Integer, PeekedRoll>();
-	private Random random;
+	protected Random random;
 	
 	public PeekableRandom() {
 		random = new Random();
