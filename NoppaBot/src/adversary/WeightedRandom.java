@@ -51,11 +51,11 @@ public class WeightedRandom extends PeekableRandom {
 	
 	@Override
 	protected int doIntRoll(int sides) {
-		double val = random.nextDouble() * 100d;
+		double val = random.nextDouble() * sides;
 		Bias b = bs.get();
 		// modifiedRoll(roll, diff) = sides^(1-diff) * roll^diff
 		int modified = (int)(Math.pow(sides, 1d - b.bias) * Math.pow(val, b.bias));
 		if (b.highRolls) return modified + 1;
-		else return 100 - modified;
+		else return sides - modified;
 	}
 }
