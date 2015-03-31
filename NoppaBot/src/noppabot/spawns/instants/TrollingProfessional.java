@@ -7,6 +7,7 @@ package noppabot.spawns.instants;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import adversary.Adversary;
 import noppabot.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
@@ -46,6 +47,26 @@ public class TrollingProfessional extends Instant {
 
 	@Override
 	public void onPickup() {
+		if (Math.random() < 0.5 && canInviteAdversary()) inviteAdversary();
+		else spawnBomb();
+	}
+
+	private boolean canInviteAdversary() {
+		Optional<Adversary> adv = bot.getAdversary();
+		if (adv.isPresent()) {
+			return !adv.get().isOnChannel();
+		}
+		else return false;
+	}
+	
+	private void inviteAdversary() {
+		bot.sendChannelFormat("%s grabs the %s!", owner, nameColored());
+		bot.sendChannelFormat("\"Say hello to my little friend!\", the trolling professional announces.");
+		Adversary adversary = bot.getAdversary().get();
+		adversary.join();
+	}
+	
+	private void spawnBomb() {
 		Calendar now = Calendar.getInstance();
 		Calendar end = bot.getSpawnEndTime();
 		long deltaMs = end.getTimeInMillis() - now.getTimeInMillis();

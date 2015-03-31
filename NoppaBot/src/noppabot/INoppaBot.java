@@ -8,6 +8,7 @@ import it.sauronsoftware.cron4j.Scheduler;
 
 import java.util.*;
 
+import adversary.Adversary;
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.PeekedRoll.Hint;
@@ -56,4 +57,5 @@ public interface INoppaBot {
 	PeekableRandom getRandomFor(String nick);
 	SortedSet<Powerup> getAvailablePowerups();
 	boolean hasFavor(String nick);
+	Optional<Adversary> getAdversary();
 }

@@ -377,7 +377,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void quit(String reason) {
 		quitting = true;
-		adversary.ifPresent(adv -> adv.quit("You haven't seen the last of me!"));
+		adversary.ifPresent(adv -> adv.quit(Adversary.LEAVE_TAUNT));
 		scheduler.stop();
 		quitServer(reason);
 	}
@@ -1648,6 +1648,10 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	@Override
 	public State getState() {
 		return state;
+	}
+	
+	public Optional<Adversary> getAdversary() {
+		return adversary;
 	}
 	
 	public class ReconnectTask extends Task {

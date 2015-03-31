@@ -23,6 +23,7 @@ import org.jibble.pircbot.*;
 public class Adversary extends PircBot implements INoppaEventListener {
 	
 	public static final File cachedRankingListPath = new File("results.cache");
+	public static final String LEAVE_TAUNT = "You haven't seen the last of me!";
 	
 	private final String botNick;
 	private final String channel;
@@ -127,7 +128,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 			else sendChannel(args);
 		}
 		else if (cmd.equals("join")) {
-			joinChannel(channel);
+			join();
 		}
 		else if (cmd.equals("story")) {
 			sendChannel("You have made it through the dice roll purgatory.");
@@ -140,6 +141,14 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		}
 		
 		return false;
+	}
+	
+	public void join() {
+		joinChannel(channel);
+	}
+	
+	public void part() {
+		partChannel(channel, LEAVE_TAUNT);
 	}
 	
 	public void quit(String reason) {
@@ -194,6 +203,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	private void roll() {
 		sendChannelFormat(getRandom(rollPreTaunts));
 		sendChannel("roll");
+		part();
 	}
 
 	@Override
@@ -480,5 +490,12 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		long passed = now - dayStart;
 		double dayCompletion = (double)passed / (double)dayDuration;
 		return dayCompletion * 2d;
+	}
+	
+	public boolean isOnChannel() {
+		for (String c : getChannels()) {
+			if (c.equals(channel)) return true;
+		}
+		return false;
 	}
 }

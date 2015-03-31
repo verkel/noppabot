@@ -9,6 +9,7 @@ import it.sauronsoftware.cron4j.Scheduler;
 import java.io.*;
 import java.util.*;
 
+import adversary.Adversary;
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.PeekedRoll.Hint;
@@ -688,6 +689,12 @@ public class GenerateItemList {
 		@Override
 		public boolean hasFavor(String nick) {
 			return false;
+		}
+
+		@Override
+		public Optional<Adversary> getAdversary() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 	
