@@ -22,6 +22,11 @@ public class RollPrediction extends Event {
 		public boolean spawnInLateEvents() {
 			return false;
 		}
+		
+		@Override
+		public double spawnChance() {
+			return 2.0;
+		}
 	};
 	
 	private static Fortunes fortunes = new Fortunes();
