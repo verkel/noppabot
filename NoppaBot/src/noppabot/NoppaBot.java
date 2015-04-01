@@ -1387,6 +1387,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		schedulePowerupsOfTheDay();
 		
 		state = State.NORMAL;
+		
+		listeners.forEach(l -> l.rollPeriodEnded());
 	}
 
 	
