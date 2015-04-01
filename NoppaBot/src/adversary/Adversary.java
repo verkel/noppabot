@@ -201,9 +201,11 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	);
 	
 	private void roll() {
-		sendChannelFormat(getRandom(rollPreTaunts));
-		sendChannel("roll");
-		part();
+		if (isOnChannel()) {
+			sendChannelFormat(getRandom(rollPreTaunts));
+			sendChannel("roll");
+			part();
+		}
 	}
 
 	@Override
