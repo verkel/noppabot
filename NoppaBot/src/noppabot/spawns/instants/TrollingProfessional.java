@@ -47,7 +47,7 @@ public class TrollingProfessional extends Instant {
 
 	@Override
 	public void onPickup() {
-		if (Math.random() < 0.5 && canInviteAdversary()) inviteAdversary();
+		if (Math.random() < 0.25 && canInviteAdversary()) inviteAdversary();
 		else spawnBomb();
 	}
 
