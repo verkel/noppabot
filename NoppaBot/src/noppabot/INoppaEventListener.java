@@ -12,5 +12,6 @@ import noppabot.spawns.Powerup;
 public interface INoppaEventListener {
 	void powerupSpawned(Powerup<?> powerup);
 	void rollPeriodStarted();
+	void rollPeriodEnded();
 	void settleTieStarted(Set<String> tiebreakers);
 }

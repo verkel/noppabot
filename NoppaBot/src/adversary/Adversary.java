@@ -204,7 +204,6 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		if (isOnChannel()) {
 			sendChannelFormat(getRandom(rollPreTaunts));
 			sendChannel("roll");
-			part();
 		}
 	}
 
@@ -499,5 +498,12 @@ public class Adversary extends PircBot implements INoppaEventListener {
 			if (c.equals(channel)) return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void rollPeriodEnded() {
+		if (isOnChannel()) {
+			part();
+		}
 	}
 }
