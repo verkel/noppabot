@@ -455,7 +455,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 					if (!isConnected()) {
 						System.out.println("Adversary: Now reconnecting");
 						reconnect();
-						joinChannel(channel);
+//						joinChannel(channel);
 						System.out.println("Adversary: Successfully reconnected!");
 					}
 					else scheduler.deschedule(id);
