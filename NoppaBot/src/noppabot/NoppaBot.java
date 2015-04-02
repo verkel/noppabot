@@ -123,6 +123,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Calendar rollPeriodStartTime;
 	private Calendar rollPeriodEndTime;
 	private Calendar spawnEndTime;
+	private Calendar rollPredictionTime;
 	private PokerTable pokerTable = new PokerTable(this);
 	private List<INoppaEventListener> listeners = new ArrayList<>();
 	private Optional<Adversary> adversary = Optional.empty();
@@ -417,6 +418,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		while (spawnTime.before(spawnEndTime)) {
 			if (n > 0) spawnPowerups = Powerups.allPowerups;
 			if (spawnTime.get(Calendar.HOUR_OF_DAY) >= 16) spawnEvents = Powerups.lateEvents;
+			tryScheduleRollPrediction(spawnTime); /// XXX for this season only
 			ISpawnable spawn = scheduleRandomSpawn(spawnTime, spawnPowerups, spawnEvents).spawn;
 			// Only allow one 4th wall break per day
 			// TODO replace this with taking a subspawner of spawnEvents when more "one-per-day" events are required
@@ -426,6 +428,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 
+	private void tryScheduleRollPrediction(Calendar spawnTime) {
+		if (rollPredictionTime != null && spawnTime.after(rollPredictionTime)
+				&& Powerups.powerupRnd.nextFloat() < 0.5f) {
+			
+			RollPrediction pred = new RollPrediction();
+			scheduleSpawn(rollPredictionTime, pred);
+			rollPredictionTime = null;
+		}
+	}
 
 	private void computeTimes() {
 		rollPeriodStartTime = Calendar.getInstance();
@@ -439,6 +450,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		spawnEndTime = (Calendar)rollPeriodStartTime.clone();
 		spawnEndTime.add(Calendar.MINUTE, -1);
+		
+		rollPredictionTime = Calendar.getInstance();
+		rollPredictionTime.set(Calendar.HOUR_OF_DAY, 12);
+		rollPredictionTime.set(Calendar.MINUTE, 0);
+		rollPredictionTime.set(Calendar.SECOND, 0);
 	}
 
 	private void incrementSpawnTime(Calendar spawnTime) {

@@ -57,8 +57,8 @@ public class Powerups {
 			DiceMutation.info,
 			DiceStorm.info,
 			FavorRefresh.info,
-			FourthWallBreaks.info,
-			RollPrediction.info
+			FourthWallBreaks.info
+			//RollPrediction.info
 		));
 		allEventInfos.addAll(RulesChange.allInfos);
 		
