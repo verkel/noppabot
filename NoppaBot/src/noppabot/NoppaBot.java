@@ -429,11 +429,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void tryScheduleRollPrediction(Calendar spawnTime) {
-		if (rollPredictionTime != null && spawnTime.after(rollPredictionTime)
-				&& Powerups.powerupRnd.nextFloat() < 0.5f) {
-			
-			RollPrediction pred = new RollPrediction();
-			scheduleSpawn(rollPredictionTime, pred);
+		if (rollPredictionTime != null && spawnTime.after(rollPredictionTime)) {
+			if (Powerups.powerupRnd.nextFloat() < 0.5f) {
+				RollPrediction pred = new RollPrediction();
+				scheduleSpawn(rollPredictionTime, pred);
+			}
 			rollPredictionTime = null;
 		}
 	}
