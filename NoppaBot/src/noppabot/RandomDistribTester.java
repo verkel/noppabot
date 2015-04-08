@@ -13,7 +13,7 @@ public class RandomDistribTester {
 	}
 
 	private void run() {
-		WeightedRandom ar = new WeightedRandom(0.1, true);
+		WeightedRandom ar = new WeightedRandom(0.05, false);
 		
 		for (int i = 0; i < ITERATIONS; i++) {
 			int roll = ar.roll(100).intValue();
@@ -21,16 +21,20 @@ public class RandomDistribTester {
 		}
 		
 		float sum = 0f;
+		float ev = 0f;
 		
 		for (int i = 0; i < stats.length; i++) {
-			float percentage = (float)stats[i] / (float)ITERATIONS * 100f;
+			float weight = (float)stats[i] / (float)ITERATIONS;
+			float percentage = weight * 100f;
 			sum += percentage;
+			ev += i * weight;
 			System.out.printf("%.4f%% of %d:\t", percentage, i);
 			for (int j = 0; j < percentage * 10; j++) System.out.print('=');
 			System.out.println();
 		}
 		
 		System.out.printf("\ntotal: %.4f%%\n", sum);
+		System.out.printf("\nEV: %.1f\n", ev);
 	}
 
 }

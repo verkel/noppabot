@@ -12,11 +12,13 @@ import java.util.stream.Stream;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.dice.PokerHand.BetterHand;
+import noppabot.spawns.events.RollPrediction;
 import noppabot.spawns.instants.*;
 
 import org.jibble.pircbot.Colors;
 
 import adversary.WeightedRandom;
+import adversary.WeightedRandom.Bias;
 
 
 public class Rules {
@@ -275,7 +277,15 @@ public class Rules {
 		spawnOverride.ifPresent(so -> list.add(so.getDescription()));
 		if (upgradedSpawns.isChanged()) list.add(EXPLAIN_UPGRADED_SPAWNS);
 		if (diceFusion.isChanged()) list.add(EXPLAIN_DICE_FUSION);
+		if (bias.isChanged()) list.add(explainBias());
 		return StringUtils.join(list, " ");
+	}
+
+	private String explainBias() {
+		Bias b = bias.get();
+		String effect = b.highRolls ? "easier" : "harder";
+		return String.format("Roll difficulty is %s: average d100 roll is %d.",
+			effect, RollPrediction.getEV(b));
 	}
 
 }

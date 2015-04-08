@@ -27,6 +27,34 @@ public class WeightedRandom extends PeekableRandom {
 		}
 		public final double bias;
 		public final boolean highRolls;
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			long temp;
+			temp = Double.doubleToLongBits(bias);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			result = prime * result + (highRolls ? 1231 : 1237);
+			return result;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Bias other = (Bias) obj;
+			if (Double.doubleToLongBits(bias) != Double
+					.doubleToLongBits(other.bias))
+				return false;
+			if (highRolls != other.highRolls)
+				return false;
+			return true;
+		}
 	}
 	
 	public WeightedRandom(double bias, boolean highRolls) {

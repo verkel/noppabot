@@ -4,9 +4,13 @@
  */
 package noppabot.spawns.events;
 
-import noppabot.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import noppabot.Color;
+import noppabot.INoppaBot;
 import noppabot.spawns.Event;
-import adversary.*;
+import adversary.WeightedRandom;
 import adversary.WeightedRandom.Bias;
 
 
@@ -63,6 +67,21 @@ public class RollPrediction extends Event {
 		new Bias(0.05, false),
 	};
 	
+	private static final Map<Bias, Integer> evs = new HashMap<>();
+	static {
+		evs.put(goodBiases[0], 56);
+		evs.put(goodBiases[1], 63);
+		evs.put(goodBiases[2], 72);
+		evs.put(goodBiases[3], 84);
+		evs.put(goodBiases[4], 91);
+		
+		evs.put(badBiases[0], 45);
+		evs.put(badBiases[1], 38);
+		evs.put(badBiases[2], 29);
+		evs.put(badBiases[3], 17);
+		evs.put(badBiases[4], 5);
+	}
+	
 	@Override
 	public void run(INoppaBot bot) {
 		bot.sendChannelFormat("It's the Diceteller's %s in today's Roll News!", Color.event("roll'o'scope"));
@@ -84,5 +103,9 @@ public class RollPrediction extends Event {
 	@Override
 	public String name() {
 		return "Roll Prediction";
+	}
+	
+	public static int getEV(Bias b) {
+		return evs.get(b);
 	}
 }
