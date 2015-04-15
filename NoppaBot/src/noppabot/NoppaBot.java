@@ -475,7 +475,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 		
 		public Powerup getPowerup() {
-			if (spawn instanceof BasicPowerup) return (Powerup)spawn;
+			if (spawn instanceof Powerup) return (Powerup)spawn;
 			else return null;
 		}
 
