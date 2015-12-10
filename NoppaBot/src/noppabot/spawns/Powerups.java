@@ -50,7 +50,8 @@ public class Powerups {
 			SwapperDie.info,
 			TrollingProfessional.info,
 			VariableDie.info,
-			WeightedDie.info
+			WeightedDie.info,
+			Present.info
 		);
 		
 		List<EventSpawnInfo> allEventInfos = new ArrayList<>(Arrays.asList(

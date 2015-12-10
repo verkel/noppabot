@@ -21,7 +21,7 @@ public class Present extends Instant {
 		
 		@Override
 		public double spawnChance() {
-			return 5.0;
+			return 1.0;
 		}
 	};
 	
