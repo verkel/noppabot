@@ -21,11 +21,6 @@ public class DiceBros extends BasicDie {
 		public double spawnChance() {
 			return 0.5;
 		}
-		
-		@Override
-		public boolean spawnInDiceBrosPowerups() {
-			return false;
-		}
 	};
 	
 	@Override
