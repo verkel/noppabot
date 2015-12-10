@@ -418,23 +418,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		while (spawnTime.before(spawnEndTime)) {
 			if (n > 0) spawnPowerups = Powerups.allPowerups;
 			if (spawnTime.get(Calendar.HOUR_OF_DAY) >= 16) spawnEvents = Powerups.lateEvents;
-			tryScheduleRollPrediction(spawnTime); /// XXX for this season only
 			ISpawnable spawn = scheduleRandomSpawn(spawnTime, spawnPowerups, spawnEvents).spawn;
 			// Only allow one 4th wall break per day
 			// TODO replace this with taking a subspawner of spawnEvents when more "one-per-day" events are required
 			if (spawn instanceof FourthWallBreaks) spawnEvents = Powerups.allEventsMinusFourthWall;
 			incrementSpawnTime(spawnTime);
 			n++;
-		}
-	}
-
-	private void tryScheduleRollPrediction(Calendar spawnTime) {
-		if (rollPredictionTime != null && spawnTime.after(rollPredictionTime)) {
-			if (Powerups.powerupRnd.nextFloat() < 0.5f) {
-				RollPrediction pred = new RollPrediction();
-				scheduleSpawn(rollPredictionTime, pred);
-			}
-			rollPredictionTime = null;
 		}
 	}
 
