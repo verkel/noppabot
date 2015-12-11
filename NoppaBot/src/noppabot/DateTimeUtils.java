@@ -4,6 +4,7 @@
  */
 package noppabot;
 
+import java.time.*;
 import java.util.Calendar;
 
 public class DateTimeUtils {
@@ -16,4 +17,13 @@ public class DateTimeUtils {
 	public static String toSchedulingPattern(Calendar time) {
 		return String.format("%s %s * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
 	}
+	
+	public static String toSchedulingPattern(LocalDateTime time) {
+		return toSchedulingPattern(time.toLocalTime());
+	}
+	
+	public static String toSchedulingPattern(LocalTime time) {
+		return String.format("%d %d * * *", time.getMinute(), time.getHour());
+	}
+	
 }

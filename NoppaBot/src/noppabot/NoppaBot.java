@@ -3,6 +3,8 @@ import it.sauronsoftware.cron4j.*;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
@@ -39,11 +41,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private final boolean dryRun;
 	private final boolean runAdversary;
 	
-	private static final String ROLL_PERIOD_ABOUT_TO_START = "59 23 * * *";
-	private static final String ROLL_PERIOD_START = "0 0 * * *";
-	private static final String AUTOROLL_TIME = "5 0 * * *";
-	private static final String ROLL_PERIOD_END = "10 0 * * *";
-	private static final int POWERUP_EXPIRE_MINUTES = 60;
+	public static final Duration ROLL_PERIOD_ABOUT_TO_START_OFFSET = Duration.ofMinutes(-1);
+	public static final Duration AUTOROLL_OFFSET = Duration.ofMinutes(5);
+	public static final Duration ROLL_PERIOD_DURATION = Duration.ofMinutes(10);
+	public static final Duration POWERUP_EXPIRY_DURATION = Duration.ofMinutes(60);
+	
+	public static LocalTime ROLL_PERIOD_START = LocalTime.of(22, 0);
+	public static LocalTime ROLL_PERIOD_ABOUT_TO_START = ROLL_PERIOD_START.plus(ROLL_PERIOD_ABOUT_TO_START_OFFSET);
+	public static LocalTime AUTOROLL_TIME = ROLL_PERIOD_START.plus(AUTOROLL_OFFSET);
+	public static LocalTime ROLL_PERIOD_END = ROLL_PERIOD_START.plus(ROLL_PERIOD_DURATION);
 	
 	private Properties properties;
 	
@@ -119,11 +125,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private Map<String, Powerup> powerups = new TreeMap<String, Powerup>();
 	private Set<String> favorsUsed = new HashSet<String>();
 	private Set<String> autorolls = new HashSet<String>();
-	private Calendar lastTiebreakPeriodStartTime;
-	private Calendar rollPeriodStartTime;
-	private Calendar rollPeriodEndTime;
-	private Calendar spawnEndTime;
-	private Calendar rollPredictionTime;
+	private LocalDateTime lastTiebreakPeriodStartTime;
+	private LocalDateTime rollPeriodStartTime;
+	private LocalDateTime rollPeriodEndTime;
+	private LocalDateTime spawnStartTime;
+	private LocalDateTime spawnEndTime;
 	private PokerTable pokerTable = new PokerTable(this);
 	private List<INoppaEventListener> listeners = new ArrayList<>();
 	private Optional<Adversary> adversary = Optional.empty();
@@ -171,7 +177,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		if (isInRollPeriod()) startRollPeriod();
 		
-		scheduler.schedule(ROLL_PERIOD_ABOUT_TO_START, new Runnable() {
+		scheduler.schedule(DateTimeUtils.toSchedulingPattern(ROLL_PERIOD_ABOUT_TO_START), new Runnable() {
 			@Override
 			public void run() {
 				synchronized (lock) {
@@ -180,7 +186,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 		});
 		
-		scheduler.schedule(ROLL_PERIOD_START, new Runnable() {
+		scheduler.schedule(DateTimeUtils.toSchedulingPattern(ROLL_PERIOD_START), new Runnable() {
 			@Override
 			public void run() {
 				synchronized (lock) {
@@ -189,7 +195,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 		});
 		
-		scheduler.schedule(AUTOROLL_TIME, new Runnable() {
+		scheduler.schedule(DateTimeUtils.toSchedulingPattern(AUTOROLL_TIME), new Runnable() {
 			@Override
 			public void run() {
 				synchronized (lock) {
@@ -198,7 +204,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			}
 		});
 		
-		scheduler.schedule(ROLL_PERIOD_END, new Runnable() {
+		scheduler.schedule(DateTimeUtils.toSchedulingPattern(ROLL_PERIOD_END), new Runnable() {
 			@Override
 			public void run() {
 				synchronized (lock) {
@@ -400,65 +406,58 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void schedulePowerupsOfTheDay() {
-		computeTimes();
-		Calendar spawnTime = Calendar.getInstance();
+		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+		computeTimes(now);
+		LocalDateTime spawnTime = now;
 		if (debug) {
-			spawnTime.set(Calendar.HOUR_OF_DAY, 0);
-			spawnTime.set(Calendar.MINUTE, 0);
-			spawnTime.set(Calendar.SECOND, 0);
+			spawnTime = spawnStartTime; //ROLL_PERIOD_START.atDate(LocalDate.now());//.toCalendar();
 		}
 
-		incrementSpawnTime(spawnTime);
+		spawnTime = incrementSpawnTime(spawnTime);
 		// Prevent missing a spawn if we get 0 from incrementSpawnTime()
-		spawnTime.add(Calendar.MINUTE, 1); 
+		spawnTime = spawnTime.plusMinutes(1);
 		
 		Spawner<BasicPowerup> spawnPowerups = Powerups.firstPowerup;
 		Spawner<Event> spawnEvents = Powerups.allEvents;
 		int n = 0;
-		while (spawnTime.before(spawnEndTime)) {
+		while (spawnTime.isBefore(spawnEndTime)) {
 			if (n > 0) spawnPowerups = Powerups.allPowerups;
-			if (spawnTime.get(Calendar.HOUR_OF_DAY) >= 16) spawnEvents = Powerups.lateEvents;
+			if (spawnTime.getHour() >= 16) spawnEvents = Powerups.lateEvents;
 			ISpawnable spawn = scheduleRandomSpawn(spawnTime, spawnPowerups, spawnEvents).spawn;
 			// Only allow one 4th wall break per day
 			// TODO replace this with taking a subspawner of spawnEvents when more "one-per-day" events are required
 			if (spawn instanceof FourthWallBreaks) spawnEvents = Powerups.allEventsMinusFourthWall;
-			incrementSpawnTime(spawnTime);
+			spawnTime = incrementSpawnTime(spawnTime);
 			n++;
 		}
 	}
 
-	private void computeTimes() {
-		rollPeriodStartTime = Calendar.getInstance();
-		rollPeriodStartTime.add(Calendar.DATE, 1);
-		rollPeriodStartTime.set(Calendar.HOUR_OF_DAY, 0);
-		rollPeriodStartTime.set(Calendar.MINUTE, 0);
-		rollPeriodStartTime.set(Calendar.SECOND, 0);
+	private void computeTimes(LocalDateTime now) {
+		rollPeriodStartTime = now.with(ROLL_PERIOD_START);
+		if (rollPeriodStartTime.isBefore(now)) rollPeriodStartTime = rollPeriodStartTime.plusDays(1);
 		
-		rollPeriodEndTime = (Calendar)rollPeriodStartTime.clone();
-		rollPeriodEndTime.set(Calendar.MINUTE, 10);
-		
-		spawnEndTime = (Calendar)rollPeriodStartTime.clone();
-		spawnEndTime.add(Calendar.MINUTE, -1);
-		
-		rollPredictionTime = Calendar.getInstance();
-		rollPredictionTime.set(Calendar.HOUR_OF_DAY, 12);
-		rollPredictionTime.set(Calendar.MINUTE, 0);
-		rollPredictionTime.set(Calendar.SECOND, 0);
+		rollPeriodEndTime = rollPeriodStartTime.with(ROLL_PERIOD_END);
+		spawnStartTime = rollPeriodEndTime.minusDays(1);
+		spawnEndTime = rollPeriodStartTime.with(ROLL_PERIOD_ABOUT_TO_START);
 	}
 
-	private void incrementSpawnTime(Calendar spawnTime) {
-		int minutesRandomRange = 260 - 5 * spawnTime.get(Calendar.HOUR_OF_DAY);
+	private LocalDateTime incrementSpawnTime(LocalDateTime spawnTime) {
+		int minutesRandomRange = 260 - 5 * getSpawnPeriodHoursPassed(spawnTime);
 		int minutesIncr = commonRandom.nextInt(minutesRandomRange);
-		spawnTime.add(Calendar.MINUTE, minutesIncr);
+		return spawnTime.plusMinutes(minutesIncr);
+	}
+	
+	private int getSpawnPeriodHoursPassed(LocalDateTime spawnTime) {
+		return (int)Duration.between(spawnStartTime, spawnTime).toHours();
 	}
 	
 	public class SpawnTask extends Task implements Comparable<SpawnTask>, IColorStrConvertable {
 		public ISpawnable spawn;
-		public Date time;
+		public LocalDateTime time;
 		public String id;
 		public ExpireTask expireTask;
 		
-		public SpawnTask(Date time, ISpawnable spawn) {
+		public SpawnTask(LocalDateTime time, ISpawnable spawn) {
 			this.time = time;
 			this.spawn = spawn;
 		}
@@ -536,7 +535,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	@Override
-	public SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
+	public SpawnTask scheduleRandomSpawn(LocalDateTime spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
 		ISpawnable spawn = rules.getRandomPowerupOrEvent(NoppaBot.this, allowedPowerups, allowedEvents);
 		return scheduleSpawn(spawnTime, spawn);
 	}
@@ -547,12 +546,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	 * @param spawnTime Spawn time or null for spawn immediately
 	 */
 	@Override
-	public SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn) {
+	public SpawnTask scheduleSpawn(LocalDateTime spawnTime, ISpawnable spawn) {
 		boolean immediateSpawn = (spawnTime == null);
-		if (immediateSpawn) spawnTime = Calendar.getInstance();
+		if (immediateSpawn) spawnTime = LocalDateTime.now();
 		final String pattern = DateTimeUtils.toSchedulingPattern(spawnTime);
 
-		SpawnTask spawnTask = new SpawnTask(spawnTime.getTime(), spawn);
+		SpawnTask spawnTask = new SpawnTask(spawnTime, spawn);
 		
 		if (immediateSpawn) {
 			spawnTask.execute(null);
@@ -564,15 +563,14 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		Powerup powerup = spawnTask.getPowerup();
 		if (powerup != null) { // Is BasicPowerup, EvolvedPowerup or Instant
-			Calendar expireTime = (Calendar)spawnTime.clone();
-			expireTime.add(Calendar.MINUTE, POWERUP_EXPIRE_MINUTES);
+			LocalDateTime expireTime = spawnTime.plus(POWERUP_EXPIRY_DURATION);
 			ExpireTask expireTask = scheduleExpire(powerup, expireTime);
 			spawnTask.expireTask = expireTask; // If we want to change the powerup, we want to alter the expire task too
 			
-			if (debug) System.out.printf("Spawning %s on %tR, expires on %tR\n", spawnTask.spawn, spawnTime.getTime(), expireTime.getTime());
+			if (debug) System.out.printf("Spawning %s on %tR, expires on %tR\n", spawnTask.spawn, spawnTime, expireTime);
 		}
 		else if (debug) { // Print events
-			System.out.printf("Spawning %s on %tR\n", spawnTask.spawn, spawnTime.getTime());
+			System.out.printf("Spawning %s on %tR\n", spawnTask.spawn, spawnTime);
 		}
 		
 		return spawnTask;
@@ -580,7 +578,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 
 	@Override
-	public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
+	public ExpireTask scheduleExpire(Powerup powerup, LocalDateTime expireTime) {
 		final String expirePattern = DateTimeUtils.toSchedulingPattern(expireTime);
 		
 		ExpireTask expireTask = new ExpireTask(powerup);
@@ -773,9 +771,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			powerup.nameWithDetailsColored());
 		powerups.remove(nick);
 		availablePowerups.add(powerup);
-		Calendar expireTime = Calendar.getInstance();
-		expireTime.add(Calendar.MINUTE, POWERUP_EXPIRE_MINUTES);
-		scheduleExpire(powerup, expireTime);
+		LocalDateTime expiryTime = LocalDateTime.now().plus(POWERUP_EXPIRY_DURATION);
+		scheduleExpire(powerup, expiryTime);
 	}
 
 
@@ -1259,7 +1256,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void tryEndRollPeriod() {
 		
 		if (rolls.isEmpty()) {
-			sendChannel("No rolls within 10 minutes. Now first roll wins, be quick!");
+			sendChannelFormat("No rolls within %s minutes. Now first roll wins, be quick!",
+				ROLL_PERIOD_DURATION.toMinutes());
 			state = State.ROLL_PERIOD;
 			return;
 		}
@@ -1281,12 +1279,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			settleTieTimeoutTask = null;
 		}
 		
-		lastTiebreakPeriodStartTime = Calendar.getInstance();
+		lastTiebreakPeriodStartTime = LocalDateTime.now();
 		String tiebreakersStr = StringUtils.join(winningRollers, ", ");
 		Roll roll = rolls.get(winningRollers.get(0));
 		String msg = String.format(
-			"The roll %s was tied between %s. Roll again within 10 minutes to settle the score!", 
-			roll.intValueRuled(this) /* don't want to display 123 (= 100)*/, tiebreakersStr);
+			"The roll %s was tied between %s. Roll again within %s minutes to settle the score!",
+			roll.intValueRuled(this) /* don't want to display 123 (= 100) */, tiebreakersStr,
+			ROLL_PERIOD_DURATION.toMinutes());
 		sendChannel(msg);
 		tiebreakers.addAll(winningRollers);
 		
@@ -1319,9 +1318,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	private SettleTieTimeoutTask scheduleSettleTieTimeout() {
 		SettleTieTimeoutTask timeoutTask = new SettleTieTimeoutTask();
-		Calendar time = (Calendar)lastTiebreakPeriodStartTime.clone();
-		time.add(Calendar.MINUTE, 10);
-		final String pattern = String.format("%s %s * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
+		LocalDateTime time = lastTiebreakPeriodStartTime;
+		time = time.plus(ROLL_PERIOD_DURATION);
+		final String pattern = DateTimeUtils.toSchedulingPattern(time);
 		timeoutTask.id = scheduler.schedule(pattern, timeoutTask);
 		return timeoutTask;
 	}
@@ -1344,9 +1343,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	private void scheduleSettleTieAutorolls(Set<String> autorolls) {
 		SettleTieAutorollsTask autorollTask = new SettleTieAutorollsTask(autorolls);
-		Calendar time = (Calendar)lastTiebreakPeriodStartTime.clone();
-		time.add(Calendar.MINUTE, 5);
-		final String pattern = String.format("%s %s * * *", time.get(Calendar.MINUTE), time.get(Calendar.HOUR_OF_DAY));
+		LocalDateTime time = lastTiebreakPeriodStartTime;
+		time = time.plus(AUTOROLL_OFFSET);
+		final String pattern = DateTimeUtils.toSchedulingPattern(time);
 		autorollTask.id = scheduler.schedule(pattern, autorollTask);
 	}
 	
@@ -1562,14 +1561,12 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	
 	@Override
 	public int getSecondsAfterPeriodStart() {
-		long now = Calendar.getInstance().getTimeInMillis();
-		Calendar periodStart;
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime periodStart;
 		if (state == State.ROLL_PERIOD) periodStart = rollPeriodStartTime;
 		else if (state == State.SETTLE_TIE) periodStart = lastTiebreakPeriodStartTime;
 		else throw new IllegalStateException("Not in roll or tie period");
-		long passed = now - periodStart.getTimeInMillis();
-		long secondsPassed = passed / 1000;
-		return (int)secondsPassed;
+		return (int)Duration.between(periodStart, now).getSeconds();
 	}
 	
 	@Override
@@ -1579,13 +1576,17 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	@Override
-	public Calendar getRollPeriodStartTime() {
+	public LocalDateTime getRollPeriodStartTime() {
 		return rollPeriodStartTime;
 	}
 	
+	@Override
+	public LocalDateTime getSpawnStartTime() {
+		return spawnStartTime;
+	}
 	
 	@Override
-	public Calendar getSpawnEndTime() {
+	public LocalDateTime getSpawnEndTime() {
 		return spawnEndTime;
 	}
 	

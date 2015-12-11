@@ -6,13 +6,14 @@ package noppabot;
 
 import it.sauronsoftware.cron4j.Scheduler;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
-import adversary.Adversary;
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.PeekedRoll.Hint;
 import noppabot.spawns.*;
+import adversary.Adversary;
 
 public interface INoppaBot {
 
@@ -26,11 +27,12 @@ public interface INoppaBot {
 	int getPowerupSides(String nick);
 	List<String> getRandomPowerupOwners();
 	DiceRoll getRoll(String nick, int sides);
-	Calendar getRollPeriodStartTime();
+	LocalDateTime getRollPeriodStartTime();
 	Rolls getRolls();
 	Rules getRules();
 	int getSecondsAfterPeriodStart();
-	Calendar getSpawnEndTime();
+	LocalDateTime getSpawnStartTime();
+	LocalDateTime getSpawnEndTime();
 	String grade(Roll value);
 	void insertApprenticeDice();
 	RollRecords loadRollRecords();
@@ -40,9 +42,9 @@ public interface INoppaBot {
 	String remainingSpawnsInfo();
 //	String rollToString(Roll roll);
 //	String rollToString(Roll roll, boolean colorRoll);
-	ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime);
-	SpawnTask scheduleRandomSpawn(Calendar spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents);
-	SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn);
+	ExpireTask scheduleExpire(Powerup powerup, LocalDateTime expireTime);
+	SpawnTask scheduleRandomSpawn(LocalDateTime spawnTime, Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents);
+	SpawnTask scheduleSpawn(LocalDateTime spawnTime, ISpawnable spawn);
 	void sendChannel(String msg);
 	void sendChannelFormat(String msg, Object... args);
 	void sendDefaultContestRollMessage(String nick, DiceRoll roll, boolean colorNick, boolean colorRoll);

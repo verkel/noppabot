@@ -7,14 +7,15 @@ package noppabot;
 import it.sauronsoftware.cron4j.Scheduler;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
-import adversary.Adversary;
 import noppabot.NoppaBot.ExpireTask;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.PeekedRoll.Hint;
 import noppabot.spawns.*;
 import noppabot.spawns.dice.*;
+import adversary.Adversary;
 
 public class GenerateItemList {
 
@@ -576,17 +577,17 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public SpawnTask scheduleSpawn(Calendar spawnTime, ISpawnable spawn) {
+		public SpawnTask scheduleSpawn(LocalDateTime spawnTime, ISpawnable spawn) {
 			return null;
 		}
 
 		@Override
-		public Calendar getRollPeriodStartTime() {
+		public LocalDateTime getRollPeriodStartTime() {
 			return null;
 		}
 
 		@Override
-		public Calendar getSpawnEndTime() {
+		public LocalDateTime getSpawnEndTime() {
 			return null;
 		}
 
@@ -601,7 +602,7 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public SpawnTask scheduleRandomSpawn(Calendar spawnTime,
+		public SpawnTask scheduleRandomSpawn(LocalDateTime spawnTime,
 			Spawner<BasicPowerup> allowedPowerups, Spawner<Event> allowedEvents) {
 			return null;
 		}
@@ -612,7 +613,7 @@ public class GenerateItemList {
 		}
 
 		@Override
-		public ExpireTask scheduleExpire(Powerup powerup, Calendar expireTime) {
+		public ExpireTask scheduleExpire(Powerup powerup, LocalDateTime expireTime) {
 			return null;
 		}
 
@@ -694,6 +695,11 @@ public class GenerateItemList {
 		@Override
 		public Optional<Adversary> getAdversary() {
 			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public LocalDateTime getSpawnStartTime() {
 			return null;
 		}
 	}

@@ -7,6 +7,7 @@ package adversary;
 import it.sauronsoftware.cron4j.*;
 
 import java.io.*;
+import java.time.*;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.*;
@@ -14,6 +15,7 @@ import java.util.regex.*;
 import noppabot.*;
 import noppabot.GenerateItemList.TestResult;
 import noppabot.spawns.*;
+import noppabot.spawns.Instant;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.instants.*;
 
@@ -484,12 +486,12 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	}
 
 	public double getHurryFactor() {
-		long periodStart = noppaBot.getRollPeriodStartTime().getTimeInMillis() / 1000;
-		long dayDuration = 86400;
-		long dayStart = periodStart - dayDuration;
-		long now = Calendar.getInstance().getTimeInMillis() / 1000;
-		long passed = now - dayStart;
-		double dayCompletion = (double)passed / (double)dayDuration;
+		LocalDateTime spawnStart = noppaBot.getSpawnStartTime();
+		LocalDateTime spawnEnd = noppaBot.getSpawnEndTime();
+		LocalDateTime now = LocalDateTime.now();
+		Duration day = Duration.between(spawnStart, spawnEnd);
+		Duration passed = Duration.between(spawnStart, now);
+		double dayCompletion = (double)passed.getSeconds() / (double)day.getSeconds();
 		return dayCompletion * 2d;
 	}
 	

@@ -4,23 +4,23 @@
  */
 package noppabot.spawns.instants;
 
+import java.time.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
-import adversary.Adversary;
 import noppabot.*;
 import noppabot.NoppaBot.SpawnTask;
 import noppabot.spawns.*;
+import adversary.Adversary;
 
 
-public class TrollingProfessional extends Instant {
+public class TrollingProfessional extends noppabot.spawns.Instant {
 	
 	public static final String NAME = "Trolling Professional";
 	
 	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
 
 		@Override
-		public Instant create() {
+		public noppabot.spawns.Instant create() {
 			return new TrollingProfessional();
 		}
 		
@@ -67,13 +67,11 @@ public class TrollingProfessional extends Instant {
 	}
 	
 	private void spawnBomb() {
-		Calendar now = Calendar.getInstance();
-		Calendar end = bot.getSpawnEndTime();
-		long deltaMs = end.getTimeInMillis() - now.getTimeInMillis();
-		int deltaMins = (int)TimeUnit.MILLISECONDS.toMinutes(deltaMs);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime end = bot.getSpawnEndTime();
+		int deltaMins = (int)Duration.between(now, end).toMinutes();
 		int addMins = Powerups.powerupRnd.nextInt(deltaMins);
-		Calendar spawnTime = (Calendar)now.clone();
-		spawnTime.add(Calendar.MINUTE, addMins);
+		LocalDateTime spawnTime = now.plusMinutes(addMins);
 		Bomb bomb = new Bomb();
 		bomb.initialize(bot);
 		SpawnTask task = bot.scheduleSpawn(spawnTime, bomb);
