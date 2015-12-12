@@ -26,8 +26,8 @@ public class PokerTable {
 	public Hand cards; // All the cards
 	public boolean gameStarted = false;
 	
-	private static final int TURN_HOURS = 18;
-	private static final int RIVER_HOURS = 22;
+	private static final int TURN_HOURS = 16;
+	private static final int RIVER_HOURS = 20;
 	private static final String TURN_SCHEDULE_STR = String.format("0 %s * * *", TURN_HOURS);
 	private static final String RIVER_SCHEDULE_STR = String.format("0 %s * * *", RIVER_HOURS);
 	

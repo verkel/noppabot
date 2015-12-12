@@ -410,7 +410,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		computeTimes(now);
 		LocalDateTime spawnTime = now;
 		if (debug) {
-			spawnTime = spawnStartTime; //ROLL_PERIOD_START.atDate(LocalDate.now());//.toCalendar();
+			spawnTime = spawnStartTime;
 		}
 
 		spawnTime = incrementSpawnTime(spawnTime);
@@ -602,10 +602,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private boolean isInRollPeriod() {
 		if (debug) return true;
 		
-		Calendar cal = Calendar.getInstance();
-		int hour = cal.get(Calendar.HOUR_OF_DAY);
-		int minute = cal.get(Calendar.MINUTE);
-		return (hour == 0 && minute >= 0 && minute < 10);
+		LocalDateTime now = LocalDateTime.now();
+		return now.isEqual(rollPeriodStartTime)
+			|| (now.isAfter(rollPeriodStartTime) && now.isBefore(rollPeriodEndTime));
 	}
 	
 	private boolean isOvertime() {
