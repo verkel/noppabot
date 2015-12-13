@@ -175,8 +175,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		initMessages();
 		
-		if (isInRollPeriod()) startRollPeriod();
-		
 		scheduler.schedule(DateTimeUtils.toSchedulingPattern(ROLL_PERIOD_ABOUT_TO_START), new Runnable() {
 			@Override
 			public void run() {
@@ -215,6 +213,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 		schedulePowerupsOfTheDay();
 		scheduler.start();
+		
+		if (isInRollPeriod()) startRollPeriod();
 		
 		if (executeDebugStuff) debugStuff();
 //		giveFreePowerup(); // spawn one right now
