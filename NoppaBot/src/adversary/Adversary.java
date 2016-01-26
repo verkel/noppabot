@@ -170,8 +170,10 @@ public class Adversary extends PircBot implements INoppaEventListener {
 
 	@Override
 	public void powerupSpawned(Powerup<?> powerup) {
-		if (powerup instanceof BasicDie) dieSpawned((BasicDie)powerup);
-		else if (powerup instanceof Instant) instantSpawned((Instant)powerup);
+		if (isOnChannel()) {
+			if (powerup instanceof BasicDie) dieSpawned((BasicDie)powerup);
+			else if (powerup instanceof Instant) instantSpawned((Instant)powerup);
+		}
 	}
 
 	@Override
@@ -257,7 +259,8 @@ public class Adversary extends PircBot implements INoppaEventListener {
 	private void instantSpawned(Instant instant) {
 		if (instant instanceof DicemonTrainer) {
 			DicemonTrainer trainer = (DicemonTrainer)instant;
-			boolean interesting = isInteresting(trainer, 50); // coinflip
+			// still not 100% grabbed with hurry factor, but pretty often
+			boolean interesting = isInteresting(trainer, 100); 
 			if (hasPowerup() && interesting) {
 				scheduleGrab(instant);
 			}
@@ -289,7 +292,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 
 	private Calendar randomGrabTime() {
 		Calendar time = Calendar.getInstance();
-		time.add(Calendar.MINUTE, rnd.nextInt(60));
+		time.add(Calendar.MINUTE, rnd.nextInt(20));
 		return time;
 	}
 	
@@ -331,7 +334,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		"I don't always grab dice, but when I do, I pick the most unfair ones.",
 		"You probably didn't know what that does. I'll tell you: %4$s");
 
-	private List<String> grabCommands = Arrays.asList("grab", "get", "pick", "take");
+	private List<String> grabCommands = Arrays.asList("grab", "get", "take");
 	
 	private void grab(Powerup<?> powerup, TestResult ranking) {
 		if (!isAvailable(powerup)) return;
