@@ -627,30 +627,15 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 
 	private void handleMessage(String sender, String message) {
-		Matcher customRollerMatcher = dicePatternWithCustomRoller.matcher(message);
-		Matcher regularMatcher = dicePattern.matcher(message);
-		boolean customRoller = customRollerMatcher.matches();
-		boolean regularRoll = regularMatcher.matches();
-		
-		if (customRoller || regularRoll) {
+		Matcher dNPattern = dicePattern.matcher(message);
+		if (dNPattern.matches()) {
 			String numberStr;
 			String rollerNick;
-			if (customRoller) {
-				numberStr = customRollerMatcher.group(1);
-				rollerNick = customRollerMatcher.group(2);
-				
-				if (isOnChannel(rollerNick)) {
-					sendCustomRollerOnChannelError(rollerNick);
-					return;
-				}
-			}
-			else {
-				numberStr = regularMatcher.group(1);
-				rollerNick = sender;
-			}
+			numberStr = dNPattern.group(1);
+			rollerNick = sender;
 
 			int sides = Integer.parseInt(numberStr);
-			rollAndParticipate(rollerNick, sides);
+			rollAndParticipate(rollerNick, sides, false);
 		}
 		
 		Matcher commandMatcher = commandAndArgument.matcher(message);
@@ -664,11 +649,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				grabPowerup(sender, args);
 			}
 			else if (cmd.equalsIgnoreCase("roll")) {
-				if (argsSplit.length == 0) rollAndParticipate(sender, 100);
+				if (argsSplit.length == 0) rollAndParticipate(sender, 100, true);
 				else if (argsSplit.length == 1) {
 					String rollerNick = argsSplit[0];
 					if (isOnChannel(rollerNick)) sendCustomRollerOnChannelError(rollerNick);
-					else rollAndParticipate(rollerNick, 100);
+					else rollAndParticipate(rollerNick, 100, true);
 				}
 			}
 			else if (cmd.equalsIgnoreCase("tells") || cmd.equalsIgnoreCase("nextrolls") || cmd.equalsIgnoreCase("predictions")) {
@@ -723,7 +708,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("reveal")) {
 					Powerup powerup = powerups.get(sender);
 					if (powerup != null && (powerup instanceof PokerHand || powerup instanceof BetterHand)) {
-						rollAndParticipate(sender, 100);
+						rollAndParticipate(sender, 100, true);
 					}
 					else {
 						sendChannelFormat("%s: you don't have a poker hand", Color.nick(sender));
@@ -1021,25 +1006,25 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		return null;
 	}
 	
-	private void rollAndParticipate(String nick, int sides) {
+	private void rollAndParticipate(String nick, int sides, boolean withPowerup) {
 		boolean rollWillParticipate = rollWillParticipate(nick);
 		
 		// Send error if the roll is not allowed
 		rules.isRollAllowed(nick, true);
 		
+		// Generate a roll
+		Roll roll;
+		if (withPowerup && powerups.containsKey(nick)) {
+			// ... with the carried power-up
+			Powerup powerup = powerups.get(nick);
+			roll = powerup.onContestRoll();
+		}
+		else {
+			// ... with the normal d100
+			roll = doRoll(nick, sides);
+		}
+		
 		if (sides == 100 && rollWillParticipate) {
-			
-			// Generate a roll
-			Roll roll;
-			if (powerups.containsKey(nick)) {
-				// ... with the carried power-up
-				Powerup powerup = powerups.get(nick);
-				roll = powerup.onContestRoll();
-			}
-			else {
-				// ... with the normal d100
-				roll = doRoll(nick, sides);
-			}
 			
 			// Activate power-ups which affect opponent rolls
 			roll = fireEarlyOpponentRolled(nick, roll);
@@ -1053,9 +1038,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			// Activate power-ups which trigger effects when opponent rolled,
 			// but don't modify opponent's roll
 			fireLateOpponentRolled(nick, roll);
-		}
-		else {
-			doRoll(nick, sides);
 		}
 	}
 	
@@ -1073,7 +1055,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendDefaultContestRollMessage(nick, roll, true, rollWillParticipate(nick));
 		}
 		else {
-			sendChannelFormat("%s rolls %s!", Color.nick(nick), 
+			sendChannelFormat("%s rolls the d%s... %s!", Color.nick(nick), sides,
 				Color.custom(String.valueOf(roll), Colors.WHITE));
 		}
 		return roll;
@@ -1112,7 +1094,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
 		String rollStr = roll.toString(colorRoll, this);
 		String nickColored = colorNick ? Color.nick(nick) : nick;
-		return String.format("%s rolls %s! %s%s", nickColored, rollStr, grade(roll), participatedMsg);
+		return String.format("%s rolls the d100... %s! %s%s", nickColored, rollStr, grade(roll), participatedMsg);
 	}
 	
 	@Override
@@ -1124,8 +1106,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		else if (score >= 80) return "Nicely done!";
 		else if (score >= 70) return "Quite good!";
 		else if (score >= 60) return "That's ok!";
-		else if (score >= 50) return "... That's decent!";
-		else if (score >= 40) return "... Could've gone better!";
+		else if (score >= 50) return "That's decent!";
+		else if (score >= 40) return "Could've gone better!";
 		else if (score >= 30) return "That's kind of a low roll!";
 		else if (score >= 20) return "Not having much luck today? :(";
 		else if (score >= 10) return "Still at two digits!";
@@ -1247,7 +1229,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			sendChannelFormat("I'll roll for: %s", StringUtils.join(rollers, ", "));
 			
 			for (String nick : rollers) {
-				rollAndParticipate(nick, 100);
+				rollAndParticipate(nick, 100, true);
 			}
 		}
 	}
