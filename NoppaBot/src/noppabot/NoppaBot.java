@@ -1007,7 +1007,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 	
 	private void rollAndParticipate(String nick, int sides, boolean withPowerup) {
-		boolean rollWillParticipate = rollWillParticipate(nick);
+		boolean rollCanParticipate = rollCanParticipate(nick);
 		
 		// Send error if the roll is not allowed
 		rules.isRollAllowed(nick, true);
@@ -1024,7 +1024,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			roll = doRoll(nick, sides);
 		}
 		
-		if (sides == 100 && rollWillParticipate) {
+		if (sides == 100 && rollCanParticipate && withPowerup) {
 			
 			// Activate power-ups which affect opponent rolls
 			roll = fireEarlyOpponentRolled(nick, roll);
@@ -1041,7 +1041,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private boolean rollWillParticipate(String nick) {
+	private boolean rollCanParticipate(String nick) {
 		boolean allowed = rules.isRollAllowed(nick, false);
 		boolean participated = participated(nick);
 		boolean rollOrTiebreakPeriod = state == State.ROLL_PERIOD || state == State.SETTLE_TIE;
@@ -1052,7 +1052,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public DiceRoll doRoll(String nick, int sides) {
 		DiceRoll roll = getRoll(nick, sides);
 		if (sides == 100) {
-			sendDefaultContestRollMessage(nick, roll, true, rollWillParticipate(nick));
+			sendDefaultContestRollMessage(nick, roll, true, rollCanParticipate(nick));
 		}
 		else {
 			sendChannelFormat("%s rolls the d%s... %s!", Color.nick(nick), sides,
