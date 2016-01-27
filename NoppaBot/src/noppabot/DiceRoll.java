@@ -89,8 +89,7 @@ public class DiceRoll implements Roll {
 	}
 	
 	public String toIntermediateString(INoppaBot bot) {
-		DiceRoll roll = capIfNeeded(bot);
-		if (hasBonus()) return String.format("(%s + %s)", roll.value, roll.getBonusStrColored());
+		if (hasBonus()) return String.format("(%s + %s)", value, getBonusStrColored());
 		else return toString();
 	}
 
@@ -129,10 +128,6 @@ public class DiceRoll implements Roll {
 	
 	private boolean willBeCapped(INoppaBot bot) {
 		return !isWithinCap() && bot.getRules().cappedRolls.get();
-	}
-	
-	private DiceRoll capIfNeeded(INoppaBot bot) {
-		return willBeCapped(bot) ? clamp() : this;
 	}
 	
 //	@Override
