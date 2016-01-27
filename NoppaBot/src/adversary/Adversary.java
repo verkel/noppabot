@@ -242,7 +242,15 @@ public class Adversary extends PircBot implements INoppaEventListener {
 					if (debug) System.out.printf("%s is better than what I have (%s)\n", die, current);
 					if (isInteresting(die, ranking.ev)) scheduleGrab(die, ranking);
 				}
+				else if (debug) {
+					if (ranking.ev <= currentRanking.ev) System.out.printf("%s is worse than what I have (%s)\n", die, current);
+					else if (!canDrop()) System.out.printf("Cannot grab %s as I've used my drop\n", die);
+				}
 			}
+		}
+		else if (debug) {
+			System.out.printf("I'm planning to grab %s, so I won't consider %s\n",
+				grabTask.get().spawn, die);
 		}
 	}
 
@@ -263,6 +271,10 @@ public class Adversary extends PircBot implements INoppaEventListener {
 			boolean interesting = isInteresting(trainer, 100); 
 			if (hasPowerup() && interesting) {
 				scheduleGrab(instant);
+			}
+			else if (debug) {
+				if (!hasPowerup())
+					System.out.println("I don't have an item so I don't need a trainer");
 			}
 		}
 	}
