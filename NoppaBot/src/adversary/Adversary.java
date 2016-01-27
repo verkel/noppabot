@@ -76,11 +76,6 @@ public class Adversary extends PircBot implements INoppaEventListener {
 		
 		scheduler.start();
 		connect(server);
-		
-		if (debug) { // Don't join the channel automatically, let's ensure NoppaBot makes it first
-			joinChannel(channel);
-			System.out.printf("Adversary: Joined as %s to channel %s\n", botNick, channel);
-		}
 	}
 	
 	private void loadCachedRankingList() {
