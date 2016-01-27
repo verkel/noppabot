@@ -228,7 +228,7 @@ public class PeekedRoll {
 
 		@Override
 		protected String hint() {
-			return Color.emphasize(value.intValue());
+			return Color.emphasize(value.total());
 		}
 
 		@Override
@@ -265,7 +265,7 @@ public class PeekedRoll {
 
 		@Override
 		protected boolean applies() {
-			return PrimalDie.primes.contains(value.intValue());
+			return PrimalDie.primes.contains(value.total());
 		}
 		
 		@Override
@@ -330,10 +330,10 @@ public class PeekedRoll {
 	}
 	
 	private String valueStr(int incr) {
-		if (value.intValue() < 1) return String.valueOf(value);
+		if (value.total() < 1) return String.valueOf(value);
 		
 		int lowBound = 1, highBound = incr;
-		while (highBound < value.intValue()) {
+		while (highBound < value.total()) {
 			lowBound += incr;
 			highBound += incr;
 		}

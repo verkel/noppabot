@@ -63,7 +63,7 @@ public class ImitatorDie extends BasicDie {
 	@Override
 	public void onPickup() {
 		bot.sendChannelFormat("%s grabs the %s and teaches how to roll %s to it.", 
-			owner, nameColored(), Color.emphasize(lastRoll.intValue()));
+			owner, nameColored(), Color.emphasize(lastRoll.total()));
 	}
 	
 	@Override
@@ -71,7 +71,7 @@ public class ImitatorDie extends BasicDie {
 		// Owner might've changed, re-retrieve the roll
 		lastRoll = getYesterdaysRoll(owner);
 		
-		if (lastRoll != null && lastRoll.intValue() > 0) {
+		if (lastRoll != null && lastRoll.total() > 0) {
 			DiceRoll penalty = roll(10);
 			String mimicGrade = getMimicGrade(penalty);
 			DiceRoll result = lastRoll.sub(penalty);
@@ -87,7 +87,7 @@ public class ImitatorDie extends BasicDie {
 	}
 	
 	private String getMimicGrade(DiceRoll penalty) {
-		int p = penalty.intValue();
+		int p = penalty.total();
 		if (p == 1) return " very skillfully!";
 		if (p <= 3) return " with great confidence.";
 		if (p <= 5) return " with good results.";
@@ -138,7 +138,7 @@ public class ImitatorDie extends BasicDie {
 		public DiceRoll onContestRoll() {
 			lastRoll = getYesterdaysRoll(owner);
 			
-			if (lastRoll != null && lastRoll.intValue() > 0) {
+			if (lastRoll != null && lastRoll.total() > 0) {
 				DiceRoll result = lastRoll;
 				bot.sendChannelFormat("%s throws the groundhog die with a familiar motion.", owner);
 				sendDefaultContestRollMessage(result);

@@ -61,12 +61,12 @@ public class DiceBros extends BasicDie {
 	}
 
 	private DiceRoll chooseBetterRoll(DiceRoll marioRoll, DiceRoll luigiRoll) {
-		if (marioRoll.intValue() > luigiRoll.intValue()) {
+		if (marioRoll.total() > luigiRoll.total()) {
 			bot.sendChannelFormat("The bros. choose Mario's roll, %s, as %s's result. %s", 
 				resultStr(marioRoll), ownerColored, bot.grade(marioRoll));
 			return marioRoll;
 		}
-		else if (luigiRoll.intValue() > marioRoll.intValue()) {
+		else if (luigiRoll.total() > marioRoll.total()) {
 			bot.sendChannelFormat("The bros. choose Luigi's roll, %s, as %s's result. %s", 
 				resultStr(luigiRoll), ownerColored, bot.grade(luigiRoll));
 			return luigiRoll;

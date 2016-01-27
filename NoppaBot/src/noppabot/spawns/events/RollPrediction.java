@@ -91,7 +91,7 @@ public class RollPrediction extends Event {
 		}
 		boolean good = Math.random() < 0.5;
 		WeightedRandom rnd = new WeightedRandom(0.85, false); // bias lower numbers
-		int n = rnd.roll(5).intValue() - 1;
+		int n = rnd.roll(5).total() - 1;
 		Bias[] biases = good ? goodBiases : badBiases;
 		String[] predictions = good ? goodPredictions : badPredictions;
 		Bias bias = biases[n];

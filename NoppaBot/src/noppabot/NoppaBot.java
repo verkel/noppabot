@@ -874,7 +874,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (rules.winCondition.get() instanceof RollClosestToTarget) {
 			RollClosestToTarget winCond = (RollClosestToTarget)rules.winCondition.get();
 			int rollTarget = winCond.getRollTarget();
-			int dist = Math.abs(rollTarget - roll.intValue());
+			int dist = Math.abs(rollTarget - roll.total());
 			return Color.custom("[" + dist + " off] ", Colors.WHITE);
 		}
 		else return "";

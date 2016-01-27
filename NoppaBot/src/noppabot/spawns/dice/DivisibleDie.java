@@ -50,7 +50,7 @@ public class DivisibleDie extends BasicDie {
 	public DiceRoll onContestRoll() {
 		DiceRoll roll = roll();
 		
-		boolean divisible = roll.intValue() % divisor == 0;
+		boolean divisible = roll.total() % divisor == 0;
 		if (divisible) {
 			int bonus = divisor * 5;
 			DiceRoll result = roll.add(bonus);
@@ -62,7 +62,7 @@ public class DivisibleDie extends BasicDie {
 		}
 		else {
 			bot.sendChannelFormat("%s rolls %s with the divisible die! The roll is not divisible with %s, though (the division has the remainder %s).", 
-				ownerColored, resultStr(roll), divisor, roll.intValue() % divisor);
+				ownerColored, resultStr(roll), divisor, roll.total() % divisor);
 			return roll;
 		}
 	}
@@ -102,7 +102,7 @@ public class DivisibleDie extends BasicDie {
 		public DiceRoll onContestRoll() {
 			DiceRoll roll = roll();
 			
-			int remainder = roll.intValue() % divisor;
+			int remainder = roll.total() % divisor;
 			int bonus = remainder * 5;
 			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat("%s rolls %s with the modular die! %s mod %s = %s, granting you +%s roll bonus!", 

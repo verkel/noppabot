@@ -244,7 +244,7 @@ public class PokerHand extends BasicPowerup<Roll> {
 		}
 
 		@Override
-		public int intValue() {
+		public int total() {
 			return rank;
 		}
 		

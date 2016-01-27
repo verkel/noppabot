@@ -48,7 +48,7 @@ public class RollingProfessional extends Instant {
 	public boolean canPickUp(String nick, boolean verbose) {
 		int sides = bot.getPowerupSides(nick);
 		DiceRoll nextRoll = bot.peekRoll(nick, sides).value;
-		if (nextRoll.intValue() < sides) {
+		if (nextRoll.total() < sides) {
 			return true;
 		}
 		else {
@@ -63,7 +63,7 @@ public class RollingProfessional extends Instant {
 		int sides = bot.getPowerupSides(owner);
 		DiceRoll nextRoll = bot.peekRoll(owner, sides).value;
 		int bonus = bonus();
-		nextRoll = nextRoll.add(bonus).clamp(sides);
+		nextRoll = nextRoll.addVisibleBonus(bonus).clamp(sides);
 		bot.setNextRoll(owner, sides, nextRoll);
 		
 		if (professor) {

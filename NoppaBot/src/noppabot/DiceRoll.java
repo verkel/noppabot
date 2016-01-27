@@ -13,7 +13,7 @@ public class DiceRoll implements Roll {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + value;
+		result = prime * result + total();
 		return result;
 	}
 
@@ -23,41 +23,59 @@ public class DiceRoll implements Roll {
 		if (obj == null) return false;
 		if (getClass() != obj.getClass()) return false;
 		DiceRoll other = (DiceRoll)obj;
-		if (value != other.value) return false;
+		if (total() != other.total()) return false;
 		return true;
 	}
 
 	public static final DiceRoll ZERO = new DiceRoll(0);
 	
 	protected final int value;
+	protected final int visibleBonus;
 
 	public DiceRoll(int value) {
+		this(value, 0);
+	}
+	
+	public DiceRoll(int value, int visibleBonus) {
 		this.value = value;
+		this.visibleBonus = visibleBonus;
 	}
 	
 	@Override
-	public int intValue() {
+	public int total() {
+		return value + visibleBonus;
+	}
+	
+	public int baseValue() {
 		return value;
 	}
 	
+	public int visibleBonus() {
+		return visibleBonus;
+	}
+	
 	public DiceRoll add(int bonus) {
-		return new DiceRoll(value + bonus);
+		return new DiceRoll(value + bonus, visibleBonus);
 	}
 	
 	public DiceRoll add(Roll roll) {
-		return new DiceRoll(value + roll.intValue());
+		return new DiceRoll(value + roll.total(), visibleBonus);
+	}
+	
+	public DiceRoll addVisibleBonus(int visibleBonus) {
+		return new DiceRoll(value, this.visibleBonus + visibleBonus);
 	}
 	
 	public DiceRoll sub(int bonus) {
-		return new DiceRoll(value - bonus);
+		return new DiceRoll(value - bonus, visibleBonus);
 	}
 	
 	public DiceRoll sub(Roll roll) {
-		return new DiceRoll(value - roll.intValue());
+		return new DiceRoll(value - roll.total(), visibleBonus);
 	}
 	
 	public DiceRoll mul(int factor) {
-		return new DiceRoll(value * factor);
+		return new DiceRoll(value * factor, visibleBonus);
 	}
 	
 	public DiceRoll clamp() {
@@ -65,26 +83,76 @@ public class DiceRoll implements Roll {
 	}
 	
 	public DiceRoll clamp(int sides) {
-		return new DiceRoll(Roll.clampValue(value, sides));
+		int clampedValue = Roll.clampValue(value, sides);
+		int clampedBonus = Roll.clampValue(visibleBonus, sides - clampedValue);
+		return new DiceRoll(clampedValue, clampedBonus);
+	}
+	
+	public String toIntermediateString(INoppaBot bot) {
+		DiceRoll roll = capIfNeeded(bot);
+		if (hasBonus()) return String.format("(%s + %s)", roll.value, roll.getBonusStrColored());
+		else return toString();
+	}
+
+	private String getBonusStrColored() {
+		return Color.visibleRollBonus(visibleBonus);
 	}
 	
 	@Override
 	public String toString() {
-		return String.valueOf(value);
+		return String.valueOf(total());
 	}
 	
 	@Override
 	public String toString(boolean color, INoppaBot bot) {
-		if (value <= 100 && value >= 0) {
-			return Roll.maybeColorRoll(this, color, bot);
-		}
-		else {
-			if (bot.getRules().cappedRolls.get()) {
-				return String.format("%s (= %s)", value, Roll.maybeColorRoll(this.clamp(), color, bot));
+		StringBuilder str = new StringBuilder();
+		boolean rollWillBeCapped = willBeCapped(bot);
+		boolean stringIsMultipart = rollWillBeCapped || hasBonus();
+		if (stringIsMultipart) {
+			str.append(value);
+			if (hasBonus()) {
+				str.append(" + ").append(getBonusStrColored());
 			}
-			else {
-				return Roll.maybeColorRoll(this, color, bot);
-			}
+			str.append(String.format(" (= %s)",	Roll.maybeColorRoll(this.clamp(), color, bot)));
 		}
+		else str.append(Roll.maybeColorRoll(this, color, bot));
+		return str.toString();
 	}
+
+	private boolean hasBonus() {
+		return visibleBonus > 0;
+	}
+	
+	private boolean isWithinCap() {
+		return total() <= 100 && total() >= 0;
+	}
+	
+	private boolean willBeCapped(INoppaBot bot) {
+		return !isWithinCap() && bot.getRules().cappedRolls.get();
+	}
+	
+	private DiceRoll capIfNeeded(INoppaBot bot) {
+		return willBeCapped(bot) ? clamp() : this;
+	}
+	
+//	@Override
+//	public String toString(boolean color, INoppaBot bot) {
+//		int total = total();
+//		if (total <= 100 && total >= 0) {
+//			return Roll.maybeColorRoll(this, color, bot);
+//		}
+//		else {
+//			if (bot.getRules().cappedRolls.get()) {
+//				return String.format("%s (= %s)", total, Roll.maybeColorRoll(this.clamp(), color, bot));
+//			}
+//			else {
+//				return Roll.maybeColorRoll(this, color, bot);
+//			}
+//		}
+//	}
+	
+//	private void maybeColorRoll(boolean color, INoppaBot bot) {
+//		String result = Roll.maybeColorRoll(this, color, bot);
+//		if (visibleBonus > 0) result += " + " + Color.instant(visibleBonus);
+//	}
 }

@@ -92,9 +92,9 @@ public class BagOfDice extends BasicDie {
 		DiceRoll result = DiceRoll.ZERO;
 		for (int die : diceBag) {
 			DiceRoll subroll = bot.getRoll(owner, die);
-			result = result.add(subroll);
+			result = result.add(subroll.intValueRuled(bot));
 			if (!first) buf.append(" + ");
-			buf.append(subroll);
+			buf.append(subroll.toIntermediateString(bot));
 			first = false;
 		}
 		String sumStr = buf.toString();

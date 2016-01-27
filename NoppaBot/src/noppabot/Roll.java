@@ -8,15 +8,15 @@ import java.util.function.IntPredicate;
 
 
 public interface Roll {
-	int intValue();
+	int total();
 	
 	default int intValueClamped() {
-		return Roll.clampValue(intValue(), 100);
+		return Roll.clampValue(total(), 100);
 	}
 	
 	default int intValue(boolean clamp) {
 		if (clamp) return intValueClamped();
-		else return intValue();
+		else return total();
 	}
 	
 	default int intValueRuled(INoppaBot bot) {
@@ -30,12 +30,12 @@ public interface Roll {
 	String toString(boolean color, INoppaBot bot);
 	
 	default boolean test(IntPredicate predicate) {
-		return predicate.test(intValue());
+		return predicate.test(total());
 	}
 	
 	public static String maybeColorRoll(Roll roll, boolean color, INoppaBot bot) {
 		if (color) return colorRoll(roll, bot); // Color it green/red
-		else return Color.emphasize(String.valueOf(roll.intValue())); // Color it hilighted white
+		else return Color.emphasize(String.valueOf(roll.total())); // Color it hilighted white
 	}
 	
 	public static int clampValue(int value, int sides) {

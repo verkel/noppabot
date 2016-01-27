@@ -53,7 +53,7 @@ public class PrimalDie extends BasicDie {
 	@Override
 	public DiceRoll onContestRoll() {
 		final DiceRoll roll = roll();
-		if (primes.contains(roll.intValue())) {
+		if (primes.contains(roll.total())) {
 			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat(
 				"%s rolls %s, which is a prime! The primal die is pleased, and adds a bonus to the roll. The final roll is %s + %s = %s.",
@@ -102,7 +102,7 @@ public class PrimalDie extends BasicDie {
 		public DiceRoll onContestRoll() {
 			final DiceRoll roll = roll();
 			DiceRoll result;
-			if (primes.contains(roll.intValue())) {
+			if (primes.contains(roll.total())) {
 				result = roll.add(bonus);
 				bot.sendChannelFormat(
 					"%s rolls %s, which is a prime! The tribe of primal dies grants you an offering of" +
@@ -129,7 +129,7 @@ public class PrimalDie extends BasicDie {
 		public void onOpponentRollLate(String opponent, Roll roll) {
 			Rolls rolls = bot.getRolls();
 			
-			if (primes.contains(roll.intValue())) {
+			if (primes.contains(roll.total())) {
 				if (bot.participated(owner)) {
 					DiceRoll totalRoll = ((DiceRoll)rolls.get(owner)).add(otherPrimesBonus);
 					rolls.put(owner, totalRoll);

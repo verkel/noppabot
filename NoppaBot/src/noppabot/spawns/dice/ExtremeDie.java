@@ -50,17 +50,17 @@ public class ExtremeDie extends BasicDie {
 
 	private DiceRoll doContestRoll(String dieName, int sides) {
 		DiceRoll roll = roll(sides);
-		if (roll.intValue() == 100) {
+		if (roll.total() == 100) {
 			bot.sendChannelFormat("%s rolls d%s with the %s! %s! That's the most extreme roll and the die is ecstatic!", 
 				ownerColored, sides, dieName, resultStr(roll)); 
 			return roll;
 		}
-		else if (roll.intValue() > 10 && roll.intValue() < 90) {
+		else if (roll.total() > 10 && roll.total() < 90) {
 			bot.sendChannelFormat("%s rolls d%s with the %s! %s! This number is quite ordinary, says the die.", 
 				ownerColored, sides, dieName, resultStr(roll));
 			return roll;
 		}
-		else if (roll.intValue() <= 10) {
+		else if (roll.total() <= 10) {
 			DiceRoll result = new DiceRoll(100).sub(roll);
 			bot.sendChannelFormat("%s rolls d%s with the %s! %s! This number is very extremal! says the die.", 
 				owner, sides, dieName, roll);
@@ -68,7 +68,7 @@ public class ExtremeDie extends BasicDie {
 				dieName, ownerColored, roll, resultStr(result));
 			return result;
 		}
-		else if (roll.intValue() >= 90) {
+		else if (roll.total() >= 90) {
 			DiceRoll bonus = roll(highRollBonusSides);
 			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat("%s rolls d%s with the %s! %s! This number is very extremal! says the die.", 

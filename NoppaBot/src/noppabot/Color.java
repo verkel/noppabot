@@ -46,6 +46,10 @@ public class Color {
 		return custom(instant, Colors.DARK_GREEN);
 	}
 	
+	public static String visibleRollBonus(int bonus) {
+		return instant(String.valueOf(bonus));
+	}
+	
 	public static String event(String event) {
 		return custom(event, Colors.RED);
 	}
@@ -63,7 +67,7 @@ public class Color {
 	}
 	
 	public static String emphasize(Roll roll) {
-		return emphasize(String.valueOf(roll.intValue()));
+		return emphasize(String.valueOf(roll.total()));
 	}
 	
 	public static String rulesMode(String name) {

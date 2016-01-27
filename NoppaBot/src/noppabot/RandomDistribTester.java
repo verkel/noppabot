@@ -16,7 +16,7 @@ public class RandomDistribTester {
 		WeightedRandom ar = new WeightedRandom(0.05, false);
 		
 		for (int i = 0; i < ITERATIONS; i++) {
-			int roll = ar.roll(100).intValue();
+			int roll = ar.roll(100).total();
 			stats[roll]++;
 		}
 		
