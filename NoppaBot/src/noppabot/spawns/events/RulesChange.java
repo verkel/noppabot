@@ -262,6 +262,11 @@ class PokerNightMode extends RulesChange {
 		public Event create() {
 			return new PokerNightMode();
 		}
+		
+		@Override
+		public double spawnChance() { // Haven't seen these for a while :(
+			return 2.0;
+		}
 	};
 	
 	@Override

@@ -19,7 +19,7 @@ public class DicemonTrainer extends Instant {
 		
 		@Override
 		public double spawnChance() {
-			return 2.0;
+			return 2.5;
 		}
 	};
 	
