@@ -5,6 +5,7 @@
 package noppabot;
 
 import java.util.Calendar;
+import java.util.stream.Stream;
 
 import noppabot.spawns.Powerup;
 import noppabot.spawns.dice.*;
@@ -73,7 +74,7 @@ public class PokerTable {
 		@Override
 		public void run() {
 			synchronized (bot.getLock()) {
-				revealTurn(true);
+				revealTurn(isAnyonePlaying());
 				bot.getScheduler().deschedule(id);
 			}
 		}		
@@ -90,7 +91,7 @@ public class PokerTable {
 		@Override
 		public void run() {
 			synchronized (bot.getLock()) {
-				revealRiver(true);
+				revealRiver(isAnyonePlaying());
 				bot.getScheduler().deschedule(id);
 			}
 		}		
@@ -159,8 +160,8 @@ public class PokerTable {
 	public void listHands(final boolean onTurnOrRiver) {
 		boolean first = true;
 		StringBuilder sb = new StringBuilder();
-		for (Powerup p : bot.getPowerups().values()) {
-			if (!(p instanceof PokerHand || p instanceof BetterHand)) continue;
+		Iterable<Powerup> hands = getHands()::iterator;
+		for (Powerup p : hands) {
 			HandRank handRank = getHandRank(onTurnOrRiver, p);
 			boolean changed = isHandRankChanged(p);
 			if (onTurnOrRiver && !changed) continue;
@@ -184,6 +185,14 @@ public class PokerTable {
 		else {
 			bot.sendChannelFormat(handsStr);
 		}
+	}
+	
+	public boolean isAnyonePlaying() {
+		return getHands().count() > 0;
+	}
+	
+	public Stream<Powerup> getHands() {
+		return bot.getPowerups().values().stream().filter(p -> p instanceof PokerHand || p instanceof BetterHand);
 	}
 	
 	private HandRank getHandRank(final boolean onTurnOrRiver, Powerup p) {
