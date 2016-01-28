@@ -702,6 +702,11 @@ public class GenerateItemList {
 		public LocalDateTime getSpawnStartTime() {
 			return null;
 		}
+
+		@Override
+		public boolean rollCanParticipate(String nick) {
+			return false;
+		}
 	}
 	
 	class LazyBot extends TestBot {

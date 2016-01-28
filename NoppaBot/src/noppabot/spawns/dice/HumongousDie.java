@@ -72,7 +72,7 @@ public class HumongousDie extends BasicDie {
 	
 	public static DiceRoll doContestRoll(Powerup self, String nick) {
 		DiceRoll roll = roll(self);
-		sendFigletText(self.bot(), String.format("%s  rolls  %s !", nick, roll));
+		sendFigletText(self.bot(), String.format("%s  rolls  %s !", nick, roll.totalStr()));
 		return roll;
 	}
 

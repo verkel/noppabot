@@ -260,7 +260,7 @@ public class PokerHand extends BasicPowerup<Roll> {
 		}
 		
 		@Override
-		public String toString(boolean color, INoppaBot bot) {
+		public String toResultString(boolean color, boolean detailed, INoppaBot bot) {
 			return Roll.maybeColorRoll(this, color, bot);
 		}
 		

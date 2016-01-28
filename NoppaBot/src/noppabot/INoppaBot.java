@@ -60,4 +60,5 @@ public interface INoppaBot {
 	SortedSet<Powerup> getAvailablePowerups();
 	boolean hasFavor(String nick);
 	Optional<Adversary> getAdversary();
+	boolean rollCanParticipate(String nick);
 }

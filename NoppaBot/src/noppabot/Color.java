@@ -27,11 +27,11 @@ public class Color {
 	}
 	
 	public static String winningRoll(Roll roll) {
-		return custom(roll.toString(), Colors.GREEN);
+		return custom(roll.totalStr(), Colors.GREEN);
 	}
 	
 	public static String losingRoll(Roll roll) {
-		return custom(roll.toString(), Colors.RED);
+		return custom(roll.totalStr(), Colors.RED);
 	}
 	
 	public static String basicPowerup(String powerup) {

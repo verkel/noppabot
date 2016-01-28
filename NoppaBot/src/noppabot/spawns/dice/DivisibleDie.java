@@ -62,7 +62,7 @@ public class DivisibleDie extends BasicDie {
 		}
 		else {
 			bot.sendChannelFormat("%s rolls %s with the divisible die! The roll is not divisible with %s, though (the division has the remainder %s).", 
-				ownerColored, resultStr(roll), divisor, roll.total() % divisor);
+				ownerColored, resultStrExp(roll), divisor, roll.total() % divisor);
 			return roll;
 		}
 	}
@@ -107,7 +107,7 @@ public class DivisibleDie extends BasicDie {
 			DiceRoll result = roll.add(bonus);
 			bot.sendChannelFormat("%s rolls %s with the modular die! %s mod %s = %s, granting you +%s roll bonus!", 
 				owner, roll, roll, divisor, remainder, bonus);
-			bot.sendChannelFormat("%s's final roll is %s + %s = %s!", ownerColored, roll, bonus,
+			bot.sendChannelFormat("%s's final roll is %s + %s = %s!", ownerColored, roll.total(), bonus,
 				resultStr(result));
 			return result;
 		}

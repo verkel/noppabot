@@ -52,12 +52,12 @@ public class ExtremeDie extends BasicDie {
 		DiceRoll roll = roll(sides);
 		if (roll.total() == 100) {
 			bot.sendChannelFormat("%s rolls d%s with the %s! %s! That's the most extreme roll and the die is ecstatic!", 
-				ownerColored, sides, dieName, resultStr(roll)); 
+				ownerColored, sides, dieName, resultStrExp(roll)); 
 			return roll;
 		}
 		else if (roll.total() > 10 && roll.total() < 90) {
 			bot.sendChannelFormat("%s rolls d%s with the %s! %s! This number is quite ordinary, says the die.", 
-				ownerColored, sides, dieName, resultStr(roll));
+				ownerColored, sides, dieName, resultStrExp(roll));
 			return roll;
 		}
 		else if (roll.total() <= 10) {

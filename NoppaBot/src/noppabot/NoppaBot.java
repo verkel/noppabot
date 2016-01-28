@@ -247,7 +247,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void debugStuff() {
 //		for (int i = 0; i < 5; i++) new RulesChange().run(this);
 		
-//		for (int i = 0; i < 10; i++) availablePowerups.add(new Diceteller().initialize(this));
+		for (int i = 0; i < 10; i++) availablePowerups.add(new RollingProfessional().initialize(this));
 		
 //		scheduleSpawn(null, new PokerDealer().initialize(this));
 		
@@ -293,7 +293,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		
 //		new FourthWallBreaks().run(this);
 		
-//		spawnAllPowerups();
+		spawnAllPowerups();
 		
 		rules.canDropItems.set(true);
 //		onRulesChanged();
@@ -863,7 +863,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			String nick = entry.getKey();
 			Roll roll = entry.getValue();
 			if (!first) buf.append(", ");
-			buf.append(String.format("%s %s(%s)", roll.toString(true, this), offTargetInfo(roll), Color.antiHilight(nick)));
+			buf.append(String.format("%s %s(%s)", roll.toResultString(true, false, this), offTargetInfo(roll), Color.antiHilight(nick)));
 			first = false;
 		}
 		if (buf.length() > 0) sendChannel(buf.toString());
@@ -1041,7 +1041,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 	
-	private boolean rollCanParticipate(String nick) {
+	@Override
+	public boolean rollCanParticipate(String nick) {
 		boolean allowed = rules.isRollAllowed(nick, false);
 		boolean participated = participated(nick);
 		boolean rollOrTiebreakPeriod = state == State.ROLL_PERIOD || state == State.SETTLE_TIE;
@@ -1092,7 +1093,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public String getDefaultContestRollMessage(String nick, DiceRoll roll, boolean colorNick, boolean colorRoll) {
 		String participatedMsg = participated(nick) ? 
 			" You've already rolled " + participatingRoll(nick) + " though, this roll won't participate!" : "";
-		String rollStr = roll.toString(colorRoll, this);
+		String rollStr = roll.toResultString(colorRoll, true, this);
 		String nickColored = colorNick ? Color.nick(nick) : nick;
 		return String.format("%s rolls the d100... %s! %s%s", nickColored, rollStr, grade(roll), participatedMsg);
 	}
@@ -1352,7 +1353,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private void endRollPeriod(List<String> winningRollers) {
 		String winner = winningRollers.get(0);
 		Roll roll = rolls.get(winner);
-		String msg = String.format(randomRollEndMsg(), Color.nick(winner), roll.toString(true, this));
+		String msg = String.format(randomRollEndMsg(), Color.nick(winner), roll.toResultString(true, false, this));
 		sendChannel(msg);
 		
 		updateRecords(winner);

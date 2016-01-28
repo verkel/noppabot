@@ -56,7 +56,7 @@ public class VariableDie extends BasicDie {
 	private DiceRoll doContestRoll(String dieName) {
 		DiceRoll result = bot.getRoll(owner, sides);
 		bot.sendChannelFormat("%s rolls d%s with %s... %s! %s", 
-			ownerColored, sides, dieName, resultStr(result), bot.grade(result));
+			ownerColored, sides, dieName, resultStrExp(result), bot.grade(result));
 		return result;
 	}
 

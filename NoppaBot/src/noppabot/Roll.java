@@ -9,6 +9,10 @@ import java.util.function.IntPredicate;
 
 public interface Roll {
 	int total();
+
+	default String totalStr() {
+		return String.valueOf(total());
+	}
 	
 	default int intValueClamped() {
 		return Roll.clampValue(total(), 100);
@@ -23,11 +27,11 @@ public interface Roll {
 		return intValue(bot.getRules().cappedRolls.get());
 	}
 	
-	default String toString(INoppaBot bot) {
-		return toString(true, bot);
+	default String toResultString(INoppaBot bot) {
+		return toResultString(true, false, bot);
 	}
 	
-	String toString(boolean color, INoppaBot bot);
+	String toResultString(boolean color, boolean detailed, INoppaBot bot);
 	
 	default boolean test(IntPredicate predicate) {
 		return predicate.test(total());

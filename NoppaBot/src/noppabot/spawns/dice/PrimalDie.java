@@ -63,7 +63,7 @@ public class PrimalDie extends BasicDie {
 		else {
 			bot.sendChannelFormat(
 				"%s rolls %s! It's not a prime, however, and the primal die disapproves.", ownerColored,
-				resultStr(roll));
+				resultStrExp(roll));
 			return roll;
 		}
 	}
@@ -113,13 +113,13 @@ public class PrimalDie extends BasicDie {
 				result = roll;
 				bot.sendChannelFormat(
 					"%s rolls %s! The tribe of primal dice seem uninterested.", ownerColored,
-					resultStr(roll));
+					resultStrExp(roll));
 			}
 			
 			if (otherPrimesTotalBonus > 0) {
 				result = result.add(otherPrimesTotalBonus);
 				bot.sendChannelFormat("The tribal gifts of %s points are added to %s's roll, " +
-					"increasing it to %s", otherPrimesTotalBonus, ownerColored, resultStr(result));
+					"increasing it to %s", otherPrimesTotalBonus, ownerColored, resultStrExp(result));
 			}
 			
 			return result;

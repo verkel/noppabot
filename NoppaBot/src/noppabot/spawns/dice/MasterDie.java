@@ -63,7 +63,7 @@ public class MasterDie extends BasicDie {
 	private DiceRoll doContestRoll(String dieName, int sides) {
 		DiceRoll result = bot.getRoll(owner, sides);
 		bot.sendChannelFormat("%s rolls d%s with %s... %s! %s", 
-			ownerColored, sides, dieName, resultStr(result), bot.grade(result));
+			ownerColored, sides, dieName, resultStrExp(result), bot.grade(result));
 		if (bot.getState() == State.ROLL_PERIOD) rollUnusedApprenticeDies(result);
 		return result;
 	}

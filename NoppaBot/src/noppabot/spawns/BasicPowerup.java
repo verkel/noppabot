@@ -88,8 +88,24 @@ public abstract class BasicPowerup<R extends Roll> extends Powerup<R> {
 		bot.sendChannelFormat(Color.expires(msg), args);
 	}
 
+	/**
+	 * Display the final result. Will not show rolling pro bonus. For cases where
+	 * the roll has been mentioned in expanded form earlier (Polished, Weighted
+	 * Die, ...)
+	 */
 	public String resultStr(Roll result) {
-		return result.toString(colorRoll, bot);
+		return result.toResultString(shouldColorRoll(), false, bot);
+	}
+
+	/**
+	 * Display the final result, possible rolling pro bonus expanded. Like:
+	 * roll + bonus (= result)
+	 * 
+	 * Only use if this is the only string shown about the roll. Otherwise rolling pro bonus should
+	 * be shown in the left hand side of the roll equation.
+	 */
+	public String resultStrExp(Roll result) {
+		return result.toResultString(shouldColorRoll(), true, bot);
 	}
 	
 	@Override
@@ -108,7 +124,11 @@ public abstract class BasicPowerup<R extends Roll> extends Powerup<R> {
 	}
 	
 	public void sendDefaultContestRollMessage(DiceRoll roll) {
-		bot.sendDefaultContestRollMessage(owner, roll, colorOwner, colorRoll);
+		bot.sendDefaultContestRollMessage(owner, roll, colorOwner, shouldColorRoll());
+	}
+	
+	private boolean shouldColorRoll() {
+		return colorRoll && bot.rollCanParticipate(owner);
 	}
 	
 	public abstract SpawnInfo<?> spawnInfo();

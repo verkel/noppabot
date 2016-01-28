@@ -88,31 +88,31 @@ public class DiceRoll implements Roll {
 		return new DiceRoll(clampedValue, clampedBonus);
 	}
 	
-	public String toIntermediateString(INoppaBot bot) {
-		if (hasBonus()) return String.format("(%s + %s)", value, getBonusStrColored());
-		else return toString();
-	}
-
 	private String getBonusStrColored() {
 		return Color.visibleRollBonus(visibleBonus);
 	}
 	
 	@Override
 	public String toString() {
-		return String.valueOf(total());
+		if (hasBonus()) return String.format("(%s + %s)", value, getBonusStrColored());
+		else return totalStr();
 	}
-	
+
 	@Override
-	public String toString(boolean color, INoppaBot bot) {
+	public String toResultString(boolean color, boolean detailed, INoppaBot bot) {
 		StringBuilder str = new StringBuilder();
 		boolean rollWillBeCapped = willBeCapped(bot);
-		boolean stringIsMultipart = rollWillBeCapped || hasBonus();
+		boolean showBonus = detailed && hasBonus();
+		boolean stringIsMultipart = rollWillBeCapped || showBonus;
 		if (stringIsMultipart) {
-			str.append(value);
-			if (hasBonus()) {
+			if (showBonus) {
+				str.append(value);
 				str.append(" + ").append(getBonusStrColored());
 			}
-			str.append(String.format(" (= %s)",	Roll.maybeColorRoll(this.clamp(), color, bot)));
+			else {
+				str.append(total());
+			}
+			str.append(String.format(" (= %s)",	Roll.maybeColorRoll(this.totalRuled(bot), color, bot)));
 		}
 		else str.append(Roll.maybeColorRoll(this, color, bot));
 		return str.toString();
@@ -128,6 +128,11 @@ public class DiceRoll implements Roll {
 	
 	private boolean willBeCapped(INoppaBot bot) {
 		return !isWithinCap() && bot.getRules().cappedRolls.get();
+	}
+	
+	private DiceRoll totalRuled(INoppaBot bot) {
+		if (willBeCapped(bot)) return this.clamp();
+		else return this;
 	}
 	
 //	@Override
