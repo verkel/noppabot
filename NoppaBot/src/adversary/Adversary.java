@@ -173,14 +173,16 @@ public class Adversary extends PircBot implements INoppaEventListener {
 
 	@Override
 	public void rollPeriodStarted() {
-		// Schedule roll
-		Calendar rollTime = randomRollTime();
-		String pattern = DateTimeUtils.toSchedulingPattern(rollTime);
-		DelegatedTask rollTask = new DelegatedTask(rollTime.getTime(), () -> {
-			roll();
-		});
-		rollTask.id = scheduler.schedule(pattern, rollTask);
-		if (debug) System.out.println("Scheduled roll: " + rollTask);
+		if (isOnChannel()) {
+			// Schedule roll
+			Calendar rollTime = randomRollTime();
+			String pattern = DateTimeUtils.toSchedulingPattern(rollTime);
+			DelegatedTask rollTask = new DelegatedTask(rollTime.getTime(), () -> {
+				roll();
+			});
+			rollTask.id = scheduler.schedule(pattern, rollTask);
+			if (debug) System.out.println("Scheduled roll: " + rollTask);
+		}
 	}
 	
 	private List<String> rollPreTaunts = Arrays.asList(
