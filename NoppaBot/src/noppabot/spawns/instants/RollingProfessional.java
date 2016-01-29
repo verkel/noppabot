@@ -66,15 +66,16 @@ public class RollingProfessional extends Instant {
 		nextRoll = nextRoll.addVisibleBonus(bonus).clamp(sides);
 		bot.setNextRoll(owner, sides, nextRoll);
 		
+		String bonusStr = Color.visibleRollBonus("+" + bonus);
 		if (professor) {
 			bot.sendChannelFormat("%s participates in the %s's applied dicetology lecture. " +
-				"%s's next roll of d%s is improved by +%s!", 
-				owner, nameColored(),  ownerColored, sides, bonus);
+				"%s's next roll of d%s is improved by %s!", 
+				owner, nameColored(),  ownerColored, sides, bonusStr);
 		}
 		else {
 			bot.sendChannelFormat("The %s demonstrates some rolling tricks to %s. " +
-				"%s's next roll of d%s is improved by +%s!", 
-				nameColored(), owner, ownerColored, sides, bonus);
+				"%s's next roll of d%s is improved by %s!", 
+				nameColored(), owner, ownerColored, sides, bonusStr);
 		}
 	}
 

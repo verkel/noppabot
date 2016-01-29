@@ -47,7 +47,11 @@ public class Color {
 	}
 	
 	public static String visibleRollBonus(int bonus) {
-		return custom(String.valueOf(bonus), Colors.CYAN);
+		return visibleRollBonus(String.valueOf(bonus));
+	}
+	
+	public static String visibleRollBonus(String bonus) {
+		return custom(bonus, Colors.CYAN);
 	}
 	
 	public static String event(String event) {
