@@ -39,7 +39,7 @@ public interface Roll {
 	
 	public static String maybeColorRoll(Roll roll, boolean color, INoppaBot bot) {
 		if (color) return colorRoll(roll, bot); // Color it green/red
-		else return Color.emphasize(String.valueOf(roll.total())); // Color it hilighted white
+		else return Color.emphasize(roll.totalStr()); // Color it hilighted white
 	}
 	
 	public static int clampValue(int value, int sides) {
