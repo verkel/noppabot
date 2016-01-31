@@ -264,8 +264,8 @@ class PokerNightMode extends RulesChange {
 		}
 		
 		@Override
-		public double spawnChance() { // Haven't seen these for a while :(
-			return 2.0;
+		public double spawnChance() { // Slightly elevated chance
+			return 0.75;
 		}
 	};
 	
