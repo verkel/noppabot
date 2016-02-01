@@ -83,9 +83,18 @@ public abstract class Powerup<R extends Roll> implements ISpawnable, IColorStrCo
 
 
 	/**
-	 * Say the appropriate roll message and return the final roll
+	 * Roll the die on contest time. Say the appropriate roll message and return
+	 * the final roll
 	 */
 	public abstract R onContestRoll();
+	
+	/**
+	 * Roll the die on non-contest time. Usually it's just the same behaviour as
+	 * during the contest.
+	 */
+	public R onNormalRoll() {
+		return onContestRoll();
+	}
 	
 	public Roll onOpponentRoll(String opponent, Roll roll) {
 		return roll;

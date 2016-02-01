@@ -1017,7 +1017,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (withPowerup && powerups.containsKey(nick)) {
 			// ... with the carried power-up
 			Powerup powerup = powerups.get(nick);
-			roll = powerup.onContestRoll();
+			if (rollCanParticipate) roll = powerup.onContestRoll();
+			else roll = powerup.onNormalRoll(); // same as onContestRoll() if not overridded by powerup
 		}
 		else {
 			// ... with the normal d100
@@ -1045,8 +1046,13 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	public boolean rollCanParticipate(String nick) {
 		boolean allowed = rules.isRollAllowed(nick, false);
 		boolean participated = participated(nick);
-		boolean rollOrTiebreakPeriod = state == State.ROLL_PERIOD || state == State.SETTLE_TIE;
+		boolean rollOrTiebreakPeriod = isRollOrTiebreakPeriod();
 		return allowed && !participated && rollOrTiebreakPeriod;
+	}
+
+	@Override
+	public boolean isRollOrTiebreakPeriod() {
+		return state == State.ROLL_PERIOD || state == State.SETTLE_TIE;
 	}
 	
 	@Override

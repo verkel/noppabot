@@ -48,6 +48,11 @@ public class FastDie extends BasicDie {
 	}
 
 	@Override
+	public DiceRoll onNormalRoll() {
+		return doNormalRoll(); // Do the normal roll outside of contest time
+	}
+	
+	@Override
 	public DiceRoll onContestRoll() {
 		DiceRoll roll = roll();
 		int seconds = bot.getSecondsAfterPeriodStart();

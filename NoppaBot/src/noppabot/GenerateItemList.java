@@ -707,6 +707,11 @@ public class GenerateItemList {
 		public boolean rollCanParticipate(String nick) {
 			return false;
 		}
+
+		@Override
+		public boolean isRollOrTiebreakPeriod() {
+			return false;
+		}
 	}
 	
 	class LazyBot extends TestBot {

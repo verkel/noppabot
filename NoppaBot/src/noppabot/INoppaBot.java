@@ -61,4 +61,5 @@ public interface INoppaBot {
 	boolean hasFavor(String nick);
 	Optional<Adversary> getAdversary();
 	boolean rollCanParticipate(String nick);
+	boolean isRollOrTiebreakPeriod();
 }
