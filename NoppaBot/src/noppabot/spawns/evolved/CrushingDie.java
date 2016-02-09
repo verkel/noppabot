@@ -45,7 +45,7 @@ public class CrushingDie extends EvolvedDie {
 		int damage = Powerups.powerupRnd.nextInt(dmgSides) + 1;
 		DiceRoll result = roll.sub(damage).clamp();
 		bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %s damage and drops down to %s.", 
-			owner, name(), Color.nick(opponent), damage, resultStr(result));
+			owner, name(), Color.nick(opponent), damage, crushResultStr(opponent, result));
 		return result;
 	}
 	
@@ -54,8 +54,12 @@ public class CrushingDie extends EvolvedDie {
 		int totalDamage = damageRoll + humongousDmgBonus;
 		DiceRoll result = roll.sub(totalDamage).clamp();
 		bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %s + %s = %s damage and drops down to %s.", 
-			owner, name(), Color.nick(opponent), damageRoll, humongousDmgBonus, totalDamage, resultStr(result));
+			owner, name(), Color.nick(opponent), damageRoll, humongousDmgBonus, totalDamage, crushResultStr(opponent, result));
 		return result;
+	}
+	
+	private String crushResultStr(String opponent, DiceRoll result) {
+		return result.toResultString(bot.rollCanParticipate(opponent), false, bot);
 	}
 	
 	@Override
