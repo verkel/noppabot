@@ -18,7 +18,7 @@ public class FourthWallBreaks extends Event {
 		@Override
 		public double spawnChance() {
 			// Compensate that these stop spawning after 16:00
-			return 1.5;
+			return 2.0;
 		}
 		
 		@Override
