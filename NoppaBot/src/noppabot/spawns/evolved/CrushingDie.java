@@ -26,9 +26,9 @@ public class CrushingDie extends EvolvedDie {
 
 	@Override
 	public DiceRoll onContestRoll() {
-		DiceRoll roll = roll();
 		if (humongous) return HumongousDie.doContestRoll(this, owner());
 		else {
+			DiceRoll roll = roll();
 			bot.sendChannelFormat("%s drops the crushing die and the ground trembles. %s! %s", 
 				ownerColored(), resultStr(roll), bot.grade(roll));
 			return roll;
