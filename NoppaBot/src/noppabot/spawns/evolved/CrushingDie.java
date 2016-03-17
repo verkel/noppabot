@@ -43,7 +43,7 @@ public class CrushingDie extends EvolvedDie {
 
 	private DiceRoll doStandardCrush(INoppaBot bot, String owner, String opponent, DiceRoll roll) {
 		int damage = Powerups.powerupRnd.nextInt(dmgSides) + 1;
-		DiceRoll result = roll.sub(damage).clamp();
+		DiceRoll result = roll.sub(damage);
 		bot.sendChannelFormat("%s's %s crushes the opposition! %s's roll takes %s damage and drops down to %s.", 
 			owner, name(), Color.nick(opponent), damage, crushResultStr(opponent, result));
 		return result;
@@ -52,7 +52,7 @@ public class CrushingDie extends EvolvedDie {
 	private DiceRoll doHumongousCrush(INoppaBot bot, String owner, String opponent, DiceRoll roll) {
 		int damageRoll = Powerups.powerupRnd.nextInt(humongousDmgSides) + 1;
 		int totalDamage = damageRoll + humongousDmgBonus;
-		DiceRoll result = roll.sub(totalDamage).clamp();
+		DiceRoll result = roll.sub(totalDamage);
 		bot.sendChannelFormat("%s's %s pulverizes the opposition! %s's roll takes %s + %s = %s damage and drops down to %s.", 
 			owner, name(), Color.nick(opponent), damageRoll, humongousDmgBonus, totalDamage, crushResultStr(opponent, result));
 		return result;
