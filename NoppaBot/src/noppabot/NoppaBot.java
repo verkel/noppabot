@@ -678,6 +678,9 @@ public class NoppaBot extends PircBot implements INoppaBot {
 				else if (cmd.equalsIgnoreCase("autoroll")) {
 					autorollFor(sender);
 				}
+				else if (cmd.equalsIgnoreCase("unautoroll")) {
+					removeAutoroll(sender);
+				}
 				else if (cmd.equalsIgnoreCase("drop")) {
 					dropPowerup(sender);
 				}
@@ -727,6 +730,16 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		}
 	}
 
+	private void removeAutoroll(String nick) {
+		if (autorolls.contains(nick)) {
+			sendChannelFormat("%s: OK, I'll let you roll manually now.", Color.nick(nick));
+			autorolls.remove(nick);
+			return;
+		}
+		else {
+			sendChannelFormat("%s: you didn't have autoroll to begin with.", Color.nick(nick));
+		}
+	}
 
 	private void sendCustomRollerOnChannelError(String rollerNick) {
 		sendChannelFormat("%s is on the channel, so you cannot roll for him/her", rollerNick);
