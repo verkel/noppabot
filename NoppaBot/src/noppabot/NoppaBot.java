@@ -734,7 +734,6 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		if (autorolls.contains(nick)) {
 			sendChannelFormat("%s: OK, I'll let you roll manually now.", Color.nick(nick));
 			autorolls.remove(nick);
-			return;
 		}
 		else {
 			sendChannelFormat("%s: you didn't have autoroll to begin with.", Color.nick(nick));
