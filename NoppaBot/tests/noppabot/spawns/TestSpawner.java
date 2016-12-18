@@ -2,7 +2,7 @@
  * Created on 18.12.2016
  * @author verkel
  */
-package ut.noppabot.spawns.instants;
+package noppabot.spawns;
 
 import static org.junit.Assert.*;
 import noppabot.spawns.*;
