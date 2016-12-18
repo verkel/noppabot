@@ -14,6 +14,7 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	private LastSpawn<S> lastSpawn;
 	private String description;
 //	private boolean clone = true;
+	private Supplier<Stream<? extends SpawnInfo<S>>> spawnables;
 
 	/**
 	 * Make a new spawner record
@@ -48,17 +49,24 @@ public class Spawner<S extends ISpawnable> implements Iterable<S> {
 	 * you wish to combine the last spawn tracking with.
 	 */
 	public Spawner(Supplier<Stream<? extends SpawnInfo<S>>> spawnables, LastSpawn<S> lastSpawn) {
+		this.spawnables = spawnables;
 		this.lastSpawn = lastSpawn;
-		
+		rebuildSpawnChances();
+	}
+
+	public void rebuildSpawnChances() {
 		// Compute sum of spawn chances
 		double sum = spawnables.get().mapToDouble(s -> s.spawnChance()).sum();
 		
 		// Build the probability distribution
+		chances.clear();
 		double chanceCeil = 0f;
 		for (Iterator<? extends SpawnInfo<S>> it = spawnables.get().iterator(); it.hasNext();) {
 			SpawnInfo<S> s = it.next();
-			chanceCeil += s.spawnChance() / sum;
-			chances.put(chanceCeil, s);
+			if (s.spawnChance() > 0d) {
+				chanceCeil += s.spawnChance() / sum;
+				chances.put(chanceCeil, s);
+			}
 		}
 	}
 	
