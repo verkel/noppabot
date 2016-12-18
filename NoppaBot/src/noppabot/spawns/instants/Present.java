@@ -4,15 +4,19 @@
  */
 package noppabot.spawns.instants;
 
+import java.time.*;
+
 import noppabot.spawns.*;
+import noppabot.spawns.Instant;
 
 
 public class Present extends Instant {
+
+	public static final double CHRISTMAS_SPAWN_CHANCE = 10.00;
 	
-//	public static Spawner<BasicPowerup> spawner = new Spawner<BasicPowerup>(
-//		Arrays.<BasicPowerup>asList(new Present()));
+	public static final PresentSpawnInfo info = new PresentSpawnInfo();
 	
-	public static final InstantSpawnInfo info = new InstantSpawnInfo() {
+	public static class PresentSpawnInfo extends InstantSpawnInfo {
 
 		@Override
 		public Instant create() {
@@ -21,7 +25,21 @@ public class Present extends Instant {
 		
 		@Override
 		public double spawnChance() {
-			return 0.33;
+			if (isChristmasTime()) return CHRISTMAS_SPAWN_CHANCE;
+			else return 0.33;
+		}
+		
+		private boolean isChristmasTime() {
+			LocalDate now = currentDate();
+			return now.isAfter(decemberDay(20)) && now.isBefore(decemberDay(25));
+		}
+		
+		public LocalDate currentDate() {
+			return LocalDate.now();
+		}
+		
+		private LocalDate decemberDay(int dayOfMonth) {
+			return LocalDate.of(Year.now().getValue(), Month.DECEMBER, dayOfMonth);
 		}
 	};
 	

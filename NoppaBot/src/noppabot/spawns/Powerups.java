@@ -26,6 +26,8 @@ public class Powerups {
 	public static final Spawner<Event> allEventsMinusFourthWall;
 	public static final Spawner<Event> lateEvents;
 	
+	public static final List<Spawner<? extends ISpawnable>> allSpawners;
+	
 	static {
 		List<BasicPowerupSpawnInfo> allPowerupInfos = Arrays.asList(
 			BagOfDice.info,
@@ -73,6 +75,9 @@ public class Powerups {
 		allEvents = Spawner.create(allEventInfos, lastEvent, i -> i.spawnInAllEvents());
 		allEventsMinusFourthWall = Spawner.create(allEventInfos, lastEvent, i -> i != FourthWallBreaks.info);
 		lateEvents = Spawner.create(allEventInfos, lastEvent, i -> i.spawnInLateEvents());
+
+		allSpawners = Arrays.asList(allPowerups, firstPowerup, diceStormPowerups, diceBrosPowerups,
+			allEvents, allEventsMinusFourthWall, lateEvents);
 	}
 	
 	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups, Spawner<Event> spawnEvents) {
@@ -99,5 +104,9 @@ public class Powerups {
 	public static Event getRandomEvent(Spawner<Event> spawnEvents) {
 		Event event = spawnEvents.spawn();
 		return event;
+	}
+	
+	public static void rebuildSpawnChances() {
+		allSpawners.forEach(Spawner::rebuildSpawnChances);
 	}
 }

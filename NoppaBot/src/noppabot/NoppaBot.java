@@ -406,6 +406,8 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private void schedulePowerupsOfTheDay() {
+		Powerups.rebuildSpawnChances();
+		
 		LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 		computeTimes(now);
 		LocalDateTime spawnTime = now;
