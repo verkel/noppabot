@@ -134,6 +134,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	private List<INoppaEventListener> listeners = new ArrayList<>();
 	private Optional<Adversary> adversary = Optional.empty();
 	private boolean quitting = false;
+	private int settleTieCount;
 	
 	public static void main(String[] args) throws Exception {
 		new NoppaBot();
@@ -1296,7 +1297,11 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			rules.reset();
 			rulesLawyerDestroyPowerups();
 		}
-		
+		else if (settleTieCount > 2) {
+			sendChannel("I'm removing the roll cap now so we won't be here all night!");
+			rules.cappedRolls.set(false);
+		}
+		settleTieCount++;
 		rolls.clear();
 		
 		for (String tiebreakerNick : tiebreakers) {
@@ -1385,6 +1390,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 		favorsUsed.clear();
 		autorolls.clear();
 		pokerTable.clear();
+		settleTieCount = 0;
 		
 		if (rules.reset()) {
 			sendChannel("The non-standard rules return to normal.");
