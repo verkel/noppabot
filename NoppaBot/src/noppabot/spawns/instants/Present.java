@@ -69,7 +69,7 @@ public class Present extends Instant {
 		
 		int count = 3 + Powerups.powerupRnd.nextInt(2);
 		for (int i = 0; i < count; i++) {
-			bot.scheduleRandomSpawn(null, Powerups.diceStormPowerups, null);
+			bot.scheduleRandomSpawn(null, Powerups.presentPowerups, null);
 		}
 	}
 

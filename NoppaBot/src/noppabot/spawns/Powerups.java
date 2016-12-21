@@ -21,6 +21,7 @@ public class Powerups {
 	public static final Spawner<BasicPowerup> allPowerups;
 	public static final Spawner<BasicPowerup> firstPowerup;
 	public static final Spawner<BasicPowerup> diceStormPowerups;
+	public static final Spawner<BasicPowerup> presentPowerups;
 	public static final Spawner<BasicPowerup> diceBrosPowerups;
 	public static final Spawner<Event> allEvents;
 	public static final Spawner<Event> allEventsMinusFourthWall;
@@ -71,13 +72,15 @@ public class Powerups {
 		allPowerups = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInAllPowerups());
 		firstPowerup = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInFirstPowerups());
 		diceStormPowerups = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInDiceStormPowerups());
+		presentPowerups = Spawner.create(allPowerupInfos, lastPowerup,
+			i -> i.spawnInDiceStormPowerups() && i != Present.info);
 		diceBrosPowerups = Spawner.create(allPowerupInfos, lastPowerup, i -> i.spawnInDiceBrosPowerups());
 		allEvents = Spawner.create(allEventInfos, lastEvent, i -> i.spawnInAllEvents());
 		allEventsMinusFourthWall = Spawner.create(allEventInfos, lastEvent, i -> i != FourthWallBreaks.info);
 		lateEvents = Spawner.create(allEventInfos, lastEvent, i -> i.spawnInLateEvents());
 
-		allSpawners = Arrays.asList(allPowerups, firstPowerup, diceStormPowerups, diceBrosPowerups,
-			allEvents, allEventsMinusFourthWall, lateEvents);
+		allSpawners = Arrays.asList(allPowerups, firstPowerup, diceStormPowerups, presentPowerups,
+			diceBrosPowerups, allEvents, allEventsMinusFourthWall, lateEvents);
 	}
 	
 	public static ISpawnable getRandomPowerupOrEvent(INoppaBot bot, Spawner<BasicPowerup> spawnPowerups, Spawner<Event> spawnEvents) {
