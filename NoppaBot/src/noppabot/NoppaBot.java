@@ -1,6 +1,4 @@
 package noppabot;
-import it.sauronsoftware.cron4j.*;
-
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.time.*;
@@ -10,6 +8,13 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.regex.*;
 
+import org.jibble.pircbot.*;
+
+import com.google.common.collect.Iterables;
+
+import adversary.*;
+import ca.ualberta.cs.poker.Deck;
+import it.sauronsoftware.cron4j.*;
 import noppabot.PeekedRoll.Hint;
 import noppabot.Rules.RollClosestToTarget;
 import noppabot.StringUtils.StringConverter;
@@ -22,13 +27,6 @@ import noppabot.spawns.dice.PokerHand.BetterHand;
 import noppabot.spawns.events.*;
 import noppabot.spawns.instants.*;
 import noppabot.spawns.instants.TrollingProfessional.Bomb;
-
-import org.jibble.pircbot.*;
-
-import adversary.*;
-import ca.ualberta.cs.poker.Deck;
-
-import com.google.common.collect.Iterables;
 
 public class NoppaBot extends PircBot implements INoppaBot {
 
@@ -828,7 +826,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 	}
 
 	private boolean hasFavorVerbose(String nick) {
-		if (hasFavor(nick)) {
+		if (!hasFavor(nick)) {
 			sendChannelFormat("%s: you have used your favor for today", Color.nick(nick));
 			return false;
 		}
@@ -838,7 +836,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 
 	@Override
 	public boolean hasFavor(String nick) {
-		return favorsUsed.contains(nick);
+		return !favorsUsed.contains(nick);
 	}
 	
 	private void listItems(boolean isRollPeriodStart) {
