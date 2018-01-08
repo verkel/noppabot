@@ -89,7 +89,7 @@ public class NoppaBot extends PircBot implements INoppaBot {
 			"The dice gods have finalized the outcome! %s won with the roll %s!",
 			"The contest is over! Our lucky winner is %s with %s points!",
 			"The die has been cast. Tonight, %s is the dice emperor with %s points!",
-			"%s won the compo this time, with %s points. Was he lucky, or maybe he was using... the MASTER DIE?!",
+			"%s won the compo this time, with %s points. Was it luck, or maybe they were using... the MASTER DIE?!",
 			"Using dice is the best way to make decisions. %s knows this best, beating others with his roll %s!",
 			"Tonight, %s was the high roller with %s points!",
 			"%s beat the others with the outstanding roll of %s!",
