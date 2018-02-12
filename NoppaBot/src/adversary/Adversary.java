@@ -4,22 +4,21 @@
  */
 package adversary;
 
-import it.sauronsoftware.cron4j.*;
-
 import java.io.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.*;
 
+import org.jibble.pircbot.*;
+
+import it.sauronsoftware.cron4j.*;
 import noppabot.*;
 import noppabot.GenerateItemList.TestResult;
 import noppabot.spawns.*;
 import noppabot.spawns.Instant;
 import noppabot.spawns.dice.*;
 import noppabot.spawns.instants.*;
-
-import org.jibble.pircbot.*;
 
 
 public class Adversary extends PircBot implements INoppaEventListener {
@@ -266,7 +265,7 @@ public class Adversary extends PircBot implements INoppaEventListener {
 			DicemonTrainer trainer = (DicemonTrainer)instant;
 			// still not 100% grabbed with hurry factor, but pretty often
 			boolean interesting = isInteresting(trainer, 100); 
-			if (hasPowerup() && interesting) {
+			if (hasPowerup() && getPowerup().isUpgradeable() && interesting) {
 				scheduleGrab(instant);
 			}
 			else if (debug) {
@@ -491,6 +490,10 @@ public class Adversary extends PircBot implements INoppaEventListener {
 
 	private boolean hasPowerup() {
 		return noppaBot.getPowerups().containsKey(botNick);
+	}
+	
+	private Powerup getPowerup() {
+		return noppaBot.getPowerups().get(botNick);
 	}
 	
 	private boolean canDrop() {
